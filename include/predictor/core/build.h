@@ -40,7 +40,7 @@
 #include "seq.h"
 #include "file_reader.h"
 
-uint64_t build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t kmer,
+unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t kmer,
 			     uint64_t* readlen_distrib, int readlen_distrib_len,
 			     uint64_t* kmer_covg_array, int len_kmer_covg_array);
 

@@ -25,7 +25,7 @@ IDIR_PREDICTOR_CORE = include/predictor/core
 # Test code includes
 IDIR_BASIC_TESTS = include/test/basic
 IDIR_HASH_TABLE_TESTS = include/test/hash_table
-IDIR_PREDICTOR_TESTS = include/test/predictor
+IDIR_PREDICTOR_TESTS = include/test/myKrobe/predictor
 
 
 IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
@@ -77,7 +77,7 @@ BASIC_TESTS_OBJ = src/obj/basic/binary_kmer.o src/obj/basic/global.o src/obj/bas
 
 HASH_TABLE_TESTS_OBJ = src/obj/basic/global.o src/obj/test/hash_table/run_hash_table_tests.o src/obj/predictor/element.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/test/hash_table/test_hash.o src/obj/basic/binary_kmer.o  src/obj/basic/seq.o src/obj/basic/event_encoding.o
 
-PREDICTOR_TESTS_OBJ = src/obj/predictor/dB_graph.o src/obj/basic/global.o src/obj/test/hash_table/run_hash_table_tests.o src/obj/predictor/element.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/test/hash_table/test_hash.o src/obj/basic/binary_kmer.o  src/obj/basic/seq.o src/obj/basic/event_encoding.o src/obj/test/predictor/test_build.c
+PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o src/obj/test/predictor/test_build.o src/obj/predictor/global.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o
 
 MAXK_AND_TEXT = $(join "", $(MAXK))
 NUMCOLS_AND_TEST = $(join "_c", $(NUM_COLS))
@@ -92,7 +92,7 @@ run_hash_table_tests : remove_objects $(HASH_TABLE_TESTS_OBJ)
 	mkdir -p $(BIN);  $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -o $(BIN)/run_hash_table_tests_$(MAXK) $(HASH_TABLE_TESTS_OBJ) $(TEST_LIBLIST)
 
 run_predictor_tests : remove_objects $(PREDICTOR_TESTS_OBJ)
-	mkdir -p $(BIN);  $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -o $(BIN)/run_cortex_var_tests_$(MAXK) $(PREDICTOR_TESTS_OBJ) $(TEST_LIBLIST)
+	mkdir -p $(BIN);  $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -o $(BIN)/run_predictor_tests $(PREDICTOR_TESTS_OBJ) $(TEST_LIBLIST)
 
 
 .PHONY : clean
@@ -126,14 +126,11 @@ src/obj/test/hash_table/open_hash/%.o : src/hash_table/open_hash/%.c include/has
 src/obj/test/hash_table/hash_key/bob_jenkins/%.o : src/hash_table/hash_key/bob_jenkins/%.c include/hash_table/hash_key/bob_jenkins/%.h
 	mkdir -p src/obj/test/hash_table/hash_key/bob_jenkins; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
 
-src/obj/graph/hash_table/open_hash/%.o : src/hash_table/open_hash/%.c include/hash_table/open_hash/%.h
-	mkdir -p src/obj/graph/hash_table/open_hash; $(CC) $(CFLAGS_GRAPH) $(OPT) -c $< -o $@
-
-src/obj/graph/hash_table/hash_key/bob_jenkins/%.o : src/hash_table/hash_key/bob_jenkins/%.c
-	mkdir -p src/obj/graph/hash_table/hash_key/bob_jenkins; $(CC) $(CFLAGS_GRAPH) $(OPT) -c $< -o $@
-
 src/obj/test/hash_table/%.o : src/test/hash_table/%.c include/test/hash_table/%.h
 	mkdir -p src/obj/test/hash_table; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
+
+src/obj/test/predictor/%.o : src/test/myKrobe/predictor/%.c include/test/myKrobe/predictor/%.h
+	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -c $< -o $@
 
 
 src/obj/predictor/%.o : src/basic/event_encoding/base_encoding/%.c include/basic/event_encoding/base_encoding/%.h

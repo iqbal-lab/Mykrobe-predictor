@@ -43,25 +43,26 @@
 void test_build_unclean_graph()
 {
   
-  uint16_t kmer_size = 3;
-  int number_of_bits = 8;
-  int bucket_size = 5;
+  uint16_t kmer_size = 31;
+  int number_of_bits = 19;
+  int bucket_size = 100;
   int max_retries = 10;
 
   dBGraph *db_graph= hash_table_new(number_of_bits, bucket_size,
 				    max_retries, kmer_size);
 
   uint64_t* kmer_covg_array = calloc(100, sizeof(uint64_t));
+  uint64_t* readlen_array = calloc(120, sizeof(uint64_t));
 
   StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/test1.bam.list");
-  uint64_t num_bases = build_unclean_graph(db_graph, 
-					   list, 
-					   kmer,
-					   kmer_covg_array, 
-					   100);
+  unsigned long long  num_bases = build_unclean_graph(db_graph, 
+						      list, 
+						      kmer_size,
+						      readlen_array, 120,
+						      kmer_covg_array, 100);
 
+  
   CU_ASSERT(num_bases == 346933015);
-
   CU_ASSERT(kmer_covg_array[1]==4100361);
   CU_ASSERT(kmer_covg_array[2]==67309);
   CU_ASSERT(kmer_covg_array[3]==3482);
@@ -70,3 +71,6 @@ void test_build_unclean_graph()
   strbuf_free(list);
   hash_table_free(&db_graph);
 }
+
+
+

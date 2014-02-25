@@ -39,18 +39,13 @@
 #include "build.h"
 
 
-//for caller:
-  // uint64_t instead of Covg since these could get large
-//  uint64_t* covgs = (uint64_t*) malloc(sizeof(uint64_t) * len_kmer_covg_array);
-
-uint64_t build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t kmer,
-			    uint64_t* readlen_distrib, int readlen_distrib_len,
-			    uint64_t* kmer_covg_array, int len_kmer_covg_array)
+unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t kmer,
+				       uint64_t* readlen_distrib, int readlen_distrib_len,
+				       uint64_t* kmer_covg_array, int len_kmer_covg_array)
 {
-  char ascii_fq_offset = 33;
+  int ascii_fq_offset = 33;
   int qual_thresh = 10;
   int homopolymer_cutoff=0;
-  boolean remove_dups_se=false;
   int into_colour=0;
   unsigned int num_files_loaded=0;
   unsigned long long total_bad_reads=0; 
@@ -63,7 +58,7 @@ uint64_t build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t 
   load_se_filelist_into_graph_colour(list_of_fastq->buff,
 				     qual_thresh, 
 				     homopolymer_cutoff, 
-				     remove_dups_se,
+				     false,
 				     ascii_fq_offset,
 				     into_colour, 
 				     db_graph, 
@@ -74,6 +69,8 @@ uint64_t build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t 
 
   db_graph_get_covg_distribution_array(db_graph, 0, &db_node_condition_always_true,
 				       kmer_covg_array, len_kmer_covg_array);
+  printf("Loaded this many bases %llu\nthis many bad reads %llu\nread this many %llu\n",
+	 total_bases_loaded, total_bad_reads, total_bases_read);
   return total_bases_loaded;
 }
 

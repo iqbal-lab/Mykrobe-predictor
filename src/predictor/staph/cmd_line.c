@@ -82,7 +82,7 @@ CmdLine* cmd_line_alloc()
     }
 
 
-  int max_expected_mean_kmer_covg = 100;
+  int max_expected_mean_kmer_covg = 500;
   cmd->len_kmer_covg_array = max_expected_mean_kmer_covg+1;
   cmd->kmer_covg_array
     = (uint64_t*) calloc(cmd->len_kmer_covg_array, sizeof(uint64_t));
