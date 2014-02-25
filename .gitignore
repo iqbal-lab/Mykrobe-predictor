@@ -1,0 +1,14 @@
+#OS junk files
+*.DS_Store
+
+#binaries
+bin
+
+##libraries
+lib
+
+## temp files
+*~
+
+## test file that is too big for github
+data/test/myKrobe/predictor/test1.bam
