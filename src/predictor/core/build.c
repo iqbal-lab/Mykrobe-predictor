@@ -118,8 +118,8 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
       printf("%d\t%" PRIu64 "\n", p, kmer_covg_array[p]);
     }
 
-  uint64_t* d1 = calloc(len_kmer_covg_array+1, sizeof(uint64_t));
-  uint64_t* d2 = calloc(len_kmer_covg_array+1, sizeof(uint64_t));
+  double* d1 = calloc(len_kmer_covg_array+1, sizeof(double));
+  double* d2 = calloc(len_kmer_covg_array+1, sizeof(double));
 
   if ( (d1==NULL) || (d2==NULL) )
     {
@@ -134,19 +134,21 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
   //I want d1 to start with index1 (ie leave index=0 at value 0.
   for (i=2; i<len_kmer_covg_array; i++)
     {
-      if (kmer_covg_array[i-1]>0)
+      if (kmer_covg_array[i]>0)
 	{
-	  d1[i-1]=kmer_covg_array[i]/kmer_covg_array[i-1];
+	  d1[i-1]=(double) kmer_covg_array[i-1]/ (double)kmer_covg_array[i];
 	}
       else
 	{
-	  d1[i-1]=COVG_MAX;
+	  d1[i-1]=(double) COVG_MAX;
 	}
       if ( (found_first_posd1==false) && (d1[i-1]<1) )
 	{
 	  found_first_posd1=true;
 	  firstPosD1=i-1;
+	  printf("Found first posd1 of %d\n", i-1);
 	}
+      printf("d1 %d\t%f\n", i-1, d1[i-1]);
     }
 
   int firstPosD2=0;
@@ -154,19 +156,21 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
 
   for (i=2; i<len_kmer_covg_array; i++)
     {
-      if (d1[i-1]>0)
+      if (d1[i]>0)
 	{
-	  d2[i-1]=d1[i]/d1[i-1];
+	  d2[i-1]=d1[i-1]/d1[i];
 	}
       else
 	{
-	  d2[i-1]=COVG_MAX;
+	  d2[i-1]=(double) COVG_MAX;
 	}
       if ( (found_first_posd2==false) && (d2[i-1]<=1) )
 	{
 	  found_first_posd2=true;
 	  firstPosD2=i-1;
+	  printf("Found forst pos2 of %d\n", i-1);
 	}
+      printf("d2 %d\t%f\n", i-1, d2[i-1]);
     }
 
   if ( (firstPosD1!=0) && (firstPosD1< 0.75*expected_depth) )

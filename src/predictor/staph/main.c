@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 
   int expected_depth = (mean_read_length-cmd_line->kmer_size+1)*(bp_loaded/cmd_line->genome_size) / mean_read_length;
 
-
+  printf("Get epected depth of %d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
 	      expected_depth, cmd_line->max_expected_sup_len);
 
