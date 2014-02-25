@@ -4,6 +4,9 @@
 #binaries
 bin
 
+#object files
+src/obj
+
 ##libraries
 lib
 
