@@ -1,0 +1,63 @@
+# Isaac Turner, Mon 13 Aug 2012
+
+1) Get libraries:
+
+mkdir -p libs
+cd libs
+git clone https://github.com/samtools/htslib.git
+cd htslib
+make clean
+make
+cd ..
+
+wget ftp://ftp.gnu.org/gnu/gsl/gsl-1.15.tar.gz
+tar xfvz gsl-1.15.tar.gz
+cd gsl-1.15
+./configure
+make
+cd ..
+
+git clone https://github.com/noporpoise/string_buffer.git
+cd string_buffer
+make
+cd ..
+
+git clone git://github.com/noporpoise/seq_file.git
+cd seq_file
+make STRING_BUF_PATH=../string_buffer SAMTOOLS_PATH=../samtools-0.1.18
+cd ..
+
+cd ..
+
+2) Attempt to correct CUnit paths?  NOT_ZAM=1 currently works on mac only. 
+   Need to know common linux CUnit paths.  
+
+3) Possibly add some line to the Makefile or documentation to ensure libraries
+   are recompiled by the end-user
+
+The following bash code would do:
+
+cd libs
+
+cd samtools-0.1.18
+make clean
+make
+cd ..
+
+cd gsl-1.15
+make clean
+./configure
+make
+cd ..
+
+cd string_buffer
+make clean
+make
+cd ..
+
+cd seq_file
+make clean
+make STRING_BUF_PATH=../string_buffer SAMTOOLS_PATH=../samtools-0.1.18
+cd ..
+
+cd ..

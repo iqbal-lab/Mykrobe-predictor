@@ -1,0 +1,48 @@
+
+** Installation of Cortex itself
+
+1. Run the install bash script
+
+ bash install.sh
+
+
+2. To compile Cortex for 1 colour and kmers between 1 and 31:
+
+make cortex_var
+
+  generates a binary/executable in bin/ called cortex_var_31_c1
+
+  To compile Cortex for 172 colours and kmers between 33 and 63, type
+
+make NUM_COLS=172 MAXK=63 cortex_var
+
+
+If this fails, consult the manual at : http://cortexassembler.sourceforge.net/cortex_var_user_manual.pdf
+
+
+
+
+** Other packages/set-up required for run_calls.pl and for dumping VCFs
+
+1. Obtain Stampy from 
+   http://www.well.ox.ac.uk/project-stampy
+   Unzip it somewhere, cd into it and type make. 
+   Stampy requirements: Stampy needs Python version 2.6 or 2.7
+                        Only supports x86_64 and (experimental) Mac.
+   The run_calls.pl and process_calls.pl will need to know where stampy.py is (I pass the path in as an argument)
+
+
+2. Obtain VCFTools from
+   http://sourceforge.net/projects/vcftools/files/vcftools_0.1.9.tar.gz
+   or an equivalent. It is not enough to know it is installed somewhere on your system by someone,
+   process_calls and run_calls will need to be given the path to the vcftools_0.1.9/ directory (or whichever
+   version you get)
+
+3. Add 
+   /path/to/CORTEX_release_v_whatever/scripts/analyse_variants/bioinf-perl/lib/
+   and
+   /path/to/CORTEX_release_v_whatever/scripts/calling/
+   to your PERL5LIB
+
+4. Add /path/to/CORTEX_release_v_whatever/scripts/analyse_variants/needleman_wunsch/ to your PATH
+
