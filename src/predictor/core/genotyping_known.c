@@ -31,7 +31,7 @@
 
 AlleleInfo* alloc_allele_info()
 {
-  AlleleInfo* ai = (AlleleInfo*) malloc(sizeof(AlleleInfo));
+  AlleleInfo* ai = (AlleleInfo*) calloc(1, sizeof(AlleleInfo));
   if (ai==NULL)
     {
       die("Disaster - cant evben alloc a tiny alleleinfo");

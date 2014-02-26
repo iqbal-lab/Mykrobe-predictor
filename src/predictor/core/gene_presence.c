@@ -28,20 +28,46 @@
 
 #include "gene_presence.h"
 
+
+GeneInfo* alloc_and_init_gene_info()
+{
+  GeneInfo* gi = (GeneInfo*) calloc(1, sizeof(GeneInfo));
+  if (gi==NULL)
+    {
+      die("Can't alloc gi\n");
+    }
+  gi->name=strbuf_new(); 
+  return gi;
+}
+void free_gene_info(GeneInfo* gi)
+{
+  strbuf_free(gi->name);
+  free(gi);
+}
+
+void reset_gene_info(GeneInfo* gi)
+{
+  gi->median_covg=0;
+  gi->min_covg=0;
+  gi->percent_nonzero=0;
+  strbuf_reset(gi->name);
+}
+
 //assume you are going to repeatedly call this on a fasta
-//file of known mutations, with the first allele being WT/susceptible.
+//file of genes
 void get_next_gene_info(FILE* fp, 
 			dBGraph* db_graph, 
 			GeneInfo* gene_info,
 			Sequence* seq, 
 			KmerSlidingWindow* kmer_window,
-			(*file_reader)(FILE * fp, 
+			int (*file_reader)(FILE * fp, 
 				       Sequence * seq, 
 				       int max_read_length, 
 				       boolean new_entry, 
 				       boolean * full_entry),
 			dBNode** array_nodes, 
-			Orientation*  array_or)
+			Orientation*  array_or,
+			CovgArray* working_ca, int max_read_length)
 {
   
   int dummy_colour_ignored=0;
@@ -52,7 +78,7 @@ void get_next_gene_info(FILE* fp,
 						   array_or, 
 						   false, 
 						   &full_entry, 
-						   file_reader_fasta,
+						   file_reader,
 						   seq, 
 						   kmer_window, 
 						   db_graph, 
