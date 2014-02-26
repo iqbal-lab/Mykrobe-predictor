@@ -250,7 +250,6 @@ Covg count_reads_on_allele_in_specific_func_of_colours(
 Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
 					      int colour, boolean* too_short)
 {
-  printf("Len is %d\n", len);
 
   if ((len==0)|| (len==1))
     {
@@ -314,6 +313,11 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
 	      min_covg = c;
 	    }
 	}
+      else
+	{
+	  min_covg=0;
+	}
+      
     }
 
   return min_covg;

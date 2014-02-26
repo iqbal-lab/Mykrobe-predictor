@@ -1,6 +1,7 @@
 
 //#include "test_dB_graph.h"
 #include "test_build.h"
+#include "test_genotyping_known.h"
 #include <CUnit.h>
 #include <Basic.h>
 
@@ -24,7 +25,12 @@ int  main()
 
 
 
-  if (NULL == CU_add_test(pPopGraphSuite, "Test building unclean graph", test_build_unclean_graph)) {
+  /*  if (NULL == CU_add_test(pPopGraphSuite, "Test building unclean graph", test_build_unclean_graph)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+    }*/
+
+  if (NULL == CU_add_test(pPopGraphSuite, "Test getting coverage info on resistance/susceptibility alleles", test_get_next_mutation_allele_info)) {
     CU_cleanup_registry();
     return CU_get_error();
   }

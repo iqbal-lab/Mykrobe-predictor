@@ -68,6 +68,7 @@ void test_build_unclean_graph()
   CU_ASSERT(kmer_covg_array[3]==3482);
 
   free(kmer_covg_array);
+  free(readlen_array);
   strbuf_free(list);
   hash_table_free(&db_graph);
 }

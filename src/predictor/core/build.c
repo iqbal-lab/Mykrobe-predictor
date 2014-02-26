@@ -69,8 +69,7 @@ unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq,
 
   db_graph_get_covg_distribution_array(db_graph, 0, &db_node_condition_always_true,
 				       kmer_covg_array, len_kmer_covg_array);
-  printf("Loaded this many bases %llu\nthis many bad reads %llu\nread this many %llu\n",
-	 total_bases_loaded, total_bad_reads, total_bases_read);
+
   return total_bases_loaded;
 }
 

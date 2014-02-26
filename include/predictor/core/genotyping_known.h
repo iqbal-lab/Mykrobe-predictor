@@ -48,17 +48,29 @@ typedef struct
   int  percent_nonzero;
 } AlleleInfo;
 
+AlleleInfo* alloc_allele_info();
+void free_allele_info(AlleleInfo* ai);
+
 typedef struct
 {
-  AlleleInfo* susceptible_allele;
-  AlleleInfo* resistant_allele;
+  AlleleInfo susceptible_allele;
+  AlleleInfo resistant_allele;
   StrBuf* name_of_gene;
 }ResVarInfo;
 
-void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* r1info,
+ResVarInfo* alloc_and_init_res_var_info();
+void free_res_var_info(ResVarInfo* rvi);
+void reset_res_var_info(ResVarInfo* rvi);
+
+void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinfo,
 				   Sequence* seq, KmerSlidingWindow* kmer_window,
-				   (*file_reader)(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry),
-				   dBNode** array_nodes, Orientation*  array_or);
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   dBNode** array_nodes, Orientation*  array_or,
+				   CovgArray* working_ca, int max_read_length);
 
 
 #endif
