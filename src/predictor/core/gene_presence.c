@@ -27,6 +27,13 @@
 
 
 #include "gene_presence.h"
+#include "element.h"
+#include "file_reader.h"
+#include "build.h"
+#include "cmd_line.h"
+#include "graph_info.h"
+#include "db_differentiation.h"
+#include "maths.h"
 
 
 GeneInfo* alloc_and_init_gene_info()

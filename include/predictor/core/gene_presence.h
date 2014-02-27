@@ -1,9 +1,16 @@
+#include "global.h" // Covg def 
+#include "seq.h" // Sequence def 
+#include "binary_kmer.h" // KmerSlidingWindow
+#include "dB_graph.h"// dBGraph
+#include "db_complex_genotyping.h" // CovgArray
+
 typedef struct
 {
   Covg median_covg;
   Covg min_covg;
   int  percent_nonzero;
   StrBuf* strbuf;
+  StrBuf* name;
 } GeneInfo;
 
 GeneInfo* alloc_and_init_gene_info();
