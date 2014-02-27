@@ -33,12 +33,9 @@
 
 #include "global.h"
 #include "element.h"
-#include "genotyping_element.h"
 #include "db_variants.h"
 #include "graph_info.h"
-#include "model_selection.h"
 #include "open_hash/little_hash_for_genotyping.h"
-#include "genotyping_element.h"
 
 extern int MIN_LLK;
 

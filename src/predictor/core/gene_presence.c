@@ -30,8 +30,6 @@
 #include "element.h"
 #include "file_reader.h"
 #include "build.h"
-#include "cmd_line.h"
-#include "graph_info.h"
 #include "db_differentiation.h"
 #include "maths.h"
 
@@ -76,7 +74,8 @@ void get_next_gene_info(FILE* fp,
 			Orientation*  array_or,
 			CovgArray* working_ca, int max_read_length)
 {
-  
+
+  boolean full_entry=true;
   int dummy_colour_ignored=0;
   int num_kmers = 
     align_next_read_to_graph_and_return_node_array(fp, 
