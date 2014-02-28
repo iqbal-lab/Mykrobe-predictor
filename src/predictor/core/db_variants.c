@@ -335,7 +335,6 @@ int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int c
  
   int i;
 
-  int index=0;
   int num_nonzero=0;
 
   for(i=1; i <len; i++)

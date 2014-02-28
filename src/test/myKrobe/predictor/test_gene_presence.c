@@ -52,16 +52,16 @@ void test_get_next_gene_info()
   dBGraph *db_graph= hash_table_new(number_of_bits, bucket_size,
 				    max_retries, kmer_size);
 
-  uint64_t* kmer_covg_array = calloc(100, sizeof(uint64_t));
-  int max_read_length = 120;
-  uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
+  int max_gene_len = 1500;
+  uint64_t* kmer_covg_array = calloc(150, sizeof(uint64_t));
+  uint64_t* readlen_array = calloc(max_gene_len, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/mutations/sample1.fa.list");
+  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/gene_presence/sample1.fa.list");
   unsigned long long  num_bases = build_unclean_graph(db_graph, 
 						      list, 
 						      kmer_size,
-						      readlen_array, max_read_length,
-						      kmer_covg_array, 100);
+						      readlen_array, max_gene_len,
+						      kmer_covg_array, 150);
 
   FILE* fp = fopen("../data/test/myKrobe/predictor/gene_presence/panel1.fasta", "r");
   if (fp==NULL)
@@ -79,7 +79,7 @@ void test_get_next_gene_info()
   if (seq == NULL){
     die("Out of memory trying to allocate Sequence");
   }
-  alloc_sequence(seq,max_read_length,LINE_MAX);
+  alloc_sequence(seq,max_gene_len,LINE_MAX);
   
   //We are going to load all the bases into a single sliding window 
   KmerSlidingWindow* kmer_window = malloc(sizeof(KmerSlidingWindow));
@@ -89,7 +89,7 @@ void test_get_next_gene_info()
     }
   
 
-  kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_read_length-db_graph->kmer_size+1));
+  kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_gene_len-db_graph->kmer_size+1));
   if (kmer_window->kmer==NULL)
     {
       die("Failed to malloc kmer_window->kmer");
@@ -97,7 +97,7 @@ void test_get_next_gene_info()
   kmer_window->nkmers=0;
   
 
-  int max_gene_len = 5000;
+  //  int max_gene_len = 5000;
   CovgArray* working_ca = alloc_and_init_covg_array(max_gene_len);
   //end of intialisation 
 	  
@@ -120,51 +120,28 @@ void test_get_next_gene_info()
     {
       die("Cannot alloc array of nodes or of orientations");
     }
-  /*
+  
   get_next_gene_info(fp, db_graph, gi,
 		     seq, kmer_window,
 		     &file_reader_fasta,
 		     array_nodes, array_or, 
-		     working_ca, max_read_length);
+		     working_ca, max_gene_len);
 
-  CU_ASSERT(gi->.median_covg==9);
-  CU_ASSERT(gi->.min_covg==9);
-  CU_ASSERT(gi->.percent_nonzero==100);
-
-  CU_ASSERT(gi->resistant_allele.median_covg==0);
-  CU_ASSERT(gi->resistant_allele.min_covg==0);
-  CU_ASSERT(gi->resistant_allele.percent_nonzero==0);
+  CU_ASSERT(gi->median_covg==6);
+  CU_ASSERT(gi->min_covg==0);
+  CU_ASSERT(gi->percent_nonzero==71);
 
 
+  
+  get_next_gene_info(fp, db_graph, gi,
+		     seq, kmer_window,
+		     &file_reader_fasta,
+		     array_nodes, array_or, 
+		     working_ca, max_gene_len);
 
-  get_next_mutation_allele_info(fp, db_graph, gi,
-				seq, kmer_window,
-				&file_reader_fasta,
-				array_nodes, array_or, working_ca, max_read_length);
-
-  CU_ASSERT(gi->.median_covg==0);
-  CU_ASSERT(gi->.min_covg==0);
-  CU_ASSERT(gi->.percent_nonzero==0);
-
-  CU_ASSERT(gi->resistant_allele.median_covg==2);
-  CU_ASSERT(gi->resistant_allele.min_covg==2);
-  CU_ASSERT(gi->resistant_allele.percent_nonzero==100);
-
-
-  get_next_mutation_allele_info(fp, db_graph, gi,
-				seq, kmer_window,
-				&file_reader_fasta,
-				array_nodes, array_or, working_ca, max_read_length);
-
-  CU_ASSERT(gi->susceptible_allele.median_covg==0);
-  CU_ASSERT(gi->susceptible_allele.min_covg==0);
-  CU_ASSERT(gi->susceptible_allele.percent_nonzero==0);
-
-  CU_ASSERT(gi->resistant_allele.median_covg==0);
-  CU_ASSERT(gi->resistant_allele.min_covg==0);
-  CU_ASSERT(gi->resistant_allele.percent_nonzero==0);
-
-  */
+  CU_ASSERT(gi->median_covg==2);
+  CU_ASSERT(gi->min_covg==0);
+  CU_ASSERT(gi->percent_nonzero==98);
 
 
   free_gene_info(gi);
