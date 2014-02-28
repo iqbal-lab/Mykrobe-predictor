@@ -41,7 +41,8 @@ int  main()
     CU_cleanup_registry();
     return CU_get_error();
   }
-
+  // run to get comments before test
+  test_get_species_info();
   if (NULL == CU_add_test(pPopGraphSuite, "Test assigning a species to a sample", test_get_species_info)) {
     CU_cleanup_registry();
     return CU_get_error();
