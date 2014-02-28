@@ -28,8 +28,11 @@ IDIR_HASH_TABLE_TESTS = include/test/hash_table
 IDIR_PREDICTOR_TESTS = include/test/myKrobe/predictor
 
 
-IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
-LDIR_CUNIT = /home/zam/bin/lib
+#IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
+#LDIR_CUNIT = /home/zam/bin/lib
+IDIR_CUNIT = /home/phelimb/local/include/CUnit
+LDIR_CUNIT = /home/phelimb/local/lib
+
 
 ifdef MAC
 	MACFLAG = -fnested-functions
@@ -77,7 +80,7 @@ BASIC_TESTS_OBJ = src/obj/basic/binary_kmer.o src/obj/basic/global.o src/obj/bas
 
 HASH_TABLE_TESTS_OBJ = src/obj/basic/global.o src/obj/test/hash_table/run_hash_table_tests.o src/obj/predictor/element.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/test/hash_table/test_hash.o src/obj/basic/binary_kmer.o  src/obj/basic/seq.o src/obj/basic/event_encoding.o
 
-PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o src/obj/test/predictor/test_build.o src/obj/test/predictor/test_genotyping_known.o src/obj/test/predictor/test_gene_presence.o src/obj/predictor/global.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/genotyping_known.o src/obj/predictor/gene_presence.o
+PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o src/obj/test/predictor/test_build.o src/obj/test/predictor/test_genotyping_known.o src/obj/test/predictor/test_gene_presence.o src/obj/test/predictor/test_species_prediction.o src/obj/predictor/global.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/genotyping_known.o src/obj/predictor/gene_presence.o
 
 MAXK_AND_TEXT = $(join "", $(MAXK))
 NUMCOLS_AND_TEST = $(join "_c", $(NUM_COLS))

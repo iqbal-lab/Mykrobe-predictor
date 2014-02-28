@@ -3,6 +3,7 @@
 #include "test_build.h"
 #include "test_genotyping_known.h"
 #include "test_gene_presence.h"
+#include "test_species_prediction.h"
 #include <CUnit.h>
 #include <Basic.h>
 
@@ -41,6 +42,10 @@ int  main()
     return CU_get_error();
   }
 
+  if (NULL == CU_add_test(pPopGraphSuite, "Test assigning a species to a sample", test_get_species_info)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
 
   /* Run all tests using the CUnit Basic interface */
   CU_basic_set_mode(CU_BRM_VERBOSE);
