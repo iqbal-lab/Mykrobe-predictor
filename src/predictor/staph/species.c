@@ -63,6 +63,11 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
   species_file_paths[16] = "../data/species/S_warneri_unique_branches.fasta";
 
   int i;char* tmpName;
+  double pcov[17]; // for storing the percentage coverage of each reference
+  int sumpcov;
+  int number_of_reads;
+
+
   GeneInfo* gi = alloc_and_init_gene_info();
   FILE* fp;
 
@@ -122,6 +127,8 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
       }
     
     // while the entry is valid iterate through the fasta file
+    number_of_reads = 0;
+    sumpcov = 0;
     do {
         get_next_gene_info(fp, db_graph, gi,
          seq, kmer_window,
@@ -129,9 +136,11 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
          array_nodes, array_or, 
          working_ca, max_gene_len);
          tmpName = gi->name->buff; 
-         printf("%i %i\n",i,gi->median_covg );  
-         printf("%s\n",tmpName); 
+         number_of_reads = number_of_reads + 1;
+         sumpcov = sumpcov + gi->percent_nonzero;
+
     } while ( strlen(tmpName) != 0);
+    pcov[i] = sumpcov / number_of_reads;
 
   }
 
@@ -143,7 +152,20 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
   free(kmer_window);
   free_sequence(&seq);
 
-  Staph_species species_out =  Aureus;
+  // Look at the max of the pcov
+  int c,location;
+  double maximum;
+  for (c = 0; c < 17; c++)
+    {
+      if (pcov[c] > maximum)
+      {
+         maximum  = pcov[c];
+         location = c;
+      }
+    }
+  printf("Maximum element is present at location %i and it's value is %f.\n", location, maximum);
+
+  Staph_species species_out =  location;
   return species_out;
 
 }

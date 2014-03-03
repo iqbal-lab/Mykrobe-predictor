@@ -27,7 +27,24 @@
 #include "dB_graph.h"
 typedef enum 
  {
-    Aureus   = 0,
-    Capitis  = 1,
+  Scapitis = 0,
+  Scaprae = 1,
+  Sepidermidis = 2,
+  Sequorum =3,
+  Shaemolyticus = 4,
+  Shominis = 5,
+  Slugdunensis = 6,
+  Smassiliensis = 7,
+  Spettenkofer = 8,
+  Spseudintermedius = 9,
+  Ssaprophyticus = 10,
+  Ssimiae = 11,
+  Ssimulans = 12,
+  Ssphgb0015 = 13,
+  Sspoj82 = 14,
+  Aureus = 15,
+  Swarneri = 16,
   } Staph_species ;
+
+
 Staph_species get_species(dBGraph *db_graph,int max_gene_len );

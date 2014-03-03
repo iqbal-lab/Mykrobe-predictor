@@ -57,12 +57,8 @@ void test_get_species_info()
                   readlen_array, max_gene_len,
                   kmer_covg_array, 150);
 
-  Staph_species species_known = Aureus;
   Staph_species species_assigned = get_species(db_graph,max_gene_len);
-
-
-
-  CU_ASSERT(species_assigned == species_known);
+  CU_ASSERT(species_assigned == Aureus);
 
   free(readlen_array);
   strbuf_free(list);
