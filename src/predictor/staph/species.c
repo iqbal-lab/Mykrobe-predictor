@@ -42,15 +42,29 @@
 #include "gene_presence.h"
 Staph_species get_species(dBGraph *db_graph,int max_gene_len )
 {
-   
-  FILE* fp = fopen("../data/test/myKrobe/predictor/gene_presence/panel1.fasta", "r");
-  if (fp==NULL)
-    {
-      die("Cannot open this file: ../data/test/myKrobe/predictor/gene_presence/panel1.fasta");
-    }
-  
-  GeneInfo* gi = alloc_and_init_gene_info();
+  // Define the paths to the possible species
+  const char *species_file_paths[17];
+  species_file_paths[0] = "../data/species/Scapitis_unique_branches.fasta";
+  species_file_paths[1] = "../data/species/Scaprae_unique_branches.fasta";
+  species_file_paths[2] = "../data/species/Sepidermidis_unique_branches.fasta";
+  species_file_paths[3] = "../data/species/Sequorum_unique_branches.fasta";
+  species_file_paths[4] = "../data/species/Shaemolyticus_unique_branches.fasta";
+  species_file_paths[5] = "../data/species/Shominis_unique_branches.fasta";
+  species_file_paths[6] = "../data/species/Slugdunensis_unique_branches.fasta";
+  species_file_paths[7] = "../data/species/Smassiliensis_unique_branches.fasta";
+  species_file_paths[8] = "../data/species/Spettenkofer_unique_branches.fasta";
+  species_file_paths[9] = "../data/species/Spseudintermedius_unique_branches.fasta";
+  species_file_paths[10] = "../data/species/Ssaprophyticus_unique_branches.fasta";
+  species_file_paths[11] = "../data/species/Ssimiae_unique_branches.fasta";
+  species_file_paths[12] = "../data/species/Ssimulans_unique_branches.fasta";
+  species_file_paths[13] = "../data/species/S_sp_hgb0015_unique_branches.fasta";
+  species_file_paths[14] = "../data/species/S_sp_oj82_unique_branches.fasta";
+  species_file_paths[15] = "../data/species/staph_unique_branches.fasta";
+  species_file_paths[16] = "../data/species/S_warneri_unique_branches.fasta";
 
+  int i;char* tmpName;
+  GeneInfo* gi = alloc_and_init_gene_info();
+  FILE* fp;
 
   //----------------------------------
   // allocate the memory used to read the sequences
@@ -60,52 +74,66 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
     die("Out of memory trying to allocate Sequence");
   }
   alloc_sequence(seq,max_gene_len,LINE_MAX);
-  
+
   //We are going to load all the bases into a single sliding window 
   KmerSlidingWindow* kmer_window = malloc(sizeof(KmerSlidingWindow));
   if (kmer_window==NULL)
     {
       die("Failed to malloc kmer sliding window");
     }
-  
 
-  kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_gene_len-db_graph->kmer_size+1));
-  if (kmer_window->kmer==NULL)
-    {
-      die("Failed to malloc kmer_window->kmer");
-    }
-  kmer_window->nkmers=0;
-  
-
-  //  int max_gene_len = 5000;
+    //  int max_gene_len = 5000;
   CovgArray* working_ca = alloc_and_init_covg_array(max_gene_len);
-  //end of intialisation 
-    
-    
-  //create file readers
-  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
-    long long ret;
-    int offset = 0;
-    if (new_entry == false){
-      offset = db_graph->kmer_size;
-    }
-    ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
-    
-    return ret;
-  }
-
   dBNode** array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_gene_len);
   Orientation* array_or =(Orientation*)  malloc(sizeof(Orientation)*max_gene_len);
-  if ( (array_nodes==NULL) || (array_or==NULL))
-    {
-      die("Cannot alloc array of nodes or of orientations");
+  for (i = 0; i < 17; i++)
+  {
+
+
+    fp = fopen(species_file_paths[i], "r");
+    if (fp==NULL)
+      {
+        die("Cannot open this file");
+      }
+    
+    kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_gene_len-db_graph->kmer_size+1));
+    if (kmer_window->kmer==NULL)
+      {
+        die("Failed to malloc kmer_window->kmer");
+      }
+    kmer_window->nkmers=0;
+    //create file readers
+    int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
+      long long ret;
+      int offset = 0;
+      if (new_entry == false){
+        offset = db_graph->kmer_size;
+      }
+      ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
+      
+      return ret;
     }
-  
-  get_next_gene_info(fp, db_graph, gi,
+
+    
+    
+    if ( (array_nodes==NULL) || (array_or==NULL))
+      {
+        die("Cannot alloc array of nodes or of orientations");
+      }
+    
+    // while the entry is valid iterate through the fasta file
+    do {
+        get_next_gene_info(fp, db_graph, gi,
          seq, kmer_window,
          &file_reader_fasta,
          array_nodes, array_or, 
          working_ca, max_gene_len);
+         tmpName = gi->name->buff; 
+         printf("%i %i\n",i,gi->median_covg );  
+         printf("%s\n",tmpName); 
+    } while ( strlen(tmpName) != 0);
+
+  }
 
   free_gene_info(gi);
   free(array_nodes);

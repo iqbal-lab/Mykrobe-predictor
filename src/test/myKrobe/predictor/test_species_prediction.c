@@ -46,11 +46,11 @@ void test_get_species_info()
   dBGraph *db_graph= hash_table_new(number_of_bits, bucket_size,
             max_retries, kmer_size);
 
-  int max_gene_len = 1500;
+  int max_gene_len = 10000;
   uint64_t* kmer_covg_array = calloc(150, sizeof(uint64_t));
   uint64_t* readlen_array = calloc(max_gene_len, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/gene_presence/sample1.fa.list");
+  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/species_assignment/species_ref_list");
   unsigned long long  num_bases = build_unclean_graph(db_graph, 
                   list, 
                   kmer_size,
