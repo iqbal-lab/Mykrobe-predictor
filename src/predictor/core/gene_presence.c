@@ -80,6 +80,39 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
     {
       return vga_A_LC;
     }
+  else if (strcmp(sbuf->buff, "msrA")==0)
+    {
+      return msrA;
+    }
+  else if (strcmp(sbuf->buff, "mecA")==0)
+    {
+      return mecA;
+    }
+  else if (strcmp(sbuf->buff, "tetK")==0)
+    {
+      return tetK;
+    }
+  else if (strcmp(sbuf->buff, "tetL")==0)
+    {
+      return tetL;
+    }
+  else if (strcmp(sbuf->buff, "tetM")==0)
+    {
+      return tetM;
+    }
+  else if (strcmp(sbuf->buff, "vanA")==0)
+    {
+      return vanA;
+    }
+  else if (strcmp(sbuf->buff, "mupA")==0)
+    {
+      return mupA;
+    }
+  else if (strcmp(sbuf->buff, "mupB")==0)
+    {
+      return mupB;
+    }
+
   else 
     {
       die("Unknown gene %s\n", sbuf->buff);

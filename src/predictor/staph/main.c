@@ -175,6 +175,72 @@ suc =  is_trimethoprim_susceptible(db_graph,
       printf("RESISTANT\n");
     }
 
+
+  suc =  is_erythromycin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("ERYTHROMYCIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_methicillin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("METHICILLIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_ciprofloxacin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("CIPROFLOXACIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+
+suc =  is_rifampicin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("RIFAMPICIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
   //cleanup
   free_antibiotic_info(abi);
   free_res_var_info(tmp_rvi);

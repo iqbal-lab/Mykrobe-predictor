@@ -51,12 +51,19 @@ typedef enum
     fusB=8,
     fusC=9,
     vga_A_LC=10,
-    msrA=12,
-    unspecified_gpg = 13,
+    msrA=11,
+    mecA=12,
+    tetK=13,
+    tetL=14,
+    tetM=15,
+    vanA=16,
+    mupA=17,
+    mupB=18,
+    unspecified_gpg = 19,
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 14
-#define MAX_LEN_GENE 2000
+#define NUM_GENE_PRESENCE_GENES 20
+#define MAX_LEN_GENE 2100
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
 

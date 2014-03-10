@@ -38,7 +38,7 @@
 
 
 //#define MAX_MUTS_IN_ANY_GENE 129
-#define MAX_LEN_MUT_ALLELE 61
+#define MAX_LEN_MUT_ALLELE 100
 
 
 #define GENE_THRESH_blaZ 25
@@ -54,6 +54,12 @@
 #define GENE_THRESH_fusB 70
 #define GENE_THRESH_fusC 70
 #define GENE_THRESH_vga_A_LC 70
+#define GENE_THRESH_mecA 70
+#define GENE_THRESH_tetL 70
+#define GENE_THRESH_tetM 70
+#define GENE_THRESH_vanA 70
+#define GENE_THRESH_mupA 70
+#define GENE_THRESH_mupB 70
 
 
 
@@ -156,7 +162,30 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi
 				  );
 
-boolean is_trimethoprim_susceptible(dBGraph* db_graph,
+boolean is_erythromycin_susceptible(dBGraph* db_graph,
+				  int (*file_reader)(FILE * fp, 
+						     Sequence * seq, 
+						     int max_read_length, 
+						     boolean new_entry, 
+						     boolean * full_entry),
+				  ReadingUtils* rutils,
+				  ResVarInfo* tmp_rvi,
+				  GeneInfo* tmp_gi,
+				  AntibioticInfo* abi
+				  );
+
+boolean is_methicillin_susceptible(dBGraph* db_graph,
+				  int (*file_reader)(FILE * fp, 
+						     Sequence * seq, 
+						     int max_read_length, 
+						     boolean new_entry, 
+						     boolean * full_entry),
+				  ReadingUtils* rutils,
+				  ResVarInfo* tmp_rvi,
+				  GeneInfo* tmp_gi,
+				  AntibioticInfo* abi
+				  );
+boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 

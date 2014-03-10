@@ -297,15 +297,15 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 
 
 boolean is_trimethoprim_susceptible(dBGraph* db_graph,
-				  int (*file_reader)(FILE * fp, 
-						     Sequence * seq, 
-						     int max_read_length, 
-						     boolean new_entry, 
-						     boolean * full_entry),
-				  ReadingUtils* rutils,
-				  ResVarInfo* tmp_rvi,
-				  GeneInfo* tmp_gi,
-				  AntibioticInfo* abi
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    ResVarInfo* tmp_rvi,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi
 				  )
 
 {
@@ -314,7 +314,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 
   //setup antibiotic info object
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/trimethoprim.fa");
-  abi->num_mutations = 6;
+  abi->num_mutations = 113;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -377,19 +377,19 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi);
 
- if (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ErmA)
+ if (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
     {
       return false;
     }
- else if (abi->genes[ermB]->percent_nonzero > GENE_THRESH_ErmB)
+ else if (abi->genes[ermB]->percent_nonzero > GENE_THRESH_ermB)
     {
       return false;
     }
- else if (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ErmC)
+ else if (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ermC)
     {
       return false;
     }
- else if (abi->genes[ermT]->percent_nonzero > GENE_THRESH_ErmT)
+ else if (abi->genes[ermT]->percent_nonzero > GENE_THRESH_ermT)
     {
       return false;
     }
@@ -436,13 +436,22 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 }
 
 
-boolean is_ciprofloxacin_susceptible(dBGraph* db_graph)
+boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi)
 {
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/ciprofloxacin.fa");
-  abi->num_mutations = 6;
+  abi->num_mutations = 94;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -482,13 +491,22 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph)
 }
 
 
-boolean is_rifampicin_susceptible(dBGraph* db_graph)
+boolean is_rifampicin_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi)
 {
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/ciprofloxacin.fa");
-  abi->num_mutations = 20;
+  abi->num_mutations = 430;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -600,6 +618,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph)
 
 boolean is_clindamycin_susceptible(dBGraph* db_graph)
 {
+//constitutuve only. inducible you get by checking erythromycin also,
 }
 
 */

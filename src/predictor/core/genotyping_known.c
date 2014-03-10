@@ -155,6 +155,7 @@ void find_mutation_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
 	    {
 	      second=i;
 	    }
+
 	}
     }
   if ( (first==0) || (second==0) )
@@ -162,8 +163,7 @@ void find_mutation_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
       die("Cannot parse %s to find the gene name\n", sbuf_in->buff);
     }
   strbuf_delete(sbuf_out, second, sbuf_out->len-second);
-  strbuf_delete(sbuf_out, 0, first-1);
-  printf("Got mut name %s\n", sbuf_out->buff);
+  strbuf_delete(sbuf_out, 0, first+1);
 }
 
 
