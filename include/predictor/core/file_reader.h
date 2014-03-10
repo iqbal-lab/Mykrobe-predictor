@@ -273,4 +273,18 @@ int load_paths_from_filelist(char* filelist_path, char** path_array);
 boolean check_colour_list(char* filename, int kmer);
 boolean check_ctx_list(char* filename, int kmer);
 
+typedef struct
+{
+  Sequence* seq;
+  KmerSlidingWindow* kmer_window;
+  CovgArray* working_ca;
+  dBNode** array_nodes;
+  Orientation* array_or;
+  int max_read_length;
+} ReadingUtils;
+
+ReadingUtils* alloc_reading_utils(int max_read_len, int kmer_size);
+void free_reading_utils(ReadingUtils* rutils);
+void reset_reading_utils(ReadingUtils* rutils);
+
 #endif /* FILE_READER_H_ */

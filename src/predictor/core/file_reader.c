@@ -2508,3 +2508,81 @@ int load_paths_from_filelist(char* filelist_path, char** path_array)
   return num_of_files;
 }
 
+ReadingUtils* alloc_reading_utils(int max_read_length, int kmer_size)
+{
+
+  ReadingUtils* ru = (ReadingUtils*) calloc(1, sizeof(ReadingUtils));
+  if (ru==NULL)
+    {
+      return NULL;
+    }
+  
+  //----------------------------------
+  // allocate the memory used to read the sequences
+  //----------------------------------
+  ru->seq = malloc(sizeof(Sequence));
+  if (ru->seq == NULL){
+    free(ru);
+    return NULL;
+  }
+  alloc_sequence(ru->seq,max_read_length,LINE_MAX);
+  
+  //We are going to load all the bases into a single sliding window 
+  ru->kmer_window = malloc(sizeof(KmerSlidingWindow));
+  if (ru->kmer_window==NULL)
+    {
+      free_sequence(&(ru->seq));
+      free(ru->seq);
+      free(ru);
+    }
+  
+
+  ru->kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_read_length-kmer_size+1));
+  if (ru->kmer_window->kmer==NULL)
+    {
+      free(ru->kmer_window);
+      free_sequence(&(ru->seq));
+      free(ru->seq);
+      free(ru);
+    }
+  ru->kmer_window->nkmers=0;
+  
+
+  ru->working_ca = alloc_and_init_covg_array(max_read_length);
+
+  ru->array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_read_length);
+  ru->array_or =(Orientation*)  malloc(sizeof(Orientation)*max_read_length);
+  if ( (ru->array_nodes==NULL) || (ru->array_or==NULL))
+    {
+      free_covg_array(ru->working_ca);
+      free(ru->kmer_window->kmer);
+      free(ru->kmer_window);
+      free_sequence(&(ru->seq));
+      free(ru->seq);
+      free(ru);
+    }
+  ru->max_read_length = max_read_length;
+  return ru;
+}
+void free_reading_utils(ReadingUtils* ru)
+{
+  free(ru->array_nodes);
+  free(ru->array_or);
+  free_covg_array(ru->working_ca);
+  free(ru->kmer_window->kmer);
+  free(ru->kmer_window);
+  free_sequence(&(ru->seq));
+  free(ru->seq);
+  free(ru);
+}
+
+void reset_reading_utils(ReadingUtils* ru)
+{
+  ru->kmer_window->nkmers=0;
+  ru->seq->name[0]='\0';
+  ru->seq->seq[0]='\0';
+  ru->seq->qual[0]='\0';
+  ru->seq->seq[ru->max_read_length]='\0';
+  ru->seq->qual[ru->max_read_length]='\0';
+}
+

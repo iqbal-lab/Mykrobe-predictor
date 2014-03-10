@@ -453,7 +453,14 @@ Covg db_node_get_coverage_tolerate_null(const dBNode* const e, int colour)
 {
   assert(colour < NUMBER_OF_COLOURS);
 
-  return e == NULL ? 0 : e->coverage[colour];
+  if ( (e==NULL) || (db_node_check_status(e, pruned)==true) )
+    {
+      return 0;
+    }
+  else
+    {
+      return e->coverage[colour];
+    }
 }
 
 Covg db_node_get_coverage(const dBNode* const e, int colour)
@@ -461,7 +468,14 @@ Covg db_node_get_coverage(const dBNode* const e, int colour)
   assert(e != NULL);
   assert(colour < NUMBER_OF_COLOURS);
 
-  return e->coverage[colour];
+  if ( (e==NULL) || (db_node_check_status(e, pruned)==true) )
+    {
+      return 0;
+    }
+  else
+    {
+      return e->coverage[colour];
+    }
 }
 
 
@@ -801,7 +815,7 @@ boolean db_node_is_blunt_end_in_subgraph_given_by_func_of_colours(
 
 
 
-boolean db_node_check_status(dBNode * node, NodeStatus status)
+boolean db_node_check_status(const dBNode* node, NodeStatus status)
 {
   return (node->status == (char)status);
 }

@@ -107,12 +107,13 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
 			      int expected_depth)//passing D_eff as integer - good enough
 {
   
-  //debug
+  /* debug
   int p;
   for (p=0; p<=30; p++)
     {
       printf("%d\t%" PRIu64 "\n", p, kmer_covg_array[p]);
     }
+  */
 
   double* d1 = calloc(len_kmer_covg_array+1, sizeof(double));
   double* d2 = calloc(len_kmer_covg_array+1, sizeof(double));
@@ -142,9 +143,8 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
 	{
 	  found_first_posd1=true;
 	  firstPosD1=i-1;
-	  printf("Found first posd1 of %d\n", i-1);
 	}
-      printf("d1 %d\t%f\n", i-1, d1[i-1]);
+      //printf("d1 %d\t%f\n", i-1, d1[i-1]);
     }
 
   int firstPosD2=0;
@@ -164,19 +164,18 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
 	{
 	  found_first_posd2=true;
 	  firstPosD2=i-1;
-	  printf("Found forst pos2 of %d\n", i-1);
 	}
-      printf("d2 %d\t%f\n", i-1, d2[i-1]);
+      //printf("d2 %d\t%f\n", i-1, d2[i-1]);
     }
 
   if ( (firstPosD1!=0) && (firstPosD1< 0.75*expected_depth) )
     {
-      printf("Use D1 threshold %d\n", firstPosD1);
+      //printf("Use D1 threshold %d\n", firstPosD1);
       return firstPosD1;
     }
   else if (firstPosD2!=0)
     {
-      printf("Use D2 threshold %d\n", firstPosD2);
+      //printf("Use D2 threshold %d\n", firstPosD2);
       return firstPosD2;
     }
   else
@@ -184,12 +183,12 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
       int ed = (expected_depth+0.5)/2; 
       if (ed>1)
 	{
-	  printf("Use threshold ed %d\n", ed);
+	  //printf("Use threshold ed %d\n", ed);
 	  return ed;
 	} 
       else
 	{
-	  printf("Fall back on threshold 1\n");
+	  //printf("Fall back on threshold 1\n");
 	  return 1;
 	}
     }
@@ -204,10 +203,10 @@ boolean clean_graph(dBGraph* db_graph,
     {
       return false;
     }
-  printf("CHose cleaning threshold %d\n", thresh);
+  printf("Chose cleaning threshold %d\n", thresh);
   db_graph_clip_tips_in_union_of_all_colours(db_graph);
 
-  printf("Remove low coverage supernodes covg (<= %d) \n", thresh);
+  //printf("Remove low coverage supernodes covg (<= %d) \n", thresh);
   db_graph_remove_errors_considering_covg_and_topology(thresh,
 						       db_graph, 
 						       &element_get_covg_union_of_all_covgs, 

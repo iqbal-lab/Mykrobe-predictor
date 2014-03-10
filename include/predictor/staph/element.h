@@ -193,7 +193,7 @@ void db_node_reset_specified_edges(dBNode * node, Orientation orientation,
 //check that the edges are 0's
 boolean db_node_edges_reset(dBNode *node, int colour);
 
-boolean db_node_check_status(dBNode *node, NodeStatus status);
+boolean db_node_check_status(const dBNode *node, NodeStatus status);
 boolean db_node_check_allele_status(dBNode * node, AlleleStatus status);
 boolean db_node_check_status_not_pruned(dBNode *node);
 boolean db_node_check_status_not_pruned_or_visited(dBNode *node);

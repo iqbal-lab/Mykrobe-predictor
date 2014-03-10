@@ -307,7 +307,7 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
     {
       if (allele[i]!=NULL)
 	{
-	  Covg c=db_node_get_coverage(allele[i], colour);
+	  Covg c=db_node_get_coverage_tolerate_null(allele[i], colour);
 	  if (c<min_covg)
 	    {
 	      min_covg = c;
@@ -341,7 +341,7 @@ int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int c
     {
       if (allele[i]!=NULL)
 	{
-	  Covg c=db_node_get_coverage(allele[i], colour);
+	  Covg c=db_node_get_coverage_tolerate_null(allele[i], colour);
 	  if (c>0)
 	    {
 	      num_nonzero++;

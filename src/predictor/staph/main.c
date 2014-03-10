@@ -41,6 +41,9 @@
 #include "graph_info.h"
 #include "db_differentiation.h"
 #include "maths.h"
+#include "gene_presence.h"
+#include "genotyping_known.h"
+#include "antibiotics.h"
 
 
 int main(int argc, char **argv)
@@ -81,6 +84,30 @@ int main(int argc, char **argv)
       return -1;
     }
 
+  //some setup
+  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
+    long long ret;
+    int offset = 0;
+    if (new_entry == false){
+      offset = db_graph->kmer_size;
+      //die("new_entry must be true in hsi test function");
+    }
+    ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
+    return ret;
+  }
+
+  ReadingUtils* ru = alloc_reading_utils(MAX_LEN_GENE, db_graph->kmer_size);
+  ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
+  GeneInfo* tmp_gi = alloc_and_init_gene_info();
+  AntibioticInfo* abi = alloc_antibiotic_info();
+  if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) )
+    {
+      return -1;
+    }
+  
+
+
+
   uint64_t bp_loaded = build_unclean_graph(db_graph, 
 					   cmd_line->list_of_fastq, 
 					   cmd_line->kmer_size,
@@ -95,9 +122,64 @@ int main(int argc, char **argv)
 
   int expected_depth = (mean_read_length-cmd_line->kmer_size+1)*(bp_loaded/cmd_line->genome_size) / mean_read_length;
 
-  printf("Get epected depth of %d\n", expected_depth);
+  printf("Get expected depth of %d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
 	      expected_depth, cmd_line->max_expected_sup_len);
+
+
+  boolean suc =  is_gentamycin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("GENTAMYCIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_penicillin_susceptible(db_graph,
+				 &file_reader_fasta,
+				 ru,
+				 tmp_rvi,
+				 tmp_gi,
+				 abi);
+  printf("PENICILLIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_trimethoprim_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("TRIMETHOPRIM ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+  //cleanup
+  free_antibiotic_info(abi);
+  free_res_var_info(tmp_rvi);
+  free_gene_info(tmp_gi);
+  free_reading_utils(ru);
 
   cmd_line_free(cmd_line);
   hash_table_free(&db_graph);

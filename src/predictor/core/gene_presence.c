@@ -32,6 +32,60 @@
 #include "build.h"
 #include "db_differentiation.h"
 #include "maths.h"
+#include "string_buffer.h"
+
+GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
+{
+  if (strcmp(sbuf->buff, "aacA-aphD")==0)
+    {
+      return aacAaphD;
+    }
+  else if (strcmp(sbuf->buff, "blaZ")==0)
+    {
+      return blaZ ;
+    }
+  else if (strcmp(sbuf->buff, "dfrA")==0)
+    {
+      return dfrA;
+    }
+  else if (strcmp(sbuf->buff, "dfrG")==0)
+    {
+      return dfrG ;
+    }
+  else if (strcmp(sbuf->buff, "ermA")==0)
+    {
+      return ermA;
+    }
+  else if (strcmp(sbuf->buff, "ermB")==0)
+    {
+      return ermB;
+    }
+  else if (strcmp(sbuf->buff, "ermC")==0)
+    {
+      return ermC;
+    }
+  else if (strcmp(sbuf->buff, "ermT")==0)
+    {
+      return ermT;
+    }
+  else if (strcmp(sbuf->buff, "fusB")==0)
+    {
+      return fusB;
+    }
+  else if (strcmp(sbuf->buff, "fusC")==0)
+    {
+      return fusC;
+    }
+  else if (strcmp(sbuf->buff, "vga(A)LC")==0)
+    {
+      return vga_A_LC;
+    }
+  else 
+    {
+      die("Unknown gene %s\n", sbuf->buff);
+    }
+
+}
 
 
 GeneInfo* alloc_and_init_gene_info()
@@ -41,38 +95,57 @@ GeneInfo* alloc_and_init_gene_info()
     {
       die("Can't alloc gi\n");
     }
-  gi->name=strbuf_new(); 
+  gi->strbuf=strbuf_new(); 
+  gi->name = unspecified_gpg;
   return gi;
 }
 void free_gene_info(GeneInfo* gi)
 {
-  strbuf_free(gi->name);
+  strbuf_free(gi->strbuf);
   free(gi);
+}
+void copy_gene_info(GeneInfo* from_gi, GeneInfo* to_gi)
+{
+  to_gi->median_covg = from_gi->median_covg;
+  to_gi->min_covg = from_gi->min_covg;
+  to_gi->percent_nonzero = from_gi->percent_nonzero;
+  strbuf_reset(to_gi->strbuf);
+  strbuf_append_str(to_gi->strbuf, from_gi->strbuf->buff);
+  to_gi->name = from_gi->name;
 }
 
 void reset_gene_info(GeneInfo* gi)
 {
+  if (gi==NULL)
+    {
+      return;
+    }
   gi->median_covg=0;
   gi->min_covg=0;
   gi->percent_nonzero=0;
-  strbuf_reset(gi->name);
+  if (gi->strbuf!=NULL)
+    {
+      strbuf_reset(gi->strbuf);
+    }
+  gi->name = unspecified_gpg;
 }
 
 //assume you are going to repeatedly call this on a fasta
 //file of genes
-void get_next_gene_info(FILE* fp, 
-			dBGraph* db_graph, 
-			GeneInfo* gene_info,
-			Sequence* seq, 
-			KmerSlidingWindow* kmer_window,
-			int (*file_reader)(FILE * fp, 
-				       Sequence * seq, 
-				       int max_read_length, 
-				       boolean new_entry, 
-				       boolean * full_entry),
-			dBNode** array_nodes, 
-			Orientation*  array_or,
-			CovgArray* working_ca, int max_read_length)
+int get_next_gene_info(FILE* fp, 
+		       dBGraph* db_graph, 
+		       GeneInfo* gene_info,
+		       Sequence* seq, 
+		       KmerSlidingWindow* kmer_window,
+		       int (*file_reader)(FILE * fp, 
+					  Sequence * seq, 
+					  int max_read_length, 
+					  boolean new_entry, 
+					  boolean * full_entry),
+		       dBNode** array_nodes, 
+		       Orientation*  array_or,
+		       CovgArray* working_ca, 
+		       int max_read_length)
 {
 
   boolean full_entry=true;
@@ -90,7 +163,10 @@ void get_next_gene_info(FILE* fp,
 						   db_graph, 
 						   dummy_colour_ignored);
 
-  
+  if (num_kmers==0)
+    {
+      return 0;
+    }
   //collect min, median covg on gene and also percentage of kmers with any covg
   boolean too_short=false;
   gene_info->median_covg = 
@@ -109,8 +185,11 @@ void get_next_gene_info(FILE* fp,
 						 num_kmers,
 						 0,
 						 &too_short);
-  strbuf_reset(gene_info->name);
-  strbuf_append_str(gene_info->name,
-		    seq->seq);
-  
+  strbuf_reset(gene_info->strbuf);
+  strbuf_append_str(gene_info->strbuf,
+		    seq->name);
+  gene_info->name 
+    = map_string_to_gene_presence_gene(gene_info->strbuf);
+
+  return num_kmers;
 }

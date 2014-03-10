@@ -135,7 +135,7 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
          &file_reader_fasta,
          array_nodes, array_or, 
          working_ca, max_gene_len);
-         tmpName = gi->name->buff; 
+         tmpName = gi->strbuf->buff; 
          number_of_reads = number_of_reads + 1;
          sumpcov = sumpcov + gi->percent_nonzero;
 
