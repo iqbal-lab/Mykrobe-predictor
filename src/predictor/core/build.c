@@ -203,7 +203,7 @@ boolean clean_graph(dBGraph* db_graph,
     {
       return false;
     }
-  printf("Chose cleaning threshold %d\n", thresh);
+  //printf("Chose cleaning threshold %d\n", thresh);
   db_graph_clip_tips_in_union_of_all_colours(db_graph);
 
   //printf("Remove low coverage supernodes covg (<= %d) \n", thresh);

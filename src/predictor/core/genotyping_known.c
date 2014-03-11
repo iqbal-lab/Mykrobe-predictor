@@ -120,6 +120,7 @@ void find_gene_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
 	  if (count==2)
 	    {
 	      strbuf_reset(sbuf_out);
+	      //from here to the end
 	      strbuf_append_str(sbuf_out, sbuf_in->buff+i+1);
 	      i = sbuf_in->len;
 	    }

@@ -29,6 +29,83 @@
 #include "file_reader.h"
 
 
+void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
+{
+  if (ab==NoDrug)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "NoDrug");
+    }
+  else if (ab==Gentamycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Gentamycin");
+    }
+  else if (ab==Penicillin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Penicillin");
+    }
+  else if (ab==Trimethoprim)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Trimethoprim");
+    }
+  else if (ab==Erythromycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Erythromycin");
+    }
+  else if (ab==Methicillin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Methicillin");
+    }
+  else if (ab==Ciprofloxacin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Ciprofloxacin");
+    }
+  else if (ab==Rifampicin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Rifampicin");
+    }
+  else if (ab==Tetracycline)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Tetracycline");
+    }
+  else if (ab==Mupirocin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Mupirocin");
+    }
+  else if (ab==FusidicAcid)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "FusidicAcid");
+    }
+  else if (ab==FusidicAcid)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "FusidicAcid");
+    }
+  else if (ab==Clindamycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Clindamycin");
+    }
+  else if (ab==Vancomycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Vancomycin");
+    }
+  else
+    {
+      die("Impossible - compiler should not allow this\n");
+    }
+}
 AntibioticInfo* alloc_antibiotic_info()
 {
   AntibioticInfo* abi = (AntibioticInfo*) calloc(1, sizeof(AntibioticInfo));
@@ -239,8 +316,9 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  )
 {
   reset_antibiotic_info(abi);
-
+  
   //setup antibiotic info object
+  abi->ab = Gentamycin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/gentamycin.fa");
   abi->num_mutations = 0;//entirely determined by gene presence
 
@@ -277,6 +355,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
 
   //setup antibiotic info object
+  abi->ab = Penicillin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/penicillin.fa");
   abi->num_mutations = 0;//entirely determined by gene presence
 
@@ -313,6 +392,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
 
   //setup antibiotic info object
+  abi->ab = Trimethoprim;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/trimethoprim.fa");
   abi->num_mutations = 113;
 
@@ -367,6 +447,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Erythromycin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/erythromycin.fa");
   abi->num_mutations = 0;
 
@@ -418,6 +499,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Methicillin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/methicillin.fa");
   abi->num_mutations = 0;
 
@@ -450,6 +532,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Ciprofloxacin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/ciprofloxacin.fa");
   abi->num_mutations = 94;
 
@@ -505,7 +588,8 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
-  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/ciprofloxacin.fa");
+  abi->ab = Rifampicin;
+  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/rifampicin.fa");
   abi->num_mutations = 430;
 
   load_antibiotic_mut_and_gene_info(db_graph,
@@ -618,6 +702,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Tetracycline;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/tetracycline.fa");
   abi->num_mutations = 0;
 
@@ -660,6 +745,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Mupirocin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/mupirocin.fa");
   abi->num_mutations = 0;
 
@@ -696,8 +782,9 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = FusidicAcid;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/fusidic_acid.fa");
-  abi->num_mutations = 299;
+  abi->num_mutations = 915;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -705,7 +792,117 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi);
-  if (abi->mut[fusA_P478S]->some_resistant_allele_present==true)
+
+
+  if (abi->mut[fusA_A655E]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_B434N]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_E444K]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if ( 
+	   (abi->mut[fusA_F652S]->some_resistant_allele_present==true)
+	   &&
+	   (abi->mut[fusA_Y654N]->some_resistant_allele_present==true)
+	    )
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_G451V]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_G452C]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_G452S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_G556S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_G617D]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_G664S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_H438N]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_H457Q]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_H457Y]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if ( 
+	   (abi->mut[fusA_L461F]->some_resistant_allele_present==true)
+	   &&
+	   (abi->mut[fusA_A376V]->some_resistant_allele_present==true)
+	   &&
+	   (abi->mut[fusA_A655P]->some_resistant_allele_present==true)
+	   &&
+	   (abi->mut[fusA_D463G]->some_resistant_allele_present==true)
+	    )
+    {
+      return false;
+    }
+  else if ( 
+	   (abi->mut[fusA_L461F]->some_resistant_allele_present==true)
+	   &&
+	   (abi->mut[fusA_E444V]->some_resistant_allele_present==true)
+	    )
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_L461K]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_L461S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_M453I]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_M651I]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_P114H]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_P404L]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_P404Q]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_P406L]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_P478S]->some_resistant_allele_present==true)
     {
       return false;
     }
@@ -789,6 +986,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Clindamycin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/clindamycin.fa");
   abi->num_mutations = 0;
 
@@ -824,6 +1022,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
+  abi->ab = Vancomycin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/vancomycin.fa");
   abi->num_mutations = 0;
 
@@ -842,5 +1041,102 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 
 }
 
+
+
+boolean print_antibiotic_susceptibility(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					ResVarInfo* tmp_rvi,
+					GeneInfo* tmp_gi,
+					AntibioticInfo* abi,
+					boolean (*func)(dBGraph* db_graph,
+							int (*file_reader)(FILE * fp, 
+									   Sequence * seq, 
+									   int max_read_length, 
+									   boolean new_entry, 
+									   boolean * full_entry),
+							ReadingUtils* rutils,
+							ResVarInfo* tmp_rvi,
+							GeneInfo* tmp_gi,
+							AntibioticInfo* abi),
+					StrBuf* tmpbuf
+					)
+{
+  boolean suc;
+  
+  suc  = func(db_graph,
+	      file_reader,
+	      rutils,
+	      tmp_rvi,
+	      tmp_gi,
+	      abi);
+
+  map_antibiotic_enum_to_str(abi->ab, tmpbuf);
+  printf("%s\t", tmpbuf->buff);
+  if (suc==true)
+    {
+      printf("S\n");
+    }
+  else
+    {
+      printf("R\n");
+    }
+  return suc;
+}
+
+
+boolean print_clindamycin_susceptibility(dBGraph* db_graph,
+					 int (*file_reader)(FILE * fp, 
+							    Sequence * seq, 
+							    int max_read_length, 
+							    boolean new_entry, 
+							    boolean * full_entry),
+					 ReadingUtils* rutils,
+					 ResVarInfo* tmp_rvi,
+					 GeneInfo* tmp_gi,
+					 AntibioticInfo* abi,
+					 boolean (*func)(dBGraph* db_graph,
+							 int (*file_reader)(FILE * fp, 
+									    Sequence * seq, 
+									    int max_read_length, 
+									    boolean new_entry, 
+									    boolean * full_entry),
+							 ReadingUtils* rutils,
+							 ResVarInfo* tmp_rvi,
+							 GeneInfo* tmp_gi,
+							 AntibioticInfo* abi),
+					 StrBuf* tmpbuf,
+					 boolean erythromycin_susceptible
+					 )
+{
+  boolean suc;
+  
+  suc  = func(db_graph,
+	      file_reader,
+	      rutils,
+	      tmp_rvi,
+	      tmp_gi,
+	      abi);
+
+  map_antibiotic_enum_to_str(abi->ab, tmpbuf);
+  printf("%s\t", tmpbuf->buff);
+  if (suc==false)
+    {
+      printf("R(constitutive)\n");
+    }
+  else if (erythromycin_susceptible==false)
+    {
+      printf("R(inducible)\n");
+    }
+  else
+    {
+      printf("S\n");
+    }
+  return suc;
+}
 
 				  

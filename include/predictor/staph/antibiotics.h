@@ -77,9 +77,10 @@ typedef enum
    Mupirocin=9,
    FusidicAcid=10,
    Clindamycin=11,
+   Vancomycin=12,
   } Antibiotic;
 
-
+void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name);
 
 
 
@@ -266,5 +267,61 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi);
 
+boolean is_vancomycin_susceptible(dBGraph* db_graph,
+				  int (*file_reader)(FILE * fp, 
+						     Sequence * seq, 
+						     int max_read_length, 
+						     boolean new_entry, 
+						     boolean * full_entry),
+				  ReadingUtils* rutils,
+				  ResVarInfo* tmp_rvi,
+				  GeneInfo* tmp_gi,
+				  AntibioticInfo* abi);
 
+boolean print_antibiotic_susceptibility(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					ResVarInfo* tmp_rvi,
+					GeneInfo* tmp_gi,
+					AntibioticInfo* abi,
+					boolean (*func)(dBGraph* db_graph,
+							int (*file_reader)(FILE * fp, 
+									   Sequence * seq, 
+									   int max_read_length, 
+									   boolean new_entry, 
+									   boolean * full_entry),
+							ReadingUtils* rutils,
+							ResVarInfo* tmp_rvi,
+							GeneInfo* tmp_gi,
+							AntibioticInfo* abi),
+					StrBuf* tmpbuf
+					);
+
+boolean print_clindamycin_susceptibility(dBGraph* db_graph,
+					 int (*file_reader)(FILE * fp, 
+							    Sequence * seq, 
+							    int max_read_length, 
+							    boolean new_entry, 
+							    boolean * full_entry),
+					 ReadingUtils* rutils,
+					 ResVarInfo* tmp_rvi,
+					 GeneInfo* tmp_gi,
+					 AntibioticInfo* abi,
+					 boolean (*func)(dBGraph* db_graph,
+							 int (*file_reader)(FILE * fp, 
+									    Sequence * seq, 
+									    int max_read_length, 
+									    boolean new_entry, 
+									    boolean * full_entry),
+							 ReadingUtils* rutils,
+							 ResVarInfo* tmp_rvi,
+							 GeneInfo* tmp_gi,
+							 AntibioticInfo* abi),
+					 StrBuf* tmpbuf,
+					 boolean erythromycin_susceptible
+					 );
 #endif

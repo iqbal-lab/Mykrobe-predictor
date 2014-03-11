@@ -60,10 +60,7 @@ int main(int argc, char **argv)
   
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
 
-  int hash_key_bits, bucket_size;
   dBGraph * db_graph = NULL;
-  short kmer_size;
-
 
 
   int lim = cmd_line->max_expected_sup_len;
@@ -122,12 +119,41 @@ int main(int argc, char **argv)
 
   int expected_depth = (mean_read_length-cmd_line->kmer_size+1)*(bp_loaded/cmd_line->genome_size) / mean_read_length;
 
-  printf("Get expected depth of %d\n", expected_depth);
+  //printf("Get expected depth of %d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
 	      expected_depth, cmd_line->max_expected_sup_len);
 
 
-  boolean suc =  is_gentamycin_susceptible(db_graph,
+  StrBuf* tmp_antibio_name = strbuf_new();
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_gentamycin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_penicillin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_trimethoprim_susceptible, tmp_antibio_name);
+  boolean erythromycin_susceptible = print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+								    &is_erythromycin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_methicillin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_fusidic_acid_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_ciprofloxacin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_rifampicin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_tetracycline_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_vancomycin_susceptible, tmp_antibio_name);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_mupirocin_susceptible, tmp_antibio_name);
+  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				   &is_clindamycin_susceptible, tmp_antibio_name, 
+				   erythromycin_susceptible);
+
+  
+  /*  boolean suc =  is_gentamycin_susceptible(db_graph,
 					   &file_reader_fasta,
 					   ru,
 					   tmp_rvi,
@@ -291,8 +317,8 @@ suc =  is_mupirocin_susceptible(db_graph,
     {
       printf("RESISTANT\n");
     }
-
-suc =  is_fusidic_acid_susceptible(db_graph,
+ 
+  suc =  is_fusidic_acid_susceptible(db_graph,
 					   &file_reader_fasta,
 					   ru,
 					   tmp_rvi,
@@ -307,12 +333,12 @@ suc =  is_fusidic_acid_susceptible(db_graph,
     {
       printf("RESISTANT\n");
     }
-
-suc =  is_clindamycin_susceptible(db_graph,
+ 
+  suc =  is_clindamycin_susceptible(db_graph,
 					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
+				    ru,
+				    tmp_rvi,
+				    tmp_gi,
 					   abi);
   printf("CLINDAMYCIN ");
   if ( (suc==true) && (ery_resist==false) )
@@ -323,8 +349,11 @@ suc =  is_clindamycin_susceptible(db_graph,
     {
       printf("RESISTANT\n");
     }
+  */  
+
 
   //cleanup
+  strbuf_free(tmp_antibio_name);
   free_antibiotic_info(abi);
   free_res_var_info(tmp_rvi);
   free_gene_info(tmp_gi);
