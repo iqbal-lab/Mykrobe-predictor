@@ -100,9 +100,9 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return fusA_A655E;
     } 
-  else if ( (strcmp(sbuf->buff, "B434N")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "D434N")==0) && (gene==fusA) )
     {
-      return fusA_B434N;
+      return fusA_D434N;
     } 
   else if ( (strcmp(sbuf->buff, "F441Y")==0) && (gene==fusA) )
     {
@@ -349,9 +349,9 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
       return fusA_E233Q;
     } 
 
-  else if ( (strcmp(sbuf->buff, "Q456K")==0) && (gene==rpoB) )
+  else if ( (strcmp(sbuf->buff, "N474K")==0) && (gene==rpoB) )
     {
-      return rpoB_Q456K;
+      return rpoB_N474K;
     } 
   else if ( (strcmp(sbuf->buff, "S463P")==0) && (gene==rpoB) )
     {

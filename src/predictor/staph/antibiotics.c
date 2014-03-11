@@ -590,7 +590,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Rifampicin;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/rifampicin.fa");
-  abi->num_mutations = 430;
+  abi->num_mutations = 439;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -649,7 +649,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
     {
       return false;
     } 
-  else if (abi->mut[rpoB_Q456K]->some_resistant_allele_present==true)
+  else if (abi->mut[rpoB_N747K]->some_resistant_allele_present==true)
     {
       return false;
     } 
@@ -784,7 +784,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = FusidicAcid;
   strbuf_append_str(abi->fasta, "../data/staph/antibiotics/fusidic_acid.fa");
-  abi->num_mutations = 915;
+  abi->num_mutations = 921;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -798,7 +798,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
       return false;
     }
-  else if (abi->mut[fusA_B434N]->some_resistant_allele_present==true)
+  else if (abi->mut[fusA_D434N]->some_resistant_allele_present==true)
     {
       return false;
     }
