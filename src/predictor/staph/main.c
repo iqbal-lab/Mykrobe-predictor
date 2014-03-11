@@ -176,6 +176,7 @@ suc =  is_trimethoprim_susceptible(db_graph,
     }
 
 
+  boolean ery_resist = false;
   suc =  is_erythromycin_susceptible(db_graph,
 					   &file_reader_fasta,
 					   ru,
@@ -189,6 +190,7 @@ suc =  is_trimethoprim_susceptible(db_graph,
     }
   else
     {
+      ery_resist = true;
       printf("RESISTANT\n");
     }
 
@@ -233,6 +235,87 @@ suc =  is_rifampicin_susceptible(db_graph,
 					   abi);
   printf("RIFAMPICIN ");
   if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+
+suc =  is_tetracycline_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("TETRACYCLINE ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_vancomycin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("VANCOMYCIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_mupirocin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("MUPIROCIN ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_fusidic_acid_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("FUSIDIC_ACID ");
+  if (suc==true)
+    {
+      printf("SUSCEPTIBLE\n");
+    }
+  else
+    {
+      printf("RESISTANT\n");
+    }
+
+suc =  is_clindamycin_susceptible(db_graph,
+					   &file_reader_fasta,
+					   ru,
+					   tmp_rvi,
+					   tmp_gi,
+					   abi);
+  printf("CLINDAMYCIN ");
+  if ( (suc==true) && (ery_resist==false) )
     {
       printf("SUSCEPTIBLE\n");
     }

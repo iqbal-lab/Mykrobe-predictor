@@ -603,23 +603,244 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
     }
 
 }
-/*
-boolean is_tetracycline_susceptible(dBGraph* db_graph)
+
+boolean is_tetracycline_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi)
 {
+  reset_antibiotic_info(abi);
+  
+  //setup antibiotic info object
+  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/tetracycline.fa");
+  abi->num_mutations = 0;
+
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_rvi,
+				    tmp_gi);
+
+ if (abi->genes[tetK]->percent_nonzero > GENE_THRESH_tetK)
+    {
+      return false;
+    }  
+ else if (abi->genes[tetL]->percent_nonzero > GENE_THRESH_tetL)
+    {
+      return false;
+    }  
+ else if (abi->genes[tetM]->percent_nonzero > GENE_THRESH_tetM)
+    {
+      return false;
+    }  
+
+
+ return true;
 }
 
-boolean is_mupirocin_susceptible(dBGraph* db_graph)
+
+boolean is_mupirocin_susceptible(dBGraph* db_graph,
+				 int (*file_reader)(FILE * fp, 
+						    Sequence * seq, 
+						    int max_read_length, 
+						    boolean new_entry, 
+						    boolean * full_entry),
+				 ReadingUtils* rutils,
+				 ResVarInfo* tmp_rvi,
+				 GeneInfo* tmp_gi,
+				 AntibioticInfo* abi)
 {
+  reset_antibiotic_info(abi);
+  
+  //setup antibiotic info object
+  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/mupirocin.fa");
+  abi->num_mutations = 0;
+
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_rvi,
+				    tmp_gi);
+
+ if (abi->genes[mupA]->percent_nonzero > GENE_THRESH_mupA)
+    {
+      return false;
+    }  
+ else if (abi->genes[mupB]->percent_nonzero > GENE_THRESH_mupB)
+    {
+      return false;
+    }  
+ return true;
 }
 
-boolean is_fusidic_acid_susceptible(dBGraph* db_graph)
+
+boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi)
 {
+  reset_antibiotic_info(abi);
+  
+  //setup antibiotic info object
+  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/fusidic_acid.fa");
+  abi->num_mutations = 299;
+
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_rvi,
+				    tmp_gi);
+  if (abi->mut[fusA_P478S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_Q115L]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R464C]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R464H]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R464S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R659C]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R659H]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R659L]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_R659S]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_T385N]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_T436I]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_T656K]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->mut[fusA_V90I]->some_resistant_allele_present==true)
+    {
+      return false;
+    }
+  else if (abi->genes[fusB]->percent_nonzero > GENE_THRESH_fusB)
+    {
+      return false;
+    }  
+  else if (abi->genes[fusC]->percent_nonzero > GENE_THRESH_fusC)
+    {
+      return false;
+    }  
+
+  else
+    {
+      return true;
+    }
 }
 
-boolean is_clindamycin_susceptible(dBGraph* db_graph)
+
+boolean is_clindamycin_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi)
+
 {
-//constitutuve only. inducible you get by checking erythromycin also,
+  //constitutuve only. inducible you get by checking erythromycin also,
+  reset_antibiotic_info(abi);
+  
+  //setup antibiotic info object
+  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/clindamycin.fa");
+  abi->num_mutations = 0;
+
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_rvi,
+				    tmp_gi);
+
+ if (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
+    {
+      return false;
+    }  
+ return true;
+
 }
 
-*/
+
+boolean is_vancomycin_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi)
+
+{
+  //constitutuve only. inducible you get by checking erythromycin also,
+  reset_antibiotic_info(abi);
+  
+  //setup antibiotic info object
+  strbuf_append_str(abi->fasta, "../data/staph/antibiotics/vancomycin.fa");
+  abi->num_mutations = 0;
+
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_rvi,
+				    tmp_gi);
+
+ if (abi->genes[vanA]->percent_nonzero > GENE_THRESH_vanA)
+    {
+      return false;
+    }  
+ return true;
+
+}
+
+
 				  

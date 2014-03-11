@@ -63,7 +63,7 @@ typedef enum
   } GenePresenceGene;
 
 #define NUM_GENE_PRESENCE_GENES 20
-#define MAX_LEN_GENE 2100
+#define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
 

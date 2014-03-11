@@ -162,6 +162,18 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi
 				  );
 
+boolean is_trimethoprim_susceptible(dBGraph* db_graph,
+				  int (*file_reader)(FILE * fp, 
+						     Sequence * seq, 
+						     int max_read_length, 
+						     boolean new_entry, 
+						     boolean * full_entry),
+				  ReadingUtils* rutils,
+				  ResVarInfo* tmp_rvi,
+				  GeneInfo* tmp_gi,
+				  AntibioticInfo* abi
+				  );
+
 boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
@@ -196,6 +208,63 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi
 				  );
+
+boolean is_rifampicin_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				  AntibioticInfo* abi);
+
+boolean is_tetracycline_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				    AntibioticInfo* abi);
+
+boolean is_mupirocin_susceptible(dBGraph* db_graph,
+				 int (*file_reader)(FILE * fp, 
+						    Sequence * seq, 
+						    int max_read_length, 
+						    boolean new_entry, 
+						    boolean * full_entry),
+				 ReadingUtils* rutils,
+				 ResVarInfo* tmp_rvi,
+				 GeneInfo* tmp_gi,
+				 AntibioticInfo* abi);
+
+
+boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				    AntibioticInfo* abi);
+
+
+boolean is_clindamycin_susceptible(dBGraph* db_graph,
+				   int (*file_reader)(FILE * fp, 
+						      Sequence * seq, 
+						      int max_read_length, 
+						      boolean new_entry, 
+						      boolean * full_entry),
+				   ReadingUtils* rutils,
+				   ResVarInfo* tmp_rvi,
+				   GeneInfo* tmp_gi,
+				   AntibioticInfo* abi);
 
 
 #endif
