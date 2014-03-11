@@ -242,3 +242,27 @@ void strbuf_rev_comp(StrBuf* sb)
     }
 }
 
+//backported by Zam
+// Bounds check when reading a range (start+len < strlen is valid)
+static void _bounds_check_read_range(const StrBuf *sbuf, size_t start, size_t len,
+                                     const char* file, int line, const char* func)
+{
+  if(start + len > sbuf->len)
+    {
+      fprintf(stderr, "%s:%i:%s() - out of bounds error "
+	      "[start: %zu; length: %zu; strlen: %zu; buf:%.*s%s]\n",
+	      file, line, func, start, len, sbuf->len,
+	      (int)MIN(5, sbuf->len), sbuf->buff, sbuf->len > 5 ? "..." : "");
+      exit(1);
+    }
+}
+
+// backported by Zam
+void strbuf_delete(StrBuf *sbuf, size_t pos, size_t len)
+{
+  _bounds_check_read_range(sbuf, pos, len, __FILE__, __LINE__, "strbuf_delete");
+  memmove(sbuf->buff+pos, sbuf->buff+pos+len, sbuf->len-pos-len);
+  sbuf->len -= len;
+  sbuf->buff[sbuf->len] = '\0';
+}
+

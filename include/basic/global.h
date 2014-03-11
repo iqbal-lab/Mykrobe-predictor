@@ -94,5 +94,7 @@ void strbuf_search_replace(StrBuf* sbuf, char find, char repl);
 int strbuf_find_first(StrBuf* sbuf, char find);
 void strbuf_add_slash_on_end(StrBuf* sbuf);
 void strbuf_rev_comp(StrBuf* sb);
+// backported by Zam
+void strbuf_delete(StrBuf *sbuf, size_t pos, size_t len);
 
 #endif /* GLOBAL_H_ */

@@ -125,10 +125,14 @@ int main(int argc, char **argv)
 
 
   StrBuf* tmp_name = strbuf_new();
-
-  map_species_enum_to_str(get_species(db_graph, 10000),tmp_name);
+  Staph_species sp = get_species(db_graph, 10000);
+  map_species_enum_to_str(sp,tmp_name);
   printf("Species\t%s\n", tmp_name->buff);
-  
+  if (sp != Aureus)
+    {
+      printf("No AMR predictions for coag-negative\n");
+      return 1;
+    }
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_gentamycin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
