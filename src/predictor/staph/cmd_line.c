@@ -48,16 +48,24 @@
 const char* usage=
 "myKrobe predictorper\n"\
 "   [--help] \t\t\t\t\t\t\t=\t This help screen.\n\n" \
-"   [--list FILENAME] \t\t\t\t\t=\t List of fastq.\n" ;
+"   [--list FILENAME] \t\t\t\t\t=\t List of fastq or bam. Cannot use --list and --file\n" \
+"   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
+  "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" ;
+  //"   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping\n" ;
 
 int default_opts(CmdLine * c)
 {
-  strbuf_reset(c->list_of_fastq);
+  strbuf_reset(c->seq_path);
+  strbuf_reset(c->id);
+  strbuf_append_str(c->id, "UnknownSample");
   c->genome_size = 2800000;
   c->kmer_size = 31;
   c->mem_width = 100;
   c->mem_height= 19;
   c->max_expected_sup_len=50000;
+  c->method=WGAssemblyThenGenotyping;//other options InSilicoOligos and WGAssemblyAndTranslation
+  c->input_file=false;
+  c->input_list=false;
   return 1;
 }
 
@@ -69,8 +77,8 @@ CmdLine* cmd_line_alloc()
     {
       die("Out of memory before we even start Cortex, cannot alloc space to hold the commandline variables! Abort\n");
     }
-  cmd->list_of_fastq = strbuf_new();
-
+  cmd->seq_path = strbuf_new();
+  cmd->id = strbuf_new();
   int max_expected_read_len = 500;//illumina
   cmd->readlen_distrib_size = max_expected_read_len + 1;
   cmd->readlen_distrib
@@ -97,7 +105,8 @@ CmdLine* cmd_line_alloc()
 
 void cmd_line_free(CmdLine* cmd)
 {
-  strbuf_free(cmd->list_of_fastq);
+  strbuf_free(cmd->seq_path);
+  strbuf_free(cmd->id);
   free(cmd->readlen_distrib);
   free(cmd);
 }
@@ -111,7 +120,10 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   
   static struct option long_options[] = {
     {"help",no_argument,NULL,'h'},
-    {"list",required_argument, NULL, 'f'},
+    {"list",required_argument, NULL, 'l'},
+    {"file",required_argument, NULL, 'f'},
+    {"method", required_argument, NULL, 'm'},
+    {"sample_id", required_argument, NULL, 's'},
     {0,0,0,0}	
   };
   
@@ -122,7 +134,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   optind=1;
   
  
-  opt = getopt_long(argc, argv, "hf:", long_options, &longopt_index);
+  opt = getopt_long(argc, argv, "hf:l:m:s:", long_options, &longopt_index);
 
   while ((opt) > 0) {
 	       
@@ -140,17 +152,58 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	break;
       }
 
-    case 'f':
+    case 'l':
       {
 	if (access(optarg,F_OK)==0) 
 	  {
-	    strbuf_append_str(cmdline_ptr->list_of_fastq, optarg);
+	    strbuf_append_str(cmdline_ptr->seq_path, optarg);
+	    cmdline_ptr->input_list=true;
 	  }
 	else
 	  {
 	    errx(1,"Cannot open file %s",optarg);
 	    return -1;
 	  }
+	break;
+      }
+    case 'f':
+      {
+	if (access(optarg,F_OK)==0) 
+	  {
+	    strbuf_append_str(cmdline_ptr->seq_path, optarg);
+	    cmdline_ptr->input_file=true;
+	  }
+	else
+	  {
+	    errx(1,"Cannot open file %s",optarg);
+	    return -1;
+	  }
+	break;
+      }
+    case 'm':
+      {
+	if (strcmp(optarg, "WGAssemblyThenGenotyping")==0)
+	  {
+	    cmdline_ptr->method=WGAssemblyThenGenotyping;
+	  }
+	else if (strcmp(optarg, "InSilicoOligos")==0)
+	  {
+	    cmdline_ptr->method=InSilicoOligos;
+	  }
+	else if (strcmp(optarg, "WGAssemblyAndTranslation")==0)
+	  {
+	    cmdline_ptr->method=WGAssemblyAndTranslation;
+	  }
+	else
+	  {
+	    errx(1, "--method requires an argument, which must be one of WGAssemblyThenGenotyping, InSilicoOligos, WGAssemblyAndTranslation\n");
+	  }
+	break;
+      }
+    case 's':
+      {
+	strbuf_reset(cmdline_ptr->id);
+	strbuf_append_str(cmdline_ptr->id, optarg);
 	break;
       }
     default:
@@ -160,7 +213,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }      
 
     }
-    opt = getopt_long(argc, argv, "hf:", long_options, &longopt_index);
+    opt = getopt_long(argc, argv, "hf:l:m:s:", long_options, &longopt_index);
     
   }   
   
@@ -195,9 +248,13 @@ void parse_cmdline(CmdLine* cmd_line,
 
 int check_cmdline(CmdLine* cmd_line, char* error_string)
 {
-  if (strcmp(cmd_line->list_of_fastq->buff, "")==0)
+  if ( (cmd_line->input_file==true) && (cmd_line->input_list==true) )
     {
-      die("You must speoify --list\n");
+      die("You cannot specify both --list and --file\n");
+    }
+  else if ((cmd_line->input_file==false) && (cmd_line->input_list==false) )
+    {
+      die("You must specify one of  --list (list of FASTQ or BAM files to load)  or  --file (single FASTQ or BAM). In both cases, these are assumed to come from one sample\n");
     }
 
   return 0;

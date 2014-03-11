@@ -46,10 +46,12 @@
 #include "antibiotics.h"
 #include "species.h"
 
+void timestamp();
+
 int main(int argc, char **argv)
 {
   // VERSION_STR is passed from the makefile -- usually last commit hash
-  printf("Starting myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
+  printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
          VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
 
   CmdLine* cmd_line = cmd_line_alloc();
@@ -103,16 +105,18 @@ int main(int argc, char **argv)
     }
   
 
-
-
+  printf("** Start time\n");
+  timestamp();
+  printf("** Sample:\n%s\n", cmd_line->id->buff);
+  
   uint64_t bp_loaded = build_unclean_graph(db_graph, 
-					   cmd_line->list_of_fastq, 
+					   cmd_line->seq_path,
+					   cmd_line->input_list,
 					   cmd_line->kmer_size,
 					   cmd_line->readlen_distrib,
 					   cmd_line->readlen_distrib_size,
 					   cmd_line->kmer_covg_array, 
 					   cmd_line->len_kmer_covg_array);
-
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
 							   cmd_line->readlen_distrib_size);
 
@@ -127,11 +131,16 @@ int main(int argc, char **argv)
   StrBuf* tmp_name = strbuf_new();
   Staph_species sp = get_species(db_graph, 10000);
   map_species_enum_to_str(sp,tmp_name);
-  printf("Species\t%s\n", tmp_name->buff);
+  printf("** Species\n%s\n", tmp_name->buff);
   if (sp != Aureus)
     {
-      printf("No AMR predictions for coag-negative\n");
+      printf("** No AMR predictions for coag-negative\n** End time\n");
+      timestamp();
       return 1;
+    }
+  else
+    {
+      printf("** Antimicrobial susceptibility predictions\n");
     }
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_gentamycin_susceptible, tmp_name);
@@ -158,8 +167,8 @@ int main(int argc, char **argv)
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
 				   erythromycin_susceptible);
-
-
+  printf("** End time\n");
+  timestamp();
 
   //cleanup
   strbuf_free(tmp_name);
@@ -178,6 +187,6 @@ int main(int argc, char **argv)
 void timestamp(){
  time_t ltime;
  ltime = time(NULL);
- printf("\n-----\n%s",asctime(localtime(&ltime)));
+ printf("%s",asctime(localtime(&ltime)));
  fflush(stdout);
 }

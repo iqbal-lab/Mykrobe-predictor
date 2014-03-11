@@ -36,9 +36,17 @@
 #define LEN_ERROR_STRING 400
 
 
+typedef enum
+  {
+    WGAssemblyThenGenotyping=0,
+    InSilicoOligos=1,
+    WGAssemblyAndTranslation=2,
+  } Approach;
+
 typedef struct
 {
-  StrBuf* list_of_fastq;
+  StrBuf* seq_path; //may be a singe bam/fastq or a list.
+  StrBuf* id; //sample id
   long long genome_size;
   uint16_t kmer_size;
   uint64_t* readlen_distrib;
@@ -50,6 +58,10 @@ typedef struct
   int max_expected_sup_len;
   int mem_height;
   int mem_width;
+  Approach method;
+  boolean input_file;
+  boolean input_list;
+  
 } CmdLine;
 
 

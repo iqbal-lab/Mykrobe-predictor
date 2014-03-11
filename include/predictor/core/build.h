@@ -40,9 +40,9 @@
 #include "seq.h"
 #include "file_reader.h"
 
-unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* list_of_fastq, uint16_t kmer,
-			     uint64_t* readlen_distrib, int readlen_distrib_len,
-			     uint64_t* kmer_covg_array, int len_kmer_covg_array);
+unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean is_list, uint16_t kmer,
+				       uint64_t* readlen_distrib, int readlen_distrib_len,
+				       uint64_t* kmer_covg_array, int len_kmer_covg_array);
 
 
 void db_graph_get_covg_distribution_array(dBGraph* db_graph, int colour,
