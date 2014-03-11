@@ -53,6 +53,15 @@ typedef struct
 AlleleInfo* alloc_allele_info();
 void free_allele_info(AlleleInfo* ai);
 
+int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
+				Sequence* seq, KmerSlidingWindow* kmer_window,
+				int (*file_reader)(FILE * fp, 
+						   Sequence * seq, 
+						   int max_read_length, 
+						   boolean new_entry, 
+						   boolean * full_entry),
+				dBNode** array_nodes, Orientation*  array_or,
+				CovgArray* working_ca, int max_read_length);
 
 
 

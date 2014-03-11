@@ -46,7 +46,7 @@
 #define GENE_THRESH_aacAaphD 70
 #define GENE_THRESH_ermC 80
 #define GENE_THRESH_tetK 80
-#define GENE_THRESH_dfrA 70 
+#define GENE_THRESH_dfrA 90 
 #define GENE_THRESH_dfrG 70
 #define GENE_THRESH_ermA 70
 #define GENE_THRESH_ermB 70

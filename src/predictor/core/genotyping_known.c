@@ -45,6 +45,61 @@ void free_allele_info(AlleleInfo* ai)
   free(ai);
 }
 
+
+
+int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
+				Sequence* seq, KmerSlidingWindow* kmer_window,
+				int (*file_reader)(FILE * fp, 
+						    Sequence * seq, 
+						   int max_read_length, 
+						   boolean new_entry, 
+						    boolean * full_entry),
+				 dBNode** array_nodes, Orientation*  array_or,
+				 CovgArray* working_ca, int max_read_length)
+
+{
+
+
+  boolean full_entry=true;
+  int dummy_colour_ignored = -1;
+  int num_kmers = 
+    align_next_read_to_graph_and_return_node_array(fp, 
+						   max_read_length, 
+						   array_nodes, 
+						   array_or, 
+						   false, 
+						   &full_entry, 
+						   file_reader,
+						   seq, 
+						   kmer_window, 
+						   db_graph, 
+						   dummy_colour_ignored);
+
+  if (num_kmers>0)
+    {
+      //collect min, median covg on allele and also percentage of kmers with any covg
+      boolean too_short=false;
+      ainfo->median_covg = 
+	median_covg_on_allele_in_specific_colour(array_nodes, 
+						 num_kmers, 
+						 working_ca, 
+						 0, 
+						 &too_short);
+      ainfo->min_covg = 
+	min_covg_on_allele_in_specific_colour(array_nodes, 
+					      num_kmers, 
+					      0, 
+					      &too_short);
+      ainfo->percent_nonzero = 
+	percent_nonzero_on_allele_in_specific_colour(array_nodes, 
+						     num_kmers, 
+						     0, 
+						     &too_short);
+    }
+  return num_kmers;
+
+}
+
 ResVarInfo* alloc_and_init_res_var_info()
 {
   ResVarInfo* rvi = calloc(1, sizeof(ResVarInfo));
@@ -205,7 +260,10 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 						   kmer_window, 
 						   db_graph, 
 						   dummy_colour_ignored);
-
+  if (num_kmers==0)
+    {
+      return;
+    }
   //read- is in this format
 
   //>ref_F99I_panel_fasta_sub--3--dfrB        so this is >ref means susceptible allele, then identifier of which reference, then sub=susbstitution

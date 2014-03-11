@@ -40,35 +40,133 @@
 #include "dB_graph.h"
 #include "species.h"
 #include "gene_presence.h"
-Staph_species get_species(dBGraph *db_graph,int max_gene_len )
+#include "genotyping_known.h"
+
+
+void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
+{
+  if (sp==Scapitis)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.capitis");
+    }
+  else if (sp==Scaprae)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.caprae");
+    }
+  else if (sp==Sepidermidis)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.epidermidis");
+    }
+  else if (sp==Sequorum)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.equorum");
+    }
+  else if (sp==Shaemolyticus)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.haemolyticus");
+    }
+  else if (sp==Shominis)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.hominis");
+    }
+  else if (sp==Slugdunensis)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.lugdunensis");
+    }
+  else if (sp==Smassiliensis)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.massiliensis");
+    }
+  else if (sp==Spettenkofer)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.pettenkofer");
+    }
+  else if (sp==Spseudintermedius)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.pseudintermedius");
+    }
+  else if (sp==Ssaprophyticus)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.saprophyticus");
+    }
+  else if (sp==Ssimiae)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.simiae");
+    }
+  else if (sp==Ssimulans)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"Ssimulans");
+    }
+  else if (sp==Ssphgb0015)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.sphgb0015");
+    }
+  else if (sp==Sspoj82)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.spoj82");
+    }
+  else if (sp==Aureus)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.aureus");
+    }
+  else if (sp==Swarneri)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S.warneri");
+    }
+  else
+    {
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
+    }
+  
+}
+
+
+Staph_species get_species(dBGraph *db_graph,int max_branch_len )
 {
   // Define the paths to the possible species
-  const char *species_file_paths[17];
-  species_file_paths[0] = "../data/species/Scapitis_unique_branches.fasta";
-  species_file_paths[1] = "../data/species/Scaprae_unique_branches.fasta";
-  species_file_paths[2] = "../data/species/Sepidermidis_unique_branches.fasta";
-  species_file_paths[3] = "../data/species/Sequorum_unique_branches.fasta";
-  species_file_paths[4] = "../data/species/Shaemolyticus_unique_branches.fasta";
-  species_file_paths[5] = "../data/species/Shominis_unique_branches.fasta";
-  species_file_paths[6] = "../data/species/Slugdunensis_unique_branches.fasta";
-  species_file_paths[7] = "../data/species/Smassiliensis_unique_branches.fasta";
-  species_file_paths[8] = "../data/species/Spettenkofer_unique_branches.fasta";
-  species_file_paths[9] = "../data/species/Spseudintermedius_unique_branches.fasta";
-  species_file_paths[10] = "../data/species/Ssaprophyticus_unique_branches.fasta";
-  species_file_paths[11] = "../data/species/Ssimiae_unique_branches.fasta";
-  species_file_paths[12] = "../data/species/Ssimulans_unique_branches.fasta";
-  species_file_paths[13] = "../data/species/S_sp_hgb0015_unique_branches.fasta";
-  species_file_paths[14] = "../data/species/S_sp_oj82_unique_branches.fasta";
-  species_file_paths[15] = "../data/species/staph_unique_branches.fasta";
-  species_file_paths[16] = "../data/species/S_warneri_unique_branches.fasta";
+  StrBuf* species_file_paths[17];
+  species_file_paths[0] = strbuf_create("../data/species/Scapitis_unique_branches.fasta");
+  species_file_paths[1] = strbuf_create("../data/species/Scaprae_unique_branches.fasta");
+  species_file_paths[2] = strbuf_create("../data/species/Sepidermidis_unique_branches.fasta");
+  species_file_paths[3] = strbuf_create("../data/species/Sequorum_unique_branches.fasta");
+  species_file_paths[4] = strbuf_create("../data/species/Shaemolyticus_unique_branches.fasta");
+  species_file_paths[5] = strbuf_create("../data/species/Shominis_unique_branches.fasta");
+  species_file_paths[6] = strbuf_create("../data/species/Slugdunensis_unique_branches.fasta");
+  species_file_paths[7] = strbuf_create("../data/species/Smassiliensis_unique_branches.fasta");
+  species_file_paths[8] = strbuf_create("../data/species/Spettenkofer_unique_branches.fasta");
+  species_file_paths[9] = strbuf_create("../data/species/Spseudintermedius_unique_branches.fasta");
+  species_file_paths[10] = strbuf_create("../data/species/Ssaprophyticus_unique_branches.fasta");
+  species_file_paths[11] = strbuf_create("../data/species/Ssimiae_unique_branches.fasta");
+  species_file_paths[12] = strbuf_create("../data/species/Ssimulans_unique_branches.fasta");
+  species_file_paths[13] = strbuf_create("../data/species/S_sp_hgb0015_unique_branches.fasta");
+  species_file_paths[14] = strbuf_create("../data/species/S_sp_oj82_unique_branches.fasta");
+  species_file_paths[15] = strbuf_create("../data/species/staph_unique_branches.fasta");
+  species_file_paths[16] = strbuf_create("../data/species/S_warneri_unique_branches.fasta");
 
-  int i;char* tmpName;
+  int i;
   double pcov[17]; // for storing the percentage coverage of each reference
   int sumpcov;
   int number_of_reads;
 
 
-  GeneInfo* gi = alloc_and_init_gene_info();
+  AlleleInfo* ai = alloc_allele_info();
   FILE* fp;
 
   //----------------------------------
@@ -78,7 +176,7 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
   if (seq == NULL){
     die("Out of memory trying to allocate Sequence");
   }
-  alloc_sequence(seq,max_gene_len,LINE_MAX);
+  alloc_sequence(seq,max_branch_len,LINE_MAX);
 
   //We are going to load all the bases into a single sliding window 
   KmerSlidingWindow* kmer_window = malloc(sizeof(KmerSlidingWindow));
@@ -87,64 +185,74 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
       die("Failed to malloc kmer sliding window");
     }
 
-    //  int max_gene_len = 5000;
-  CovgArray* working_ca = alloc_and_init_covg_array(max_gene_len);
-  dBNode** array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_gene_len);
-  Orientation* array_or =(Orientation*)  malloc(sizeof(Orientation)*max_gene_len);
-  for (i = 0; i < 17; i++)
-  {
 
-
-    fp = fopen(species_file_paths[i], "r");
-    if (fp==NULL)
-      {
-        die("Cannot open this file");
-      }
+  CovgArray* working_ca = alloc_and_init_covg_array(max_branch_len);
+  dBNode** array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_branch_len);
+  Orientation* array_or =(Orientation*)  malloc(sizeof(Orientation)*max_branch_len);
+  kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_branch_len-db_graph->kmer_size+1));
+  if (kmer_window->kmer==NULL)
+    {
+      die("Failed to malloc kmer_window->kmer");
+    }
+  kmer_window->nkmers=0;
+  //create file readers
+  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
+    long long ret;
+    int offset = 0;
+    if (new_entry == false){
+      offset = db_graph->kmer_size;
+    }
+    ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
     
-    kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_gene_len-db_graph->kmer_size+1));
-    if (kmer_window->kmer==NULL)
-      {
-        die("Failed to malloc kmer_window->kmer");
-      }
-    kmer_window->nkmers=0;
-    //create file readers
-    int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
-      long long ret;
-      int offset = 0;
-      if (new_entry == false){
-        offset = db_graph->kmer_size;
-      }
-      ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
+    return ret;
+  }
+  
+  
+  
+  if ( (array_nodes==NULL) || (array_or==NULL))
+    {
+      die("Cannot alloc array of nodes or of orientations");
+    }
+  
+  for (i = 0; i < 17; i++)
+    {
       
-      return ret;
+      
+      fp = fopen(species_file_paths[i]->buff, "r");
+      if (fp==NULL)
+	{
+	  die("Cannot open this file");
+	}
+      
+      
+      // while the entry is valid iterate through the fasta file
+      number_of_reads = 0;
+      int num_kmers=0;
+      sumpcov = 0;
+      do {
+	
+	num_kmers= get_next_single_allele_info(fp, db_graph, ai,
+					       seq, kmer_window,
+					       &file_reader_fasta,
+					       array_nodes, array_or, 
+					       working_ca, max_branch_len);
+	number_of_reads = number_of_reads + 1;
+	sumpcov = sumpcov + ai->percent_nonzero;
+	
+      } while ( num_kmers>0);
+      if (number_of_reads>0)
+	{
+	  pcov[i] = sumpcov / number_of_reads;
+	}
+      else
+	{
+	  pcov[i]=0;
+	}
+      
     }
 
-    
-    
-    if ( (array_nodes==NULL) || (array_or==NULL))
-      {
-        die("Cannot alloc array of nodes or of orientations");
-      }
-    
-    // while the entry is valid iterate through the fasta file
-    number_of_reads = 0;
-    sumpcov = 0;
-    do {
-        get_next_gene_info(fp, db_graph, gi,
-         seq, kmer_window,
-         &file_reader_fasta,
-         array_nodes, array_or, 
-         working_ca, max_gene_len);
-         tmpName = gi->strbuf->buff; 
-         number_of_reads = number_of_reads + 1;
-         sumpcov = sumpcov + gi->percent_nonzero;
-
-    } while ( strlen(tmpName) != 0);
-    pcov[i] = sumpcov / number_of_reads;
-
-  }
-
-  free_gene_info(gi);
+  
+  free_allele_info(ai);
   free(array_nodes);
   free(array_or);
   free_covg_array(working_ca);
@@ -152,9 +260,13 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
   free(kmer_window);
   free_sequence(&seq);
 
+  for (i=0; i<17; i++)
+    {
+      strbuf_free(species_file_paths[i]);
+    }
   // Look at the max of the pcov
   int c,location;
-  double maximum;
+  double maximum=0;
   for (c = 0; c < 17; c++)
     {
       if (pcov[c] > maximum)
@@ -163,7 +275,7 @@ Staph_species get_species(dBGraph *db_graph,int max_gene_len )
          location = c;
       }
     }
-  printf("Maximum element is present at location %i and it's value is %f.\n", location, maximum);
+  //  printf("Maximum element is present at location %i and it's value is %f.\n", location, maximum);
 
   Staph_species species_out =  location;
   return species_out;

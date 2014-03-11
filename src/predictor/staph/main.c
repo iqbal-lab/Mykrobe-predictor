@@ -44,7 +44,7 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 #include "antibiotics.h"
-
+#include "species.h"
 
 int main(int argc, char **argv)
 {
@@ -124,236 +124,41 @@ int main(int argc, char **argv)
 	      expected_depth, cmd_line->max_expected_sup_len);
 
 
-  StrBuf* tmp_antibio_name = strbuf_new();
+  StrBuf* tmp_name = strbuf_new();
+
+  map_species_enum_to_str(get_species(db_graph, 10000),tmp_name);
+  printf("Species\t%s\n", tmp_name->buff);
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_gentamycin_susceptible, tmp_antibio_name);
+				  &is_gentamycin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_penicillin_susceptible, tmp_antibio_name);
+				  &is_penicillin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_trimethoprim_susceptible, tmp_antibio_name);
+				  &is_trimethoprim_susceptible, tmp_name);
   boolean erythromycin_susceptible = print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-								    &is_erythromycin_susceptible, tmp_antibio_name);
+								    &is_erythromycin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_methicillin_susceptible, tmp_antibio_name);
+				  &is_methicillin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_fusidic_acid_susceptible, tmp_antibio_name);
+				  &is_fusidic_acid_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_ciprofloxacin_susceptible, tmp_antibio_name);
+				  &is_ciprofloxacin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_rifampicin_susceptible, tmp_antibio_name);
+				  &is_rifampicin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_tetracycline_susceptible, tmp_antibio_name);
+				  &is_tetracycline_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_vancomycin_susceptible, tmp_antibio_name);
+				  &is_vancomycin_susceptible, tmp_name);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_mupirocin_susceptible, tmp_antibio_name);
+				  &is_mupirocin_susceptible, tmp_name);
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				   &is_clindamycin_susceptible, tmp_antibio_name, 
+				   &is_clindamycin_susceptible, tmp_name, 
 				   erythromycin_susceptible);
 
-  
-  /*  boolean suc =  is_gentamycin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("GENTAMYCIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-suc =  is_penicillin_susceptible(db_graph,
-				 &file_reader_fasta,
-				 ru,
-				 tmp_rvi,
-				 tmp_gi,
-				 abi);
-  printf("PENICILLIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-suc =  is_trimethoprim_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("TRIMETHOPRIM ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-
-  boolean ery_resist = false;
-  suc =  is_erythromycin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("ERYTHROMYCIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      ery_resist = true;
-      printf("RESISTANT\n");
-    }
-
-suc =  is_methicillin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("METHICILLIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-suc =  is_ciprofloxacin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("CIPROFLOXACIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-
-suc =  is_rifampicin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("RIFAMPICIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-
-suc =  is_tetracycline_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("TETRACYCLINE ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-suc =  is_vancomycin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("VANCOMYCIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-
-suc =  is_mupirocin_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("MUPIROCIN ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
- 
-  suc =  is_fusidic_acid_susceptible(db_graph,
-					   &file_reader_fasta,
-					   ru,
-					   tmp_rvi,
-					   tmp_gi,
-					   abi);
-  printf("FUSIDIC_ACID ");
-  if (suc==true)
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
- 
-  suc =  is_clindamycin_susceptible(db_graph,
-					   &file_reader_fasta,
-				    ru,
-				    tmp_rvi,
-				    tmp_gi,
-					   abi);
-  printf("CLINDAMYCIN ");
-  if ( (suc==true) && (ery_resist==false) )
-    {
-      printf("SUSCEPTIBLE\n");
-    }
-  else
-    {
-      printf("RESISTANT\n");
-    }
-  */  
 
 
   //cleanup
-  strbuf_free(tmp_antibio_name);
+  strbuf_free(tmp_name);
   free_antibiotic_info(abi);
   free_res_var_info(tmp_rvi);
   free_gene_info(tmp_gi);

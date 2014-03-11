@@ -46,5 +46,5 @@ typedef enum
   Swarneri = 16,
   } Staph_species ;
 
-
+void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf);
 Staph_species get_species(dBGraph *db_graph,int max_gene_len );
