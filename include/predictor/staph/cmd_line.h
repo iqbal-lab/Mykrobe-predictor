@@ -48,6 +48,7 @@ typedef struct
   StrBuf* seq_path; //may be a singe bam/fastq or a list.
   StrBuf* id; //sample id
   StrBuf* skeleton_binary;
+  StrBuf* install_dir;
   long long genome_size;
   uint16_t kmer_size;
   uint64_t* readlen_distrib;

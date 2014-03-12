@@ -24,6 +24,7 @@
   cmd_line.c
 */
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,6 +34,7 @@
 #include <sys/stat.h>
 #include <math.h>
 #include <err.h>
+#include <errno.h>
 
 // myKrobe headers
 #include "cmd_line.h"
@@ -52,7 +54,8 @@ const char* usage=
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
 "   [--oligo_bin FILENAME] \t\t\t\t\t=\t Full path to oligo binary file - only needed if setting method to InSilicoOligos\n" \
-"   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" ;
+"   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" \
+"   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
 
 int default_opts(CmdLine * c)
 {
@@ -60,6 +63,7 @@ int default_opts(CmdLine * c)
   strbuf_reset(c->id);
   strbuf_append_str(c->id, "UnknownSample");
   strbuf_reset(c->skeleton_binary);
+  strbuf_reset(c->install_dir);
   c->genome_size = 2800000;
 
   c->kmer_size = 31;
@@ -81,6 +85,7 @@ CmdLine* cmd_line_alloc()
       die("Out of memory before we even start Cortex, cannot alloc space to hold the commandline variables! Abort\n");
     }
   cmd->seq_path = strbuf_new();
+  cmd->install_dir = strbuf_new();
   cmd->id = strbuf_new();
   cmd->skeleton_binary = strbuf_new();
   int max_expected_read_len = 500;//illumina
@@ -110,6 +115,7 @@ CmdLine* cmd_line_alloc()
 void cmd_line_free(CmdLine* cmd)
 {
   strbuf_free(cmd->seq_path);
+  strbuf_free(cmd->install_dir);
   strbuf_free(cmd->id);
   strbuf_free(cmd->skeleton_binary);
   free(cmd->readlen_distrib);
@@ -130,6 +136,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"method", required_argument, NULL, 'm'},
     {"sample_id", required_argument, NULL, 's'},
     {"oligo_bin", required_argument, NULL, 'b'},
+    {"install_dir", required_argument, NULL, 'i'},
     {0,0,0,0}	
   };
   
@@ -158,11 +165,35 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	break;
       }
 
+    case 'i':
+      {
+	StrBuf* tmp = strbuf_create(optarg);
+	strbuf_add_slash_on_end(tmp);
+	if (0 != access(tmp->buff, F_OK)) {
+	  if (ENOENT == errno) {
+	    die("You have specified with --install_dir, a directory which does not exist (%s)\n", optarg);
+	  }
+	  if (ENOTDIR == errno) {
+	    // not a directory
+	    die("You have specified with --install_dir, a directory which is not a directory (%s)\n", optarg);
+	  }
+	}	
+	strbuf_append_str(cmdline_ptr->install_dir, tmp->buff);
+	strbuf_append_str(tmp, "data/staph/antibiotics/penicillin.fa");
+	if (access(tmp->buff,F_OK)!=0)
+	  {
+	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of myKrobe.predictor. Cannot find %s\n", tmp->buff);
+	  }
+	
+	break;
+      }
     case 'l':
       {
 	if (access(optarg,F_OK)==0) 
 	  {
-	    strbuf_append_str(cmdline_ptr->seq_path, optarg);
+	    char* full_path = realpath(optarg,NULL);
+	    strbuf_append_str(cmdline_ptr->seq_path,full_path );
+	    free(full_path);
 	    cmdline_ptr->input_list=true;
 	  }
 	else
@@ -176,7 +207,9 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       {
 	if (access(optarg,F_OK)==0) 
 	  {
-	    strbuf_append_str(cmdline_ptr->seq_path, optarg);
+	    char* full_path = realpath(optarg,NULL);
+	    strbuf_append_str(cmdline_ptr->seq_path, full_path);
+	    free(full_path);
 	    cmdline_ptr->input_file=true;
 	  }
 	else
@@ -299,6 +332,10 @@ int check_cmdline(CmdLine* cmd_line, char* error_string)
 	{
 	  die("You should only specify --oligo_bin if you are setting --method to InSilicoOligos\n");
 	}
+    }
+  if (strcmp(cmd_line->install_dir->buff, "")==0)
+    {
+      die("You must specify --install_dir\n");
     }
   return 0;
 }

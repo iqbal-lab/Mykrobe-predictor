@@ -341,14 +341,13 @@ int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int c
     {
       if (allele[i]!=NULL)
 	{
-	  Covg c=db_node_get_coverage_tolerate_null(allele[i], colour);
+	  Covg c=db_node_get_coverage(allele[i], colour);
 	  if (c>0)
 	    {
 	      num_nonzero++;
 	    }
 	}
     }
-
   return num_nonzero*100/(len-1);
 }
 

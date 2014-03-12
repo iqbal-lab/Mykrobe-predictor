@@ -142,23 +142,23 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len )
 {
   // Define the paths to the possible species
   StrBuf* species_file_paths[17];
-  species_file_paths[0] = strbuf_create("../data/species/Scapitis_unique_branches.fasta");
-  species_file_paths[1] = strbuf_create("../data/species/Scaprae_unique_branches.fasta");
-  species_file_paths[2] = strbuf_create("../data/species/Sepidermidis_unique_branches.fasta");
-  species_file_paths[3] = strbuf_create("../data/species/Sequorum_unique_branches.fasta");
-  species_file_paths[4] = strbuf_create("../data/species/Shaemolyticus_unique_branches.fasta");
-  species_file_paths[5] = strbuf_create("../data/species/Shominis_unique_branches.fasta");
-  species_file_paths[6] = strbuf_create("../data/species/Slugdunensis_unique_branches.fasta");
-  species_file_paths[7] = strbuf_create("../data/species/Smassiliensis_unique_branches.fasta");
-  species_file_paths[8] = strbuf_create("../data/species/Spettenkofer_unique_branches.fasta");
-  species_file_paths[9] = strbuf_create("../data/species/Spseudintermedius_unique_branches.fasta");
-  species_file_paths[10] = strbuf_create("../data/species/Ssaprophyticus_unique_branches.fasta");
-  species_file_paths[11] = strbuf_create("../data/species/Ssimiae_unique_branches.fasta");
-  species_file_paths[12] = strbuf_create("../data/species/Ssimulans_unique_branches.fasta");
-  species_file_paths[13] = strbuf_create("../data/species/S_sp_hgb0015_unique_branches.fasta");
-  species_file_paths[14] = strbuf_create("../data/species/S_sp_oj82_unique_branches.fasta");
-  species_file_paths[15] = strbuf_create("../data/species/staph_unique_branches.fasta");
-  species_file_paths[16] = strbuf_create("../data/species/S_warneri_unique_branches.fasta");
+  species_file_paths[0] = strbuf_create("../data/staph/species/Scapitis_unique_branches.fasta");
+  species_file_paths[1] = strbuf_create("../data/staph/species/Scaprae_unique_branches.fasta");
+  species_file_paths[2] = strbuf_create("../data/staph/species/Sepidermidis_unique_branches.fasta");
+  species_file_paths[3] = strbuf_create("../data/staph/species/Sequorum_unique_branches.fasta");
+  species_file_paths[4] = strbuf_create("../data/staph/species/Shaemolyticus_unique_branches.fasta");
+  species_file_paths[5] = strbuf_create("../data/staph/species/Shominis_unique_branches.fasta");
+  species_file_paths[6] = strbuf_create("../data/staph/species/Slugdunensis_unique_branches.fasta");
+  species_file_paths[7] = strbuf_create("../data/staph/species/Smassiliensis_unique_branches.fasta");
+  species_file_paths[8] = strbuf_create("../data/staph/species/Spettenkofer_unique_branches.fasta");
+  species_file_paths[9] = strbuf_create("../data/staph/species/Spseudintermedius_unique_branches.fasta");
+  species_file_paths[10] = strbuf_create("../data/staph/species/Ssaprophyticus_unique_branches.fasta");
+  species_file_paths[11] = strbuf_create("../data/staph/species/Ssimiae_unique_branches.fasta");
+  species_file_paths[12] = strbuf_create("../data/staph/species/Ssimulans_unique_branches.fasta");
+  species_file_paths[13] = strbuf_create("../data/staph/species/S_sp_hgb0015_unique_branches.fasta");
+  species_file_paths[14] = strbuf_create("../data/staph/species/S_sp_oj82_unique_branches.fasta");
+  species_file_paths[15] = strbuf_create("../data/staph/species/staph_unique_branches.fasta");
+  species_file_paths[16] = strbuf_create("../data/staph/species/S_warneri_unique_branches.fasta");
 
   int i;
   double pcov[17]; // for storing the percentage coverage of each reference
@@ -265,7 +265,8 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len )
       strbuf_free(species_file_paths[i]);
     }
   // Look at the max of the pcov
-  int c,location;
+  int c=0;
+  int location=0;
   double maximum=0;
   for (c = 0; c < 17; c++)
     {

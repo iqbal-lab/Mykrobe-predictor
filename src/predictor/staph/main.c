@@ -50,6 +50,7 @@ void timestamp();
 
 int main(int argc, char **argv)
 {
+
   // VERSION_STR is passed from the makefile -- usually last commit hash
   printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
          VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
@@ -153,7 +154,7 @@ int main(int argc, char **argv)
 
   //printf("Get expected depth of %d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-	      expected_depth, cmd_line->max_expected_sup_len);
+  	      expected_depth, cmd_line->max_expected_sup_len);
 
 
   StrBuf* tmp_name = strbuf_new();
@@ -170,32 +171,36 @@ int main(int argc, char **argv)
     {
       printf("** Antimicrobial susceptibility predictions\n");
     }
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_gentamycin_susceptible, tmp_name);
+  &is_gentamycin_susceptible, tmp_name, cmd_line->install_dir); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_penicillin_susceptible, tmp_name);
+				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_trimethoprim_susceptible, tmp_name);
+				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir);
   boolean erythromycin_susceptible = print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-								    &is_erythromycin_susceptible, tmp_name);
+								    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_methicillin_susceptible, tmp_name);
+				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_fusidic_acid_susceptible, tmp_name);
+				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_ciprofloxacin_susceptible, tmp_name);
+				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_rifampicin_susceptible, tmp_name);
+				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_tetracycline_susceptible, tmp_name);
+				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_vancomycin_susceptible, tmp_name);
+				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_mupirocin_susceptible, tmp_name);
+				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir);
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
-				   erythromycin_susceptible);
-  printf("** End time\n");
+				   erythromycin_susceptible, cmd_line->install_dir);
+  /*  printf("** Virulence markers\n");
+  print_pvl_presence(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  &is_pvl_positive, tmp_name); */ 
+  printf("** End time\n"); 
   timestamp();
 
   //cleanup
