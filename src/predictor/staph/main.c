@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 
 
   StrBuf* tmp_name = strbuf_new();
-  Staph_species sp = get_species(db_graph, 10000);
+  Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir);
   map_species_enum_to_str(sp,tmp_name);
   printf("** Species\n%s\n", tmp_name->buff);
   if (sp != Aureus)
