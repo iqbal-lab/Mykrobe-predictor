@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2011 Zamin Iqbal and Mario Caccamo
+ * Copyright 2009-2014 Zamin Iqbal and Mario Caccamo
  * 
  * CORTEX project contacts:  
  * 		M. Caccamo (mario.caccamo@bbsrc.ac.uk) and 
@@ -87,14 +87,31 @@ StrBuf* file_reader_get_strbuf_of_dir_path(char* path);
 
 boolean subsample_null();
 
+boolean check_binary_signature_NEW(FILE * fp,int kmer_size, 
+				   BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode,
+				   int first_colour_loading_into);
+
+boolean query_binary_NEW(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode, int first_colour_loading_into);
+
+boolean get_extra_data_from_header(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode, int first_colour_loading_into);
+
+boolean get_read_lengths_and_total_seqs_from_header(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode,
+						    int first_colour_loading_into);
+
+boolean  get_binversion6_extra_data(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode, int first_colour_loading_into);
+boolean read_next_error_cleaning_object(FILE* fp, ErrorCleaning* cl);
+
+long long load_multicolour_binary_from_filename_into_graph(char* filename,  dBGraph* db_graph, GraphInfo* ginfo, int* num_cols_in_loaded_binary);
+
 void load_se_seq_data_into_graph_colour(
-  const char *file_path,
-  char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_se,
-  char ascii_fq_offset, int colour_index, dBGraph *db_graph,
-  unsigned long long *bad_reads, unsigned long long *dup_reads,
-  unsigned long long *bases_read, unsigned long long *bases_loaded,
-  unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-  boolean (*subsample_func)() );
+					const char *file_path,
+					char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_se,
+					char ascii_fq_offset, int colour_index, dBGraph *db_graph,
+					unsigned long long *bad_reads, unsigned long long *dup_reads,
+					unsigned long long *bases_read, unsigned long long *bases_loaded,
+					unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					boolean (*subsample_func)(),
+					boolean only_load_pre_existing_kmers);
 
 void load_pe_seq_data_into_graph_colour(
   const char *file_path1, const char *file_path2,
@@ -103,27 +120,28 @@ void load_pe_seq_data_into_graph_colour(
   unsigned long long *bad_reads, unsigned long long *dup_reads,
   unsigned long long *bases_read, unsigned long long *bases_loaded,
   unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-  boolean (*subsample_func)() );
+  boolean (*subsample_func)(), boolean only_load_pre_existing_kmers );
 
 void load_se_filelist_into_graph_colour(
-  char* se_filelist_path,
-  int qual_thresh, int homopol_limit, boolean remove_dups_se,
-  char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_list,
-  unsigned int *total_files_loaded,
-  unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-  unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-  unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-  boolean (*subsample_func)() );
+					char* se_filelist_path,
+					int qual_thresh, int homopol_limit, boolean remove_dups_se,
+					char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_list,
+					unsigned int *total_files_loaded,
+					unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
+					unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
+					unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					boolean (*subsample_func)(),
+					boolean only_load_pre_existing_kmers);
 
 void load_pe_filelists_into_graph_colour(
-  char* pe_filelist_path1, char* pe_filelist_path2,
-  int qual_thresh, int homopol_limit, boolean remove_dups_pe,
-  char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_lists,
-  unsigned int *total_file_pairs_loaded,
-  unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-  unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-  unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-  boolean (*subsample_func)() );
+					 char* pe_filelist_path1, char* pe_filelist_path2,
+					 int qual_thresh, int homopol_limit, boolean remove_dups_pe,
+					 char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_lists,
+					 unsigned int *total_file_pairs_loaded,
+					 unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
+					 unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
+					 unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					 boolean (*subsample_func)(),  boolean only_load_pre_existing_kmers );
 
 // End of loading sequence data
 

@@ -51,6 +51,7 @@
 #include "file_reader.h"
 #include "dB_graph_supernode.h"
 #include "build.h"
+#include "graph_info.h"
 
 #define is_base_char(x) ((x) == 'a' || (x) == 'A' || \
                          (x) == 'c' || (x) == 'C' || \
@@ -374,7 +375,8 @@ inline void _process_read(SeqFile *sf, char* kmer_str, char* qual_str,
                           Orientation curr_orient,
                           unsigned long long *bases_loaded,
                           unsigned long *readlen_count_array,
-                          unsigned long readlen_count_array_size)
+                          unsigned long readlen_count_array_size,
+			  boolean only_load_pre_existing_kmers)
 {
   // Hash table stuff
   Element *prev_node = NULL; // Element is a hash table entry
@@ -404,12 +406,28 @@ inline void _process_read(SeqFile *sf, char* kmer_str, char* qual_str,
       seq_to_binary_kmer(kmer_str, kmer_size, (BinaryKmer*)curr_kmer);
 
       element_get_key((BinaryKmer*)curr_kmer, kmer_size, &tmp_key);
-      curr_node = hash_table_find_or_insert(&tmp_key, &curr_found, db_graph);
-      curr_orient = db_node_get_orientation((BinaryKmer*)curr_kmer, curr_node,
-                                             kmer_size);
+      if (only_load_pre_existing_kmers==false)
+	{
+	  curr_node = hash_table_find_or_insert(&tmp_key, &curr_found, db_graph);
+	  curr_orient = db_node_get_orientation((BinaryKmer*)curr_kmer, curr_node,
+						kmer_size);
+	  // Update coverage
+	  db_node_update_coverage(curr_node, colour_index, 1);
 
-      // Update coverage
-      db_node_update_coverage(curr_node, colour_index, 1);
+	}
+      else
+	{
+	  curr_node = hash_table_find(&tmp_key, db_graph);
+	  if (curr_node!=NULL)
+	    {
+	      curr_orient = db_node_get_orientation((BinaryKmer*)curr_kmer, curr_node,
+						    kmer_size);
+	      // Update coverage
+	      db_node_update_coverage(curr_node, colour_index, 1);
+
+	    }
+	}
+
     }
 
     #ifdef DEBUG_CONTIGS
@@ -493,16 +511,30 @@ inline void _process_read(SeqFile *sf, char* kmer_str, char* qual_str,
 
       // Lookup in db
       element_get_key((BinaryKmer*)curr_kmer, kmer_size, &tmp_key);
-      curr_node = hash_table_find_or_insert(&tmp_key, &curr_found, db_graph);
-      curr_orient = db_node_get_orientation((BinaryKmer*)curr_kmer, curr_node, kmer_size);
+      if (only_load_pre_existing_kmers==false)
+	{
+	  curr_node = hash_table_find_or_insert(&tmp_key, &curr_found, db_graph);
+	  curr_orient = db_node_get_orientation((BinaryKmer*)curr_kmer, curr_node, kmer_size);
+	  // Update covg
+	  db_node_update_coverage(curr_node, colour_index, 1);
+	  // Add edge
+	  db_node_add_edge(prev_node, curr_node,
+			   prev_orient, curr_orient,
+			   kmer_size, colour_index);
 
-      // Update covg
-      db_node_update_coverage(curr_node, colour_index, 1);
+	}
+      else
+	{
+	  curr_node = hash_table_find(&tmp_key, db_graph);
+	  if (curr_node!=NULL)
+	    {
+	      curr_orient = 
+		db_node_get_orientation((BinaryKmer*)curr_kmer, curr_node, kmer_size);
+	      // Update covg
+	      db_node_update_coverage(curr_node, colour_index, 1);
+	    }
+	}
 
-      // Add edge
-      db_node_add_edge(prev_node, curr_node,
-                       prev_orient, curr_orient,
-                       kmer_size, colour_index);
     }
 
     // Store bases that made it into the graph
@@ -527,17 +559,461 @@ boolean subsample_null()
   return true;
 }
 
+//return yes if signature is consistent
+boolean check_binary_signature_NEW(FILE * fp,int kmer_size, 
+				   BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode,
+				   int first_colour_loading_into)
+				   
+{
+  boolean bin_header_ok = query_binary_NEW(fp, binfo, ecode, first_colour_loading_into);
+
+  if (bin_header_ok==true)
+    {
+      //just need to check the kmer is ok
+      if (kmer_size==binfo->kmer_size)
+	{
+	  return true;
+	}
+      else
+	{
+	  return false;
+	}
+    }
+  return false;
+}
+
+
+//return true if signature is readable, checks binversion, number of bitfields, magic number.
+//does not check kmer is compatible with number of bitfields, leaves that to caller.
+boolean query_binary_NEW(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode, int first_colour_loading_into)
+{
+  int read;
+  char magic_number[6];
+  
+  *ecode = EValid;
+  read = fread(magic_number,sizeof(char),6,fp);
+  if (read>0)
+    {
+      if (       magic_number[0]=='C' &&
+		 magic_number[1]=='O' &&
+		 magic_number[2]=='R' &&
+		 magic_number[3]=='T' &&
+		 magic_number[4]=='E' &&
+		 magic_number[5]=='X' )
+	{
+	  
+	  read = fread(&(binfo->version),sizeof(int),1,fp);
+	  if (read>0)
+	    {//can read version
+	      if ((binfo->version >=4) && (binfo->version<=BINVERSION) )
+		{//version is good
+		  read = fread(&(binfo->kmer_size),sizeof(int),1,fp);
+		  if (read>0)
+		    {//can read bitfields
+		      read = fread(&(binfo->number_of_bitfields),sizeof(int),1,fp);
+		     
+		      if (binfo->number_of_bitfields==NUMBER_OF_BITFIELDS_IN_BINARY_KMER)
+			{//bitfuields are good
+
+			  read = fread(&(binfo->number_of_colours),sizeof(int),1,fp);
+			  
+			  if ( read>0  )
+			    {//can read colours
+
+			      if (binfo->number_of_colours<=NUMBER_OF_COLOURS)
+				{//colours are good
+				  
+				  //ok, the basic information looks OK
+				  // get extra information. In all cases, return false and an error code if anything looks bad.
+				  return get_extra_data_from_header(fp, binfo, ecode, first_colour_loading_into);
+				  //also checks for the magic number at the end of the header
+				}
+			      else
+				{//colours bad
+				  *ecode = EBadColours;
+				  return false;				      
+				}
+			    }
+			  else
+			    {//cant read colours
+			      *ecode = ECannotReadNumColours;
+			      return false;
+			    }
+			}//bitfields are good
+		      else
+			{//bitfields are bad
+			  *ecode =  EWrongNumberBitfields;
+			  return false;
+			}
+		    }//can read bitfields
+		  else
+		    {//cannot read bitfields
+		      *ecode = ECannotReadNumBitfields;
+		      return false;
+		    }
+		}//version is good
+	      else
+		{//version is bad
+		  *ecode = EInvalidBinversion;
+		  return false;
+		}
+	    }//can read version
+	  else
+	    {//cannot read version
+	      *ecode =  ECannotReadBinversion;
+	      return false;
+	    }
+	}//magic number good
+      else
+	{
+	  *ecode=  ECanReadMagicNumberButIsWrong;
+	  return false;
+	}
+    }
+  else
+    {
+      *ecode = ECannotReadMagicNumber;
+      return false;
+    }
+
+  
+}
+
+
+//assume num colours, number of bitfields, etc were fine. So now
+//
+// Binary Version 5: mean read lengths (NUMBER_OF_COLOURS of them) and then total sequences
+// Binary Version 6: as 5, and then the Sample Id's for each colour, then the sequencing error rates
+//                         and then the ErrorCleanings
+boolean get_extra_data_from_header(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode, int first_colour_loading_into)
+{
+  boolean no_problem=true;
+
+  if (first_colour_loading_into+binfo->number_of_colours>NUMBER_OF_COLOURS-1)
+    {
+      *ecode = EBinaryHasTooManyColoursGivenFirstColour;
+      no_problem=false;
+    }
+
+  if ( (binfo->version==5) || (binfo->version==4) )//legacy
+    {
+      no_problem = get_read_lengths_and_total_seqs_from_header(fp, binfo, ecode, first_colour_loading_into);
+    }
+  else if (binfo->version==6)
+    {
+      no_problem = get_read_lengths_and_total_seqs_from_header(fp, binfo, ecode, first_colour_loading_into);
+      if (no_problem==true)
+	{
+	  //get the extra stuff for binary version 6
+	  no_problem = get_binversion6_extra_data(fp, binfo, ecode, first_colour_loading_into);
+	}
+    }
+  else
+    {
+      *ecode = EInvalidBinversion;
+      no_problem=false;
+    }
+
+  if (no_problem==true)
+    {
+      //only thing remaining to check is the end of header magic number
+      int read;
+      char magic_number[6];
+      magic_number[0]='\0';
+      magic_number[1]='\0';
+      magic_number[2]='\0';
+      magic_number[3]='\0';
+      magic_number[4]='\0';
+      magic_number[5]='\0';
+      read = fread(magic_number,sizeof(char),6,fp);
+      if (read==0)
+	{
+	  *ecode = ECannotReadEndOfHeaderMagicNumber;
+	  no_problem=false;
+	}
+      else if (
+	   magic_number[0]=='C' &&
+	   magic_number[1]=='O' &&
+	   magic_number[2]=='R' &&
+	   magic_number[3]=='T' &&
+	   magic_number[4]=='E' &&
+	   magic_number[5]=='X' )
+	{
+	  //all good.
+	}
+      else
+	{
+	  no_problem=false;
+	  *ecode = ECanReadEndOfHeaderMagicNumberButIsWrong;
+	}
+    }
+
+  return no_problem;
+
+}
+
+
+boolean get_read_lengths_and_total_seqs_from_header(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode,
+						    int first_colour_loading_into)
+{
+  int read;
+  int i;
+  boolean no_problem=true;
+  
+  for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
+    {
+      int mean_read_len=0;
+      read = fread(&mean_read_len, sizeof(int),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	  *ecode= EFailedToReadReadLensAndCovgs;
+	}
+      else
+	{
+	  binfo->ginfo->mean_read_length[i] += mean_read_len;
+	}
+    }
+  if (no_problem==true)
+    {
+      for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
+	{
+	  long long tot=0;
+	  read = fread(&tot, sizeof(long long),1,fp);
+	  if (read==0)
+	    {
+	      no_problem=false;
+	      *ecode= EFailedToReadReadLensAndCovgs;
+	    }
+	  else
+	    {
+	      binfo->ginfo->total_sequence[i] +=tot;
+	    }
+	}
+    }
+
+  return no_problem;
+}
+
+//Binary header version 6 includes sample id's, and Seq Error rate and Error Cleaning Info.
+boolean  get_binversion6_extra_data(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode, int first_colour_loading_into)
+{
+  int read;
+  int i;
+  boolean no_problem=true;
+
+  //first get sample information
+  for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
+    {
+      //get the length of the sample id name
+      read = fread(&(binfo->ginfo->sample_id_lens[i]),sizeof(int),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	  *ecode = EFailedToReadSampleIds;
+	}
+      else
+	{
+	  //now get the actual sample id for colour i
+	  if (binfo->ginfo->sample_id_lens[i]<MAX_LEN_SAMPLE_NAME)
+	    {
+	      char tmp_name[binfo->ginfo->sample_id_lens[i]+1];
+	      set_string_to_null(tmp_name,binfo->ginfo->sample_id_lens[i]+1);
+	      read = fread(tmp_name,sizeof(char),binfo->ginfo->sample_id_lens[i],fp);
+	      if (read==0)
+		{
+		  no_problem=false;
+		  *ecode = EFailedToReadSampleIds;
+		}
+	      else
+		{
+		  //binfo->ginfo->sample_ids[i][binfo->ginfo->sample_id_lens[i]] = '\0';
+		  set_string_to_null(binfo->ginfo->sample_ids[i], binfo->ginfo->sample_id_lens[i]+1);
+		  strcat(binfo->ginfo->sample_ids[i], tmp_name);
+		}
+	    }
+	  else
+	    {
+	      no_problem=false;
+	      *ecode = EFailedToReadSampleIdsSeemsTooLong;
+
+	    }
+	}
+    }
+
+  //now get the sequencing error rate
+  for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
+    {
+      read = fread(&(binfo->ginfo->seq_err[i]),sizeof(long double),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	  printf("i is %d and num colours is %d, but read is zero  - problem reading binary header. Contact Zam\n", i, binfo->number_of_colours);
+	  *ecode = EFailedToReadSeqErrRates;
+	}
+    }
+
+
+  //now get the error cleaning information for each colour
+  for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
+    {
+      no_problem = read_next_error_cleaning_object(fp, (binfo->ginfo->cleaning[i]) );
+      if (no_problem==false)
+	{
+	  *ecode = EFailedToReadErrorCleaningInfo;
+	}
+    }
+
+  return no_problem;
+
+}
+
+boolean read_next_error_cleaning_object(FILE* fp, ErrorCleaning* cl)
+{
+  int read;
+  boolean no_problem=true;
+
+  read = fread(&(cl->tip_clipping),sizeof(boolean),1,fp);
+  if (read==0)
+    {
+      no_problem=false;
+    }
+  if (no_problem==true)
+    {
+      read = fread(&(cl->remv_low_cov_sups),sizeof(boolean),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+
+  if (no_problem==true)
+    {
+      read = fread(&(cl->remv_low_cov_nodes),sizeof(boolean),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+  if (no_problem==true)
+    {
+      read = fread(&(cl->cleaned_against_another_graph),sizeof(boolean),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+  if (no_problem==true)
+    {
+      read = fread(&(cl->remv_low_cov_sups_thresh),sizeof(int),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+  if (no_problem==true)
+    {
+      read = fread(&(cl->remv_low_cov_nodes_thresh),sizeof(int),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+
+  if (no_problem==true)
+    {
+      read = fread(&(cl->len_name_of_graph_against_which_was_cleaned),sizeof(int),1,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+  if (no_problem==true)
+    {
+      read = fread(cl->name_of_graph_against_which_was_cleaned,sizeof(char),cl->len_name_of_graph_against_which_was_cleaned,fp);
+      if (read==0)
+	{
+	  no_problem=false;
+	}
+    }
+
+  return no_problem;
+
+}
+
+
+//returns number of kmers loaded*kmer_length
+ //array_mean_readlens and array_total_seqs are arrays of length NUMBER_OF_COLOURS, so they can hold the mean read length+total seq in every colour
+long long load_multicolour_binary_from_filename_into_graph(char* filename,  dBGraph* db_graph, GraphInfo* ginfo, int* num_cols_in_loaded_binary) 
+
+{
+
+  //printf("Load this binary - %s\n", filename);
+  FILE* fp_bin = fopen(filename, "r");
+  long long  seq_length = 0;
+  dBNode node_from_file;
+  element_initialise_kmer_covgs_edges_and_status_to_zero(&node_from_file);
+
+
+  int count=0;
+
+  if (fp_bin == NULL){
+    die("load_multicolour_binary_from_filename_into_graph cannot open file:%s\n",filename); 
+  }
+
+  BinaryHeaderErrorCode ecode = EValid;
+  BinaryHeaderInfo binfo;
+  initialise_binary_header_info(&binfo, ginfo);//pass in the main graph info
+
+  //load_multicolour always loads into colours starting at 0, hence last argument of following line
+  if (!(check_binary_signature_NEW(fp_bin, db_graph->kmer_size, &binfo, &ecode, 0)))
+    {
+      die("Cannot load this binary(%s) - signature check fails. Wrong max kmer, "
+          "number of colours, or binary version. Exiting, error code %d\n", 
+	        filename, ecode);
+    }
+  else
+    {
+      *num_cols_in_loaded_binary = binfo.number_of_colours;
+    }
+
+  //always reads the multicol binary into successive colours starting from 0 - assumes the hash table is empty prior to this
+  while (db_node_read_multicolour_binary(fp_bin,db_graph->kmer_size,&node_from_file, *num_cols_in_loaded_binary, binfo.version)){
+    count++;
+    
+    dBNode * current_node  = NULL;
+    BinaryKmer tmp_kmer;
+    //current_node = hash_table_find_or_insert(element_get_key(element_get_kmer(&node_from_file),db_graph->kmer_size, &tmp_kmer),&found,db_graph);
+    current_node = hash_table_insert(element_get_key(element_get_kmer(&node_from_file),db_graph->kmer_size, &tmp_kmer),db_graph);
+    
+    seq_length+=db_graph->kmer_size;
+   
+    int i;
+    for (i=0; i<(*num_cols_in_loaded_binary) ; i++)
+      {
+	add_edges(current_node, i, get_edge_copy(node_from_file, i));
+	db_node_update_coverage(current_node, i, db_node_get_coverage(&node_from_file,i));
+      }
+
+  }
+  
+  fclose(fp_bin);
+  return seq_length;
+}
+
+
 void load_se_seq_data_into_graph_colour(
-  const char *file_path,
-  char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_se,
-  char ascii_fq_offset, int colour_index, dBGraph *db_graph,
-  unsigned long long *bad_reads, // number of reads that have no good kmers
-  unsigned long long *dup_reads, // number of reads that pcr duplicates
-  unsigned long long *bases_read, // total bases in file
-  unsigned long long *bases_loaded, // bases that make it into the graph
-  unsigned long *readlen_count_array, // histogram of contigs lengths
-  unsigned long readlen_count_array_size,// contigs bigger go in final bin
-  boolean (*subsample_func)() ) 
+					const char *file_path,
+					char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_se,
+					char ascii_fq_offset, int colour_index, dBGraph *db_graph,
+					unsigned long long *bad_reads, // number of reads that have no good kmers
+					unsigned long long *dup_reads, // number of reads that pcr duplicates
+					unsigned long long *bases_read, // total bases in file
+					unsigned long long *bases_loaded, // bases that make it into the graph
+					unsigned long *readlen_count_array, // histogram of contigs lengths
+					unsigned long readlen_count_array_size,// contigs bigger go in final bin
+					boolean (*subsample_func)(),
+					boolean only_load_pre_existing_kmers) 
 {
   short kmer_size = db_graph->kmer_size;
 
@@ -588,9 +1064,19 @@ void load_se_seq_data_into_graph_colour(
 
       seq_to_binary_kmer(kmer_str, kmer_size, &curr_kmer);
       element_get_key(&curr_kmer, kmer_size, &tmp_key);
-      curr_node = hash_table_find_or_insert(&tmp_key, &curr_found, db_graph);
-      curr_orient = db_node_get_orientation(&curr_kmer, curr_node, kmer_size);
-
+      if (only_load_pre_existing_kmers==false)
+	{
+	  curr_node = hash_table_find_or_insert(&tmp_key, &curr_found, db_graph);
+	  curr_orient = db_node_get_orientation(&curr_kmer, curr_node, kmer_size);
+	}
+      else
+	{
+	  curr_node = hash_table_find(&tmp_key, db_graph);
+	  if (curr_node !=NULL)
+	    {
+	      curr_orient = db_node_get_orientation(&curr_kmer, curr_node, kmer_size);
+	    }
+	}
       if(remove_dups_se == true)
       {
         // We are assuming that if you want to remove dups, you deal with one sample
@@ -628,7 +1114,8 @@ void load_se_seq_data_into_graph_colour(
 			  db_graph, colour_index,
 			  curr_kmer, curr_node, curr_orient,
 			  bases_loaded,
-			  readlen_count_array, readlen_count_array_size);
+			  readlen_count_array, readlen_count_array_size,
+			  only_load_pre_existing_kmers);
 	  }
       }
     }
@@ -646,16 +1133,17 @@ void load_se_seq_data_into_graph_colour(
 }
 
 void load_pe_seq_data_into_graph_colour(
-  const char *file_path1, const char *file_path2,
-  char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_pe,
-  char ascii_fq_offset, int colour_index, dBGraph *db_graph,
-  unsigned long long *bad_reads, // number of reads that have no good kmers
-  unsigned long long *dup_reads, // number of reads that are pcr duplicates
-  unsigned long long *bases_read, // total bases in file
-  unsigned long long *bases_loaded, // bases that make it into the graph
-  unsigned long *readlen_count_array, // length of contigs loaded
-  unsigned long readlen_count_array_size, // contigs bigger go in final bin
-  boolean (*subsample_func)() )
+					const char *file_path1, const char *file_path2,
+					char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_pe,
+					char ascii_fq_offset, int colour_index, dBGraph *db_graph,
+					unsigned long long *bad_reads, // number of reads that have no good kmers
+					unsigned long long *dup_reads, // number of reads that are pcr duplicates
+					unsigned long long *bases_read, // total bases in file
+					unsigned long long *bases_loaded, // bases that make it into the graph
+					unsigned long *readlen_count_array, // length of contigs loaded
+					unsigned long readlen_count_array_size, // contigs bigger go in final bin
+					boolean (*subsample_func)(),
+					boolean only_load_pre_existing_kmers)
 
 {
   short kmer_size = db_graph->kmer_size;
@@ -727,8 +1215,21 @@ void load_pe_seq_data_into_graph_colour(
 
       // Look up first kmer
       element_get_key(&curr_kmer1, kmer_size, &tmp_key);
-      curr_node1 = hash_table_find_or_insert(&tmp_key, &curr_found1, db_graph);
-      curr_orient1 = db_node_get_orientation(&curr_kmer1, curr_node1, kmer_size);
+      if (only_load_pre_existing_kmers==false)
+	{
+	  curr_node1 = hash_table_find_or_insert(&tmp_key, &curr_found1, db_graph);
+	  curr_orient1 = db_node_get_orientation(&curr_kmer1, curr_node1, kmer_size);
+	}
+      else
+	{
+	  curr_node1 = hash_table_find(&tmp_key, db_graph);
+	  if (curr_node1!=NULL)
+	    {
+	      curr_orient1 = 
+		db_node_get_orientation(&curr_kmer1, curr_node1, kmer_size);
+	    }
+
+	}
     }
     else
     {
@@ -745,8 +1246,22 @@ void load_pe_seq_data_into_graph_colour(
 
       // Look up second kmer
       element_get_key(&curr_kmer2, kmer_size, &tmp_key);
-      curr_node2 = hash_table_find_or_insert(&tmp_key, &curr_found2, db_graph);
-      curr_orient2 = db_node_get_orientation(&curr_kmer2, curr_node2, kmer_size);
+      
+      if (only_load_pre_existing_kmers==false)
+	{
+	  curr_node2 = hash_table_find_or_insert(&tmp_key, &curr_found2, db_graph);
+	  curr_orient2 = db_node_get_orientation(&curr_kmer2, curr_node2, kmer_size);
+	}
+      else
+	{
+	  curr_node2 = hash_table_find(&tmp_key, db_graph);
+	  if (curr_node2 !=NULL)
+	    {
+	      curr_orient2 = 
+		db_node_get_orientation(&curr_kmer2, curr_node2, kmer_size);
+	    }
+	  
+	}
     }
     else
     {
@@ -787,13 +1302,6 @@ void load_pe_seq_data_into_graph_colour(
       }
     }
 
-    /*
-    // For debugging
-    char tmpstr1[kmer_size+1], tmpstr2[kmer_size+1];
-    binary_kmer_to_seq((BinaryKmer*)curr_kmer1, kmer_size, tmpstr1);
-    binary_kmer_to_seq((BinaryKmer*)curr_kmer2, kmer_size, tmpstr2);
-    printf("Paired first kmers: %s %s\n", read1 ? tmpstr1 : "", read2 ? tmpstr2 : "");
-    */
 
     if(!is_dupe)
     {
@@ -809,7 +1317,8 @@ void load_pe_seq_data_into_graph_colour(
 			    db_graph, colour_index,
 			    curr_kmer1, curr_node1, curr_orient1,
 			    bases_loaded,
-			    readlen_count_array, readlen_count_array_size);
+			    readlen_count_array, readlen_count_array_size,
+			    only_load_pre_existing_kmers);
 	    }
 	  
 	  if(read2)
@@ -822,7 +1331,8 @@ void load_pe_seq_data_into_graph_colour(
 			    db_graph, colour_index,
 			    curr_kmer2, curr_node2, curr_orient2,
 			    bases_loaded,
-			    readlen_count_array, readlen_count_array_size);
+			    readlen_count_array, readlen_count_array_size,
+			    only_load_pre_existing_kmers);
 	    }
 	}
 
@@ -852,15 +1362,16 @@ StrBuf* file_reader_get_strbuf_of_dir_path(char* path)
 // bases_loaded to see how much passed filters and
 // got into the graph
 void load_se_filelist_into_graph_colour(
-  char* se_filelist_path,
-  int qual_thresh, int homopol_limit, boolean remove_dups_se,
-  char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_list,
-  unsigned int *total_files_loaded,
-  unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-  unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-  unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-  boolean (*subsample_func)() )
-
+					char* se_filelist_path,
+					int qual_thresh, int homopol_limit, boolean remove_dups_se,
+					char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_list,
+					unsigned int *total_files_loaded,
+					unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
+					unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
+					unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					boolean (*subsample_func)(),
+					boolean only_load_pre_existing_kmers )
+  
 {
   qual_thresh += ascii_fq_offset;
 
@@ -925,25 +1436,25 @@ void load_se_filelist_into_graph_colour(
       if(is_colour_list)
       {
         load_se_filelist_into_graph_colour(path_ptr,
-          qual_thresh, homopol_limit, remove_dups_se,
-          ascii_fq_offset, colour, db_graph, 0,
-          &se_files_loaded,
-          &se_bad_reads, &se_dup_reads,
-          &se_bases_read, &se_bases_loaded,
-	  readlen_count_array, readlen_count_array_size,
-	  subsample_func);
+					   qual_thresh, homopol_limit, remove_dups_se,
+					   ascii_fq_offset, colour, db_graph, 0,
+					   &se_files_loaded,
+					   &se_bad_reads, &se_dup_reads,
+					   &se_bases_read, &se_bases_loaded,
+					   readlen_count_array, readlen_count_array_size,
+					   subsample_func,  only_load_pre_existing_kmers);
 
         colour++;
       }
       else
       {
         load_se_seq_data_into_graph_colour(path_ptr,
-          qual_thresh, homopol_limit, remove_dups_se,
-          ascii_fq_offset, colour, db_graph,
-          &se_bad_reads, &se_dup_reads,
-          &se_bases_read, &se_bases_loaded,
-	  readlen_count_array, readlen_count_array_size,
-          subsample_func);
+					   qual_thresh, homopol_limit, remove_dups_se,
+					   ascii_fq_offset, colour, db_graph,
+					   &se_bad_reads, &se_dup_reads,
+					   &se_bases_read, &se_bases_loaded,
+					   readlen_count_array, readlen_count_array_size,
+					   subsample_func,  only_load_pre_existing_kmers);
       }
 
       se_files_loaded++;
@@ -977,14 +1488,15 @@ void load_se_filelist_into_graph_colour(
 
 // Go through all the files, loading data into the graph
 void load_pe_filelists_into_graph_colour(
-  char* pe_filelist_path1, char* pe_filelist_path2,
-  int qual_thresh, int homopol_limit, boolean remove_dups_pe,
-  char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_lists,
-  unsigned int *total_file_pairs_loaded,
-  unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-  unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-  unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-  boolean (*subsample_func)() ) 
+					 char* pe_filelist_path1, char* pe_filelist_path2,
+					 int qual_thresh, int homopol_limit, boolean remove_dups_pe,
+					 char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_lists,
+					 unsigned int *total_file_pairs_loaded,
+					 unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
+					 unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
+					 unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					 boolean (*subsample_func)(),
+					 boolean only_load_pre_existing_kmers) 
 {
   qual_thresh += ascii_fq_offset;
 
@@ -1094,22 +1606,24 @@ void load_pe_filelists_into_graph_colour(
       if(is_colour_lists)
       {
         load_pe_filelists_into_graph_colour(path_ptr1, path_ptr2,
-          qual_thresh, homopol_limit, remove_dups_pe,
-          ascii_fq_offset, colour, db_graph, 0,
-          &pe_file_pairs_loaded, &pe_bad_reads, &pe_dup_reads,
-          &pe_bases_read, &pe_bases_loaded,
-	  readlen_count_array, readlen_count_array_size, subsample_func);
+					    qual_thresh, homopol_limit, remove_dups_pe,
+					    ascii_fq_offset, colour, db_graph, 0,
+					    &pe_file_pairs_loaded, &pe_bad_reads, &pe_dup_reads,
+					    &pe_bases_read, &pe_bases_loaded,
+					    readlen_count_array, readlen_count_array_size, subsample_func,
+					    only_load_pre_existing_kmers);
 
         colour++;
       }
       else
       {
         load_pe_seq_data_into_graph_colour(path_ptr1, path_ptr2,
-          qual_thresh, homopol_limit, remove_dups_pe,
-          ascii_fq_offset, colour, db_graph,
-          &pe_bad_reads, &pe_dup_reads,
-          &pe_bases_read, &pe_bases_loaded,
-	  readlen_count_array, readlen_count_array_size, subsample_func);
+					   qual_thresh, homopol_limit, remove_dups_pe,
+					   ascii_fq_offset, colour, db_graph,
+					   &pe_bad_reads, &pe_dup_reads,
+					   &pe_bases_read, &pe_bases_loaded,
+					   readlen_count_array, readlen_count_array_size, subsample_func,
+					   only_load_pre_existing_kmers);
       }
 
       pe_file_pairs_loaded++;
@@ -2387,48 +2901,6 @@ int given_prev_kmer_align_next_read_to_graph_and_return_node_array_including_ove
 
 
 
-
-boolean get_read_lengths_and_total_seqs_from_header(FILE * fp, BinaryHeaderInfo* binfo, BinaryHeaderErrorCode* ecode,
-						    int first_colour_loading_into)
-{
-  int read;
-  int i;
-  boolean no_problem=true;
-  
-  for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
-    {
-      int mean_read_len=0;
-      read = fread(&mean_read_len, sizeof(int),1,fp);
-      if (read==0)
-	{
-	  no_problem=false;
-	  *ecode= EFailedToReadReadLensAndCovgs;
-	}
-      else
-	{
-	  binfo->ginfo->mean_read_length[i] += mean_read_len;
-	}
-    }
-  if (no_problem==true)
-    {
-      for (i=first_colour_loading_into; (i<first_colour_loading_into+binfo->number_of_colours) && (no_problem==true); i++)
-	{
-	  long long tot=0;
-	  read = fread(&tot, sizeof(long long),1,fp);
-	  if (read==0)
-	    {
-	      no_problem=false;
-	      *ecode= EFailedToReadReadLensAndCovgs;
-	    }
-	  else
-	    {
-	      binfo->ginfo->total_sequence[i] +=tot;
-	    }
-	}
-    }
-
-  return no_problem;
-}
 
 
 // Given a 'filelist' file, check all files pointed to exist. 

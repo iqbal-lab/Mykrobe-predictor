@@ -1,0 +1,48 @@
+
+-----
+Tue Mar 11 21:46:39 2014
+Starting Cortex, version 1.0.5.21 (commit )
+Command: /home/zam/dev/hg/bitbucket/CORTEX_mainline/bin/cortex_var_31_c1 --se_list list_speciesbranches_genes_and_muts --kmer_size 31 --mem_height 20 --mem_width 100 --dump_binary skeleton.ctx --sample_id skeleton_chg_id_843686d13302b7b04d6b26d7464e87ce7d401cd7 
+Maximum k-mer size (compile-time setting): 31
+Actual K-mer size: 31
+Hash table created, number of buckets: 1048576
+Input file of single ended data filenames: list_speciesbranches_genes_and_muts
+No paired-end data
+No quality filtering
+No PCR duplicate removal
+
+-----
+Tue Mar 11 21:46:39 2014
+DEBUG - we have qual thresh of 0
+Collisions:
+	 tries 0: 1156379
+
+-----
+Tue Mar 11 21:46:44 2014
+Sequence data loaded
+Total bases parsed:1967291
+Total bases passing filters and loaded into graph:1957799
+DEBUG - bad reads 369
+Mean read length after filters applied:73
+Setting the following per-colour sequencing error rates (used only for genotyping):
+Colour	Rate
+0	0.010
+Total kmers in table: 974949
+The following is a summary of the data that has been loaded, immediately after loading (prior to any error cleaning, calling etc)
+****************************************
+SUMMARY:
+Colour	SampleID	MeanReadLen	TotalSeq	ErrorCleaning	LowCovSupsThresh	LowCovNodesThresh	PoolagainstWhichCleaned
+0	skeleton_chg_id_843686d13302b7b04d6b26d7464e87ce7d401cd7	73	1957799	UNCLEANED	-1	-1	undefined
+****************************************
+
+-----
+Tue Mar 11 21:46:44 2014
+Input data was fasta/q, so dump single colour binary file: skeleton.ctx
+
+-----
+Tue Mar 11 21:46:47 2014
+Binary dumped
+
+-----
+Tue Mar 11 21:46:48 2014
+Cortex completed - y'all have a nice day!

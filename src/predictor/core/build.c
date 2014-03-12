@@ -37,17 +37,39 @@
 #include "seq.h"
 #include "file_reader.h"
 #include "build.h"
+#include "graph_info.h"
+
+
+void set_all_coverages_to_zero(dBGraph* dbg, int colour)
+{
+    void reset_covg(dBNode * node)
+    {
+      if (node!=NULL)
+	{
+	  node->coverage[colour]=0;
+	}
+    }
+    hash_table_traverse(&reset_covg, dbg);
+}
+
 
 //if boolean is_list==true, then path=list of fastq (or bams)
 //if boolean is_list==false, then path is a fastq file  (or bam)
-unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean is_list, uint16_t kmer,
-				       uint64_t* readlen_distrib, int readlen_distrib_len,
-				       uint64_t* kmer_covg_array, int len_kmer_covg_array)
+unsigned long long build_unclean_graph(dBGraph* db_graph, 
+				       StrBuf* path, 
+				       boolean is_list, 
+				       uint16_t kmer,
+				       uint64_t* readlen_distrib, 
+				       int readlen_distrib_len,
+				       uint64_t* kmer_covg_array, 
+				       int len_kmer_covg_array,
+				       boolean only_load_pre_existing_kmers,
+				       int into_colour)
 {
   int ascii_fq_offset = 33;
   int qual_thresh = 10;
   int homopolymer_cutoff=0;
-  int into_colour=0;
+
   unsigned int num_files_loaded=0;
   unsigned long long total_bad_reads=0; 
   unsigned long long total_dup_reads=0;
@@ -66,9 +88,15 @@ unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean 
 					 into_colour, 
 					 db_graph, 
 					 0, // 0 => filelist not colourlist
-					 &num_files_loaded, &total_bad_reads, &total_dup_reads,
-					 &total_bases_read, &total_bases_loaded,
-					 readlen_distrib, readlen_distrib_len, &subsample_null);
+					 &num_files_loaded, 
+					 &total_bad_reads, 
+					 &total_dup_reads,
+					 &total_bases_read, 
+					 &total_bases_loaded,
+					 readlen_distrib, 
+					 readlen_distrib_len, 
+					 &subsample_null,
+					 only_load_pre_existing_kmers);
     }
   else
     {
@@ -84,7 +112,10 @@ unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean 
 					 &total_dup_reads,
 					 &total_bases_read, 
 					 &total_bases_loaded,
-					 readlen_distrib, readlen_distrib_len, &subsample_null);
+					 readlen_distrib, 
+					 readlen_distrib_len, 
+					 &subsample_null,
+					 only_load_pre_existing_kmers);
     }
   db_graph_get_covg_distribution_array(db_graph, 0, &db_node_condition_always_true,
 				       kmer_covg_array, len_kmer_covg_array);

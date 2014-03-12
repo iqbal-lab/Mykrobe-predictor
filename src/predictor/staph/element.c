@@ -420,6 +420,10 @@ void db_node_increment_coverage(dBNode* e, int colour)
 
 void db_node_update_coverage(dBNode* e, int colour, long update)
 {
+  if (e==NULL)
+    {
+      return;
+    }
   assert(colour < NUMBER_OF_COLOURS);
 
   if(COVG_MAX - update >= e->coverage[colour])
@@ -560,6 +564,10 @@ boolean db_node_add_edge(dBNode * src_e, dBNode * tgt_e,
                          Orientation src_o, Orientation tgt_o,
                          short kmer_size, int colour)
 {
+  if ( (src_e==NULL) || (tgt_e==NULL) )
+    {
+      return false;
+    }
   BinaryKmer src_k, tgt_k, tmp_kmer; 
   char seq1[kmer_size+1];
   char seq2[kmer_size+1];
@@ -1443,6 +1451,10 @@ boolean db_node_condition_always_true(dBNode* node)
 // and it will handle the case when it is a read start in both directions
 boolean db_node_check_read_start(dBNode* node, Orientation ori)
 {
+  if (node==NULL)
+    {
+      return false;
+    }
   if ( (ori==forward) && 
        (db_node_check_status(node, read_start_forward) || db_node_check_status(node, read_start_forward_and_reverse) ) ) 
     {
@@ -1461,9 +1473,14 @@ boolean db_node_check_read_start(dBNode* node, Orientation ori)
 
 void db_node_set_read_start_status(dBNode* node, Orientation ori)
 {
+  if (node==NULL)
+    {
+      return;
+    }
+
   if (db_node_check_status(node, visited) )
     {
-      warn("setting status of a visisted node to read_start\n");
+      warn("setting status of a visited node to read_start\n");
     }
   else if (db_node_check_status(node, unassigned) )
     {

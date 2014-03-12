@@ -50,15 +50,18 @@ const char* usage=
 "   [--help] \t\t\t\t\t\t\t=\t This help screen.\n\n" \
 "   [--list FILENAME] \t\t\t\t\t=\t List of fastq or bam. Cannot use --list and --file\n" \
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
-  "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" ;
-  //"   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping\n" ;
+"   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
+"   [--oligo_bin FILENAME] \t\t\t\t\t=\t Full path to oligo binary file - only needed if setting method to InSilicoOligos\n" \
+"   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" ;
 
 int default_opts(CmdLine * c)
 {
   strbuf_reset(c->seq_path);
   strbuf_reset(c->id);
   strbuf_append_str(c->id, "UnknownSample");
+  strbuf_reset(c->skeleton_binary);
   c->genome_size = 2800000;
+
   c->kmer_size = 31;
   c->mem_width = 100;
   c->mem_height= 19;
@@ -79,6 +82,7 @@ CmdLine* cmd_line_alloc()
     }
   cmd->seq_path = strbuf_new();
   cmd->id = strbuf_new();
+  cmd->skeleton_binary = strbuf_new();
   int max_expected_read_len = 500;//illumina
   cmd->readlen_distrib_size = max_expected_read_len + 1;
   cmd->readlen_distrib
@@ -107,6 +111,7 @@ void cmd_line_free(CmdLine* cmd)
 {
   strbuf_free(cmd->seq_path);
   strbuf_free(cmd->id);
+  strbuf_free(cmd->skeleton_binary);
   free(cmd->readlen_distrib);
   free(cmd);
 }
@@ -124,6 +129,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"file",required_argument, NULL, 'f'},
     {"method", required_argument, NULL, 'm'},
     {"sample_id", required_argument, NULL, 's'},
+    {"oligo_bin", required_argument, NULL, 'b'},
     {0,0,0,0}	
   };
   
@@ -134,7 +140,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   optind=1;
   
  
-  opt = getopt_long(argc, argv, "hf:l:m:s:", long_options, &longopt_index);
+  opt = getopt_long(argc, argv, "hf:l:m:s:b:", long_options, &longopt_index);
 
   while ((opt) > 0) {
 	       
@@ -189,6 +195,8 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	else if (strcmp(optarg, "InSilicoOligos")==0)
 	  {
 	    cmdline_ptr->method=InSilicoOligos;
+	    /* cmdline_ptr->mem_height=19;
+	       cmdline_ptr->mem_width=100; */
 	  }
 	else if (strcmp(optarg, "WGAssemblyAndTranslation")==0)
 	  {
@@ -206,6 +214,20 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	strbuf_append_str(cmdline_ptr->id, optarg);
 	break;
       }
+    case 'b':
+      {
+	if (access(optarg,F_OK)==0) 
+	  {
+	    strbuf_reset(cmdline_ptr->skeleton_binary);
+	    strbuf_append_str(cmdline_ptr->skeleton_binary, optarg);
+	  }
+	else
+	  {
+	    errx(1,"Cannot open file %s",optarg);
+	    return -1;
+	  }
+	break;
+      }
     default:
       {
 	errx(1, "Unknown option %c\n", opt);
@@ -213,7 +235,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }      
 
     }
-    opt = getopt_long(argc, argv, "hf:l:m:s:", long_options, &longopt_index);
+    opt = getopt_long(argc, argv, "hf:l:m:s:b:", long_options, &longopt_index);
     
   }   
   
@@ -256,7 +278,28 @@ int check_cmdline(CmdLine* cmd_line, char* error_string)
     {
       die("You must specify one of  --list (list of FASTQ or BAM files to load)  or  --file (single FASTQ or BAM). In both cases, these are assumed to come from one sample\n");
     }
-
+  if ( 
+      (cmd_line->method!=WGAssemblyThenGenotyping)
+      &&
+      (cmd_line->method!=InSilicoOligos)
+       )
+    {
+      die("--method only takes argument WGAssemblyThenGenotyping or InSilicoOligos\n");
+    }
+  if (cmd_line->method==InSilicoOligos)
+    {
+      if (strcmp(cmd_line->skeleton_binary->buff,"")==0)
+	{
+	  die("If you specify --method InSilicoOligos, then you must also specify --oligo_bin\n");
+	}
+    }
+  if (strcmp(cmd_line->skeleton_binary->buff, "")!=0)
+    {
+      if (cmd_line->method!=InSilicoOligos)
+	{
+	  die("You should only specify --oligo_bin if you are setting --method to InSilicoOligos\n");
+	}
+    }
   return 0;
 }
 

@@ -108,7 +108,32 @@ int main(int argc, char **argv)
   printf("** Start time\n");
   timestamp();
   printf("** Sample:\n%s\n", cmd_line->id->buff);
-  
+
+ 
+  int into_colour=0;
+  boolean only_load_pre_existing_kmers=false;
+  GraphInfo* gi = graph_info_alloc_and_init();
+
+  if (cmd_line->method==WGAssemblyThenGenotyping)
+    {
+      only_load_pre_existing_kmers=false;
+    }
+  else if (cmd_line->method==InSilicoOligos)
+    {
+      only_load_pre_existing_kmers=true;
+      int col=0;
+
+      load_multicolour_binary_from_filename_into_graph(cmd_line->skeleton_binary->buff,
+						       db_graph, 
+						       gi,
+						       &col);
+      set_all_coverages_to_zero(db_graph, 0);
+    }
+  else
+    {
+      die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
+    }
+
   uint64_t bp_loaded = build_unclean_graph(db_graph, 
 					   cmd_line->seq_path,
 					   cmd_line->input_list,
@@ -116,7 +141,10 @@ int main(int argc, char **argv)
 					   cmd_line->readlen_distrib,
 					   cmd_line->readlen_distrib_size,
 					   cmd_line->kmer_covg_array, 
-					   cmd_line->len_kmer_covg_array);
+					   cmd_line->len_kmer_covg_array,
+					   only_load_pre_existing_kmers,
+					   into_colour);
+  
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
 							   cmd_line->readlen_distrib_size);
 
