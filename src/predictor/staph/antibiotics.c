@@ -194,7 +194,8 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 								 boolean * full_entry),
 					      AntibioticInfo* abi,
 					      ReadingUtils* rutils,
-					      ResVarInfo* tmp_rvi)
+					      ResVarInfo* tmp_rvi,
+					      int ignore_first, int ignore_last)
 {
   reset_reading_utils(rutils);
   reset_res_var_info(tmp_rvi);
@@ -218,7 +219,8 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 				    rutils->array_or,
 				    rutils->working_ca, 
 				    MAX_LEN_MUT_ALLELE,
-				    tmp1, tmp2, tmp3);
+				    tmp1, tmp2, tmp3,
+				    ignore_first, ignore_last);
 
       copy_res_var_info(tmp_rvi, abi->mut[tmp_rvi->var_id]);
     }
@@ -241,6 +243,7 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 						  AntibioticInfo* abi,
 						  ReadingUtils* rutils,
 						  GeneInfo* tmp_gi)
+
 {
   reset_reading_utils(rutils);
 
@@ -275,7 +278,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       AntibioticInfo* abi,
 				       ReadingUtils* rutils,
 				       ResVarInfo* tmp_rvi,
-				       GeneInfo* tmp_gi)
+				       GeneInfo* tmp_gi,
+				       int ignore_first, int ignore_last)
 {
 
   FILE* fp = fopen(abi->fasta->buff, "r");
@@ -290,13 +294,15 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 					  file_reader,
 					  abi,
 					  rutils, 
-					  tmp_rvi);
+					  tmp_rvi,
+					  ignore_first, ignore_last);
   load_antibiotic_gene_presence_info_on_sample(fp,
 					       db_graph,
 					       file_reader,
 					       abi,
 					       rutils,
 					       tmp_gi);
+
   fclose(fp);
 }
 
@@ -315,7 +321,8 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  ResVarInfo* tmp_rvi,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
-				  StrBuf* install_dir
+				  StrBuf* install_dir,
+				  int ignore_first, int ignore_last
 				  )
 {
   reset_antibiotic_info(abi);
@@ -332,7 +339,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi, ignore_first, ignore_last);
 
   if (abi->genes[aacAaphD]->percent_nonzero > GENE_THRESH_aacAaphD)
     {
@@ -353,7 +360,8 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  ResVarInfo* tmp_rvi,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
-				  StrBuf* install_dir
+				  StrBuf* install_dir,
+				  int ignore_first, int ignore_last
 				  )
 
 {
@@ -371,7 +379,8 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
   if (abi->genes[blaZ]->percent_nonzero > GENE_THRESH_blaZ)
     {
@@ -392,7 +401,8 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    ResVarInfo* tmp_rvi,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
-				    StrBuf* install_dir
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last
 				  )
 
 {
@@ -411,7 +421,8 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
   if (abi->mut[dfrB_F99I]->some_resistant_allele_present==true)
     {
@@ -453,7 +464,8 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    ResVarInfo* tmp_rvi,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
-StrBuf* install_dir)
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -470,7 +482,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
  if (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
     {
@@ -509,7 +522,8 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				   ResVarInfo* tmp_rvi,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
-StrBuf* install_dir)
+				   StrBuf* install_dir,
+				   int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -525,7 +539,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
  if (abi->genes[mecA]->percent_nonzero > GENE_THRESH_mecA)
     {
@@ -541,11 +556,12 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 						      int max_read_length, 
 						      boolean new_entry, 
 						      boolean * full_entry),
-				   ReadingUtils* rutils,
-				   ResVarInfo* tmp_rvi,
-				   GeneInfo* tmp_gi,
-				   AntibioticInfo* abi,
-StrBuf* install_dir)
+				     ReadingUtils* rutils,
+				     ResVarInfo* tmp_rvi,
+				     GeneInfo* tmp_gi,
+				     AntibioticInfo* abi,
+				     StrBuf* install_dir,
+				     int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -561,7 +577,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
   if (abi->mut[gyrA_E88K]->some_resistant_allele_present==true)
     {
@@ -600,11 +617,12 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 						      int max_read_length, 
 						      boolean new_entry, 
 						      boolean * full_entry),
-				   ReadingUtils* rutils,
-				   ResVarInfo* tmp_rvi,
-				   GeneInfo* tmp_gi,
-				   AntibioticInfo* abi,
-StrBuf* install_dir)
+				  ReadingUtils* rutils,
+				  ResVarInfo* tmp_rvi,
+				  GeneInfo* tmp_gi,
+				  AntibioticInfo* abi,
+				  StrBuf* install_dir,
+				  int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -621,7 +639,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
   if (abi->mut[rpoB_A477D]->some_resistant_allele_present==true)
     {
       return false;
@@ -718,11 +737,12 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 						      int max_read_length, 
 						      boolean new_entry, 
 						      boolean * full_entry),
-				   ReadingUtils* rutils,
-				   ResVarInfo* tmp_rvi,
-				   GeneInfo* tmp_gi,
-				   AntibioticInfo* abi,
-StrBuf* install_dir)
+				    ReadingUtils* rutils,
+				    ResVarInfo* tmp_rvi,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -737,7 +757,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
  if (abi->genes[tetK]->percent_nonzero > GENE_THRESH_tetK)
     {
@@ -767,7 +788,8 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 ResVarInfo* tmp_rvi,
 				 GeneInfo* tmp_gi,
 				 AntibioticInfo* abi,
-StrBuf* install_dir)
+				 StrBuf* install_dir,
+				 int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -783,7 +805,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
  if (abi->genes[mupA]->percent_nonzero > GENE_THRESH_mupA)
     {
@@ -798,16 +821,17 @@ StrBuf* install_dir)
 
 
 boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
-				   int (*file_reader)(FILE * fp, 
-						      Sequence * seq, 
-						      int max_read_length, 
-						      boolean new_entry, 
-						      boolean * full_entry),
-				   ReadingUtils* rutils,
-				   ResVarInfo* tmp_rvi,
-				   GeneInfo* tmp_gi,
-				   AntibioticInfo* abi,
-StrBuf* install_dir)
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    ResVarInfo* tmp_rvi,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last)
 {
   reset_antibiotic_info(abi);
   
@@ -823,7 +847,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
 
   if (abi->mut[fusA_A655E]->some_resistant_allele_present==true)
@@ -1012,7 +1037,8 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   ResVarInfo* tmp_rvi,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
-				   StrBuf* install_dir)
+				   StrBuf* install_dir,
+				   int ignore_first, int ignore_last)
 
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1029,7 +1055,8 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
  if (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
     {
@@ -1050,8 +1077,9 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				   ResVarInfo* tmp_rvi,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
-StrBuf* install_dir)
-
+				  StrBuf* install_dir,
+				  int ignore_first, int ignore_last)
+  
 {
   //constitutuve only. inducible you get by checking erythromycin also,
   reset_antibiotic_info(abi);
@@ -1068,7 +1096,8 @@ StrBuf* install_dir)
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi);
+				    tmp_gi,
+				    ignore_first, ignore_last);
 
  if (abi->genes[vanA]->percent_nonzero > GENE_THRESH_vanA)
     {
@@ -1100,9 +1129,11 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 							ResVarInfo* tmp_rvi,
 							GeneInfo* tmp_gi,
 							AntibioticInfo* abi,
-							StrBuf* install_dir),
+							StrBuf* install_dir,
+							int ignore_first, int ignore_last),
 					StrBuf* tmpbuf,
-					StrBuf* install_dir
+					StrBuf* install_dir,
+					int ignore_first, int ignore_last
 					)
 {
   boolean suc;
@@ -1113,7 +1144,8 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 	      tmp_rvi,
 	      tmp_gi,
 	      abi, 
-	      install_dir);
+	      install_dir,
+	      ignore_first, ignore_last);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
   printf("%s\t", tmpbuf->buff);
@@ -1149,10 +1181,12 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 							 ResVarInfo* tmp_rvi,
 							 GeneInfo* tmp_gi,
 							 AntibioticInfo* abi,
-							 StrBuf* install_dir),
+							 StrBuf* install_dir,
+							 int ignore_first, int ignore_last),
 					 StrBuf* tmpbuf,
 					 boolean erythromycin_susceptible,
-					 StrBuf* install_dir
+					 StrBuf* install_dir,
+					 int ignore_first, int ignore_last
 					 )
 {
   boolean suc;
@@ -1163,7 +1197,8 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 	      tmp_rvi,
 	      tmp_gi,
 	      abi,
-	      install_dir);
+	      install_dir,
+	      ignore_first, ignore_last);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
   printf("%s\t", tmpbuf->buff);

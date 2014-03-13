@@ -54,6 +54,7 @@ typedef struct
   uint64_t* readlen_distrib;
   uint64_t readlen_distrib_size;
   uint64_t* kmer_covg_array;
+  int num_bases_around_mut_in_fasta;
   int len_kmer_covg_array;
   int bucket_size;
   int number_of_buckets_bits;

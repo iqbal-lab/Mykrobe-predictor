@@ -61,7 +61,8 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 						   boolean new_entry, 
 						   boolean * full_entry),
 				dBNode** array_nodes, Orientation*  array_or,
-				CovgArray* working_ca, int max_read_length);
+				CovgArray* working_ca, int max_read_length,
+				int ignore_first, int ignore_last);
 
 
 
@@ -91,7 +92,8 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   CovgArray* working_ca, int max_read_length,
 				   StrBuf* temp_readid_buf, 
 				   StrBuf* temp_mut_buf,
-				   StrBuf* temp_gene_name_buf);
+				   StrBuf* temp_gene_name_buf,
+				   int ignore_first, int ignore_last);
 
 
 #endif

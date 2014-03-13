@@ -138,7 +138,8 @@ void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
 }
 
 
-Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir )
+Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
+			  int ignore_first, int ignore_last)
 {
   // Define the paths to the possible species
   StrBuf* species_file_paths[17];
@@ -252,7 +253,8 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
 					       seq, kmer_window,
 					       &file_reader_fasta,
 					       array_nodes, array_or, 
-					       working_ca, max_branch_len);
+					       working_ca, max_branch_len,
+					       ignore_first, ignore_last);
 	number_of_reads = number_of_reads + 1;
 	sumpcov = sumpcov + ai->percent_nonzero;
 	

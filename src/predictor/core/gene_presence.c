@@ -179,6 +179,7 @@ int get_next_gene_info(FILE* fp,
 		       Orientation*  array_or,
 		       CovgArray* working_ca, 
 		       int max_read_length)
+
 {
 
   boolean full_entry=true;
@@ -202,22 +203,27 @@ int get_next_gene_info(FILE* fp,
     }
   //collect min, median covg on gene and also percentage of kmers with any covg
   boolean too_short=false;
+  int ignore_first=0;
+  int ignore_last=0;
   gene_info->median_covg = 
     median_covg_on_allele_in_specific_colour(array_nodes,
 					     num_kmers,
 					     working_ca,
 					     0,
-					     &too_short);
+					     &too_short,
+					     ignore_first, ignore_last);
   gene_info->min_covg = 
     min_covg_on_allele_in_specific_colour(array_nodes,
 					  num_kmers,
 					  0,
-					  &too_short);
+					  &too_short,
+					  ignore_first, ignore_last);
   gene_info->percent_nonzero = 
     percent_nonzero_on_allele_in_specific_colour(array_nodes,
 						 num_kmers,
 						 0,
-						 &too_short);
+						 &too_short,
+						 ignore_first, ignore_last);
   strbuf_reset(gene_info->strbuf);
   strbuf_append_str(gene_info->strbuf,
 		    seq->name);

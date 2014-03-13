@@ -157,8 +157,10 @@ int main(int argc, char **argv)
   	      expected_depth, cmd_line->max_expected_sup_len);
 
 
+
   StrBuf* tmp_name = strbuf_new();
-  Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir);
+  Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
+				 1,1);
   map_species_enum_to_str(sp,tmp_name);
   printf("** Species\n%s\n", tmp_name->buff);
   if (sp != Aureus)
@@ -172,31 +174,49 @@ int main(int argc, char **argv)
       printf("** Antimicrobial susceptibility predictions\n");
     }
   
+  //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
+  //if k=31, we want to ignore 1 kmer at start and end
+  //if k=29, we want to ignore 3 kmers at start and end.. etc
+
+
+  int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-  &is_gentamycin_susceptible, tmp_name, cmd_line->install_dir); 
+				  &is_gentamycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   boolean erythromycin_susceptible = print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-								    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir);
+								     &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
+								     ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir);
+				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore);
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
-				   erythromycin_susceptible, cmd_line->install_dir);
+				   erythromycin_susceptible, cmd_line->install_dir,
+				   ignore, ignore);
   /*  printf("** Virulence markers\n");
   print_pvl_presence(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
   &is_pvl_positive, tmp_name); */ 

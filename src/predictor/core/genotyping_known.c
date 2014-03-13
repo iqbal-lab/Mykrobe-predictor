@@ -47,6 +47,10 @@ void free_allele_info(AlleleInfo* ai)
 
 
 
+//we want to use the same FASTA files irrespective of k.
+//so we expect alleles ay have extra bases on the front and en
+//ie we have fasta with 30 bases before/after a SNP, but if we are using k=21,
+//then we must ignore the first 9 and last 9 bases
 int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 				Sequence* seq, KmerSlidingWindow* kmer_window,
 				int (*file_reader)(FILE * fp, 
@@ -55,7 +59,8 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 						   boolean new_entry, 
 						    boolean * full_entry),
 				 dBNode** array_nodes, Orientation*  array_or,
-				 CovgArray* working_ca, int max_read_length)
+				CovgArray* working_ca, int max_read_length,
+				int ignore_first, int ignore_last)
 
 {
 
@@ -84,17 +89,20 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 						 num_kmers, 
 						 working_ca, 
 						 0, 
-						 &too_short);
+						 &too_short,
+						 ignore_first, ignore_last);
       ainfo->min_covg = 
 	min_covg_on_allele_in_specific_colour(array_nodes, 
 					      num_kmers, 
 					      0, 
-					      &too_short);
+					      &too_short,
+					      ignore_first, ignore_last);
       ainfo->percent_nonzero = 
 	percent_nonzero_on_allele_in_specific_colour(array_nodes, 
 						     num_kmers, 
 						     0, 
-						     &too_short);
+						     &too_short,
+						     ignore_first, ignore_last);
     }
   return num_kmers;
 
@@ -128,16 +136,7 @@ void reset_res_var_info(ResVarInfo* rvi)
 {
   memset(rvi,0, sizeof(ResVarInfo));
   rvi->some_resistant_allele_present=false;
-  /*  rvi->susceptible_allele.median_covg=0;
-  rvi->susceptible_allele.min_covg=0;
-  rvi->susceptible_allele.percent_nonzero=0;
-  int i;
-  for (i=0; i<rvi->num_resistant_alleles; i++)
-    {
-      rvi->resistant_alleles[i].median_covg=0;
-      rvi->resistant_alleles[i].min_covg=0;
-      rvi->resistant_alleles[i].percent_nonzero=0;
-      } */
+
 }
 
 
@@ -242,7 +241,9 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   CovgArray* working_ca, int max_read_length,
 				   StrBuf* temp_readid_buf, 
 				   StrBuf* temp_mut_buf,
-				   StrBuf* temp_gene_name_buf)
+				   StrBuf* temp_gene_name_buf,
+				   int ignore_first, int ignore_last)
+				   
 {
 
 
@@ -295,17 +296,20 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 					     num_kmers, 
 					     working_ca, 
 					     0, 
-					     &too_short);
+					     &too_short,
+					     ignore_first, ignore_last);
   rinfo->susceptible_allele.min_covg = 
     min_covg_on_allele_in_specific_colour(array_nodes, 
 					  num_kmers, 
 					  0, 
-					  &too_short);
+					  &too_short,
+					  ignore_first, ignore_last);
   rinfo->susceptible_allele.percent_nonzero = 
     percent_nonzero_on_allele_in_specific_colour(array_nodes, 
 						 num_kmers, 
 						 0, 
-						 &too_short);
+						 &too_short,
+						 ignore_first, ignore_last);
 
   int i;
   for (i=0; i<rinfo->num_resistant_alleles; i++)
@@ -327,17 +331,21 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 						 num_kmers, 
 						 working_ca,
 						 0,
-						 &too_short);
+						 &too_short,
+						 ignore_first, ignore_last);
       rinfo->resistant_alleles[i].min_covg = 
 	min_covg_on_allele_in_specific_colour(array_nodes,
 					      num_kmers,
 					      0,
-					      &too_short);
+					      &too_short,
+					      ignore_first, ignore_last);
       rinfo->resistant_alleles[i].percent_nonzero = 
 	percent_nonzero_on_allele_in_specific_colour(array_nodes,
 						     num_kmers,
 						     0,
-						     &too_short);
+						     &too_short,
+						     ignore_first, ignore_last);
+
       if (rinfo->resistant_alleles[i].percent_nonzero>=MIN_PERCENT_MUT_ALLELE_PRESENT)
 	{
 	  rinfo->some_resistant_allele_present=true;

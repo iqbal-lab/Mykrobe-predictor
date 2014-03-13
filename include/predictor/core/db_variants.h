@@ -63,15 +63,14 @@ Covg count_reads_on_allele_in_specific_func_of_colours(
 						       boolean* too_short);
 
 Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
-					      int colour, boolean* too_short);
+					      int colour, boolean* too_short,
+					      int ignore_first, int ignore_last);
 
-Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short);
+Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
+					   int ignore_first, int ignore_last);
 
-int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short);
+int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
+						 int ignore_first, int ignore_last);
 
-Covg median_covg_on_allele_in_specific_colour_with_allele_presence_constraint(dBNode** allele, int len, CovgArray* working_ca,
-									      int colour, boolean* too_short, AlleleStatus st,
-									      float eff_depth);
-Covg median_of_CovgArray(CovgArray* array, CovgArray* working_array);
 
 #endif /* DB_VARIANTS_H_ */

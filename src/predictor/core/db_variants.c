@@ -9,42 +9,6 @@ char variant_overflow_warning_printed = 0;
 
 
 
-//first argument is an array of length NUMBER_OF_COLOURS, into which results go.
-//If you want the number of reads on the entire branch, enter the length of that branch in arg3 (eg var->len_one-allele)
-//Sometimes we want to take just the start of the branch (if one branch is longer than the other, we may just take the length of the shorter one)
-//and so you enter that in arg3 in that case
-//note these are effective reads, as counting covg in the de Bruijn graph
-//returns TRUE if branch is too short (1 oor 2 nodes) to do this
-boolean get_num_effective_reads_on_branch(Covg* array, dBNode** allele, int how_many_nodes, 
-					  boolean use_median, CovgArray* working_ca, GraphInfo* ginfo, int kmer)
-{
-  int i;
-  boolean too_short=false;
-  for (i=0; i<NUMBER_OF_COLOURS; i++)
-    {
-      if (use_median==false)
-	{
-	  array[i] = count_reads_on_allele_in_specific_colour(allele, how_many_nodes, i, &too_short);
-	}
-      else
-	{
-	  int eff_read_len = 100;
-	  if (ginfo!=NULL)
-	    {
-	      eff_read_len = ginfo->mean_read_length[i] - kmer+1;
-	    }
-	  if (how_many_nodes>eff_read_len)
-	    {
-	      array[i] = ((how_many_nodes+ 0.5*eff_read_len)/eff_read_len) *  median_covg_on_allele_in_specific_colour(allele, how_many_nodes, working_ca, i, &too_short);
-	    }
-	  else
-	    {
-	      array[i] = median_covg_on_allele_in_specific_colour(allele, how_many_nodes, working_ca, i, &too_short);
-	    }
-	}
-    }
-  return too_short;
-}
 
 
 
@@ -247,8 +211,10 @@ Covg count_reads_on_allele_in_specific_func_of_colours(
 
 //robust to start being > end (might traverse an allele backwards)
 //if length==0 or 1  returns 0.
+//allows you to ignore the first N bases and the last M
 Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
-					      int colour, boolean* too_short)
+					      int colour, boolean* too_short, 
+					      int ignore_first, int ignore_last)
 {
 
   if ((len==0)|| (len==1))
@@ -260,14 +226,15 @@ Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArra
   reset_covg_array(working_ca);//TODO - use reset_used_part_of.... as performance improvement. Will do when correctness of method established.
   int i;
 
-  for(i=1; i <len; i++)
+  for(i=ignore_first; i < len+1-ignore_last; i++)
     {
-      working_ca->covgs[i-1]=db_node_get_coverage_tolerate_null(allele[i], colour);
+      working_ca->covgs[i-ignore_first]
+	=db_node_get_coverage_tolerate_null(allele[i], colour);
     }
 
-  int array_len =len-1;
+  int array_len =len+1-ignore_first-ignore_last;
   qsort(working_ca->covgs, array_len, sizeof(Covg), Covg_cmp); 
-  working_ca->len=len-1;
+  working_ca->len=array_len;
 
   Covg median=0;
   int lhs = (array_len - 1) / 2 ;
@@ -289,7 +256,8 @@ Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArra
 
 //robust to start being > end (might traverse an allele backwards)
 //if length==0 or 1  returns 0.
-Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short)
+Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
+					   int ignore_first, int ignore_last)
 {
 
   if ((len==0)|| (len==1))
@@ -303,7 +271,7 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
   int index=0;
 
   Covg min_covg = COVG_MAX;
-  for(i=1; i <len; i++)
+  for(i=ignore_first; i < len+1-ignore_last; i++)
     {
       if (allele[i]!=NULL)
 	{
@@ -324,7 +292,8 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
 }
 
 
-int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short)
+int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
+						 int ignore_first, int ignore_last)
 {
 
   if ((len==0)|| (len==1))
@@ -337,7 +306,7 @@ int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int c
 
   int num_nonzero=0;
 
-  for(i=1; i <len; i++)
+  for(i=ignore_first; i < len+1-ignore_last; i++)
     {
       if (allele[i]!=NULL)
 	{
@@ -348,93 +317,7 @@ int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int c
 	    }
 	}
     }
-  return num_nonzero*100/(len-1);
+  return num_nonzero*100/(len+1-ignore_first-ignore_last);
 }
 
-
-//only count nodes which have the desired allele status
-Covg median_covg_on_allele_in_specific_colour_with_allele_presence_constraint(dBNode** allele, int len, CovgArray* working_ca,
-									      int colour, boolean* too_short, AlleleStatus st,
-									      float eff_depth)
-{
-
-  if ((len==0)|| (len==1))
-    {
-      *too_short=true;
-      return 0;//ignore first and last nodes
-    }
- 
-  reset_covg_array(working_ca);//TODO - use reset_used_part_of.... as performance improvement. Will do when correctness of method established.
-  int i;
-
-  int index=0;
-
-  for(i=1; i <len; i++)
-    {
-      if (allele[i]!=NULL)
-	{
-	  if (db_node_check_allele_status(allele[i], st)==true)
-	    {
-	      Covg cov = db_node_get_coverage_tolerate_null(allele[i], colour);
-	      if (cov < 2* eff_depth)
-		{
-		  working_ca->covgs[index]=cov;
-		  index++;
-		}
-	    }
-	}
-    }
-
-  int array_len = index+1;
-  qsort(working_ca->covgs, array_len, sizeof(Covg), Covg_cmp); 
-  working_ca->len=index+1;
-
-  Covg median=0;
-  int lhs = (array_len - 1) / 2 ;
-  int rhs = array_len / 2 ;
-  
-  if (lhs == rhs)
-    {
-      median = working_ca->covgs[lhs] ;
-    }
-  else 
-    {
-      median = mean_of_covgs(working_ca->covgs[lhs], working_ca->covgs[rhs]);
-    }
-
-  return median;
-}
-
-
-
-
-
-Covg median_of_CovgArray(CovgArray* array, CovgArray* working_array)
-{
-  if (array->len>working_array->len_alloced)
-    {
-      die("Trying to find median of an array using a working-array which is too short\n");
-    }
-  int i=0;
-  for(i = 0; i<array->len; i++)
-    {
-      working_array->covgs[i]=array->covgs[i];
-    }
-
-  qsort(working_array->covgs, array->len, sizeof(Covg), Covg_cmp); 
-  
-  Covg median=0;
-  int lhs = (array->len - 1) / 2 ;
-  int rhs = array->len / 2 ;
-  
-  if (lhs == rhs)
-    {
-      median = working_array->covgs[lhs] ;
-    }
-  else 
-    {
-      median = mean_of_covgs(working_array->covgs[lhs], working_array->covgs[rhs]);
-    }
-  return median;
-}
 

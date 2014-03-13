@@ -47,4 +47,5 @@ typedef enum
   } Staph_species ;
 
 void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf);
-Staph_species get_species(dBGraph *db_graph,int max_gene_len, StrBuf* install_dir );
+Staph_species get_species(dBGraph *db_graph,int max_gene_len, StrBuf* install_dir,
+			  int ignore_first, int ignore_last);
