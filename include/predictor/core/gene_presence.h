@@ -95,7 +95,8 @@ int get_next_gene_info(FILE* fp,
 					  boolean * full_entry),
 		       dBNode** array_nodes, 
 		       Orientation*  array_or,
-			CovgArray* working_ca, int max_read_length);
+		       CovgArray* working_ca, int max_read_length);
+
 
 
 #endif

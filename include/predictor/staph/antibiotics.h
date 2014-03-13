@@ -42,14 +42,14 @@
 
 
 #define GENE_THRESH_blaZ 20
-#define GENE_THRESH_msrA 90
+#define GENE_THRESH_msrA 60
 #define GENE_THRESH_aacAaphD 70
-#define GENE_THRESH_ermC 80
 #define GENE_THRESH_tetK 80
 #define GENE_THRESH_dfrA 90 
 #define GENE_THRESH_dfrG 70
-#define GENE_THRESH_ermA 70
-#define GENE_THRESH_ermB 70
+#define GENE_THRESH_ermA 90
+#define GENE_THRESH_ermB 90
+#define GENE_THRESH_ermC 50
 #define GENE_THRESH_ermT 70
 #define GENE_THRESH_fusB 70
 #define GENE_THRESH_fusC 70
@@ -152,7 +152,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-int ignore_first, int ignore_last
+				  int ignore_first, int ignore_last
 				  );
 
 
@@ -167,7 +167,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-int ignore_first, int ignore_last
+				  int ignore_first, int ignore_last
 				  );
 
 boolean is_trimethoprim_susceptible(dBGraph* db_graph,
@@ -181,7 +181,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-int ignore_first, int ignore_last
+				    int ignore_first, int ignore_last
 				  );
 
 boolean is_erythromycin_susceptible(dBGraph* db_graph,
@@ -195,7 +195,8 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-int ignore_first, int ignore_last
+				    int ignore_first, int ignore_last,
+				    boolean* any_erm_present
 				    );
 
 boolean is_methicillin_susceptible(dBGraph* db_graph,
@@ -209,7 +210,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
-int ignore_first, int ignore_last
+				   int ignore_first, int ignore_last
 				  );
 
 boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
@@ -223,7 +224,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     GeneInfo* tmp_gi,
 				     AntibioticInfo* abi,
 				     StrBuf* install_dir,
-int ignore_first, int ignore_last
+				     int ignore_first, int ignore_last
 				     );
 
 boolean is_rifampicin_susceptible(dBGraph* db_graph,
@@ -237,7 +238,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-int ignore_first, int ignore_last);
+				  int ignore_first, int ignore_last);
 
 boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
@@ -250,7 +251,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-int ignore_first, int ignore_last);
+				    int ignore_first, int ignore_last);
 
 boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
@@ -263,7 +264,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 GeneInfo* tmp_gi,
 				 AntibioticInfo* abi,
 				 StrBuf* install_dir,
-int ignore_first, int ignore_last);
+				 int ignore_first, int ignore_last);
 
 
 boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
@@ -277,9 +278,10 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-int ignore_first, int ignore_last);
+				    int ignore_first, int ignore_last);
 
-
+//this really only asks if it is CONSTITUTIVELY susceptobe;/resistant.
+//inducible resistance covered elsewhere
 boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
@@ -291,7 +293,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
-int ignore_first, int ignore_last);
+				   int ignore_first, int ignore_last);
 
 boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
@@ -304,7 +306,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-int ignore_first, int ignore_last);
+				  int ignore_first, int ignore_last);
 
 boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					int (*file_reader)(FILE * fp, 
@@ -327,11 +329,40 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 							GeneInfo* tmp_gi,
 							AntibioticInfo* abi,
 							StrBuf* install_dir,
-int ignore_first, int ignore_last),
+							int ignore_first, int ignore_last),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
-int ignore_first, int ignore_last
+					int ignore_first, int ignore_last
 					);
+
+boolean print_erythromycin_susceptibility(dBGraph* db_graph,
+					  int (*file_reader)(FILE * fp, 
+							     Sequence * seq, 
+							     int max_read_length, 
+							     boolean new_entry, 
+							     boolean * full_entry),
+					  ReadingUtils* rutils,
+					  ResVarInfo* tmp_rvi,
+					  GeneInfo* tmp_gi,
+					  AntibioticInfo* abi,
+					  boolean (*func)(dBGraph* db_graph,
+							 int (*file_reader)(FILE * fp, 
+									    Sequence * seq, 
+									    int max_read_length, 
+									    boolean new_entry, 
+									    boolean * full_entry),
+							 ReadingUtils* rutils,
+							 ResVarInfo* tmp_rvi,
+							 GeneInfo* tmp_gi,
+							 AntibioticInfo* abi,
+							 StrBuf* install_dir,
+							  int ignore_first, int ignore_last,
+							  boolean* any_erm_present),
+					  StrBuf* tmpbuf,
+					  StrBuf* install_dir,
+					  int ignore_first, int ignore_last,
+					  boolean* any_erm_present
+					  );
 
 boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 int (*file_reader)(FILE * fp, 
@@ -354,9 +385,9 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 							 GeneInfo* tmp_gi,
 							 AntibioticInfo* abi,
 							 StrBuf* install_dir,
-int ignore_first, int ignore_last),
+							 int ignore_first, int ignore_last),
 					 StrBuf* tmpbuf,
-					 boolean erythromycin_susceptible,
+					 boolean any_erm_present,
 					 StrBuf* install_dir,
 int ignore_first, int ignore_last
 					 );

@@ -13,12 +13,6 @@ make clean
 make
 cd ..
 
-cd gsl-1.15
-make clean
-./configure
-make
-cd ..
-
 cd string_buffer
 make clean
 make
@@ -31,14 +25,3 @@ cd ..
 
 cd ..
 
-cd scripts/analyse_variants/needleman_wunsch/
-make clean
-make
-cd ..
-
-cd vcf-hack
-make clean
-make
-cd ..
-cd ..
-cd ..

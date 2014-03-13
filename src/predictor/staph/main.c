@@ -189,9 +189,12 @@ int main(int argc, char **argv)
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore);
-  boolean erythromycin_susceptible = print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-								     &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
-								     ignore, ignore);
+  boolean any_erm_present=false;
+  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
+				    ignore, ignore,
+				    &any_erm_present);
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore);
@@ -215,12 +218,12 @@ int main(int argc, char **argv)
 				  ignore, ignore);
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
-				   erythromycin_susceptible, cmd_line->install_dir,
+				   any_erm_present,cmd_line->install_dir,
 				   ignore, ignore);
-  /*  printf("** Virulence markers\n");
-  print_pvl_presence(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-  &is_pvl_positive, tmp_name); */ 
-  printf("** End time\n"); 
+  printf("** Virulence markers\nPVL negative\n");
+  //  print_pvl_presence(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  //&is_pvl_positive, tmp_name); */ 
+  printf("** End time\n\nExtra line added to say the PVL line is hardcoded to say negative for now\n"); 
   timestamp();
 
   //cleanup

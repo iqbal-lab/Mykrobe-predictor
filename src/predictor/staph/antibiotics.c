@@ -381,7 +381,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi,
 				    ignore_first, ignore_last);
-
+  printf("blaZ covg is %d\n", abi->genes[blaZ]->percent_nonzero);
   if (abi->genes[blaZ]->percent_nonzero > GENE_THRESH_blaZ)
     {
       return false;
@@ -454,6 +454,13 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
     }
 }
 
+/* reminder of how erythromycin and clindamycin resistance is related:
+gene               erythromycin          clindamycin disc    clindamycin D test         note
+erm A, B, C, T     R                     S or R              positive                 assume clinda R
+msrA               R                     S                   negative                 erythromycin specific efflux pump
+vga(A)LC           S                     R                   n/a                      clindamycin specific efflux pump
+*/
+
 boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
@@ -465,10 +472,11 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last)
+				    int ignore_first, int ignore_last,
+				    boolean* any_erm_present)
 {
   reset_antibiotic_info(abi);
-  
+  *any_erm_present=false;
   //setup antibiotic info object
   abi->ab = Erythromycin;
   strbuf_append_str(abi->fasta, install_dir->buff);
@@ -485,20 +493,31 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
 
+  printf("Ery covg stats for erm A,B,C,T and msrA are %d, %d, %d, %d, %d\n", 
+	 abi->genes[ermA]->percent_nonzero,
+	 abi->genes[ermB]->percent_nonzero,
+	 abi->genes[ermC]->percent_nonzero,
+	 abi->genes[ermT]->percent_nonzero,
+	 abi->genes[msrA]->percent_nonzero);
+	 
  if (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
     {
+      *any_erm_present=true;
       return false;
     }
  else if (abi->genes[ermB]->percent_nonzero > GENE_THRESH_ermB)
     {
+      *any_erm_present=true;
       return false;
     }
  else if (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ermC)
     {
+      *any_erm_present=true;
       return false;
     }
  else if (abi->genes[ermT]->percent_nonzero > GENE_THRESH_ermT)
     {
+      *any_erm_present=true;
       return false;
     }
  else if (abi->genes[msrA]->percent_nonzero > GENE_THRESH_msrA)
@@ -1057,6 +1076,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi,
 				    ignore_first, ignore_last);
+  printf("Clinda covg stats for vgaaLC is %d\n", abi->genes[vga_A_LC]->percent_nonzero);
 
  if (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
     {
@@ -1161,6 +1181,61 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 }
 
 
+boolean print_erythromycin_susceptibility(dBGraph* db_graph,
+					  int (*file_reader)(FILE * fp, 
+							     Sequence * seq, 
+							     int max_read_length, 
+							     boolean new_entry, 
+							     boolean * full_entry),
+					  ReadingUtils* rutils,
+					  ResVarInfo* tmp_rvi,
+					  GeneInfo* tmp_gi,
+					  AntibioticInfo* abi,
+					  boolean (*func)(dBGraph* db_graph,
+							 int (*file_reader)(FILE * fp, 
+									    Sequence * seq, 
+									    int max_read_length, 
+									    boolean new_entry, 
+									    boolean * full_entry),
+							 ReadingUtils* rutils,
+							 ResVarInfo* tmp_rvi,
+							 GeneInfo* tmp_gi,
+							 AntibioticInfo* abi,
+							 StrBuf* install_dir,
+							  int ignore_first, int ignore_last,
+							  boolean* any_erm_present),
+					  StrBuf* tmpbuf,
+					  StrBuf* install_dir,
+					  int ignore_first, int ignore_last,
+					  boolean* any_erm_present
+					 )
+{
+  boolean suc;
+  
+  suc  = func(db_graph,
+	      file_reader,
+	      rutils,
+	      tmp_rvi,
+	      tmp_gi,
+	      abi,
+	      install_dir,
+	      ignore_first, ignore_last,
+	      any_erm_present);
+
+  map_antibiotic_enum_to_str(abi->ab, tmpbuf);
+  printf("%s\t", tmpbuf->buff);
+  if (suc==false)
+    {
+      printf("R\n");
+    }
+  else
+    {
+      printf("S\n");
+    }
+  return suc;
+}
+
+
 boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 int (*file_reader)(FILE * fp, 
 							    Sequence * seq, 
@@ -1184,7 +1259,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 							 StrBuf* install_dir,
 							 int ignore_first, int ignore_last),
 					 StrBuf* tmpbuf,
-					 boolean erythromycin_susceptible,
+					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last
 					 )
@@ -1206,7 +1281,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
     {
       printf("R(constitutive)\n");
     }
-  else if (erythromycin_susceptible==false)
+  else if (any_erm_present==true)
     {
       printf("R(inducible)\n");
     }
