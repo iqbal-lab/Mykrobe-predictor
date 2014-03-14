@@ -51,8 +51,8 @@
 #define GENE_THRESH_ermB 90
 #define GENE_THRESH_ermC 50
 #define GENE_THRESH_ermT 70
-#define GENE_THRESH_fusB 70
-#define GENE_THRESH_fusC 70
+#define GENE_THRESH_fusB 60
+#define GENE_THRESH_fusC 60
 #define GENE_THRESH_vga_A_LC 70
 #define GENE_THRESH_mecA 70
 #define GENE_THRESH_tetL 70
@@ -61,6 +61,8 @@
 #define GENE_THRESH_mupA 70
 #define GENE_THRESH_mupB 70
 
+#define GENE_THRESH_pvl 70
+#define MIN_COV_ON_NONZERO 5
 
 
 typedef enum 
@@ -389,7 +391,34 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 StrBuf* tmpbuf,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
-int ignore_first, int ignore_last
+					 int ignore_first, int ignore_last
 					 );
 
+boolean is_pvl_positive(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir);
+
+void print_pvl_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			boolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi),
+			StrBuf* install_dir);
 #endif

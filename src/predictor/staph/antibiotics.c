@@ -341,7 +341,10 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi, ignore_first, ignore_last);
 
-  if (abi->genes[aacAaphD]->percent_nonzero > GENE_THRESH_aacAaphD)
+  if ( (abi->genes[aacAaphD]->percent_nonzero > GENE_THRESH_aacAaphD)
+       && 
+       (abi->genes[aacAaphD]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }
@@ -382,7 +385,10 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
   printf("blaZ covg is %d\n", abi->genes[blaZ]->percent_nonzero);
-  if (abi->genes[blaZ]->percent_nonzero > GENE_THRESH_blaZ)
+
+  if ( (abi->genes[blaZ]->percent_nonzero > GENE_THRESH_blaZ)
+       && (abi->genes[blaZ]->median_covg_on_nonzero_nodes >= MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }
@@ -444,7 +450,10 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
     {
       return false;
     }
-  else if (abi->genes[dfrG]->percent_nonzero > GENE_THRESH_blaZ)
+  else if ( (abi->genes[dfrG]->percent_nonzero > GENE_THRESH_dfrG)
+	    && 
+	    (abi->genes[dfrG]->median_covg_on_nonzero_nodes >=MIN_COV_ON_NONZERO)
+	    )
     {
       return false;
     }
@@ -493,34 +502,44 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
 
-  printf("Ery covg stats for erm A,B,C,T and msrA are %d, %d, %d, %d, %d\n", 
-	 abi->genes[ermA]->percent_nonzero,
-	 abi->genes[ermB]->percent_nonzero,
-	 abi->genes[ermC]->percent_nonzero,
-	 abi->genes[ermT]->percent_nonzero,
-	 abi->genes[msrA]->percent_nonzero);
 	 
- if (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
+  if ( (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
+       &&
+       (abi->genes[ermA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       *any_erm_present=true;
       return false;
     }
- else if (abi->genes[ermB]->percent_nonzero > GENE_THRESH_ermB)
+  else if ( (abi->genes[ermB]->percent_nonzero > GENE_THRESH_ermB)
+	    &&
+	    (abi->genes[ermB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
+
     {
       *any_erm_present=true;
       return false;
     }
- else if (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ermC)
+  else if ( (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ermC)
+	    &&
+	    (abi->genes[ermB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
     {
       *any_erm_present=true;
       return false;
     }
- else if (abi->genes[ermT]->percent_nonzero > GENE_THRESH_ermT)
+  else if ( (abi->genes[ermT]->percent_nonzero > GENE_THRESH_ermT)
+	    &&
+	    (abi->genes[ermT]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
     {
       *any_erm_present=true;
       return false;
     }
- else if (abi->genes[msrA]->percent_nonzero > GENE_THRESH_msrA)
+  else if ( (abi->genes[msrA]->percent_nonzero > GENE_THRESH_msrA)
+	    &&
+	    (abi->genes[msrA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
     {
       return false;
     }
@@ -561,7 +580,10 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
 
- if (abi->genes[mecA]->percent_nonzero > GENE_THRESH_mecA)
+  if ( (abi->genes[mecA]->percent_nonzero > GENE_THRESH_mecA)
+       &&
+       (abi->genes[mecA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }  
@@ -668,9 +690,6 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
     {
       return false;
     } 
-
-
-
   else if (abi->mut[rpoB_D471Y]->some_resistant_allele_present==true)
     {
       return false;
@@ -779,15 +798,25 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
 
- if (abi->genes[tetK]->percent_nonzero > GENE_THRESH_tetK)
+  if ( (abi->genes[tetK]->percent_nonzero > GENE_THRESH_tetK)
+       &&
+       (abi->genes[tetK]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }  
- else if (abi->genes[tetL]->percent_nonzero > GENE_THRESH_tetL)
+  else if ( (abi->genes[tetL]->percent_nonzero > GENE_THRESH_tetL)
+	    &&
+	    (abi->genes[tetL]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
+    
     {
       return false;
     }  
- else if (abi->genes[tetM]->percent_nonzero > GENE_THRESH_tetM)
+  else if ( (abi->genes[tetM]->percent_nonzero > GENE_THRESH_tetM)
+	    &&
+	    (abi->genes[tetM]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }  
@@ -827,11 +856,18 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
 
- if (abi->genes[mupA]->percent_nonzero > GENE_THRESH_mupA)
+  if ( (abi->genes[mupA]->percent_nonzero > GENE_THRESH_mupA)
+       &&
+       (abi->genes[mupA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }  
- else if (abi->genes[mupB]->percent_nonzero > GENE_THRESH_mupB)
+  else if ( (abi->genes[mupB]->percent_nonzero > GENE_THRESH_mupB)
+	    &&
+	    (abi->genes[mupB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
+    
     {
       return false;
     }  
@@ -1030,11 +1066,19 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
       return false;
     }
-  else if (abi->genes[fusB]->percent_nonzero > GENE_THRESH_fusB)
+  else if ( (abi->genes[fusB]->percent_nonzero > GENE_THRESH_fusB)
+	    &&
+	    (abi->genes[fusB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
+    
     {
       return false;
     }  
-  else if (abi->genes[fusC]->percent_nonzero > GENE_THRESH_fusC)
+  else if ( (abi->genes[fusC]->percent_nonzero > GENE_THRESH_fusC)
+	    &&
+	    (abi->genes[fusC]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    )
+    
     {
       return false;
     }  
@@ -1076,9 +1120,13 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi,
 				    ignore_first, ignore_last);
-  printf("Clinda covg stats for vgaaLC is %d\n", abi->genes[vga_A_LC]->percent_nonzero);
 
- if (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
+
+  if ( (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
+       &&
+       (abi->genes[vga_A_LC]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
+
     {
       return false;
     }  
@@ -1119,7 +1167,10 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				    tmp_gi,
 				    ignore_first, ignore_last);
 
- if (abi->genes[vanA]->percent_nonzero > GENE_THRESH_vanA)
+  if ( (abi->genes[vanA]->percent_nonzero > GENE_THRESH_vanA)
+       &&
+       (abi->genes[vanA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+       )
     {
       return false;
     }  
@@ -1296,34 +1347,81 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
 ///virulence
-/*
-boolean is_is_pvl_positive(dBGraph* db_graph,
+boolean is_pvl_positive(dBGraph* db_graph,
 			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
 					      int max_read_length, 
 					      boolean new_entry, 
 					      boolean * full_entry),
-			   ReadingUtils* rutils,
-			   ResVarInfo* tmp_rvi,
-			   GeneInfo* tmp_gi)
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
 			   
 
 {
-  StrBuf* fa = strbuf_create("../
-  int get_next_gene_info(FILE* fp, 
-		       dBGraph* db_graph, 
-		       GeneInfo* gene_info,
-		       Sequence* seq, 
-		       KmerSlidingWindow* kmer_window,
-		       int (*file_reader)(FILE * fp, 
-					  Sequence * seq, 
-					  int max_read_length, 
-					  boolean new_entry, 
-					  boolean * full_entry),
-		       dBNode** array_nodes, 
-		       Orientation*  array_or,
-		       CovgArray* working_ca, 
-		       int max_read_length)
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/luks.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+
+      if ( (tmp_gi->percent_nonzero > GENE_THRESH_pvl)
+	   && 
+	   (tmp_gi->median_covg_on_nonzero_nodes >= MIN_COV_ON_NONZERO)
+	   )
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  return is_pos;
+
 }
-*/
-				  
+
+
+void print_pvl_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			boolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi),
+			StrBuf* install_dir)
+{
+  printf("PVL\t");
+  boolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  if (result==true)
+    {
+      printf("positive\n");
+    }
+  else
+    {
+      printf("negative\n");
+    }
+}

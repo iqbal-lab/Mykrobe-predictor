@@ -220,10 +220,10 @@ int main(int argc, char **argv)
 				   &is_clindamycin_susceptible, tmp_name, 
 				   any_erm_present,cmd_line->install_dir,
 				   ignore, ignore);
-  printf("** Virulence markers\nPVL negative\n");
-  //  print_pvl_presence(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-  //&is_pvl_positive, tmp_name); */ 
-  printf("** End time\n\nExtra line added to say the PVL line is hardcoded to say negative for now\n"); 
+  printf("** Virulence markers\n");
+  print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_pvl_positive, cmd_line->install_dir); 
+
   timestamp();
 
   //cleanup

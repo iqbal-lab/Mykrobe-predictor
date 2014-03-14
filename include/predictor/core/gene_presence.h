@@ -59,7 +59,9 @@ typedef enum
     vanA=16,
     mupA=17,
     mupB=18,
-    unspecified_gpg = 19,
+    luk1=19,//merged lukS-PV and lukF-PV, canonical type1
+    luk2=19,//merged lukS-PV and lukF-PV, canonical type2
+    unspecified_gpg = 20,
   } GenePresenceGene;
 
 #define NUM_GENE_PRESENCE_GENES 20
@@ -72,6 +74,7 @@ typedef struct
 {
   Covg median_covg;
   Covg min_covg;
+  Covg median_covg_on_nonzero_nodes;
   int  percent_nonzero;
   StrBuf* strbuf;
   //StrBuf* name;

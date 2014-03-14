@@ -254,6 +254,63 @@ Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArra
 
 
 
+
+
+Covg median_covg_ignoring_zeroes_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
+							      int colour, boolean* too_short, 
+							      int ignore_first, int ignore_last)
+{
+
+  if ((len==0)|| (len==1))
+    {
+      *too_short=true;
+      return 0;//ignore first and last nodes
+    }
+ 
+  reset_covg_array(working_ca);//TODO - use reset_used_part_of.... as performance improvement. Will do when correctness of method established.
+  int i;
+
+  int num_nonzero=0;
+  for(i=ignore_first; i < len+1-ignore_last; i++)
+    {
+      Covg c = db_node_get_coverage_tolerate_null(allele[i], colour);
+      if (c>0)
+	{
+	  working_ca->covgs[num_nonzero] = c;
+	  num_nonzero++;
+	}
+    }
+
+  int array_len =num_nonzero;
+  if (array_len==0)
+    {
+      return 0;
+    }
+
+  qsort(working_ca->covgs, array_len, sizeof(Covg), Covg_cmp); 
+  working_ca->len=array_len;
+
+  Covg median=0;
+  int lhs = (array_len - 1) / 2 ;
+  int rhs = array_len / 2 ;
+  
+  if (lhs == rhs)
+    {
+      median = working_ca->covgs[lhs] ;
+    }
+  else 
+    {
+      median = mean_of_covgs(working_ca->covgs[lhs], working_ca->covgs[rhs]);
+    }
+
+  return median;
+}
+
+
+
+
+
+
 //robust to start being > end (might traverse an allele backwards)
 //if length==0 or 1  returns 0.
 Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,

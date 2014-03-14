@@ -66,6 +66,10 @@ Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArra
 					      int colour, boolean* too_short,
 					      int ignore_first, int ignore_last);
 
+Covg median_covg_ignoring_zeroes_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
+							      int colour, boolean* too_short, 
+							      int ignore_first, int ignore_last);
+
 Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
 					   int ignore_first, int ignore_last);
 

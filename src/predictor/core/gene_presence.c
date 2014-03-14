@@ -112,7 +112,14 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
     {
       return mupB;
     }
-
+  else if (strcmp(sbuf->buff, "luk1")==0)
+    {
+      return luk1;
+    }
+  else if (strcmp(sbuf->buff, "luk2")==0)
+    {
+      return luk2;
+    }
   else 
     {
       die("Unknown gene %s\n", sbuf->buff);
@@ -142,6 +149,7 @@ void copy_gene_info(GeneInfo* from_gi, GeneInfo* to_gi)
   to_gi->median_covg = from_gi->median_covg;
   to_gi->min_covg = from_gi->min_covg;
   to_gi->percent_nonzero = from_gi->percent_nonzero;
+  to_gi->median_covg_on_nonzero_nodes = from_gi->median_covg_on_nonzero_nodes;
   strbuf_reset(to_gi->strbuf);
   strbuf_append_str(to_gi->strbuf, from_gi->strbuf->buff);
   to_gi->name = from_gi->name;
@@ -156,6 +164,7 @@ void reset_gene_info(GeneInfo* gi)
   gi->median_covg=0;
   gi->min_covg=0;
   gi->percent_nonzero=0;
+  gi->median_covg_on_nonzero_nodes=0;
   if (gi->strbuf!=NULL)
     {
       strbuf_reset(gi->strbuf);
@@ -224,6 +233,17 @@ int get_next_gene_info(FILE* fp,
 						 0,
 						 &too_short,
 						 ignore_first, ignore_last);
+
+
+  gene_info->median_covg_on_nonzero_nodes = 
+    median_covg_ignoring_zeroes_on_allele_in_specific_colour(array_nodes,
+							     num_kmers,
+							     working_ca,
+							     0,
+							     &too_short,
+							     ignore_first, ignore_last);
+
+
   strbuf_reset(gene_info->strbuf);
   strbuf_append_str(gene_info->strbuf,
 		    seq->name);
