@@ -59,16 +59,15 @@ typedef enum
     vanA=16,
     mupA=17,
     mupB=18,
-    luk1=19,//merged lukS-PV and lukF-PV, canonical type1
-    luk2=19,//merged lukS-PV and lukF-PV, canonical type2
+    luk=19,//lukS-PV and lukF-PV
     unspecified_gpg = 20,
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 20
+#define NUM_GENE_PRESENCE_GENES 20    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
-
+boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir);
 
 typedef struct
 {
@@ -76,8 +75,8 @@ typedef struct
   Covg min_covg;
   Covg median_covg_on_nonzero_nodes;
   int  percent_nonzero;
+  int num_instances;//will read several exemplars of this gene and store info on the best match
   StrBuf* strbuf;
-  //StrBuf* name;
   GenePresenceGene name;
 } GeneInfo;
 

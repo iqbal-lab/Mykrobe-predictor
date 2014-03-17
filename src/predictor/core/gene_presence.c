@@ -112,13 +112,9 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
     {
       return mupB;
     }
-  else if (strcmp(sbuf->buff, "luk1")==0)
+  else if (strcmp(sbuf->buff, "luk")==0)
     {
-      return luk1;
-    }
-  else if (strcmp(sbuf->buff, "luk2")==0)
-    {
-      return luk2;
+      return luk;
     }
   else 
     {
@@ -127,6 +123,99 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
 
 }
 
+
+boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir)
+{
+  strbuf_append_str(fa, install_dir->buff);
+  strbuf_append_str(fa, "data/staph/antibiotics/");
+
+  if (gene==aacAaphD)
+    {
+      strbuf_append_str(fa, "aacAaphD.fa");
+    }
+  else if (gene==blaZ)
+    {
+      strbuf_append_str(fa, "blaZ.fa");
+    }
+  else if (gene==dfrA)
+    {
+      strbuf_append_str(fa, "dfrA.fa");
+    }
+  else if (gene==dfrG)
+    {
+      strbuf_append_str(fa, "dfrG.fa");
+    }
+  else if (gene==ermA)
+    {
+      strbuf_append_str(fa, "ermA.fa");
+    }
+  else if (gene==ermB)
+    {
+      strbuf_append_str(fa, "ermB.fa");
+    }
+  else if (gene==ermC)
+    {
+      strbuf_append_str(fa, "ermC.fa");
+    }
+  else if (gene==ermT)
+    {
+      strbuf_append_str(fa, "ermT.fa");
+    }
+  else if (gene==fusB)
+    {
+      strbuf_append_str(fa, "fusB.fa");
+    }
+  else if (gene==fusC)
+    {
+      strbuf_append_str(fa, "fusC.fa");
+    }
+  else if (gene==vga_A_LC)
+    {
+      strbuf_append_str(fa, "vga_A_LC.fa");
+    }
+  else if (gene==msrA)
+    {
+      strbuf_append_str(fa, "msrA.fa");
+    }
+  else if (gene==mecA)
+    {
+      strbuf_append_str(fa, "mecA.fa");
+    }
+  else if (gene==tetK)
+    {
+      strbuf_append_str(fa, "tetK.fa");
+    }
+  else if (gene==tetL)
+    {
+      strbuf_append_str(fa, "tetL.fa");
+    }
+  else if (gene==tetM)
+    {
+      strbuf_append_str(fa, "tetM.fa");
+    }
+  else if (gene==vanA)
+    {
+      strbuf_append_str(fa, "vanA.fa");
+    }
+  else if (gene==mupA)
+    {
+      strbuf_append_str(fa, "mupA.fa");
+    }
+  else if (gene==mupB)
+    {
+      strbuf_append_str(fa, "mupB.fa");
+    }
+  else if (gene==luk)
+    {
+      strbuf_append_str(fa, "luk.fa");
+    }
+  else if (gene==unspecified_gpg)
+    {
+      strbuf_reset(fa);
+      return false;
+    }
+  return true;
+}
 
 GeneInfo* alloc_and_init_gene_info()
 {
@@ -191,6 +280,8 @@ int get_next_gene_info(FILE* fp,
 
 {
 
+  int i;
+
   boolean full_entry=true;
   int dummy_colour_ignored=0;
   int num_kmers = 
@@ -206,11 +297,11 @@ int get_next_gene_info(FILE* fp,
 						   db_graph, 
 						   dummy_colour_ignored);
 
-  if (num_kmers==0)
-    {
-      return 0;
-    }
-  //collect min, median covg on gene and also percentage of kmers with any covg
+      if (num_kmers==0)
+	{
+	  return 0;
+	}
+      //collect min, median covg on gene and also percentage of kmers with any covg
   boolean too_short=false;
   int ignore_first=0;
   int ignore_last=0;

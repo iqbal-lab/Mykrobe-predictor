@@ -117,12 +117,12 @@ AntibioticInfo* alloc_antibiotic_info()
     }
   else
     {
-      abi->fasta = strbuf_new();
-      int i;
+      abi->m_fasta = strbuf_new();
+      abi->num_genes = 0;
       abi->mut = (ResVarInfo**) malloc(sizeof(ResVarInfo*)*NUM_KNOWN_MUTATIONS);
       if (abi->mut==NULL)
 	{
-	  strbuf_free(abi->fasta);
+	  strbuf_free(abi->m_fasta);
 	  free(abi);
 	  return NULL;
 	}
@@ -130,11 +130,21 @@ AntibioticInfo* alloc_antibiotic_info()
       if (abi->genes==NULL)
 	{
 	  free(abi->mut);
-	  strbuf_free(abi->fasta);
+	  strbuf_free(abi->m_fasta);
 	  free(abi);
 	  return NULL;
 	}
-      
+      abi->which_genes = (int*) calloc(MAX_GENES_PER_ANTIBIOTIC, sizeof(int));
+      if (abi->which_genes==NULL)
+	{
+	  free(abi->genes);
+	  free(abi->mut);
+	  strbuf_free(abi->m_fasta);
+	  free(abi);
+	  return NULL;
+	  
+	}
+      int i;
       for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
 	{
 	  abi->mut[i] = alloc_and_init_res_var_info();
@@ -142,7 +152,9 @@ AntibioticInfo* alloc_antibiotic_info()
       for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
 	{
 	  abi->genes[i] = alloc_and_init_gene_info();
+	  abi->genes[i]->name = (GenePresenceGene) i;
 	}
+
     }
   return abi;
 }
@@ -154,7 +166,7 @@ void free_antibiotic_info(AntibioticInfo* abi)
     }
   else
     {
-      strbuf_free(abi->fasta);
+      strbuf_free(abi->m_fasta);
       int i;
       for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
 	{
@@ -164,7 +176,6 @@ void free_antibiotic_info(AntibioticInfo* abi)
 	{
 	  free_gene_info(abi->genes[i]);
 	}
-
       free(abi);
     }
 }
@@ -172,8 +183,9 @@ void free_antibiotic_info(AntibioticInfo* abi)
 void reset_antibiotic_info(AntibioticInfo* abi)
 {
   abi->ab = NoDrug;
-  strbuf_reset(abi->fasta);
+  strbuf_reset(abi->m_fasta);
   abi->num_mutations=0;
+
   int i;
   for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
     {
@@ -232,7 +244,8 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 }
 
 
-
+//one gene per fasta, so if you have multiple reads,
+//these are different exemplars, for divergent versions of the same gene
 void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 						  dBGraph* db_graph,
 						  int (*file_reader)(FILE * fp, 
@@ -244,10 +257,13 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 						  ReadingUtils* rutils,
 						  GeneInfo* tmp_gi)
 
+
+
 {
   reset_reading_utils(rutils);
 
   int num=1;
+
   while (num>0)
     {
       num = get_next_gene_info(fp,
@@ -261,7 +277,11 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
 
-      copy_gene_info(tmp_gi, abi->genes[tmp_gi->name]);
+      if (tmp_gi->percent_nonzero>abi->genes[tmp_gi->name]->percent_nonzero)
+	{
+	  copy_gene_info(tmp_gi, abi->genes[tmp_gi->name]);
+	}
+
     }
   
 
@@ -279,31 +299,56 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       ReadingUtils* rutils,
 				       ResVarInfo* tmp_rvi,
 				       GeneInfo* tmp_gi,
-				       int ignore_first, int ignore_last)
+				       int ignore_first, int ignore_last,
+				       StrBuf* install_dir)
+
 {
 
-  FILE* fp = fopen(abi->fasta->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s - should be there as part of the install - did you run out of disk mid-install?\n",
-	  abi->fasta->buff);
-    }
-  
-  load_antibiotic_mutation_info_on_sample(fp,
-					  db_graph,
-					  file_reader,
-					  abi,
-					  rutils, 
-					  tmp_rvi,
-					  ignore_first, ignore_last);
-  load_antibiotic_gene_presence_info_on_sample(fp,
-					       db_graph,
-					       file_reader,
-					       abi,
-					       rutils,
-					       tmp_gi);
+  FILE* fp;
 
-  fclose(fp);
+  if (abi->num_mutations>0)
+    {
+      fp = fopen(abi->m_fasta->buff, "r");
+      if (fp==NULL)
+	{
+	  die("Cannot open %s - should be there as part of the install - did you run out of disk mid-install?\n",
+	      abi->m_fasta->buff);
+	}
+      
+      load_antibiotic_mutation_info_on_sample(fp,
+					      db_graph,
+					      file_reader,
+					      abi,
+					      rutils, 
+					      tmp_rvi,
+					      ignore_first, ignore_last);
+      fclose(fp);
+    }
+  if (abi->num_genes>0)
+    {
+      StrBuf* tmp = strbuf_new();
+      int j;
+      for (j=0; j<abi->num_genes; j++)
+	{
+	  strbuf_reset(tmp);
+	  GenePresenceGene g = (GenePresenceGene) abi->which_genes[j];
+	  map_gene_to_fasta(g, tmp, install_dir);
+	  FILE* fp = fopen(tmp->buff, "r");
+	  if (fp==NULL)
+	    {
+	      die("Unable to open %s, which should come as part of the install.\n", tmp->buff);
+	    }
+	  load_antibiotic_gene_presence_info_on_sample(fp,
+						       db_graph,
+						       file_reader,
+						       abi,
+						       rutils,
+						       tmp_gi);
+	  fclose(fp);
+	}
+      strbuf_free(tmp);
+
+    }
 }
 
 
@@ -329,9 +374,10 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Gentamycin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/gentamycin.fa");
-
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/gentamycin.fa");
+  abi->which_genes[0]=aacAaphD;
+  abi->num_genes=1;
   abi->num_mutations = 0;//entirely determined by gene presence
 
   load_antibiotic_mut_and_gene_info(db_graph,
@@ -339,7 +385,8 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi, ignore_first, ignore_last);
+				    tmp_gi, ignore_first, ignore_last,
+	install_dir);
 
   if ( (abi->genes[aacAaphD]->percent_nonzero > GENE_THRESH_aacAaphD)
        && 
@@ -373,9 +420,12 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 
   //setup antibiotic info object
   abi->ab = Penicillin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/penicillin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/penicillin.fa");
   abi->num_mutations = 0;//entirely determined by gene presence
+  abi->which_genes[0]=blaZ;
+  abi->num_genes=1;
+
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -383,8 +433,8 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
-  printf("blaZ covg is %d\n", abi->genes[blaZ]->percent_nonzero);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if ( (abi->genes[blaZ]->percent_nonzero > GENE_THRESH_blaZ)
        && (abi->genes[blaZ]->median_covg_on_nonzero_nodes >= MIN_COV_ON_NONZERO)
@@ -417,10 +467,11 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 
   //setup antibiotic info object
   abi->ab = Trimethoprim;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/trimethoprim.fa");
-
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/trimethoprim.fa");
   abi->num_mutations = 113;
+  abi->which_genes[0]=dfrG;
+  abi->num_genes=1;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -428,7 +479,8 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if (abi->mut[dfrB_F99I]->some_resistant_allele_present==true)
     {
@@ -488,11 +540,17 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
   *any_erm_present=false;
   //setup antibiotic info object
   abi->ab = Erythromycin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/erythromycin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/erythromycin.fa");
 
 
   abi->num_mutations = 0;
+  abi->which_genes[0]=ermA;
+  abi->which_genes[1]=ermB;
+  abi->which_genes[2]=ermC;
+  abi->which_genes[3]=ermT;
+  abi->which_genes[4]=msrA;
+  abi->num_genes=5;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -500,9 +558,17 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
-	 
+  /*
+  printf("Erm C percentkmers %d, median on nonzero %d\n",
+	 abi->genes[ermC]->percent_nonzero,
+	 abi->genes[ermC]->median_covg_on_nonzero_nodes);
+  printf("Erm T percentkmers %d, median on nonzero %d\n",
+	 abi->genes[ermT]->percent_nonzero,
+	 abi->genes[ermT]->median_covg_on_nonzero_nodes);
+  */
   if ( (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
        &&
        (abi->genes[ermA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
@@ -522,7 +588,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
     }
   else if ( (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ermC)
 	    &&
-	    (abi->genes[ermB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
+	    (abi->genes[ermC]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
 	    )
     {
       *any_erm_present=true;
@@ -567,10 +633,11 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Methicillin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/methicillin.fa");
-
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/methicillin.fa");
   abi->num_mutations = 0;
+  abi->which_genes[0]=mecA;
+  abi->num_genes=1;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -578,7 +645,8 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if ( (abi->genes[mecA]->percent_nonzero > GENE_THRESH_mecA)
        &&
@@ -608,10 +676,11 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Ciprofloxacin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/ciprofloxacin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/ciprofloxacin.fa");
 
   abi->num_mutations = 94;
+  abi->num_genes=0;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -619,7 +688,8 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if (abi->mut[gyrA_E88K]->some_resistant_allele_present==true)
     {
@@ -669,11 +739,12 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Rifampicin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/rifampicin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/rifampicin.fa");
 
 
   abi->num_mutations = 439;
+  abi->num_genes=0;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -681,7 +752,8 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
   if (abi->mut[rpoB_A477D]->some_resistant_allele_present==true)
     {
       return false;
@@ -786,9 +858,13 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab =Tetracycline;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/tetracycline.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/tetracycline.fa");
   abi->num_mutations = 0;
+  abi->which_genes[0]=tetK;
+  abi->which_genes[1]=tetL;
+  abi->which_genes[2]=tetM;
+  abi->num_genes=3;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -796,7 +872,8 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if ( (abi->genes[tetK]->percent_nonzero > GENE_THRESH_tetK)
        &&
@@ -843,10 +920,13 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Mupirocin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/mupirocin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/mupirocin.fa");
 
   abi->num_mutations = 0;
+  abi->which_genes[0]=mupA;
+  abi->which_genes[1]=mupB;
+  abi->num_genes=2;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -854,7 +934,8 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if ( (abi->genes[mupA]->percent_nonzero > GENE_THRESH_mupA)
        &&
@@ -892,10 +973,15 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = FusidicAcid;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/fusidic_acid.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/fusidic_acid.fa");
 
   abi->num_mutations = 921;
+
+  abi->which_genes[0]=fusB;
+  abi->which_genes[1]=fusC;
+  abi->num_genes=2;
+
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -903,7 +989,8 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
 
   if (abi->mut[fusA_A655E]->some_resistant_allele_present==true)
@@ -1109,9 +1196,11 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Clindamycin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/clindamycin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/clindamycin.fa");
   abi->num_mutations = 0;
+  abi->which_genes[0]=vga_A_LC;
+  abi->num_genes=1;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -1119,7 +1208,8 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
 
   if ( (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
@@ -1154,10 +1244,12 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Vancomycin;
-  strbuf_append_str(abi->fasta, install_dir->buff);
-  strbuf_append_str(abi->fasta, "data/staph/antibiotics/vancomycin.fa");
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/vancomycin.fa");
 
   abi->num_mutations = 0;
+  abi->which_genes[0]=vanA;
+  abi->num_genes=1;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -1165,7 +1257,8 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last,
+	install_dir);
 
   if ( (abi->genes[vanA]->percent_nonzero > GENE_THRESH_vanA)
        &&
@@ -1218,6 +1311,7 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 	      install_dir,
 	      ignore_first, ignore_last);
 
+  
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
   printf("%s\t", tmpbuf->buff);
   if (suc==true)
@@ -1326,6 +1420,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 	      install_dir,
 	      ignore_first, ignore_last);
 
+
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
   printf("%s\t", tmpbuf->buff);
   if (suc==false)
@@ -1411,7 +1506,8 @@ void print_pvl_presence(dBGraph* db_graph,
 							   boolean new_entry, 
 							   boolean * full_entry),
 					ReadingUtils* rutils,
-					GeneInfo* tmp_gi),
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
 			StrBuf* install_dir)
 {
   printf("PVL\t");

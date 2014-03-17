@@ -63,7 +63,7 @@
 
 #define GENE_THRESH_pvl 70
 #define MIN_COV_ON_NONZERO 5
-
+#define MAX_GENES_PER_ANTIBIOTIC 6
 
 typedef enum 
  {
@@ -89,13 +89,13 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name);
 typedef struct
 {
   Antibiotic ab;
-  StrBuf* fasta; //mutations and genes  
+  StrBuf* m_fasta; //mutations
+  StrBuf** g_fasta;//array of StrBuf*s, one per gene (which may contain many exemplars of that gene)
   int num_mutations;
+  int num_genes;
   ResVarInfo** mut;// array of length NUM_KNOWN_MUTATIONS];//indexed by enum of mutation names
   GeneInfo** genes;// array of length NUM_GENE_PRESENCE_GENES];//indexed by enum of gene names
-  //which genes to check for presence of is only held implicitly, by reading
-  //the relevant file.
-  
+  int* which_genes;
 } AntibioticInfo;
 
 
@@ -141,7 +141,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       ReadingUtils* rutils,
 				       ResVarInfo* tmp_rvi,
 				       GeneInfo* tmp_gi,
-				       int ignore_first, int ignore_last);
+				       int ignore_first, int ignore_last,
+				       StrBuf* install_dir);
 
 boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
@@ -419,6 +420,7 @@ void print_pvl_presence(dBGraph* db_graph,
 							   boolean new_entry, 
 							   boolean * full_entry),
 					ReadingUtils* rutils,
-					GeneInfo* tmp_gi),
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
 			StrBuf* install_dir);
 #endif
