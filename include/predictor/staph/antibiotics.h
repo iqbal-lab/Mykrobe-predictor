@@ -41,9 +41,9 @@
 #define MAX_LEN_MUT_ALLELE 100
 
 
-#define GENE_THRESH_blaZ 60
+#define GENE_THRESH_blaZ 30 //
 #define GENE_THRESH_msrA 60
-#define GENE_THRESH_aacAaphD 70
+#define GENE_THRESH_aacAaphD 70//
 #define GENE_THRESH_tetK 80
 #define GENE_THRESH_dfrA 90 
 #define GENE_THRESH_dfrG 70

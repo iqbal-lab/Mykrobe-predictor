@@ -276,6 +276,12 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
+      /*      printf("Percent >0 %d\n Median on nonzero %d\nMin %d\n, median %d\n",
+	     tmp_gi->percent_nonzero,
+	     tmp_gi->median_covg_on_nonzero_nodes,
+	     tmp_gi->median_covg,
+	     tmp_gi->min_covg);
+      */
 
       if (tmp_gi->percent_nonzero>abi->genes[tmp_gi->name]->percent_nonzero)
 	{

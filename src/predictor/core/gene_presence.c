@@ -280,8 +280,6 @@ int get_next_gene_info(FILE* fp,
 
 {
 
-  int i;
-
   boolean full_entry=true;
   int dummy_colour_ignored=0;
   int num_kmers = 
@@ -297,11 +295,11 @@ int get_next_gene_info(FILE* fp,
 						   db_graph, 
 						   dummy_colour_ignored);
 
-      if (num_kmers==0)
-	{
-	  return 0;
-	}
-      //collect min, median covg on gene and also percentage of kmers with any covg
+  if (num_kmers==0)
+    {
+      return 0;
+    }
+  //collect min, median covg on gene and also percentage of kmers with any covg
   boolean too_short=false;
   int ignore_first=0;
   int ignore_last=0;
