@@ -41,25 +41,27 @@
 #define MAX_LEN_MUT_ALLELE 100
 
 
-#define GENE_THRESH_blaZ 30 //
-#define GENE_THRESH_msrA 60
+
+
 #define GENE_THRESH_aacAaphD 70//
-#define GENE_THRESH_tetK 80
-#define GENE_THRESH_dfrA 90 
-#define GENE_THRESH_dfrG 70
+#define GENE_THRESH_blaZ 30 //
+#define GENE_THRESH_dfrA 70// 
+#define GENE_THRESH_dfrG 70//
 #define GENE_THRESH_ermA 90
-#define GENE_THRESH_ermB 90
-#define GENE_THRESH_ermC 80
+#define GENE_THRESH_ermB 90//
+#define GENE_THRESH_ermC 90//
 #define GENE_THRESH_ermT 70
 #define GENE_THRESH_fusB 60
 #define GENE_THRESH_fusC 60
-#define GENE_THRESH_vga_A_LC 70
+#define GENE_THRESH_msrA 60
 #define GENE_THRESH_mecA 70
+#define GENE_THRESH_tetK 90//
 #define GENE_THRESH_tetL 70
 #define GENE_THRESH_tetM 70
-#define GENE_THRESH_vanA 70
+#define GENE_THRESH_vanA 70//
 #define GENE_THRESH_mupA 70
 #define GENE_THRESH_mupB 70
+#define GENE_THRESH_vga_A_LC 70
 
 #define GENE_THRESH_pvl 70
 #define MIN_COV_ON_NONZERO 5
