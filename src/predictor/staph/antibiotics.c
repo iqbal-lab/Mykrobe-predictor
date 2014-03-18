@@ -568,12 +568,21 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 	install_dir);
 
   /*
+  printf("Erm A percentkmers %d, median on nonzero %d\n",
+	 abi->genes[ermA]->percent_nonzero,
+	 abi->genes[ermA]->median_covg_on_nonzero_nodes);
+  printf("Erm B percentkmers %d, median on nonzero %d\n",
+	 abi->genes[ermB]->percent_nonzero,
+	 abi->genes[ermB]->median_covg_on_nonzero_nodes);
   printf("Erm C percentkmers %d, median on nonzero %d\n",
 	 abi->genes[ermC]->percent_nonzero,
 	 abi->genes[ermC]->median_covg_on_nonzero_nodes);
   printf("Erm T percentkmers %d, median on nonzero %d\n",
 	 abi->genes[ermT]->percent_nonzero,
 	 abi->genes[ermT]->median_covg_on_nonzero_nodes);
+  printf("msrA percentkmers %d, median on nonzero %d\n",
+	 abi->genes[msrA]->percent_nonzero,
+	 abi->genes[msrA]->median_covg_on_nonzero_nodes);
   */
   if ( (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
        &&

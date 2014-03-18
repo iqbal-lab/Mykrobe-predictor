@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 
   int expected_depth = (mean_read_length-cmd_line->kmer_size+1)*(bp_loaded/cmd_line->genome_size) / mean_read_length;
 
-  //printf("Get expected depth of %d\n", expected_depth);
+  printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   	      expected_depth, cmd_line->max_expected_sup_len);
 
@@ -181,21 +181,21 @@ int main(int argc, char **argv)
 
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
 
-  /*  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_gentamycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore);  */
+				  ignore, ignore);  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore);
-  /*  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore);
+				  ignore, ignore); 
   boolean any_erm_present=false;
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
 				    ignore, ignore,
 				    &any_erm_present);
-  
+
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore);
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
   printf("** Virulence markers\n");
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_pvl_positive, cmd_line->install_dir); 
-  */
+   
   timestamp();
 
   //cleanup
