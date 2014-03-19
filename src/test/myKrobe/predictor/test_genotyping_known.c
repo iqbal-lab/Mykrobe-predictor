@@ -58,10 +58,11 @@ void test_get_next_mutation_allele_info()
 
   StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/mutations/sample1.fa.list");
   unsigned long long  num_bases = build_unclean_graph(db_graph, 
-						      list, 
+						      list, true,
 						      kmer_size,
 						      readlen_array, max_read_length,
-						      kmer_covg_array, 100);
+						      kmer_covg_array, 100,
+						      false, 0);
 
   FILE* fp = fopen("../data/test/myKrobe/predictor/mutations/some_snps1.fa", "r");
   if (fp==NULL)
@@ -119,51 +120,65 @@ void test_get_next_mutation_allele_info()
     {
       die("Cannot alloc array of nodes or of orientations");
     }
+  StrBuf* temp_rid = strbuf_new();
+  StrBuf* temp_mut = strbuf_new();
+  StrBuf* temp_gene = strbuf_new();
+  int ignore = 1;
   get_next_mutation_allele_info(fp, db_graph, rvi,
 				seq, kmer_window,
 				&file_reader_fasta,
-				array_nodes, array_or, working_ca, max_read_length);
+				array_nodes, array_or, working_ca, max_read_length,
+				temp_rid, temp_mut, temp_gene,
+				ignore, ignore);
 
   CU_ASSERT(rvi->susceptible_allele.median_covg==9);
   CU_ASSERT(rvi->susceptible_allele.min_covg==9);
   CU_ASSERT(rvi->susceptible_allele.percent_nonzero==100);
 
-  CU_ASSERT(rvi->resistant_allele.median_covg==0);
-  CU_ASSERT(rvi->resistant_allele.min_covg==0);
-  CU_ASSERT(rvi->resistant_allele.percent_nonzero==0);
+  CU_ASSERT(rvi->resistant_alleles[0].median_covg==0);
+  CU_ASSERT(rvi->resistant_alleles[0].min_covg==0);
+  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==0);
 
 
 
   get_next_mutation_allele_info(fp, db_graph, rvi,
 				seq, kmer_window,
 				&file_reader_fasta,
-				array_nodes, array_or, working_ca, max_read_length);
+				array_nodes, array_or, working_ca, max_read_length,
+				temp_rid, temp_mut, temp_gene,
+				ignore, ignore);
+
 
   CU_ASSERT(rvi->susceptible_allele.median_covg==0);
   CU_ASSERT(rvi->susceptible_allele.min_covg==0);
   CU_ASSERT(rvi->susceptible_allele.percent_nonzero==0);
 
-  CU_ASSERT(rvi->resistant_allele.median_covg==2);
-  CU_ASSERT(rvi->resistant_allele.min_covg==2);
-  CU_ASSERT(rvi->resistant_allele.percent_nonzero==100);
+  CU_ASSERT(rvi->resistant_alleles[0].median_covg==2);
+  CU_ASSERT(rvi->resistant_alleles[0].min_covg==2);
+  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==100);
 
 
   get_next_mutation_allele_info(fp, db_graph, rvi,
 				seq, kmer_window,
 				&file_reader_fasta,
-				array_nodes, array_or, working_ca, max_read_length);
+				array_nodes, array_or, working_ca, max_read_length,
+				temp_rid, temp_mut, temp_gene,
+				ignore, ignore);
+
 
   CU_ASSERT(rvi->susceptible_allele.median_covg==0);
   CU_ASSERT(rvi->susceptible_allele.min_covg==0);
   CU_ASSERT(rvi->susceptible_allele.percent_nonzero==0);
 
-  CU_ASSERT(rvi->resistant_allele.median_covg==0);
-  CU_ASSERT(rvi->resistant_allele.min_covg==0);
-  CU_ASSERT(rvi->resistant_allele.percent_nonzero==0);
+  CU_ASSERT(rvi->resistant_alleles[0].median_covg==0);
+  CU_ASSERT(rvi->resistant_alleles[0].min_covg==0);
+  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==0);
 
 
 
-
+  strbuf_free(temp_rid);
+  strbuf_free(temp_mut);
+  strbuf_free(temp_gene);
   free_res_var_info(rvi);
   free(array_nodes);
   free(array_or);

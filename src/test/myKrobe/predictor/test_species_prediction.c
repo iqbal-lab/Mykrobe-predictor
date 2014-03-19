@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyrightf 2014 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
  * **********************************************************************
@@ -35,6 +35,7 @@
 #include <CUnit.h>
 #include <Basic.h>
 #include <string_buffer.h>
+#include "build.h"
 
 void test_get_species_info()
 {
@@ -52,16 +53,20 @@ void test_get_species_info()
 
   StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/species_assignment/species_ref_list");
   unsigned long long  num_bases = build_unclean_graph(db_graph, 
-                  list, 
-                  kmer_size,
-                  readlen_array, max_gene_len,
-                  kmer_covg_array, 150);
+						      list, true,
+						      kmer_size,
+						      readlen_array, max_gene_len,
+						      kmer_covg_array, 150,
+						      false,0);
 
-  Staph_species species_assigned = get_species(db_graph,max_gene_len);
+  StrBuf* install_dir = strbuf_create("../");
+
+  Staph_species species_assigned = get_species(db_graph,max_gene_len, install_dir, 0,0);
   CU_ASSERT(species_assigned == Aureus);
 
   free(readlen_array);
   strbuf_free(list);
+  strbuf_free(install_dir);
   free(kmer_covg_array);
   hash_table_free(&db_graph);
 }

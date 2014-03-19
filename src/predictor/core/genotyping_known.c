@@ -154,6 +154,10 @@ int find_number_resistant_alleles(StrBuf* sbuf)
 	{
 	  char d = sbuf->buff[i+1];
 	  int id = d - '0';
+	  if (id>6)
+	    {
+	      die("myKrobe is hardcoded to expect a max of 6 resistant alleles - you must have added more since that limit was set\n");
+	    }
 	  return id;
 	}
     }

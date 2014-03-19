@@ -586,7 +586,7 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     } 
   else 
     {
-      die("Parsing error\n");
+      die("Parsing error - unknown mutation\n");
       return NotSpecified;
     } 
 

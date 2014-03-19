@@ -57,9 +57,11 @@ void test_build_unclean_graph()
   StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/test1.bam.list");
   unsigned long long  num_bases = build_unclean_graph(db_graph, 
 						      list, 
+						      true,
 						      kmer_size,
 						      readlen_array, 120,
-						      kmer_covg_array, 100);
+						      kmer_covg_array, 100,
+						      false, 0);
 
   
   CU_ASSERT(num_bases == 346933015);

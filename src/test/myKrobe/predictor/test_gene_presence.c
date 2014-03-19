@@ -58,10 +58,11 @@ void test_get_next_gene_info()
 
   StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/gene_presence/sample1.fa.list");
   unsigned long long  num_bases = build_unclean_graph(db_graph, 
-						      list, 
+						      list, true,
 						      kmer_size,
 						      readlen_array, max_gene_len,
-						      kmer_covg_array, 150);
+						      kmer_covg_array, 150,
+						      false, 0);
 
   FILE* fp = fopen("../data/test/myKrobe/predictor/gene_presence/panel1.fasta", "r");
   if (fp==NULL)
