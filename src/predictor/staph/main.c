@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     }
   
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
-
+  printf("Kmer size %d\n", cmd_line->kmer_size);
   dBGraph * db_graph = NULL;
 
 
