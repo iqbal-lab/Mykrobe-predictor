@@ -41,7 +41,7 @@
 #include "db_variants.h"
 #include "known_mutations.h"
 
-#define MIN_PERCENT_MUT_ALLELE_PRESENT 40
+#define MIN_PERCENT_MUT_ALLELE_PRESENT 80
 
 typedef struct
 {
@@ -93,7 +93,7 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   StrBuf* temp_readid_buf, 
 				   StrBuf* temp_mut_buf,
 				   StrBuf* temp_gene_name_buf,
-				   int ignore_first, int ignore_last);
+				   int ignore_first, int ignore_last, int expected_covg);
 
 
 #endif

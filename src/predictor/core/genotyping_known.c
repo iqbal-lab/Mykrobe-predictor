@@ -246,7 +246,8 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   StrBuf* temp_readid_buf, 
 				   StrBuf* temp_mut_buf,
 				   StrBuf* temp_gene_name_buf,
-				   int ignore_first, int ignore_last)
+				   int ignore_first, int ignore_last, 
+				   int expected_covg)
 				   
 {
 

@@ -207,7 +207,7 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 					      AntibioticInfo* abi,
 					      ReadingUtils* rutils,
 					      ResVarInfo* tmp_rvi,
-					      int ignore_first, int ignore_last)
+					      int ignore_first, int ignore_last, int expected_covg)
 {
   reset_reading_utils(rutils);
   reset_res_var_info(tmp_rvi);
@@ -232,7 +232,7 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 				    rutils->working_ca, 
 				    MAX_LEN_MUT_ALLELE,
 				    tmp1, tmp2, tmp3,
-				    ignore_first, ignore_last);
+				    ignore_first, ignore_last, expected_covg);
 
       copy_res_var_info(tmp_rvi, abi->mut[tmp_rvi->var_id]);
     }
@@ -305,7 +305,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       ReadingUtils* rutils,
 				       ResVarInfo* tmp_rvi,
 				       GeneInfo* tmp_gi,
-				       int ignore_first, int ignore_last,
+				       int ignore_first, int ignore_last, int expected_covg,
 				       StrBuf* install_dir)
 
 {
@@ -327,7 +327,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 					      abi,
 					      rutils, 
 					      tmp_rvi,
-					      ignore_first, ignore_last);
+					      ignore_first, ignore_last, expected_covg);
       fclose(fp);
     }
   if (abi->num_genes>0)
@@ -373,7 +373,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last
+				  int ignore_first, int ignore_last, int expected_covg
 				  )
 {
   reset_antibiotic_info(abi);
@@ -391,13 +391,11 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				    abi,
 				    rutils,
 				    tmp_rvi,
-				    tmp_gi, ignore_first, ignore_last,
-	install_dir);
+				    tmp_gi, ignore_first, ignore_last, expected_covg,
+				    install_dir);
 
-  if ( (abi->genes[aacAaphD]->percent_nonzero > GENE_THRESH_aacAaphD)
-       && 
-       (abi->genes[aacAaphD]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  if (abi->genes[aacAaphD]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+
     {
       return false;
     }
@@ -417,7 +415,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last
+				  int ignore_first, int ignore_last, int expected_covg
 				  )
 
 {
@@ -439,12 +437,11 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if ( (abi->genes[blaZ]->percent_nonzero > GENE_THRESH_blaZ)
-       && (abi->genes[blaZ]->median_covg_on_nonzero_nodes >= MIN_COV_ON_NONZERO)
-       )
+
+  if (abi->genes[blaZ]->percent_nonzero > MIN_PERC_COVG_BLAZ)
     {
       return false;
     }
@@ -464,7 +461,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last
+				    int ignore_first, int ignore_last, int expected_covg
 				  )
 
 {
@@ -476,8 +473,9 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   strbuf_append_str(abi->m_fasta, install_dir->buff);
   strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/trimethoprim.fa");
   abi->num_mutations = 113;
-  abi->which_genes[0]=dfrG;
-  abi->num_genes=1;
+  abi->which_genes[0]=dfrA;
+  abi->which_genes[1]=dfrG;
+  abi->num_genes=2;
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -485,7 +483,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
   if (abi->mut[dfrB_F99I]->some_resistant_allele_present==true)
@@ -508,10 +506,11 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
     {
       return false;
     }
-  else if ( (abi->genes[dfrG]->percent_nonzero > GENE_THRESH_dfrG)
-	    && 
-	    (abi->genes[dfrG]->median_covg_on_nonzero_nodes >=MIN_COV_ON_NONZERO)
-	    )
+  else if (abi->genes[dfrA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+    {
+      return false;
+    }
+  else if (abi->genes[dfrG]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }
@@ -539,7 +538,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last,
+				    int ignore_first, int ignore_last, int expected_covg,
 				    boolean* any_erm_present)
 {
   reset_antibiotic_info(abi);
@@ -564,63 +563,31 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  /*
-  printf("Erm A percentkmers %d, median on nonzero %d\n",
-	 abi->genes[ermA]->percent_nonzero,
-	 abi->genes[ermA]->median_covg_on_nonzero_nodes);
-  printf("Erm B percentkmers %d, median on nonzero %d\n",
-	 abi->genes[ermB]->percent_nonzero,
-	 abi->genes[ermB]->median_covg_on_nonzero_nodes);
-  printf("Erm C percentkmers %d, median on nonzero %d\n",
-	 abi->genes[ermC]->percent_nonzero,
-	 abi->genes[ermC]->median_covg_on_nonzero_nodes);
-  printf("Erm T percentkmers %d, median on nonzero %d\n",
-	 abi->genes[ermT]->percent_nonzero,
-	 abi->genes[ermT]->median_covg_on_nonzero_nodes);
-  printf("msrA percentkmers %d, median on nonzero %d\n",
-	 abi->genes[msrA]->percent_nonzero,
-	 abi->genes[msrA]->median_covg_on_nonzero_nodes);
-  */
-  if ( (abi->genes[ermA]->percent_nonzero > GENE_THRESH_ermA)
-       &&
-       (abi->genes[ermA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  if (abi->genes[ermA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       *any_erm_present=true;
       return false;
     }
-  else if ( (abi->genes[ermB]->percent_nonzero > GENE_THRESH_ermB)
-	    &&
-	    (abi->genes[ermB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
+  else if (abi->genes[ermB]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+    {
+      *any_erm_present=true;
+      return false;
+    }
+  else if (abi->genes[ermC]->percent_nonzero > MIN_PERC_COVG_STANDARD)
 
     {
       *any_erm_present=true;
       return false;
     }
-  else if ( (abi->genes[ermC]->percent_nonzero > GENE_THRESH_ermC)
-	    &&
-	    (abi->genes[ermC]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
+  else if (abi->genes[ermT]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       *any_erm_present=true;
       return false;
     }
-  else if ( (abi->genes[ermT]->percent_nonzero > GENE_THRESH_ermT)
-	    &&
-	    (abi->genes[ermT]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
-    {
-      *any_erm_present=true;
-      return false;
-    }
-  else if ( (abi->genes[msrA]->percent_nonzero > GENE_THRESH_msrA)
-	    &&
-	    (abi->genes[msrA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
+  else if (abi->genes[msrA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }
@@ -642,7 +609,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
-				   int ignore_first, int ignore_last)
+				   int ignore_first, int ignore_last, int expected_covg)
 {
   reset_antibiotic_info(abi);
   
@@ -660,13 +627,10 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if ( (abi->genes[mecA]->percent_nonzero > GENE_THRESH_mecA)
-       &&
-       (abi->genes[mecA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  if (abi->genes[mecA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
@@ -685,7 +649,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     GeneInfo* tmp_gi,
 				     AntibioticInfo* abi,
 				     StrBuf* install_dir,
-				     int ignore_first, int ignore_last)
+				     int ignore_first, int ignore_last, int expected_covg)
 {
   reset_antibiotic_info(abi);
   
@@ -703,7 +667,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
   if (abi->mut[gyrA_E88K]->some_resistant_allele_present==true)
@@ -748,7 +712,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last)
+				  int ignore_first, int ignore_last, int expected_covg)
 {
   reset_antibiotic_info(abi);
   
@@ -767,7 +731,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
   if (abi->mut[rpoB_A477D]->some_resistant_allele_present==true)
     {
@@ -867,7 +831,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last)
+				    int ignore_first, int ignore_last, int expected_covg)
 {
   reset_antibiotic_info(abi);
   
@@ -887,28 +851,18 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if ( (abi->genes[tetK]->percent_nonzero > GENE_THRESH_tetK)
-       &&
-       (abi->genes[tetK]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  if (abi->genes[tetK]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
-  else if ( (abi->genes[tetL]->percent_nonzero > GENE_THRESH_tetL)
-	    &&
-	    (abi->genes[tetL]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
-    
+  else if (abi->genes[tetL]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
-  else if ( (abi->genes[tetM]->percent_nonzero > GENE_THRESH_tetM)
-	    &&
-	    (abi->genes[tetM]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  else if (abi->genes[tetM]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
@@ -929,7 +883,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 GeneInfo* tmp_gi,
 				 AntibioticInfo* abi,
 				 StrBuf* install_dir,
-				 int ignore_first, int ignore_last)
+				 int ignore_first, int ignore_last, int expected_covg)
 {
   reset_antibiotic_info(abi);
   
@@ -949,21 +903,14 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if ( (abi->genes[mupA]->percent_nonzero > GENE_THRESH_mupA)
-       &&
-       (abi->genes[mupA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  if (abi->genes[mupA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
-  else if ( (abi->genes[mupB]->percent_nonzero > GENE_THRESH_mupB)
-	    &&
-	    (abi->genes[mupB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
-    
+  else if (abi->genes[mupB]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
@@ -982,7 +929,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last)
+				    int ignore_first, int ignore_last, int expected_covg)
 {
   reset_antibiotic_info(abi);
   
@@ -1004,7 +951,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
 
@@ -1168,19 +1115,11 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
       return false;
     }
-  else if ( (abi->genes[fusB]->percent_nonzero > GENE_THRESH_fusB)
-	    &&
-	    (abi->genes[fusB]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
-    
+  else if (abi->genes[fusB]->percent_nonzero > MIN_PERC_COVG_FUSBC)
     {
       return false;
     }  
-  else if ( (abi->genes[fusC]->percent_nonzero > GENE_THRESH_fusC)
-	    &&
-	    (abi->genes[fusC]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-	    )
-    
+  else if (abi->genes[fusC]->percent_nonzero > MIN_PERC_COVG_FUSBC)
     {
       return false;
     }  
@@ -1203,7 +1142,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
-				   int ignore_first, int ignore_last)
+				   int ignore_first, int ignore_last, int expected_covg)
 
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1223,15 +1162,11 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
+				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
 
-  if ( (abi->genes[vga_A_LC]->percent_nonzero > GENE_THRESH_vga_A_LC)
-       &&
-       (abi->genes[vga_A_LC]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
-
+  if (abi->genes[vga_A_LC]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
@@ -1251,7 +1186,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last)
+				  int ignore_first, int ignore_last, int expected_covg)
   
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1272,13 +1207,10 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last,
-	install_dir);
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
 
-  if ( (abi->genes[vanA]->percent_nonzero > GENE_THRESH_vanA)
-       &&
-       (abi->genes[vanA]->median_covg_on_nonzero_nodes>=MIN_COV_ON_NONZERO)
-       )
+  if (abi->genes[vanA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
     {
       return false;
     }  
@@ -1309,10 +1241,11 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 							GeneInfo* tmp_gi,
 							AntibioticInfo* abi,
 							StrBuf* install_dir,
-							int ignore_first, int ignore_last),
+							int ignore_first, int ignore_last, int expected_covg),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
-					int ignore_first, int ignore_last
+					int ignore_first, int ignore_last,
+					int expected_covg
 					)
 {
   boolean suc;
@@ -1324,7 +1257,9 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 	      tmp_gi,
 	      abi, 
 	      install_dir,
-	      ignore_first, ignore_last);
+	      ignore_first, 
+	      ignore_last, 
+	      expected_covg);
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
@@ -1357,16 +1292,16 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 									    int max_read_length, 
 									    boolean new_entry, 
 									    boolean * full_entry),
-							 ReadingUtils* rutils,
-							 ResVarInfo* tmp_rvi,
-							 GeneInfo* tmp_gi,
-							 AntibioticInfo* abi,
-							 StrBuf* install_dir,
-							  int ignore_first, int ignore_last,
+							  ReadingUtils* rutils,
+							  ResVarInfo* tmp_rvi,
+							  GeneInfo* tmp_gi,
+							  AntibioticInfo* abi,
+							  StrBuf* install_dir,
+							  int ignore_first, int ignore_last, int expected_covg,
 							  boolean* any_erm_present),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
-					  int ignore_first, int ignore_last,
+					  int ignore_first, int ignore_last, int expected_covg,
 					  boolean* any_erm_present
 					 )
 {
@@ -1379,7 +1314,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 	      tmp_gi,
 	      abi,
 	      install_dir,
-	      ignore_first, ignore_last,
+	      ignore_first, ignore_last, expected_covg,
 	      any_erm_present);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
@@ -1417,11 +1352,11 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 							 GeneInfo* tmp_gi,
 							 AntibioticInfo* abi,
 							 StrBuf* install_dir,
-							 int ignore_first, int ignore_last),
+							 int ignore_first, int ignore_last, int expected_covg),
 					 StrBuf* tmpbuf,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
-					 int ignore_first, int ignore_last
+					 int ignore_first, int ignore_last, int expected_covg
 					 )
 {
   boolean suc;
@@ -1433,7 +1368,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 	      tmp_gi,
 	      abi,
 	      install_dir,
-	      ignore_first, ignore_last);
+	      ignore_first, ignore_last, expected_covg);
 
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
@@ -1492,10 +1427,7 @@ boolean is_pvl_positive(dBGraph* db_graph,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
 
-      if ( (tmp_gi->percent_nonzero > GENE_THRESH_pvl)
-	   && 
-	   (tmp_gi->median_covg_on_nonzero_nodes >= MIN_COV_ON_NONZERO)
-	   )
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_STANDARD)
 	{
 	  is_pos=true;
 	}
