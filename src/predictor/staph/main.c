@@ -114,6 +114,7 @@ int main(int argc, char **argv)
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
   GraphInfo* gi = graph_info_alloc_and_init();
+  uint64_t bp_loaded=0;
 
   if (cmd_line->method==WGAssemblyThenGenotyping)
     {
@@ -121,30 +122,38 @@ int main(int argc, char **argv)
     }
   else if (cmd_line->method==InSilicoOligos)
     {
-      only_load_pre_existing_kmers=true;
-      int col=0;
-
-      load_multicolour_binary_from_filename_into_graph(cmd_line->skeleton_binary->buff,
-						       db_graph, 
-						       gi,
-						       &col);
+      StrBuf* skeleton_flist = strbuf_new();
+      strbuf_append_str(skeleton_flist, 
+			cmd_line->install_dir->buff);
+      strbuf_append_str(skeleton_flist, 
+			"data/skeleton_binary/list_speciesbranches_genes_and_muts");
+      build_unclean_graph(db_graph, 
+			  skeleton_flist,
+			  true,
+			  cmd_line->kmer_size,
+			  NULL, 0,
+			  NULL, 0,
+			  false,
+			  into_colour);
       set_all_coverages_to_zero(db_graph, 0);
+      strbuf_free(skeleton_flist);
+      only_load_pre_existing_kmers=true;
     }
   else
     {
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
 
-  uint64_t bp_loaded = build_unclean_graph(db_graph, 
-					   cmd_line->seq_path,
-					   cmd_line->input_list,
-					   cmd_line->kmer_size,
-					   cmd_line->readlen_distrib,
-					   cmd_line->readlen_distrib_size,
-					   cmd_line->kmer_covg_array, 
-					   cmd_line->len_kmer_covg_array,
-					   only_load_pre_existing_kmers,
-					   into_colour);
+  bp_loaded = build_unclean_graph(db_graph, 
+				  cmd_line->seq_path,
+				  cmd_line->input_list,
+				  cmd_line->kmer_size,
+				  cmd_line->readlen_distrib,
+				  cmd_line->readlen_distrib_size,
+				  cmd_line->kmer_covg_array, 
+				  cmd_line->len_kmer_covg_array,
+				  only_load_pre_existing_kmers,
+				  into_colour);
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
 							   cmd_line->readlen_distrib_size);

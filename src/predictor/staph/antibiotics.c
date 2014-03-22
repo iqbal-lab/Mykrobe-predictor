@@ -437,10 +437,13 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_rvi,
 				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-	install_dir);
+				    ignore_first, 
+				    ignore_last, 
+				    expected_covg,
+				    install_dir);
 
-
+  //  printf("Got blaZ percent %d\n", abi->genes[blaZ]->percent_nonzero);
+  
   if (abi->genes[blaZ]->percent_nonzero > MIN_PERC_COVG_BLAZ)
     {
       return false;

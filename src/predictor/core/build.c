@@ -128,6 +128,10 @@ void db_graph_get_covg_distribution_array(dBGraph* db_graph, int colour,
 					  uint64_t * kmer_covg_array, 
 					  uint32_t len_kmer_covg_array)
 {
+  if (kmer_covg_array==NULL)
+    {
+      return;
+    }
   uint32_t i;
 
 
@@ -1549,7 +1553,11 @@ boolean db_graph_remove_supernode_containing_this_node_if_looks_like_induced_by_
       die("Called db_graph_remove_supernode_containing_this_node_if_looks_like_induced_by_error with a NULL node. Programming error\n");
     }
 
-  if (db_node_check_status(node, none)==false)//don't touch stuff that is visited or pruned, or whatever
+  if ( 
+      (db_node_check_status(node, none)==false)//don't touch stuff that is visited or pruned, or whatever
+      ||
+      (sum_of_covgs_in_desired_colours(node)==0)
+       )
     {
       *supernode_len=-1;//caller can check this
       is_supernode_pruned=false;
