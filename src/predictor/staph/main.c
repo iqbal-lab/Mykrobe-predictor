@@ -113,7 +113,7 @@ int main(int argc, char **argv)
  
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
-  GraphInfo* gi = graph_info_alloc_and_init();
+  //  GraphInfo* gi = graph_info_alloc_and_init();
   uint64_t bp_loaded=0;
 
   if (cmd_line->method==WGAssemblyThenGenotyping)
@@ -235,6 +235,19 @@ int main(int argc, char **argv)
 		     &is_pvl_positive, cmd_line->install_dir); 
    
   timestamp();
+
+  if (cmd_line ->output_supernodes==true)
+    {
+      printf("Print contigs\n");
+      db_graph_print_supernodes_defined_by_func_of_colours(cmd_line->contig_file->buff, "", 
+							   cmd_line->max_expected_sup_len,
+							   db_graph, 
+							   &element_get_colour_union_of_all_colours, 
+							   &element_get_covg_union_of_all_covgs, 
+							   &print_no_extra_supernode_info);
+      printf("Completed printing contigs\n");
+    }
+
 
   //cleanup
   strbuf_free(tmp_name);

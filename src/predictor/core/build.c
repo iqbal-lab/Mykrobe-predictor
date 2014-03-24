@@ -2544,3 +2544,214 @@ void db_graph_wipe_two_colours_in_one_traversal(int colour1, int colour2, dBGrap
   }
   hash_table_traverse(&wipe_node, db_graph);
 }
+
+void db_graph_print_supernodes_defined_by_func_of_colours(char * filename_sups, char* filename_sings, int max_length, 
+							  dBGraph * db_graph, Edges (*get_colour)(const dBNode*), Covg (*get_covg)(const dBNode*),
+							  void (*print_extra_info)(dBNode**, Orientation*, int, FILE*)){
+
+  boolean do_we_print_singletons=true;//singletons are supernodes consisting of ONE node.
+
+  FILE * fout1; //file to which we will write all supernodes which are longer than 1 node in fasta format
+  fout1= fopen(filename_sups, "w"); 
+  if (fout1==NULL)
+    {
+      die("Cannot open file %s in db_graph_print_supernodes_defined_by_func_of_colours",
+          filename_sups);
+    }
+
+  FILE * fout2=NULL; //file to which we will write all "singleton" supernodes, that are just  1 node, in fasta format
+  if ( strcmp(filename_sings, "")==0 )
+    {
+      //      printf("Only printing supernodes consisting of >1 node "
+      //     "(ie contigs longer than %d bases)", db_graph->kmer_size);
+    
+      do_we_print_singletons = false;
+    }
+  else
+    {
+      fout2= fopen(filename_sings, "w"); 
+      if (fout2==NULL)
+	{
+	  die("Cannot open file %s in db_graph_print_supernodes_defined_by_func_of_colours",
+        filename_sings);
+	}
+    }
+
+
+  int count_nodes=0;
+  
+  dBNode * *    path_nodes;
+  Orientation * path_orientations;
+  Nucleotide *  path_labels;
+  char * seq;
+  boolean is_cycle;
+  double avg_coverage=0;
+  Covg min_covg = 0, max_covg = 0;
+
+  path_nodes        = calloc(max_length,sizeof(dBNode*));
+  path_orientations = calloc(max_length,sizeof(Orientation));
+  path_labels       = calloc(max_length,sizeof(Nucleotide));
+  seq               = calloc(max_length+1+db_graph->kmer_size,sizeof(char));
+  
+  
+
+  long long count_kmers = 0;
+  long long count_sing  = 0;
+
+  void print_supernode(dBNode * node){
+    count_kmers++;
+    char name[100];
+
+    if (db_node_check_status_none(node) == true){
+      int length = db_graph_supernode_in_subgraph_defined_by_func_of_colours(node,max_length,&db_node_action_set_status_visited,
+									     path_nodes,path_orientations,path_labels,
+									     seq,&avg_coverage,&min_covg,&max_covg,&is_cycle,
+									     db_graph, get_colour, get_covg);
+
+      if (length>0){	
+	sprintf(name,"node_%i",count_nodes);
+
+	print_ultra_minimal_fasta_from_path(fout1,name,length,
+					    path_nodes[0],path_orientations[0], seq,
+					    db_graph->kmer_size,true);
+	if (length==max_length){
+	  printf("contig length equals max length [%i] for node_%i\n",max_length,count_nodes);
+	}
+	//fprintf(fout1, "extra information:\n");
+	print_extra_info(path_nodes, path_orientations, length, fout1);
+	count_nodes++;
+      }
+      else{
+	count_sing++;
+	if (do_we_print_singletons==true)
+	  {
+	    sprintf(name,"node_%qd",count_sing);
+	    print_ultra_minimal_fasta_from_path(fout2,name,length,
+						path_nodes[0],path_orientations[0],seq,
+						db_graph->kmer_size,true);
+	    //fprintf(fout2, "extra information:\n");
+	    print_extra_info(path_nodes, path_orientations, length, fout2);
+	  }
+	
+
+      }
+    
+    }
+  }
+  
+  hash_table_traverse(&print_supernode,db_graph); 
+  printf("%qd nodes visted [%qd singletons]\n",count_kmers,count_sing);
+
+  free(path_nodes);
+  free(path_orientations);
+  free(path_labels);
+  free(seq);
+  fclose(fout1);
+  if (fout2 != NULL)
+    {
+      fclose(fout2);
+    }
+}
+
+
+
+void print_ultra_minimal_fasta_from_path(FILE *fout,
+					 char * name,
+					 int length,
+					 dBNode * fst_node,
+					 Orientation fst_orientation,
+					 // dBNode * lst_node,
+					 //Orientation lst_orientation,
+					 char * string, //labels of paths
+					 int kmer_size,
+					 boolean include_first_kmer)
+{
+
+  if (fout==NULL)
+    {
+      die("Exiting - have passed a null file pointer to "
+          "print_ultra_minimal_fasta_from_path\n");
+    }
+  
+  
+  if (include_first_kmer==false)
+    {
+      fprintf(fout,">%s length:%i kmer:%d\n%s\n", name, length, kmer_size, string);
+    }
+  else
+    {
+      if ( fst_node==NULL )
+	{
+	  die("WARNING - print_ultra_minimal_fasta_from_path command has been "
+        "given a NULL node as first node, and needs to dereference it.");
+	}
+      else
+	{
+	  char fst_seq[kmer_size+1];
+	  fst_seq[kmer_size]='\0';
+	  BinaryKmer fst_kmer; BinaryKmer tmp_kmer;
+	  
+	  if (fst_orientation==reverse)
+	    {
+	      binary_kmer_assignment_operator(fst_kmer, *(  binary_kmer_reverse_complement(element_get_kmer(fst_node),kmer_size, &tmp_kmer) ) );
+	    } 
+	  else
+	    {
+	      binary_kmer_assignment_operator(fst_kmer, *(element_get_kmer(fst_node)) );
+	    }
+	  
+	  binary_kmer_to_seq(&fst_kmer,kmer_size,fst_seq);
+	  
+	  fprintf(fout,">%s length:%i INFO:KMER=%d\n", name,length+kmer_size, kmer_size);
+	  fprintf(fout,"%s", fst_seq);
+	  fprintf(fout,"%s\n",string);
+      
+	}
+      
+    }
+
+}
+
+
+void print_standard_extra_supernode_info(dBNode** node_array,
+                                         Orientation* or_array,
+                                         int len, FILE* fout)
+{
+  // Let the compiler know that we're deliberately ignoring a parameter
+  (void)or_array;
+  
+  int col;
+  for (col=0; col<NUMBER_OF_COLOURS; col++)
+    {
+      
+      fprintf(fout, "Covg in Colour %d:\n", col);
+      int i;
+      for (i=0; i<len; i++)
+	{
+	  if (node_array[i]!=NULL)
+	    {
+	      fprintf(fout, "%d ", node_array[i]->coverage[col]);
+	    }
+	  else
+	    {
+	      fprintf(fout, "0 ");
+	    }
+	}
+      fprintf(fout, "\n");
+      
+    }
+  
+}
+
+
+void print_no_extra_supernode_info(dBNode** node_array, Orientation* or_array,
+                                   int len, FILE* fout)
+{
+  // Let the compiler know that we are deliberately doing nothing with our
+  // paramters
+  (void)node_array;
+  (void)or_array;
+  (void)len;
+  (void)fout;
+}
+

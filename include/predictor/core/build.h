@@ -416,6 +416,28 @@ long long db_graph_health_check(boolean fix, dBGraph * db_graph);
 //clean off edges that point nowhere - caused when you dump a subgraph
 long long db_graph_clean_orphan_edges(dBGraph * db_graph);
 
+void db_graph_print_supernodes_defined_by_func_of_colours(char * filename_sups, char* filename_sings, int max_length, 
+							  dBGraph * db_graph, Edges (*get_colour)(const dBNode*), Covg (*get_covg)(const dBNode*),
+							  void (*print_extra_info)(dBNode**, Orientation*, int, FILE*));
+
+void print_ultra_minimal_fasta_from_path(FILE *fout,
+					 char * name,
+					 int length,
+					 dBNode * fst_node,
+					 Orientation fst_orientation,
+					 // dBNode * lst_node,
+					 //Orientation lst_orientation,
+					 char * string, //labels of paths
+					 int kmer_size,
+					 boolean include_first_kmer);
+
+
+void print_standard_extra_supernode_info(dBNode** node_array,
+                                         Orientation* or_array,
+                                         int len, FILE* fout);
+
+void print_no_extra_supernode_info(dBNode** node_array, Orientation* or_array,
+                                   int len, FILE* fout);
 
 
 

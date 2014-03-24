@@ -71,6 +71,7 @@ int default_opts(CmdLine * c)
   c->method=WGAssemblyThenGenotyping;//other options InSilicoOligos and WGAssemblyAndTranslation
   c->input_file=false;
   c->input_list=false;
+  c->output_supernodes = false;
   return 1;
 }
 
@@ -85,6 +86,7 @@ CmdLine* cmd_line_alloc()
   cmd->seq_path = strbuf_new();
   cmd->install_dir = strbuf_new();
   cmd->id = strbuf_new();
+  cmd->contig_file = strbuf_new();
   int max_expected_read_len = 500;//illumina
   cmd->readlen_distrib_size = max_expected_read_len + 1;
   cmd->readlen_distrib
@@ -114,6 +116,7 @@ void cmd_line_free(CmdLine* cmd)
   strbuf_free(cmd->seq_path);
   strbuf_free(cmd->install_dir);
   strbuf_free(cmd->id);
+  strbuf_free(cmd->contig_file);
   free(cmd->readlen_distrib);
   free(cmd);
 }
@@ -131,8 +134,8 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"file",required_argument, NULL, 'f'},
     {"method", required_argument, NULL, 'm'},
     {"sample_id", required_argument, NULL, 's'},
-    {"oligo_bin", required_argument, NULL, 'b'},
     {"install_dir", required_argument, NULL, 'i'},
+    {"print_contigs", required_argument, NULL, 'c'},
     {0,0,0,0}	
   };
   
@@ -143,7 +146,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   optind=1;
   
  
-  opt = getopt_long(argc, argv, "hf:l:m:s:", long_options, &longopt_index);
+  opt = getopt_long(argc, argv, "hf:l:m:s:i:c:", long_options, &longopt_index);
 
   while ((opt) > 0) {
 	       
@@ -201,7 +204,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }
     case 'f':
       {
-	if (access(optarg,F_OK)==0) 
+	if (access(optarg,F_OK)==0)
 	  {
 	    char* full_path = realpath(optarg,NULL);
 	    strbuf_append_str(cmdline_ptr->seq_path, full_path);
@@ -243,6 +246,20 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	strbuf_append_str(cmdline_ptr->id, optarg);
 	break;
       }
+    case 'c':
+      {
+	if (access(optarg,F_OK)==0) 
+	  {
+	    errx(1,"--print_contigs requires an output file as argument, but the file you specify already exists. Abort, as will not overwrite it\n");
+	    return -1;
+	  }
+	else
+	  {
+	    cmdline_ptr->output_supernodes=true;
+	    strbuf_append_str(cmdline_ptr->contig_file, optarg);
+	  }
+	break;
+      }
     default:
       {
 	errx(1, "Unknown option %c\n", opt);
@@ -250,7 +267,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }      
 
     }
-    opt = getopt_long(argc, argv, "hf:l:m:s:", long_options, &longopt_index);
+    opt = getopt_long(argc, argv, "hf:l:m:s:i:c:", long_options, &longopt_index);
     
   }   
   

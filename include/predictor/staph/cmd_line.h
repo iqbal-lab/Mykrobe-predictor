@@ -48,6 +48,7 @@ typedef struct
   StrBuf* seq_path; //may be a singe bam/fastq or a list.
   StrBuf* id; //sample id
   StrBuf* install_dir;
+  StrBuf* contig_file;
   long long genome_size;
   uint16_t kmer_size;
   uint64_t* readlen_distrib;
@@ -63,7 +64,7 @@ typedef struct
   Approach method;
   boolean input_file;
   boolean input_list;
-  
+  boolean output_supernodes;
 } CmdLine;
 
 
