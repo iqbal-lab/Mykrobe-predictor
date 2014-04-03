@@ -124,12 +124,13 @@ void test_get_next_mutation_allele_info()
   StrBuf* temp_mut = strbuf_new();
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
+  int expected_covg = 9;
   get_next_mutation_allele_info(fp, db_graph, rvi,
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore);
+				ignore, ignore, expected_covg);
 
   CU_ASSERT(rvi->susceptible_allele.median_covg==9);
   CU_ASSERT(rvi->susceptible_allele.min_covg==9);
@@ -146,7 +147,7 @@ void test_get_next_mutation_allele_info()
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore);
+				ignore, ignore, expected_covg);
 
 
   CU_ASSERT(rvi->susceptible_allele.median_covg==0);
@@ -163,7 +164,7 @@ void test_get_next_mutation_allele_info()
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore);
+				ignore, ignore, expected_covg);
 
 
   CU_ASSERT(rvi->susceptible_allele.median_covg==0);
