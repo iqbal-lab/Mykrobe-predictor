@@ -227,8 +227,8 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	else if (strcmp(optarg, "InSilicoOligos")==0)
 	  {
 	    cmdline_ptr->method=InSilicoOligos;
-	    /* cmdline_ptr->mem_height=19;
-	       cmdline_ptr->mem_width=100; */
+	    cmdline_ptr->mem_height=14;
+	    cmdline_ptr->mem_width=100; 
 	  }
 	else if (strcmp(optarg, "WGAssemblyAndTranslation")==0)
 	  {
