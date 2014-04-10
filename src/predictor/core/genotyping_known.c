@@ -58,7 +58,7 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 						   int max_read_length, 
 						   boolean new_entry, 
 						    boolean * full_entry),
-				 dBNode** array_nodes, Orientation*  array_or,
+				dBNode** array_nodes, Orientation*  array_or,
 				CovgArray* working_ca, int max_read_length,
 				int ignore_first, int ignore_last)
 
@@ -142,6 +142,22 @@ void reset_res_var_info(ResVarInfo* rvi)
 
 
 //util funcs
+
+Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi)
+{
+  int i;
+  Covg max=0;
+  for (i=0; i<rvi->num_resistant_alleles; i++)
+    {
+      Covg c = rvi->resistant_alleles[i].median_covg;
+      if (c>max)
+	{
+	  max=c;
+	}
+    }
+  return max;
+}
+
 
 //finds the (single-digit_ number after the first minus sign
 int find_number_resistant_alleles(StrBuf* sbuf)

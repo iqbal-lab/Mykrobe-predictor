@@ -95,5 +95,6 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   StrBuf* temp_gene_name_buf,
 				   int ignore_first, int ignore_last, int expected_covg);
 
+Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi);
 
 #endif

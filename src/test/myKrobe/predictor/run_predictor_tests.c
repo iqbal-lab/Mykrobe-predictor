@@ -32,12 +32,31 @@ int  main()
     return CU_get_error();
     }*/
 
-  if (NULL == CU_add_test(pPopGraphSuite, "Test getting coverage info on resistance/susceptibility alleles", test_get_next_mutation_allele_info)) {
+  if (NULL == CU_add_test(pPopGraphSuite, 
+			  "Test getting coverage info on resistance/susceptibility alleles", 
+			  test_get_next_mutation_allele_info)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
 
-  if (NULL == CU_add_test(pPopGraphSuite, "Test getting coverage info on a gene (for gene presence testing)", test_get_next_gene_info)) {
+  if (NULL == CU_add_test(pPopGraphSuite, 
+			  "Test log likelihoods/models for clonal susceptible infection", 
+			  test_mutation_model_log_likelihoods_1)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+
+  if (NULL == CU_add_test(pPopGraphSuite, 
+			  "Test log likelihoods/models for clonal resistant infection", 
+			  test_mutation_model_log_likelihoods_2)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+
+
+  if (NULL == CU_add_test(pPopGraphSuite, 
+			  "Test getting coverage info on a gene (for gene presence testing)", 
+			  test_get_next_gene_info)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
