@@ -44,27 +44,21 @@ typedef enum
 
 
 double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
-								double epsilon,
-								double delta,
-								double lambda,
+								double lambda_g, double lambda_e,
 								int kmer);
 
 double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(ResVarInfo* rvi,
-								     double epsilon,
-								     double delta,
-								     double lambda,
+								     double lambda_g, double lambda_e,
 								     int kmer);
 
 double get_biallelic_log_lik(Covg covg_model_true,
 			     Covg  covg_model_err,
-			     double epsilon,
-			     double delta,
-			     double lambda,
+			     double lambda_g, 
+			     double lambda_e,
 			     int kmer);
 
 double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
-				      double epsilon,
-				      double lambda,
+				      double lambda_g,
 				      double err_rate,
 				      int kmer);
 
@@ -76,11 +70,11 @@ typedef struct
 
 int model_cmp(const void *a, const void *b);
 
-Model choose_best_model(double llk_R, double llk_S, double llk_M,
-			double* confidence);
+void choose_best_model(double llk_R, double llk_S, double llk_M,
+		       double* confidence, Model* best_model);
 
 InfectionType best_model(ResVarInfo* rvi, double err_rate, int kmer,
-			 int expected_covg, int mean_read_len,
+			 double lambda_g, double lambda_e,
 			 double* confidence);
 
 #endif

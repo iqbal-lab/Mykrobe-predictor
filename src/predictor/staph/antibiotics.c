@@ -30,6 +30,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
+#include "mut_models.h"
 
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
 {
@@ -374,7 +375,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  int mean_read_len, double err_rate
+				  double lambda_g, double lambda_e, double err_rate
 				  )
 {
   reset_antibiotic_info(abi);
@@ -417,7 +418,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  int mean_read_len, double err_rate
+				  double lambda_g, double lambda_e, double err_rate
 				  )
 
 {
@@ -467,7 +468,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    int mean_read_len, double err_rate
+				    double lambda_g, double lambda_e, double err_rate
 				    )
 
 {
@@ -500,10 +501,11 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   for (i=first_trim_mut; i<=last_trim_mut; i++)
     {
       double conf=0;
-      Model m = best_model(abi->mut[i],
-			   err_rate, kmer, expected_covg,
-			   mean_read_len, &conf);
-      if ( (m.type==Resistant) || (m.type==MixedInfection) )
+      InfectionType I=
+	best_model(abi->mut[i], err_rate, db_graph->kmer_size, 
+		   lambda_g, lambda_e,
+		   &conf);
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
 	  return false;
 	}
@@ -563,7 +565,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    int mean_read_len, double err_rate,
+				    double lambda_g, double lambda_e, double err_rate,
 				    boolean* any_erm_present)
 {
   reset_antibiotic_info(abi);
@@ -635,7 +637,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
 				   int ignore_first, int ignore_last, int expected_covg,
-				   int mean_read_len, double err_rate)
+				   double lambda_g, double lambda_e, double err_rate)
 {
   reset_antibiotic_info(abi);
   
@@ -676,7 +678,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     AntibioticInfo* abi,
 				     StrBuf* install_dir,
 				     int ignore_first, int ignore_last, int expected_covg,
-				     int mean_read_len, double err_rate)
+				     double lambda_g, double lambda_e, double err_rate)
 {
   reset_antibiotic_info(abi);
   
@@ -708,10 +710,11 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   for (i=first_cip_mut; i<=last_cip_mut; i++)
     {
       double conf=0;
-      Model m = best_model(abi->mut[i],
-			   err_rate, kmer, expected_covg,
-			   mean_read_len, &conf);
-      if ( (m.type==Resistant) || (m.type==MixedInfection) )
+      InfectionType I=
+	best_model(abi->mut[i],
+		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		   &conf);
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
 	  return false;
 	}
@@ -763,7 +766,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  int mean_read_len, double err_rate)
+				  double lambda_g, double lambda_e, double err_rate)
 {
   reset_antibiotic_info(abi);
   
@@ -798,23 +801,26 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   for (i=first_rif_mut; i<=last_rif_mut; i++)
     {
       double conf=0;
-      Model m = best_model(abi->mut[i],
-			   err_rate, kmer, expected_covg,
-			   mean_read_len, &conf);
-      if ( (m.type==Resistant) || (m.type==MixedInfection) )
+      InfectionType I=
+	best_model(abi->mut[i],
+		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		   &conf);
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
 	  return false;
 	}
     }
   double conf=0;
-  Model m_m470t = best_model(abi->mut[rpoB_M470T],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
-  Model m_d471g = best_model(abi->mut[rpoB_D471G],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
-
-  if (m_m470t.type==Resistant && m_d471g.type==Resistant)
+  InfectionType I_m470t=
+    best_model(abi->mut[rpoB_M470T],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
+  InfectionType I_d471g=
+    best_model(abi->mut[rpoB_D471G],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
+  
+  if (I_m470t==Resistant && I_d471g==Resistant)
     {
       return false; //ignoring mixed infections for epistatic case
     }
@@ -920,7 +926,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    int mean_read_len, double err_rate)
+				    double lambda_g, double lambda_e, double err_rate)
 {
   reset_antibiotic_info(abi);
   
@@ -973,7 +979,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 AntibioticInfo* abi,
 				 StrBuf* install_dir,
 				 int ignore_first, int ignore_last, int expected_covg,
-				 int mean_read_len, double err_rate)
+				 double lambda_g, double lambda_e, double err_rate)
 {
   reset_antibiotic_info(abi);
   
@@ -1020,7 +1026,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    int mean_read_len, double err_rate)
+				    double lambda_g, double lambda_e, double err_rate)
 {
   reset_antibiotic_info(abi);
   
@@ -1060,10 +1066,11 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   for (i=first_fus_mut; i<=last_fus_mut; i++)
     {
       double conf=0;
-      Model m = best_model(abi->mut[i],
-			   err_rate, kmer, expected_covg,
-			   mean_read_len, &conf);
-      if ( (m.type==Resistant) || (m.type==MixedInfection) )
+      InfectionType I=
+	best_model(abi->mut[i],
+		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		   &conf);
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
 	  return false;
 	}
@@ -1071,14 +1078,16 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   
   double conf=0;
-  Model m_f652s = best_model(abi->mut[fusA_F652S],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
-  Model m_y654n = best_model(abi->mut[fusA_Y654N],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
+  InfectionType I_f652s=
+    best_model(abi->mut[fusA_F652S],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
+  InfectionType I_y654n=
+    best_model(abi->mut[fusA_Y654N],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
 
-  if (m_f652s.type==Resistant && m_y654n.type=Resistant)
+  if (I_f652s==Resistant && I_y654n==Resistant)
     {
       return false;
     }
@@ -1086,38 +1095,43 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
 
 
-  Model m_l461f = best_model(abi->mut[fusA_L461F],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
-  Model m_a376v = best_model(abi->mut[fusA_A376V],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
-  Model m_a655p = best_model(abi->mut[fusA_A655P],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
-  Model m_d463g = best_model(abi->mut[fusA_D463G],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
+  InfectionType I_l461f=
+    best_model(abi->mut[fusA_L461F],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
+  InfectionType I_a376v=
+    best_model(abi->mut[fusA_A376V],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
+  InfectionType I_a655p=
+    best_model(abi->mut[fusA_A655P],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
+  InfectionType I_d463g=
+    best_model(abi->mut[fusA_D463G],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       &conf);
   
-  if ( (m_l461f.type==Resistant)
+  if ( (I_l461f==Resistant)
        &&
-       (m_a376v.type==Resistant)
+       (I_a376v==Resistant)
        &&
-       (m_a655p.type==Resistant)
+       (I_a655p==Resistant)
        &&
-       (m_d463g.type==Resistant)
+       (I_d463g==Resistant)
        )
     {
       return false;
     }
 
-  Model m_e444v = best_model(abi->mut[fusA_E444V],
-			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf);
+  InfectionType I_e444v;
+  best_model(abi->mut[fusA_E444V],
+	     err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	     &conf);
 
-  if ((m_l461f.type==Resistant)
+  if ((I_l461f==Resistant)
        &&
-      (m_e444v.type==Resistant) )
+      (I_e444v==Resistant) )
     {
       return false;
     }
@@ -1313,7 +1327,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
 				   int ignore_first, int ignore_last, int expected_covg,
-				   int mean_read_len, double err_rate)
+				   double lambda_g, double lambda_e, double err_rate)
 
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1358,7 +1372,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				   AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  int mean_read_len, double err_rate)
+				  double lambda_g, double lambda_e, double err_rate)
   
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1413,12 +1427,13 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 							GeneInfo* tmp_gi,
 							AntibioticInfo* abi,
 							StrBuf* install_dir,
-							int ignore_first, int ignore_last, int expected_covg),
+							int ignore_first, int ignore_last, int expected_covg,
+							double lambda_g, double lambda_e, double err_rate),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last,
 					int expected_covg,
-					int mean_read_len, double err_rate
+					double lambda_g, double lambda_e, double err_rate
 					)
 {
   boolean suc;
@@ -1433,7 +1448,8 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 	      ignore_first, 
 	      ignore_last, 
 	      expected_covg,
-	      mean_read_len,
+	      lambda_g,
+	      lambda_e,
 	      err_rate);
 
   
@@ -1473,11 +1489,12 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 							  AntibioticInfo* abi,
 							  StrBuf* install_dir,
 							  int ignore_first, int ignore_last, int expected_covg,
+							  double lambda_g, double lambda_e, double err_rate,
 							  boolean* any_erm_present),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
-					  int mean_read_len, double err_rate,
+					  double lambda_g, double lambda_e, double err_rate,
 					  boolean* any_erm_present
 					 )
 {
@@ -1491,7 +1508,9 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 	      abi,
 	      install_dir,
 	      ignore_first, ignore_last, expected_covg,
-	      mean_read_len, err_rate,
+	      lambda_g,
+	      lambda_e,
+	      err_rate,
 	      any_erm_present);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
@@ -1529,12 +1548,13 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 							 GeneInfo* tmp_gi,
 							 AntibioticInfo* abi,
 							 StrBuf* install_dir,
-							 int ignore_first, int ignore_last, int expected_covg),
+							 int ignore_first, int ignore_last, int expected_covg,
+							 double lambda_g, double lambda_e, double err_rate),
 					 StrBuf* tmpbuf,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 int mean_read_len, double err_rate
+					 double lambda_g, double lambda_e, double err_rate
 					 )
 {
   boolean suc;
@@ -1547,7 +1567,9 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 	      abi,
 	      install_dir,
 	      ignore_first, ignore_last, expected_covg,
-	      mean_read_len, err_rate);
+	      lambda_g,
+	      lambda_e,
+	      err_rate);
 
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);

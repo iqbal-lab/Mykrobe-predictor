@@ -31,7 +31,7 @@
 
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name)
 {
-    if (strcmp(name->buff, "dfrB")==0)
+  if (strcmp(name->buff, "dfrB")==0)
     {
       return dfrB;
     }
@@ -323,10 +323,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return rpoB_D550G;
     } 
-  else if ( (strcmp(sbuf->buff, "N474K")==0) && (gene==rpoB) )
-    {
-      return rpoB_N474K;
-    } 
   else if ( (strcmp(sbuf->buff, "S84A")==0) && (gene==gyrA) )
     {
       return gyrA_S84A;
@@ -350,7 +346,7 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "S80Y")==0) && (gene==grlA) )
     {
       return grlA_S80Y;
-    } 
+    }
   else 
     {
       die("Parsing error - unknown mutation\n");

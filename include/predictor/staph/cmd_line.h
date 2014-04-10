@@ -43,7 +43,7 @@ typedef enum
     WGAssemblyAndTranslation=2,
   } Approach;
 
-typdef enum
+typedef enum
 {
   Illumina=0,
   OxfordNanopore=1,

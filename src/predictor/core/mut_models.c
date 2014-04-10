@@ -35,14 +35,13 @@
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
 double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
-								double epsilon,
-								double delta,
-								double lambda,
+								double lambda_g, double lambda_e,
 								int kmer)
 {
   Covg c = get_max_covg_on_any_resistant_allele(rvi);
   return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
-			       epsilon, delta, lambda, kmer);
+			       lambda_g, lambda_e, kmer);
+
 }
 
 
@@ -50,14 +49,13 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
 double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(ResVarInfo* rvi,
-								     double epsilon,
-								     double delta,
-								     double lambda,
+								     double lambda_g,
+								     double lambda_e,
 								     int kmer)
 {
   Covg c = get_max_covg_on_any_resistant_allele(rvi);
   return get_biallelic_log_lik(rvi->susceptible_allele.median_covg, c, 
-			       epsilon, delta, lambda, kmer);
+			       lambda_g, lambda_e, kmer);
 }
 
 //under a model where the first allele is the true one and second is seq error
@@ -66,14 +64,13 @@ double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(ResVarInfo*
 // lambda = expected_covg/mean_read_len
 double get_biallelic_log_lik(Covg covg_model_true,//covg on allele the model says is true
 			     Covg covg_model_err,
-			     double epsilon,
-			     double delta,
-			     double lambda,
+			     double lambda_g, 
+			     double lambda_e,
 			     int kmer)
 {
   //Under this model, covg on th true allele is Poisson distributed
-  //with rate at true allele   r_t = (1-e)^k  *  lambda
-  double r_t = epsilon * lambda;
+  //with rate at true allele   r_t = (1-e)^k  *  depth/read-length =: lambda_g
+  double r_t = lambda_g;
   
   // P(covg_model_true) = exp(-r_t) * (r_t)^covg_model_true /covg_model_true!
   
@@ -83,8 +80,8 @@ double get_biallelic_log_lik(Covg covg_model_true,//covg on allele the model say
     - log_factorial(covg_model_true);
     
   //Covg on the err allele is Poisson distributed with 
-  // rate at error allele = e * (1-e)^(k-1) * lambda/3
-  double r_e = delta * lambda/3;
+  // rate at error allele = e * (1-e)^(k-1) * (D/R) /3 =: lambda_e
+  double r_e = lambda_e;
   
   double log_lik_err_allele  
     = -r_e 
@@ -103,8 +100,7 @@ double get_biallelic_log_lik(Covg covg_model_true,//covg on allele the model say
 //llk for model where frequency of resistant allele is the point
 //estimate given by allele balance from covgs.
 double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
-				      double epsilon,
-				      double lambda,
+				      double lambda_g,
 				      double err_rate,
 				      int kmer)
 {
@@ -126,8 +122,8 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
     }
   
   //Under this model, covg on the susceptible allele is Poisson distributed
-  //with rate at susc allele   r_s = (1-e)^k  *  lambda * s/(s+r)
-  double r_s = epsilon * lambda * (1-estim_freq_res);
+  //with rate at susc allele   r_s = (1-e)^k  *  (D/R) * s/(s+r)
+  double r_s = lambda_g * (1-estim_freq_res);
   
   // P(covg_model_susc) = exp(-r_s) * (r_s)^s /s!
   
@@ -138,7 +134,7 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
     
   //Covg on the resistant allele is Poisson distributed with 
   // rate at resistant allele = (1-e)^k * lambda * r/(r+s)
-  double r_r = epsilon * lambda * estim_freq_res;
+  double r_r = lambda_g * estim_freq_res;
   
   double log_lik_res_allele  
     = -r_r 
@@ -170,8 +166,8 @@ int model_cmp(const void *a, const void *b)
     }
 }
 
-Model choose_best_model(double llk_R, double llk_S, double llk_M,
-			double* confidence)
+void choose_best_model(double llk_R, double llk_S, double llk_M,
+		       double* confidence, Model* best_model)
 {
   Model mR;
   mR.type=Resistant;
@@ -186,27 +182,25 @@ Model choose_best_model(double llk_R, double llk_S, double llk_M,
   Model arr[3]={mR, mS, mM};
   qsort(arr, 3, sizeof(Model), model_cmp);
   *confidence = arr[2].likelihood-arr[1].likelihood;
-  return arr[2];
+  best_model->type = arr[2].type;
+  best_model->likelihood = arr[2].likelihood;
 }
 
 InfectionType best_model(ResVarInfo* rvi, double err_rate, int kmer,
-			 int expected_covg, int mean_read_len,
+			 double lambda_g, double lambda_e,
 			 double* confidence)
 {
-  double epsilon = pow(1-err_rate, kmer);
-  double delta   = err_rate * pow(1-err_rate, kmer-1);
-  double lambda  = (double) expected_covg/(double) mean_read_len;
-
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi, 
-									  epsilon, delta, lambda,
+									  lambda_g, lambda_e,
 									  kmer);
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi, 
-									       epsilon, delta, lambda,
+									       lambda_g, lambda_e,
 									       kmer);
-  double llk_M = get_log_lik_of_mixed_infection(rvi, epsilon, lambda, err_rate, kmer);
+  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
 
   *confidence=0;
-  Model best = choose_best_model(llk_R, llk_S, llk_M, confidence);
+  Model best;
+  choose_best_model(llk_R, llk_S, llk_M, confidence, &best);
   if (*confidence>MIN_CONFIDENCE)
     {
       return best.type;

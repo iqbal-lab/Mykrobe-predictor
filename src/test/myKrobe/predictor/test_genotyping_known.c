@@ -302,20 +302,18 @@ void test_mutation_model_log_likelihoods_1()
   double delta = pow(1-error_rate, kmer_size-1) * error_rate;
   int mean_read_len = 61;
   double lambda = (double) expected_covg/(double) mean_read_len;
-
+  double lambda_g = pow(1-error_rate, kmer_size)*lambda;
+  double lambda_e = error_rate*(1-error_rate, kmer_size-1)*lambda;
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi,
-									epsilon,
-									delta,
-									lambda,
-									kmer_size);
+									  lambda_g,
+									  lambda_e,
+									  kmer_size);
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi,
-									       epsilon,
-									       delta,
-									       lambda,
+									       lambda_g,
+									       lambda_e,
 									       kmer_size);
   double llk_M = get_log_lik_of_mixed_infection(rvi,
-						epsilon,
-						lambda,
+						lambda_g,
 						error_rate,
 						kmer_size);
 
@@ -324,10 +322,11 @@ void test_mutation_model_log_likelihoods_1()
   CU_ASSERT(llk_M < llk_R);//we veto mixed infection unless resistant frequency more than double error_rate
 
   double confidence = 0;
-  Model m = choose_best_model(llk_R, llk_S, llk_M, &confidence);
+  Model m;
+  choose_best_model(llk_R, llk_S, llk_M, &confidence, &m);
   CU_ASSERT(m.type==Susceptible);
   
-  InfectionType t = best_model(rvi, error_rate, kmer_size, expected_covg, mean_read_len, &confidence);
+  InfectionType t = best_model(rvi, error_rate, kmer_size, lambda_g, lambda_e, &confidence);
   CU_ASSERT(t==Susceptible);
 
   strbuf_free(temp_rid);
@@ -455,20 +454,19 @@ void test_mutation_model_log_likelihoods_2()
   double delta = pow(1-error_rate, kmer_size-1) * error_rate;
   int mean_read_len = 61;
   double lambda = (double)expected_covg/(double) mean_read_len;
+  double lambda_g = pow(1-error_rate, kmer_size)*lambda;
+  double lambda_e = error_rate*(1-error_rate, kmer_size-1)*lambda;
 
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi,
-									epsilon,
-									delta,
-									lambda,
-									kmer_size);
+									  lambda_g,
+									  lambda_e,
+									  kmer_size);
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi,
-									       epsilon,
-									       delta,
-									       lambda,
+									       lambda_g,
+									       lambda_e,
 									       kmer_size);
   double llk_M = get_log_lik_of_mixed_infection(rvi,
-						epsilon,
-						lambda,
+						lambda_g,
 						error_rate,
 						kmer_size);
 
@@ -477,10 +475,11 @@ void test_mutation_model_log_likelihoods_2()
   CU_ASSERT(llk_M < llk_R);
 
   double confidence = 0;
-  Model m = choose_best_model(llk_R, llk_S, llk_M, &confidence);
+  Model m;
+  choose_best_model(llk_R, llk_S, llk_M, &confidence, &m);
   CU_ASSERT(m.type==Resistant);
   
-  InfectionType t = best_model(rvi, error_rate, kmer_size, expected_covg, mean_read_len, &confidence);
+  InfectionType t = best_model(rvi, error_rate, kmer_size, lambda_g, lambda_e, &confidence);
   CU_ASSERT(t==Resistant);
 
   strbuf_free(temp_rid);
