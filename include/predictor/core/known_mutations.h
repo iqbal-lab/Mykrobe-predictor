@@ -117,17 +117,16 @@ typedef enum
     rpoB_S486L = 62,
     rpoB_I527F = 63,
     rpoB_D550G = 64,
-    rpoB_N747K = 65,
-    gyrA_S84A = 66,
-    gyrA_S84L = 67,
-    gyrA_S85P = 68,
-    gyrA_E88K = 69,
-    grlA_S80F = 70,
-    grlA_S80Y = 71,
-    NotSpecified = 72,
+    gyrA_S84A = 65,
+    gyrA_S84L = 66,
+    gyrA_S85P = 67,
+    gyrA_E88K = 68,
+    grlA_S80F = 69,
+    grlA_S80Y = 70,
+    NotSpecified = 71,
   } KnownMutation;
 
-#define NUM_KNOWN_MUTATIONS 72
+#define NUM_KNOWN_MUTATIONS 71
 
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene);
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name);

@@ -792,7 +792,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   //these aren't the first of ALL rifampicin/rpoB mutations
   //but the first and last of those able to cause resistance on their own
   int first_rif_mut = rpoB_S463P;
-  int last_rif_mut = rpoB_N747K;
+  int last_rif_mut = rpoB_D550G;
   int i;
 
   //if you have any of these resistance alleles - call resistant
