@@ -72,6 +72,7 @@ int default_opts(CmdLine * c)
   c->input_file=false;
   c->input_list=false;
   c->output_supernodes = false;
+  c->machine=Illumina;
   return 1;
 }
 

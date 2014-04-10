@@ -194,8 +194,8 @@ InfectionType best_model(ResVarInfo* rvi, double err_rate, int kmer,
 			 double* confidence)
 {
   double epsilon = pow(1-err_rate, kmer);
-  double delta = err_rate * pow(1-err_rate, kmer-1);
-  double lambda = (double) expected_covg/(double) mean_read_len;
+  double delta   = err_rate * pow(1-err_rate, kmer-1);
+  double lambda  = (double) expected_covg/(double) mean_read_len;
 
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi, 
 									  epsilon, delta, lambda,

@@ -138,7 +138,8 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg
+				  int ignore_first, int ignore_last, int expected_covg,
+				  int mean_read_len, double err_rate
 				  );
 
 
@@ -153,7 +154,8 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg
+				  int ignore_first, int ignore_last, int expected_covg,
+				  int mean_read_len, double err_rate
 				  );
 
 boolean is_trimethoprim_susceptible(dBGraph* db_graph,
@@ -167,7 +169,8 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg
+				    int ignore_first, int ignore_last, int expected_covg,
+				    int mean_read_len, double err_rate
 				  );
 
 boolean is_erythromycin_susceptible(dBGraph* db_graph,
@@ -182,6 +185,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
+				    int mean_read_len, double err_rate,
 				    boolean* any_erm_present
 				    );
 
@@ -196,7 +200,8 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
-				   int ignore_first, int ignore_last, int expected_covg
+				   int ignore_first, int ignore_last, int expected_covg,
+				   int mean_read_len, double err_rate
 				  );
 
 boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
@@ -210,7 +215,8 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     GeneInfo* tmp_gi,
 				     AntibioticInfo* abi,
 				     StrBuf* install_dir,
-				     int ignore_first, int ignore_last, int expected_covg
+				     int ignore_first, int ignore_last, int expected_covg,
+				     int mean_read_len, double err_rate
 				     );
 
 boolean is_rifampicin_susceptible(dBGraph* db_graph,
@@ -224,7 +230,9 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg);
+				  int ignore_first, int ignore_last, int expected_covg,
+				  int mean_read_len, double err_rate
+				  );
 
 boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
@@ -237,7 +245,8 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg);
+				    int ignore_first, int ignore_last, int expected_covg,
+				    int mean_read_len, double err_rate);
 
 boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
@@ -250,7 +259,8 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 GeneInfo* tmp_gi,
 				 AntibioticInfo* abi,
 				 StrBuf* install_dir,
-				 int ignore_first, int ignore_last, int expected_covg);
+				 int ignore_first, int ignore_last, int expected_covg,
+				 int mean_read_len, double err_rate);
 
 
 boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
@@ -264,7 +274,8 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    GeneInfo* tmp_gi,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg);
+				    int ignore_first, int ignore_last, int expected_covg,
+				    int mean_read_len, double err_rate);
 
 //this really only asks if it is CONSTITUTIVELY susceptobe;/resistant.
 //inducible resistance covered elsewhere
@@ -279,7 +290,8 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   GeneInfo* tmp_gi,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
-				   int ignore_first, int ignore_last, int expected_covg);
+				   int ignore_first, int ignore_last, int expected_covg,
+				   int mean_read_len, double err_rate);
 
 boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
@@ -292,7 +304,8 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg);
+				  int ignore_first, int ignore_last, int expected_covg,
+				  int mean_read_len, double err_rate);
 
 boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					int (*file_reader)(FILE * fp, 
@@ -318,7 +331,8 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 							int ignore_first, int ignore_last, int expected_covg),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
-					int ignore_first, int ignore_last, int expected_covg
+					int ignore_first, int ignore_last, int expected_covg,
+					int mean_read_len, double err_rate
 					);
 
 boolean print_erythromycin_susceptibility(dBGraph* db_graph,
@@ -347,6 +361,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
+					  int mean_read_len, double err_rate,
 					  boolean* any_erm_present
 					  );
 
@@ -375,7 +390,8 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 StrBuf* tmpbuf,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
-					 int ignore_first, int ignore_last, int expected_covg
+					 int ignore_first, int ignore_last, int expected_covg,
+					 int mean_read_len, double err_rate
 					 );
 
 boolean is_pvl_positive(dBGraph* db_graph,

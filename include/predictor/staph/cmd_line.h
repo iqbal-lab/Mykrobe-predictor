@@ -43,6 +43,13 @@ typedef enum
     WGAssemblyAndTranslation=2,
   } Approach;
 
+typdef enum
+{
+  Illumina=0,
+  OxfordNanopore=1,
+  UnknownMachine=2,
+} Sequencer;
+
 typedef struct
 {
   StrBuf* seq_path; //may be a singe bam/fastq or a list.
@@ -65,6 +72,7 @@ typedef struct
   boolean input_file;
   boolean input_list;
   boolean output_supernodes;
+  Sequencer machine;
 } CmdLine;
 
 

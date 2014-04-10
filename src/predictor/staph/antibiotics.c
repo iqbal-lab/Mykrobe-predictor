@@ -786,7 +786,8 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 	install_dir);
 
 
-
+  //these aren't the first of ALL rifampicin/rpoB mutations
+  //but the first and last of those able to cause resistance on their own
   int first_rif_mut = rpoB_S463P;
   int last_rif_mut = rpoB_N747K;
   int i;
@@ -796,10 +797,6 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 
   for (i=first_rif_mut; i<=last_rif_mut; i++)
     {
-      if ( (i==rpoB_M470T) || (i==rpoB_D471G) )
-	{
-	  continue;
-	}
       double conf=0;
       Model m = best_model(abi->mut[i],
 			   err_rate, kmer, expected_covg,
@@ -809,14 +806,13 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 	  return false;
 	}
     }
-  double conf1=0;
+  double conf=0;
   Model m_m470t = best_model(abi->mut[rpoB_M470T],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf1);
-  double conf2=0;
+			     mean_read_len, &conf);
   Model m_d471g = best_model(abi->mut[rpoB_D471G],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf2);
+			     mean_read_len, &conf);
 
   if (m_m470t.type==Resistant && m_d471g.type==Resistant)
     {
@@ -1049,29 +1045,20 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
+
+  // in terms of avoiding future bugs when people modify the code,
+  // I'm not super-keen on what I've done here:
+  // for this to work, there is a dependency between the ordering in the KnownMutations enum,
+  // and this code.
+  // note first first/last mutations are the first/last of the non-epistatic mutations,
+  // which each are enough to cause resistance on their own.
+  // I deal with the epistatic ones after the following loop
   int first_fus_mut = fusA_V90I;
   int last_fus_mut  = fusA_G664S;
   int i;
 
   for (i=first_fus_mut; i<=last_fus_mut; i++)
     {
-      if ( (i==fusA_F652S) 
-	   || 
-	   (i==fusA_Y654N) 
-	   || 
-	   (i==fusA_L461F) 
-	   || 
-	   (i==fusA_A376V) 
-	   || 
-	   (i==fusA_A655P) 
-	   || 
-	   (i==fusA_D463G) 
-	   ||
-	   (i==fusA_E444V)
-	   )
-	{
-	  continue;
-	}
       double conf=0;
       Model m = best_model(abi->mut[i],
 			   err_rate, kmer, expected_covg,
@@ -1083,14 +1070,13 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     }
 
   
-  double conf1=0;
+  double conf=0;
   Model m_f652s = best_model(abi->mut[fusA_F652S],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf1);
-  double conf2=0;
+			     mean_read_len, &conf);
   Model m_y654n = best_model(abi->mut[fusA_Y654N],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf2);
+			     mean_read_len, &conf);
 
   if (m_f652s.type==Resistant && m_y654n.type=Resistant)
     {
@@ -1099,23 +1085,19 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   
 
 
-  conf1=0;
+
   Model m_l461f = best_model(abi->mut[fusA_L461F],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf1);
-  conf2=0;
+			     mean_read_len, &conf);
   Model m_a376v = best_model(abi->mut[fusA_A376V],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf2);
-  double conf3=0;
+			     mean_read_len, &conf);
   Model m_a655p = best_model(abi->mut[fusA_A655P],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf3);
-
-  double conf4=0;
+			     mean_read_len, &conf);
   Model m_d463g = best_model(abi->mut[fusA_D463G],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf4);
+			     mean_read_len, &conf);
   
   if ( (m_l461f.type==Resistant)
        &&
@@ -1131,7 +1113,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   Model m_e444v = best_model(abi->mut[fusA_E444V],
 			     err_rate, kmer, expected_covg,
-			     mean_read_len, &conf4);//reuse conf4
+			     mean_read_len, &conf);
 
   if ((m_l461f.type==Resistant)
        &&
@@ -1450,7 +1432,9 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 	      install_dir,
 	      ignore_first, 
 	      ignore_last, 
-	      expected_covg);
+	      expected_covg,
+	      mean_read_len,
+	      err_rate);
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
@@ -1493,6 +1477,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
+					  int mean_read_len, double err_rate,
 					  boolean* any_erm_present
 					 )
 {
@@ -1506,6 +1491,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 	      abi,
 	      install_dir,
 	      ignore_first, ignore_last, expected_covg,
+	      mean_read_len, err_rate,
 	      any_erm_present);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
@@ -1560,7 +1546,8 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 	      tmp_gi,
 	      abi,
 	      install_dir,
-	      ignore_first, ignore_last, expected_covg);
+	      ignore_first, ignore_last, expected_covg,
+	      mean_read_len, err_rate);
 
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);

@@ -91,73 +91,21 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return fusA_V90I;
     } 
-  else if ( (strcmp(sbuf->buff, "A655E")==0) && (gene==fusA) )
-    {
-      return fusA_A655E;
-    } 
-  else if ( (strcmp(sbuf->buff, "D434N")==0) && (gene==fusA) )
-    {
-      return fusA_D434N;
-    } 
-  else if ( (strcmp(sbuf->buff, "F441Y")==0) && (gene==fusA) )
-    {
-      return fusA_F441Y;
-    } 
-  else if ( (strcmp(sbuf->buff, "E444K")==0) && (gene==fusA) )
-    {
-      return fusA_E444K;
-    } 
-  else if ( (strcmp(sbuf->buff, "G451V")==0) && (gene==fusA) )
-    {
-      return fusA_G451V;
-    } 
-  else if ( (strcmp(sbuf->buff, "G452S")==0) && (gene==fusA) )
-    {
-      return fusA_G452S;
-    } 
-  else if ( (strcmp(sbuf->buff, "G452C")==0) && (gene==fusA) )
-    {
-      return fusA_G452C;
-    } 
-  else if ( (strcmp(sbuf->buff, "G617D")==0) && (gene==fusA) )
-    {
-      return fusA_G617D;
-    } 
-  else if ( (strcmp(sbuf->buff, "G664S")==0) && (gene==fusA) )
-    {
-      return fusA_G664S;
-    } 
-  else if ( (strcmp(sbuf->buff, "H438N")==0) && (gene==fusA) )
-    {
-      return fusA_H438N;
-    } 
-  else if ( (strcmp(sbuf->buff, "L456F")==0) && (gene==fusA) )
-    {
-      return fusA_L456F;
-    } 
-  else if ( (strcmp(sbuf->buff, "H457Y")==0) && (gene==fusA) )
-    {
-      return fusA_H457Y;
-    } 
-  else if ( (strcmp(sbuf->buff, "L461K")==0) && (gene==fusA) )
-    {
-      return fusA_L461K;
-    } 
-  else if ( (strcmp(sbuf->buff, "L461S")==0) && (gene==fusA) )
-    {
-      return fusA_L461S;
-    } 
-  else if ( (strcmp(sbuf->buff, "M453I")==0) && (gene==fusA) )
-    {
-      return fusA_M453I;
-    } 
-  else if ( (strcmp(sbuf->buff, "M651I")==0) && (gene==fusA) )
-    {
-      return fusA_M651I;
-    } 
   else if ( (strcmp(sbuf->buff, "P114H")==0) && (gene==fusA) )
     {
       return fusA_P114H;
+    } 
+  else if ( (strcmp(sbuf->buff, "Q115L")==0) && (gene==fusA) )
+    {
+      return fusA_Q115L;
+    } 
+  else if ( (strcmp(sbuf->buff, "A376V")==0) && (gene==fusA) )
+    {
+      return fusA_A376V;
+    } 
+  else if ( (strcmp(sbuf->buff, "T385N")==0) && (gene==fusA) )
+    {
+      return fusA_T385N;
     } 
   else if ( (strcmp(sbuf->buff, "P404L")==0) && (gene==fusA) )
     {
@@ -171,13 +119,65 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return fusA_P406L;
     } 
-  else if ( (strcmp(sbuf->buff, "P478S")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "D434N")==0) && (gene==fusA) )
     {
-      return fusA_P478S;
+      return fusA_D434N;
     } 
-  else if ( (strcmp(sbuf->buff, "Q115L")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "T436I")==0) && (gene==fusA) )
     {
-      return fusA_Q115L;
+      return fusA_T436I;
+    } 
+  else if ( (strcmp(sbuf->buff, "H438N")==0) && (gene==fusA) )
+    {
+      return fusA_H438N;
+    } 
+  else if ( (strcmp(sbuf->buff, "E444K")==0) && (gene==fusA) )
+    {
+      return fusA_E444K;
+    } 
+  else if ( (strcmp(sbuf->buff, "E444V")==0) && (gene==fusA) )
+    {
+      return fusA_E444V;
+    } 
+  else if ( (strcmp(sbuf->buff, "G451V")==0) && (gene==fusA) )
+    {
+      return fusA_G451V;
+    } 
+  else if ( (strcmp(sbuf->buff, "G452C")==0) && (gene==fusA) )
+    {
+      return fusA_G452C;
+    } 
+  else if ( (strcmp(sbuf->buff, "G452S")==0) && (gene==fusA) )
+    {
+      return fusA_G452S;
+    } 
+  else if ( (strcmp(sbuf->buff, "M453I")==0) && (gene==fusA) )
+    {
+      return fusA_M453I;
+    } 
+  else if ( (strcmp(sbuf->buff, "H457Q")==0) && (gene==fusA) )
+    {
+      return fusA_H457Q;
+    } 
+  else if ( (strcmp(sbuf->buff, "H457Y")==0) && (gene==fusA) )
+    {
+      return fusA_H457Y;
+    } 
+  else if ( (strcmp(sbuf->buff, "L461F")==0) && (gene==fusA) )
+    {
+      return fusA_L461F;
+    } 
+  else if ( (strcmp(sbuf->buff, "L461K")==0) && (gene==fusA) )
+    {
+      return fusA_L461K;
+    } 
+  else if ( (strcmp(sbuf->buff, "L461S")==0) && (gene==fusA) )
+    {
+      return fusA_L461S;
+    } 
+  else if ( (strcmp(sbuf->buff, "D463G")==0) && (gene==fusA) )
+    {
+      return fusA_D463G;
     } 
   else if ( (strcmp(sbuf->buff, "R464C")==0) && (gene==fusA) )
     {
@@ -191,85 +191,21 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return fusA_R464H;
     } 
-  else if ( (strcmp(sbuf->buff, "R659C")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "P478S")==0) && (gene==fusA) )
     {
-      return fusA_R659C;
+      return fusA_P478S;
     } 
-  else if ( (strcmp(sbuf->buff, "R659H")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "G556S")==0) && (gene==fusA) )
     {
-      return fusA_R659H;
+      return fusA_G556S;
     } 
-  else if ( (strcmp(sbuf->buff, "R659S")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "G617D")==0) && (gene==fusA) )
     {
-      return fusA_R659S;
+      return fusA_G617D;
     } 
-  else if ( (strcmp(sbuf->buff, "R659L")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "M651I")==0) && (gene==fusA) )
     {
-      return fusA_R659L;
-    } 
-  else if ( (strcmp(sbuf->buff, "T385N")==0) && (gene==fusA) )
-    {
-      return fusA_T385N;
-    } 
-  else if ( (strcmp(sbuf->buff, "T436I")==0) && (gene==fusA) )
-    {
-      return fusA_T436I;
-    } 
-  else if ( (strcmp(sbuf->buff, "T656K")==0) && (gene==fusA) )
-    {
-      return fusA_T656K;
-    } 
-  else if ( (strcmp(sbuf->buff, "V607I")==0) && (gene==fusA) )
-    {
-      return fusA_V607I;
-    } 
-  else if ( (strcmp(sbuf->buff, "V90A")==0) && (gene==fusA) )
-    {
-      return fusA_V90A;
-    } 
-  else if ( (strcmp(sbuf->buff, "L456F")==0) && (gene==fusA) )
-    {
-      return fusA_L456F;
-    } 
-  else if ( (strcmp(sbuf->buff, "A376V")==0) && (gene==fusA) )
-    {
-      return fusA_A376V;
-    } 
-  else if ( (strcmp(sbuf->buff, "A655P")==0) && (gene==fusA) )
-    {
-      return fusA_A655P;
-    } 
-  else if ( (strcmp(sbuf->buff, "D463G")==0) && (gene==fusA) )
-    {
-      return fusA_D463G;
-    } 
-  else if ( (strcmp(sbuf->buff, "D189G")==0) && (gene==fusA) )
-    {
-      return fusA_D189G;
-    } 
-  else if ( (strcmp(sbuf->buff, "A70V")==0) && (gene==fusA) )
-    {
-      return fusA_A70V;
-    } 
-  else if ( (strcmp(sbuf->buff, "A160V")==0) && (gene==fusA) )
-    {
-      return fusA_A160V;
-    } 
-  else if ( (strcmp(sbuf->buff, "A71V")==0) && (gene==fusA) )
-    {
-      return fusA_A71V;
-    } 
-  else if ( (strcmp(sbuf->buff, "D189V")==0) && (gene==fusA) )
-    {
-      return fusA_D189V;
-    } 
-  else if ( (strcmp(sbuf->buff, "L430S")==0) && (gene==fusA) )
-    {
-      return fusA_L430S;
-    } 
-  else if ( (strcmp(sbuf->buff, "E444V")==0) && (gene==fusA) )
-    {
-      return fusA_E444V;
+      return fusA_M651I;
     } 
   else if ( (strcmp(sbuf->buff, "F652S")==0) && (gene==fusA) )
     {
@@ -279,70 +215,37 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return fusA_Y654N;
     } 
-  else if ( (strcmp(sbuf->buff, "L461F")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "A655E")==0) && (gene==fusA) )
     {
-      return fusA_L461F;
+      return fusA_A655E;
     } 
-  else if ( (strcmp(sbuf->buff, "M161I")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "A655P")==0) && (gene==fusA) )
     {
-      return fusA_M161I;
+      return fusA_A655P;
     } 
-  else if ( (strcmp(sbuf->buff, "A67T")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "T656K")==0) && (gene==fusA) )
     {
-      return fusA_A67T;
+      return fusA_T656K;
     } 
-  else if ( (strcmp(sbuf->buff, "S416F")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "R659C")==0) && (gene==fusA) )
     {
-      return fusA_S416F;
+      return fusA_R659C;
     } 
-  else if ( (strcmp(sbuf->buff, "G556S")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "R659H")==0) && (gene==fusA) )
     {
-      return fusA_G556S;
+      return fusA_R659H;
     } 
-  else if ( (strcmp(sbuf->buff, "H557Y")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "R659L")==0) && (gene==fusA) )
     {
-      return fusA_H557Y;
+      return fusA_R659L;
     } 
-  else if ( (strcmp(sbuf->buff, "D373N")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "R659S")==0) && (gene==fusA) )
     {
-      return fusA_D373N;
+      return fusA_R659S;
     } 
-  else if ( (strcmp(sbuf->buff, "C473S")==0) && (gene==fusA) )
+  else if ( (strcmp(sbuf->buff, "G664S")==0) && (gene==fusA) )
     {
-      return fusA_C473S;
-    } 
-  else if ( (strcmp(sbuf->buff, "R76C")==0) && (gene==fusA) )
-    {
-      return fusA_R76C;
-    } 
-  else if ( (strcmp(sbuf->buff, "T387I")==0) && (gene==fusA) )
-    {
-      return fusA_T387I;
-    } 
-  else if ( (strcmp(sbuf->buff, "E449K")==0) && (gene==fusA) )
-    {
-      return fusA_E449K;
-    } 
-  else if ( (strcmp(sbuf->buff, "H457Q")==0) && (gene==fusA) )
-    {
-      return fusA_H457Q;
-    } 
-  else if ( (strcmp(sbuf->buff, "A655V")==0) && (gene==fusA) )
-    {
-      return fusA_A655V;
-    } 
-  else if ( (strcmp(sbuf->buff, "V90I")==0) && (gene==fusA) )
-    {
-      return fusA_V90I;
-    } 
-  else if ( (strcmp(sbuf->buff, "E233Q")==0) && (gene==fusA) )
-    {
-      return fusA_E233Q;
-    } 
-
-  else if ( (strcmp(sbuf->buff, "N474K")==0) && (gene==rpoB) )
-    {
-      return rpoB_N474K;
+      return fusA_G664S;
     } 
   else if ( (strcmp(sbuf->buff, "S463P")==0) && (gene==rpoB) )
     {
@@ -352,9 +255,9 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return rpoB_S464P;
     } 
-  else if ( (strcmp(sbuf->buff, "L466S")==0) && (gene==rpoB) )
+  else if ( (strcmp(sbuf->buff, "Q468K")==0) && (gene==rpoB) )
     {
-      return rpoB_L466S;
+      return rpoB_Q468K;
     } 
   else if ( (strcmp(sbuf->buff, "Q468L")==0) && (gene==rpoB) )
     {
@@ -363,10 +266,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "Q468R")==0) && (gene==rpoB) )
     {
       return rpoB_Q468R;
-    } 
-  else if ( (strcmp(sbuf->buff, "Q468K")==0) && (gene==rpoB) )
-    {
-      return rpoB_Q468K;
     } 
   else if ( (strcmp(sbuf->buff, "M470T")==0) && (gene==rpoB) )
     {
@@ -380,14 +279,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return rpoB_D471Y;
     } 
-  else if ( (strcmp(sbuf->buff, "A473T")==0) && (gene==rpoB) )
-    {
-      return rpoB_A473T;
-    } 
-  else if ( (strcmp(sbuf->buff, "N474K")==0) && (gene==rpoB) )
-    {
-      return rpoB_N474K;
-    } 
   else if ( (strcmp(sbuf->buff, "ins475G")==0) && (gene==rpoB) )
     {
       return rpoB_ins475G;
@@ -396,17 +287,17 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return rpoB_ins475H;
     } 
-  else if ( (strcmp(sbuf->buff, "A477T")==0) && (gene==rpoB) )
+  else if ( (strcmp(sbuf->buff, "A477D")==0) && (gene==rpoB) )
     {
-      return rpoB_A477T;
+      return rpoB_A477D;
     } 
   else if ( (strcmp(sbuf->buff, "A477V")==0) && (gene==rpoB) )
     {
       return rpoB_A477V;
     } 
-  else if ( (strcmp(sbuf->buff, "A477D")==0) && (gene==rpoB) )
+  else if ( (strcmp(sbuf->buff, "H481D")==0) && (gene==rpoB) )
     {
-      return rpoB_A477D;
+      return rpoB_H481D;
     } 
   else if ( (strcmp(sbuf->buff, "H481N")==0) && (gene==rpoB) )
     {
@@ -415,10 +306,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "H481Y")==0) && (gene==rpoB) )
     {
       return rpoB_H481Y;
-    } 
-  else if ( (strcmp(sbuf->buff, "H481D")==0) && (gene==rpoB) )
-    {
-      return rpoB_H481D;
     } 
   else if ( (strcmp(sbuf->buff, "R484H")==0) && (gene==rpoB) )
     {
@@ -432,28 +319,14 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return rpoB_I527F;
     } 
-  else if ( (strcmp(sbuf->buff, "I527M")==0) && (gene==rpoB) )
-    {
-      return rpoB_I527M;
-    } 
-  else if ( (strcmp(sbuf->buff, "I527L")==0) && (gene==rpoB) )
-    {
-      return rpoB_I527L;
-    } 
-  else if ( (strcmp(sbuf->buff, "S529L")==0) && (gene==rpoB) )
-    {
-      return rpoB_S529L;
-    } 
   else if ( (strcmp(sbuf->buff, "D550G")==0) && (gene==rpoB) )
     {
       return rpoB_D550G;
     } 
-  else if ( (strcmp(sbuf->buff, "Q565R")==0) && (gene==rpoB) )
+  else if ( (strcmp(sbuf->buff, "N474K")==0) && (gene==rpoB) )
     {
-      return rpoB_Q565R;
+      return rpoB_N474K;
     } 
-
-
   else if ( (strcmp(sbuf->buff, "S84A")==0) && (gene==gyrA) )
     {
       return gyrA_S84A;
@@ -466,42 +339,9 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return gyrA_S85P;
     } 
-  else if ( (strcmp(sbuf->buff, "E88V")==0) && (gene==gyrA) )
-    {
-      return gyrA_E88V;
-    } 
-  else if ( (strcmp(sbuf->buff, "E88G")==0) && (gene==gyrA) )
-    {
-      return gyrA_E88G;
-    } 
-  else if ( (strcmp(sbuf->buff, "E88L")==0) && (gene==gyrA) )
-    {
-      return gyrA_E88L;
-    } 
   else if ( (strcmp(sbuf->buff, "E88K")==0) && (gene==gyrA) )
     {
       return gyrA_E88K;
-    } 
-  else if ( (strcmp(sbuf->buff, "G106D")==0) && (gene==gyrA) )
-    {
-      return gyrA_G106D;
-    } 
-
-  else if ( (strcmp(sbuf->buff, "V41G")==0) && (gene==grlA) )
-    {
-      return grlA_V41G;
-    } 
-  else if ( (strcmp(sbuf->buff, "I45M")==0) && (gene==grlA) )
-    {
-      return grlA_I45M;
-    } 
-  else if ( (strcmp(sbuf->buff, "A48T")==0) && (gene==grlA) )
-    {
-      return grlA_A48T;
-    } 
-  else if ( (strcmp(sbuf->buff, "D79V")==0) && (gene==grlA) )
-    {
-      return grlA_D79V;
     } 
   else if ( (strcmp(sbuf->buff, "S80F")==0) && (gene==grlA) )
     {
@@ -510,70 +350,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "S80Y")==0) && (gene==grlA) )
     {
       return grlA_S80Y;
-    } 
-  else if ( (strcmp(sbuf->buff, "E84L")==0) && (gene==grlA) )
-    {
-      return grlA_E84L;
-    } 
-  else if ( (strcmp(sbuf->buff, "E84G")==0) && (gene==grlA) )
-    {
-      return grlA_E84G;
-    } 
-  else if ( (strcmp(sbuf->buff, "E84K")==0) && (gene==grlA) )
-    {
-      return grlA_E84K;
-    } 
-  else if ( (strcmp(sbuf->buff, "E84V")==0) && (gene==grlA) )
-    {
-      return grlA_E84V;
-    } 
-  else if ( (strcmp(sbuf->buff, "Y83N")==0) && (gene==grlA) )
-    {
-      return grlA_Y83N;
-    } 
-  else if ( (strcmp(sbuf->buff, "S108N")==0) && (gene==grlA) )
-    {
-      return grlA_S108N;
-    } 
-  else if ( (strcmp(sbuf->buff, "A116E")==0) && (gene==grlA) )
-    {
-      return grlA_A116E;
-    } 
-  else if ( (strcmp(sbuf->buff, "D432G")==0) && (gene==grlA) )
-    {
-      return grlA_D432G;
-    } 
-  else if ( (strcmp(sbuf->buff, "E422D")==0) && (gene==grlB) )
-    {
-      return grlB_E422D;
-    } 
-  else if ( (strcmp(sbuf->buff, "D432V")==0) && (gene==grlB) )
-    {
-      return grlB_D432V;
-    } 
-  else if ( (strcmp(sbuf->buff, "D432NorH")==0) && (gene==grlB) )
-    {
-      return grlB_D432NorH;
-    } 
-  else if ( (strcmp(sbuf->buff, "D443E")==0) && (gene==grlB) )
-    {
-      return grlB_D443E;
-    } 
-  else if ( (strcmp(sbuf->buff, "R444S")==0) && (gene==grlB) )
-    {
-      return grlB_R444S;
-    } 
-  else if ( (strcmp(sbuf->buff, "P451S")==0) && (gene==grlB) )
-    {
-      return grlB_P451S;
-    } 
-  else if ( (strcmp(sbuf->buff, "N470D")==0) && (gene==grlB) )
-    {
-      return grlB_N470D;
-    } 
-  else if ( (strcmp(sbuf->buff, "P585S")==0) && (gene==grlB) )
-    {
-      return grlB_P585S;
     } 
   else 
     {
