@@ -346,30 +346,34 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 								 kmer_window, 
 								 db_graph, 
 								 dummy_colour_ignored);
-      too_short=false;
-      rinfo->resistant_alleles[i].median_covg = 
-	median_covg_on_allele_in_specific_colour(array_nodes, 
-						 num_kmers, 
-						 working_ca,
-						 0,
-						 &too_short,
-						 ignore_first, ignore_last);
-      rinfo->resistant_alleles[i].min_covg = 
-	min_covg_on_allele_in_specific_colour(array_nodes,
-					      num_kmers,
-					      0,
-					      &too_short,
-					      ignore_first, ignore_last);
-      rinfo->resistant_alleles[i].percent_nonzero = 
-	percent_nonzero_on_allele_in_specific_colour(array_nodes,
-						     num_kmers,
+
+      if (rinfo->some_resistant_allele_present==false)
+	{
+	  too_short=false;
+	  rinfo->resistant_alleles[i].median_covg = 
+	    median_covg_on_allele_in_specific_colour(array_nodes, 
+						     num_kmers, 
+						     working_ca,
 						     0,
 						     &too_short,
 						     ignore_first, ignore_last);
+	  rinfo->resistant_alleles[i].min_covg = 
+	    min_covg_on_allele_in_specific_colour(array_nodes,
+						  num_kmers,
+						  0,
+						  &too_short,
+						  ignore_first, ignore_last);
+	  rinfo->resistant_alleles[i].percent_nonzero = 
+	    percent_nonzero_on_allele_in_specific_colour(array_nodes,
+							 num_kmers,
+							 0,
+							 &too_short,
+							 ignore_first, ignore_last);
 
-      if (rinfo->resistant_alleles[i].percent_nonzero>=MIN_PERCENT_MUT_ALLELE_PRESENT)
-	{
-	  rinfo->some_resistant_allele_present=true;
+	  if (rinfo->resistant_alleles[i].percent_nonzero>=MIN_PERCENT_MUT_ALLELE_PRESENT)
+	    {
+	      rinfo->some_resistant_allele_present=true;
+	    }
 	}
     }
 }
