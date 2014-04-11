@@ -71,10 +71,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return dfrB_L41F;
     } 
-  else if ( (strcmp(sbuf->buff, "N60I")==0) && (gene==dfrB) )
-    {
-      return dfrB_N60I;
-    } 
   else if ( (strcmp(sbuf->buff, "F99Y")==0) && (gene==dfrB) )
     {
       return dfrB_F99Y;
@@ -86,6 +82,10 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "F99I")==0) && (gene==dfrB) )
     {
       return dfrB_F99I;
+    } 
+  else if ( (strcmp(sbuf->buff, "H150R")==0) && (gene==dfrB) )
+    {
+      return dfrB_H150R;
     } 
   else if ( (strcmp(sbuf->buff, "V90I")==0) && (gene==fusA) )
     {

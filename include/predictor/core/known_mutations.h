@@ -43,12 +43,13 @@ typedef enum
 
 typedef enum
   {
+
     dfrB_H31N = 0,
     dfrB_L41F = 1,
-    dfrB_N60I = 2,
-    dfrB_F99Y = 3,
-    dfrB_F99S = 4,
-    dfrB_F99I = 5,
+    dfrB_F99Y = 2,
+    dfrB_F99S = 3,
+    dfrB_F99I = 4,
+    dfrB_H150R = 5,
     //start of fusA variants which only cause resistance when in combination
     fusA_F652S = 6,
     fusA_Y654N = 7,

@@ -494,7 +494,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	install_dir);
 
   int first_trim_mut = dfrB_H31N;
-  int last_trim_mut = dfrB_F99I;
+  int last_trim_mut = dfrB_H150R;
   int i;
 
   //if you have any of these resistance alleles - call resistant
@@ -1297,17 +1297,15 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
       return false;
     }
-  else if (abi->genes[fusB]->percent_nonzero > MIN_PERC_COVG_FUSBC)
-    {
-      return false;
-    }  
   */
-
-  if (abi->genes[fusC]->percent_nonzero > MIN_PERC_COVG_FUSBC)
+  if (abi->genes[fusB]->percent_nonzero > MIN_PERC_COVG_FUSBC)
     {
       return false;
     }  
-
+  else if (abi->genes[fusC]->percent_nonzero > MIN_PERC_COVG_FUSBC)
+    {
+      return false;
+    }  
   else
     {
       return true;
