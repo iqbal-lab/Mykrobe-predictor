@@ -119,6 +119,7 @@ ResVarInfo* alloc_and_init_res_var_info()
   rvi->var_id = NotSpecified;
   rvi->gene = Unknown;
   rvi->some_resistant_allele_present = false;
+  rvi->working_current_max_res_allele_present=0;
   return rvi;
 }
 
@@ -136,7 +137,7 @@ void reset_res_var_info(ResVarInfo* rvi)
 {
   memset(rvi,0, sizeof(ResVarInfo));
   rvi->some_resistant_allele_present=false;
-
+  rvi->working_current_max_res_allele_present=0;
 }
 
 
@@ -347,32 +348,48 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 								 db_graph, 
 								 dummy_colour_ignored);
 
+      //we have not yet got all the kmers in a resistance allele
       if (rinfo->some_resistant_allele_present==false)
 	{
 	  too_short=false;
-	  rinfo->resistant_alleles[i].median_covg = 
+	  
+	  int tmp_med = 
 	    median_covg_on_allele_in_specific_colour(array_nodes, 
 						     num_kmers, 
 						     working_ca,
 						     0,
 						     &too_short,
 						     ignore_first, ignore_last);
-	  rinfo->resistant_alleles[i].min_covg = 
+	  
+	  int tmp_min = 
 	    min_covg_on_allele_in_specific_colour(array_nodes,
 						  num_kmers,
 						  0,
 						  &too_short,
 						  ignore_first, ignore_last);
-	  rinfo->resistant_alleles[i].percent_nonzero = 
+	  
+	  
+	  int tmp_perc = 
 	    percent_nonzero_on_allele_in_specific_colour(array_nodes,
 							 num_kmers,
 							 0,
 							 &too_short,
 							 ignore_first, ignore_last);
-
-	  if (rinfo->resistant_alleles[i].percent_nonzero>=MIN_PERCENT_MUT_ALLELE_PRESENT)
+	  //if more of the kmers of this version of this mutation
+	  //i.e this version of the mutation on this background
+	    //are recovered, then keep it - we want to keep the best match
+	  if (tmp_perc > rvi->working_current_max_res_allele_present)
 	    {
-	      rinfo->some_resistant_allele_present=true;
+	      rinfo->resistant_alleles[i].median_covg = tmp_med;
+	      rinfo->resistant_alleles[i].min_covg = tmp_min;  
+	      rinfo->resistant_alleles[i].percent_nonzero = tmp_perc;
+	      //update current best
+	      rvi->working_current_max_res_allele_present = tmp_perc;
+	      if (tmp_perc==100)
+		{
+		  // we have a complete resistance allele, no need to go further
+		  rinfo->some_resistant_allele_present=true;
+		}
 	    }
 	}
     }
