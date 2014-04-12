@@ -378,13 +378,13 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 	  //if more of the kmers of this version of this mutation
 	  //i.e this version of the mutation on this background
 	    //are recovered, then keep it - we want to keep the best match
-	  if (tmp_perc > rvi->working_current_max_res_allele_present)
+	  if (tmp_perc > rinfo->working_current_max_res_allele_present)
 	    {
 	      rinfo->resistant_alleles[i].median_covg = tmp_med;
 	      rinfo->resistant_alleles[i].min_covg = tmp_min;  
 	      rinfo->resistant_alleles[i].percent_nonzero = tmp_perc;
 	      //update current best
-	      rvi->working_current_max_res_allele_present = tmp_perc;
+	      rinfo->working_current_max_res_allele_present = tmp_perc;
 	      if (tmp_perc==100)
 		{
 		  // we have a complete resistance allele, no need to go further
