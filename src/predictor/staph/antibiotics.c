@@ -491,7 +491,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi,
 				    ignore_first, ignore_last, expected_covg,
-	install_dir);
+				    install_dir);
 
   int first_trim_mut = dfrB_H31N;
   int last_trim_mut = dfrB_H150R;
