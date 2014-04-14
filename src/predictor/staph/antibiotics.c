@@ -494,7 +494,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    install_dir);
 
   int first_trim_mut = dfrB_H31N;
-  int last_trim_mut = dfrB_H150R;
+  int last_trim_mut = dfrB_H150R-1;//added -1 for DEBUG
   int i;
 
   //if you have any of these resistance alleles - call resistant
