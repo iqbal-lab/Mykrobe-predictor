@@ -217,11 +217,11 @@ int main(int argc, char **argv)
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate); 
-  boolean any_erm_present=false;
+    boolean any_erm_present=false;
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
 				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate,
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
   printf("** Virulence markers\n");
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_pvl_positive, cmd_line->install_dir); 
-   
+
   timestamp();
 
   if (cmd_line ->output_supernodes==true)

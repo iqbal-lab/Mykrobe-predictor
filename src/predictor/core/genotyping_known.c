@@ -160,6 +160,22 @@ Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi)
 }
 
 
+int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi)
+{
+  int i;
+  int max=0;
+  for (i=0; i<rvi->num_resistant_alleles; i++)
+    {
+      int c = rvi->resistant_alleles[i].percent_nonzero;
+      if (c>max)
+	{
+	  max=c;
+	}
+    }
+  return max;
+}
+
+
 //finds the (single-digit_ number after the first minus sign
 int find_number_resistant_alleles(StrBuf* sbuf)
 {
@@ -245,12 +261,12 @@ void find_mutation_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
 
 //assume you are going to repeatedly call this on a fasta
 //file of known mutations, with the first allele being the susceptible allele, in this format
-//>ref_F99I_panel_fasta_sub--3
+//>ref_F99I_panel_fasta_sub-3
 // the "ref" says it's the susceptible allele. 
 //then it has the amino acid substitution (in future will end up with more general, but right now ALL the cases from
 //the literature are AA substitutions or indels in genes
 //the "sub" says it is a substitution
-//then after the -- it says how many resistant alleles there are
+//then after the - it says how many resistant alleles there are
 void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinfo,
 				   Sequence* seq, KmerSlidingWindow* kmer_window,
 				   int (*file_reader)(FILE * fp, 
@@ -289,16 +305,16 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
     }
   //read- is in this format
 
-  //>ref_F99I_panel_fasta_sub--3--dfrB        so this is >ref means susceptible allele, then identifier of which reference, then sub=susbstitution
+  //>ref_F99I_panel_fasta_sub-3-dfrB        so this is >ref means susceptible allele, then identifier of which reference, then sub=susbstitution
   //                                          then 3 means there are 3 possibe resistance alleles all implying F-->Y, and finally the gene name
   //CATGTTTTTATATTTGGAGGGCAAACATTATTTGAAGAAATGATTGATAAAGTGGACGAC
-  //>ATA_F99I_panel_fasta_alt--1--dfrB
+  //>ATA_F99I_panel_fasta_alt-1-dfrB
   //CATGTTTTTATATTTGGAGGGCAAACATTAATAGAAGAAATGATTGATAAAGTGGACGAC
   //ATG
-  //>ATT_F99I_panel_fasta_alt--2--dfrB
+  //>ATT_F99I_panel_fasta_alt-2-dfrB
   //CATGTTTTTATATTTGGAGGGCAAACATTAATTGAAGAAATGATTGATAAAGTGGACGAC
   //ATG
-  //>ATC_F99I_panel_fasta_alt--3--dfrB
+  //>ATC_F99I_panel_fasta_alt-3-dfrB
   //CATGTTTTTATATTTGGAGGGCAAACATTAATCGAAGAAATGATTGATAAAGTGGACGAC
   //ATG
 

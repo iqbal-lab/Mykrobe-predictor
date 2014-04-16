@@ -479,7 +479,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   abi->ab = Trimethoprim;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
   strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/trimethoprim.fa");
-  abi->num_mutations = 85;
+  abi->num_mutations = 73;
   abi->which_genes[0]=dfrA;
   abi->which_genes[1]=dfrG;
   abi->num_genes=2;
@@ -500,14 +500,14 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   //if you have any of these resistance alleles - call resistant
   for (i=first_trim_mut; i<=last_trim_mut; i++)
     {
-      double conf=0;
+      Model best_model;
       InfectionType I=
-	best_model(abi->mut[i], err_rate, db_graph->kmer_size, 
-		   lambda_g, lambda_e,
-		   &conf);
-      if ( (I==Resistant) || (I==MixedInfection) )
+	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e,
+		    &best_model, MaxAPosteriori);
+      if (I==Resistant) //|| (I==MixedInfection) )
 	{
-	  return false;
+	      return false;
 	}
     }
 
@@ -531,6 +531,7 @@ erm A, B, C, T     R                     S or R              positive           
 msrA               R                     S                   negative                 erythromycin specific efflux pump
 vga(A)LC           S                     R                   n/a                      clindamycin specific efflux pump
 */
+
 
 boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
@@ -664,6 +665,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Ciprofloxacin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
+
   strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/ciprofloxacin.fa");
 
   abi->num_mutations = 94;
@@ -688,14 +690,14 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   //if you have any of these resistance alleles - call resistant
   for (i=first_cip_mut; i<=last_cip_mut; i++)
     {
-      double conf=0;
+      Model best_model;
       InfectionType I=
-	best_model(abi->mut[i],
+	resistotype(abi->mut[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-		   &conf);
-      if ( (I==Resistant) || (I==MixedInfection) )
+		    &best_model, MaxAPosteriori);
+      if (I==Resistant)
 	{
-	  return false;
+	      return false;
 	}
     }
 
@@ -748,27 +750,28 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   //if you have any of these resistance alleles - call resistant
   //covers all except the two mutations that have to occur together
 
+  Model best_model;
   for (i=first_rif_mut; i<=last_rif_mut; i++)
     {
-      double conf=0;
+
       InfectionType I=
-	best_model(abi->mut[i],
-		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-		   &conf);
-      if ( (I==Resistant) || (I==MixedInfection) )
-	{
-	  return false;
+	resistotype(abi->mut[i],
+		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		    &best_model, MaxAPosteriori);
+      if (I==Resistant)
+	{	  
+	      return false;
 	}
     }
-  double conf=0;
+
   InfectionType I_m470t=
-    best_model(abi->mut[rpoB_M470T],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[rpoB_M470T],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   InfectionType I_d471g=
-    best_model(abi->mut[rpoB_D471G],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[rpoB_D471G],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   
   if (I_m470t==Resistant && I_d471g==Resistant)
     {
@@ -927,29 +930,29 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   int last_fus_mut  = fusA_G664S;
   int i;
 
+  Model best_model;
   for (i=first_fus_mut; i<=last_fus_mut; i++)
     {
-      double conf=0;
       InfectionType I=
-	best_model(abi->mut[i],
-		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-		   &conf);
-      if ( (I==Resistant) || (I==MixedInfection) )
+	resistotype(abi->mut[i],
+		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		    &best_model, MaxAPosteriori);
+      if (I==Resistant)
 	{
-	  return false;
+	      return false;
 	}
     }
 
   
-  double conf=0;
+
   InfectionType I_f652s=
-    best_model(abi->mut[fusA_F652S],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[fusA_F652S],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   InfectionType I_y654n=
-    best_model(abi->mut[fusA_Y654N],
+    resistotype(abi->mut[fusA_Y654N],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+		&best_model, MaxAPosteriori);
 
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
@@ -960,21 +963,21 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
 
   InfectionType I_l461f=
-    best_model(abi->mut[fusA_L461F],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[fusA_L461F],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   InfectionType I_a376v=
-    best_model(abi->mut[fusA_A376V],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[fusA_A376V],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   InfectionType I_a655p=
-    best_model(abi->mut[fusA_A655P],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[fusA_A655P],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   InfectionType I_d463g=
-    best_model(abi->mut[fusA_D463G],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	       &conf);
+    resistotype(abi->mut[fusA_D463G],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		&best_model, MaxAPosteriori);
   
   if ( (I_l461f==Resistant)
        &&
@@ -989,15 +992,15 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     }
 
   InfectionType I_e444v;
-  best_model(abi->mut[fusA_E444V],
-	     err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-	     &conf);
+  resistotype(abi->mut[fusA_E444V],
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	      &best_model, MaxAPosteriori);
 
   if ((I_l461f==Resistant)
        &&
       (I_e444v==Resistant) )
     {
-      return false;
+	      return false;
     }
 
 

@@ -101,6 +101,13 @@ int float_cmp(const void* a, const void* b)
   return (fa > fb) - (fa < fb);
 }
 
+int double_cmp(const void* a, const void* b)
+{
+  double fa = *(double*) a;
+  double fb = *(double*) b;
+  return (fa > fb) - (fa < fb);
+}
+
 int long_double_cmp(const void* a, const void* b)
 {
   long double fa = *(long double*) a;

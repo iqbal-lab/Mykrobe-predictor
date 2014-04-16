@@ -43,7 +43,6 @@ typedef enum
 
 typedef enum
   {
-
     dfrB_H31N = 0,
     dfrB_L41F = 1,
     dfrB_F99Y = 2,

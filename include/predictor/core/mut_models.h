@@ -36,11 +36,30 @@
 
 typedef enum
   {
+    MaxLikelihood = 0,
+    MaxAPosteriori =1,
+  } ModelChoiceMethod;
+
+typedef enum
+  {
     Resistant = 0,
     Susceptible = 1,
     MixedInfection = 2, //means mixed resistant and susceptible
     Unsure = 3,
   } InfectionType;
+
+double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
+								      ResVarInfo* rvi,
+								      int max_perc_covg_on_res_allele);
+
+double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
+									   ResVarInfo* rvi,
+									   int max_perc_covg_on_res_allele);
+
+double get_log_posterior_of_mixed_infection(double llk,
+					    ResVarInfo* rvi,
+					    int max_perc_covg_on_res_allele,
+					    int perc_covg_susc);
 
 
 double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
@@ -66,15 +85,25 @@ typedef struct
 {
   InfectionType type;
   double likelihood;//log likelihood
+  double lp; //log posterior
+  double conf;
 } Model;
 
-int model_cmp(const void *a, const void *b);
+int model_cmp_loglik(const void *a, const void *b);
+int model_cmp_logpost(const void *a, const void *b);
 
-void choose_best_model(double llk_R, double llk_S, double llk_M,
-		       double* confidence, Model* best_model);
+void choose_ml_model(double llk_R, double llk_S, double llk_M,
+		     Model* best_model);
 
-InfectionType best_model(ResVarInfo* rvi, double err_rate, int kmer,
-			 double lambda_g, double lambda_e,
-			 double* confidence);
+void choose_map_model(ResVarInfo* rvi,
+		      double llk_R, double llk_S, double llk_M,
+		      Model* best_model);
+
+InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
+			  double lambda_g, double lambda_e,
+			  Model* best_model,
+			  ModelChoiceMethod choice);
+
+
 
 #endif

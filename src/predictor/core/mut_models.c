@@ -29,7 +29,81 @@
 #include "maths.h"
 #include "mut_models.h"
 
-// *** LOG LIKELIHOODS FOR THE MODELS WITH CLONAL STRAIN + SEQUENCING ERRORS 
+// *** LOG LIKELIHOODS and POSTERIORS  FOR THE MODELS WITH CLONAL STRAIN + SEQUENCING ERRORS 
+
+
+//this is for SNPS and indels, not for gene presence, where the prior would depend
+//on divergence between the gene panel
+double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
+								      ResVarInfo* rvi,
+								      int max_perc_covg_on_res_allele)
+
+{
+  // prior probability that sample is resistant - look at covg gaps in resistant allele
+  int p = max_perc_covg_on_res_allele;
+  
+  //prob = 0.9 if p==100
+  //     = 0.1 if p>80
+  //     = 0 else
+  if (p==100)
+    {
+      return log(0.9)+llk;
+    }
+  else if (p>=80)
+    {
+      return log(0.1) + llk;
+    }
+  else
+    {
+      return -99999999;
+    }
+}
+
+
+
+double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
+									   ResVarInfo* rvi,
+									   int max_perc_covg_on_res_allele)
+{
+
+  int p = max_perc_covg_on_res_allele;
+  
+  if (p==0)
+    {
+      return llk;
+    }
+  else
+    {
+      return log(0.5) + llk;
+    }
+}
+
+double get_log_posterior_of_mixed_infection(double llk,
+					    ResVarInfo* rvi,
+					    int max_perc_covg_on_res_allele,
+					    int perc_covg_susc)
+{
+  if ( (max_perc_covg_on_res_allele==100)
+       && 
+       (perc_covg_susc==100) )
+    {
+      return llk;
+    }
+  else if ((max_perc_covg_on_res_allele>30)
+	   && 
+	   (perc_covg_susc>30) )
+    {
+      return llk+log(0.5);
+    }
+  else
+    {
+      return -9999999;
+    }
+}
+
+
+
+
 
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
@@ -145,7 +219,7 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
   
 }
 
-int model_cmp(const void *a, const void *b)
+int model_cmp_loglik(const void *a, const void *b)
 {
   // casting pointer types
   const Model *ia = (const Model *)a;
@@ -166,8 +240,29 @@ int model_cmp(const void *a, const void *b)
     }
 }
 
-void choose_best_model(double llk_R, double llk_S, double llk_M,
-		       double* confidence, Model* best_model)
+int model_cmp_logpost(const void *a, const void *b)
+{
+  // casting pointer types
+  const Model *ia = (const Model *)a;
+  const Model *ib = (const Model *)b;
+
+  //actually log likelihood.
+  if (ia->lp < ib->lp)
+    {
+      return -1;
+    }
+  else if (ia->lp > ib->lp)
+    {
+      return 1;
+    }
+  else
+    {
+      return 0;
+    }
+}
+
+void choose_ml_model(double llk_R, double llk_S, double llk_M,
+		     Model* best_model)
 {
   Model mR;
   mR.type=Resistant;
@@ -180,15 +275,52 @@ void choose_best_model(double llk_R, double llk_S, double llk_M,
   mM.likelihood=llk_M;
 
   Model arr[3]={mR, mS, mM};
-  qsort(arr, 3, sizeof(Model), model_cmp);
-  *confidence = arr[2].likelihood-arr[1].likelihood;
+  qsort(arr, 3, sizeof(Model), model_cmp_loglik);
+  best_model->conf = arr[2].likelihood-arr[1].likelihood;
   best_model->type = arr[2].type;
   best_model->likelihood = arr[2].likelihood;
+  best_model->lp =0;
 }
 
-InfectionType best_model(ResVarInfo* rvi, double err_rate, int kmer,
-			 double lambda_g, double lambda_e,
-			 double* confidence)
+
+
+//max a posteriori
+void choose_map_model(ResVarInfo* rvi,
+		      double llk_R, double llk_S, double llk_M,
+		      Model* best_model)
+{
+
+  Model mR;
+  mR.type=Resistant;
+  mR.likelihood=llk_R;
+  Model mS;
+  mS.type=Susceptible;
+  mS.likelihood=llk_S;
+  //  Model mM;
+  //mM.type=MixedInfection;
+  //mM.likelihood=llk_M;
+
+  int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(rvi);
+
+  mR.lp = llk_R + get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(llk_R, rvi,
+										       max_perc_covg_on_res);
+  mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, rvi,
+											    max_perc_covg_on_res);
+
+  //we are ignoring mixed infections for now
+  Model arr[2]={mR, mS};
+  qsort(arr, 2, sizeof(Model), model_cmp_logpost);
+  best_model->conf = arr[1].lp-arr[0].lp;
+  best_model->type = arr[1].type;
+  best_model->likelihood = arr[1].likelihood;
+  best_model->lp = arr[1].lp;
+}
+
+
+InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
+			  double lambda_g, double lambda_e,
+			  Model* best_model,
+			  ModelChoiceMethod choice)
 {
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi, 
 									  lambda_g, lambda_e,
@@ -198,12 +330,19 @@ InfectionType best_model(ResVarInfo* rvi, double err_rate, int kmer,
 									       kmer);
   double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
 
-  *confidence=0;
-  Model best;
-  choose_best_model(llk_R, llk_S, llk_M, confidence, &best);
-  if (*confidence>MIN_CONFIDENCE)
+  best_model->conf=0;
+  if (choice==MaxLikelihood)
     {
-      return best.type;
+      choose_ml_model(llk_R, llk_S, llk_M, best_model);
+    }
+  else
+    {
+      choose_map_model(rvi, llk_R, llk_S, llk_M, best_model);
+    }
+
+  if (best_model->conf > MIN_CONFIDENCE)
+    {
+      return best_model->type;
     }
   else
     {

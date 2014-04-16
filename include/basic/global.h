@@ -70,6 +70,7 @@ boolean test_file_existence(char* file);
 int int_cmp(const void *a, const void *b);
 int Covg_cmp(const void *a, const void *b);
 int float_cmp(const void* a, const void* b);
+int double_cmp(const void* a, const void* b);
 int long_double_cmp(const void* a, const void* b);
 
 void set_string_to_null(char* str, int len);
