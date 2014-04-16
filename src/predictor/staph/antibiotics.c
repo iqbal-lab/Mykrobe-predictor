@@ -505,7 +505,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
 		    lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if ( (I==Resistant) || (I==MixedInfection) )
+      if (I==Resistant)// || (I==MixedInfection) )
 	{
 	  /* if (I==MixedInfection)
 	    {
@@ -699,14 +699,14 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if ( (I==Resistant) || (I==MixedInfection) )
+      if (I==Resistant) //|| (I==MixedInfection) )
 	{
 	  /*  if (I==MixedInfection)
-	    {
+	      {
 	      printf("Ciprofloxacin - called mixed\n");
 	      }*/
-
-	      return false;
+	  
+	  return false;
 	}
     }
 
@@ -767,12 +767,12 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if ( (I==Resistant)|| (I==MixedInfection))
+      if (I==Resistant)//|| (I==MixedInfection))
 	{	 
 	  /* if (I==MixedInfection)
-	    {
-	      printf("Rifampicin- called mixed\n");
-	    } *
+	     {
+	     printf("Rifampicin- called mixed\n");
+	     } */
 
 	      return false;
 	}
@@ -947,19 +947,19 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   Model best_model;
   for (i=first_fus_mut; i<=last_fus_mut; i++)
     {
-      InfectionType I=
-	resistotype(abi->mut[i],
-		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
-		    &best_model, MaxAPosteriori);
-      if ( (I==Resistant) || (I==MixedInfection) )
-	{
+    InfectionType I=
+      resistotype(abi->mut[i],
+		  err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		  &best_model, MaxAPosteriori);
+    if (I==Resistant) //|| (I==MixedInfection) )
+      {
 	/*  if (I==MixedInfection)
 	    {
 	      printf("Fusidic - called mixed\n");
 	      } */
-
-	      return false;
-	}
+	
+	return false;
+      }
     }
 
   
