@@ -80,18 +80,17 @@ double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(doubl
 
 double get_log_posterior_of_mixed_infection(double llk,
 					    ResVarInfo* rvi,
-					    int max_perc_covg_on_res_allele,
-					    int perc_covg_susc)
+					    int max_perc_covg_on_res_allele)
 {
   if ( (max_perc_covg_on_res_allele==100)
        && 
-       (perc_covg_susc==100) )
+       (rvi->susceptible_allele.percent_nonzero==100) )
     {
       return llk;
     }
-  else if ((max_perc_covg_on_res_allele>30)
+  else if ((max_perc_covg_on_res_allele>80)
 	   && 
-	   (perc_covg_susc>30) )
+	   (rvi->susceptible_allele.percent_nonzero > 80) )
     {
       return llk+log(0.5);
     }
@@ -296,9 +295,9 @@ void choose_map_model(ResVarInfo* rvi,
   Model mS;
   mS.type=Susceptible;
   mS.likelihood=llk_S;
-  //  Model mM;
-  //mM.type=MixedInfection;
-  //mM.likelihood=llk_M;
+  Model mM;
+  mM.type=MixedInfection;
+  mM.likelihood=llk_M;
 
   int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(rvi);
 
@@ -306,14 +305,15 @@ void choose_map_model(ResVarInfo* rvi,
 										       max_perc_covg_on_res);
   mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, rvi,
 											    max_perc_covg_on_res);
+  mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, rvi,
+						       max_perc_covg_on_res);
 
-  //we are ignoring mixed infections for now
-  Model arr[2]={mR, mS};
-  qsort(arr, 2, sizeof(Model), model_cmp_logpost);
-  best_model->conf = arr[1].lp-arr[0].lp;
-  best_model->type = arr[1].type;
-  best_model->likelihood = arr[1].likelihood;
-  best_model->lp = arr[1].lp;
+  Model arr[3]={mR, mS, mM};
+  qsort(arr, 3, sizeof(Model), model_cmp_logpost);
+  best_model->conf = arr[2].lp-arr[1].lp;
+  best_model->type = arr[2].type;
+  best_model->likelihood = arr[2].likelihood;
+  best_model->lp = arr[2].lp;
 }
 
 

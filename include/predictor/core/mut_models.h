@@ -32,7 +32,7 @@
 #include "genotyping_known.h"
 
 
-#define MIN_CONFIDENCE 3
+#define MIN_CONFIDENCE 2
 
 typedef enum
   {
@@ -58,8 +58,7 @@ double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(doubl
 
 double get_log_posterior_of_mixed_infection(double llk,
 					    ResVarInfo* rvi,
-					    int max_perc_covg_on_res_allele,
-					    int perc_covg_susc);
+					    int max_perc_covg_on_res_allele);
 
 
 double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,

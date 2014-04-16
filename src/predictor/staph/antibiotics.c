@@ -494,7 +494,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    install_dir);
 
   int first_trim_mut = dfrB_H31N;
-  int last_trim_mut = dfrB_H150R-1;//added -1 for DEBUG
+  int last_trim_mut = dfrB_H150R;
   int i;
 
   //if you have any of these resistance alleles - call resistant
@@ -505,9 +505,13 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
 		    lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if (I==Resistant) //|| (I==MixedInfection) )
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
-	      return false;
+	  /* if (I==MixedInfection)
+	    {
+	      printf("Trimethoprim - called mixed\n");
+	      }*/
+	  return false;
 	}
     }
 
@@ -695,8 +699,13 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
+	  /*  if (I==MixedInfection)
+	    {
+	      printf("Ciprofloxacin - called mixed\n");
+	      }*/
+
 	      return false;
 	}
     }
@@ -758,8 +767,13 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if (I==Resistant)
-	{	  
+      if ( (I==Resistant)|| (I==MixedInfection))
+	{	 
+	  /* if (I==MixedInfection)
+	    {
+	      printf("Rifampicin- called mixed\n");
+	    } *
+
 	      return false;
 	}
     }
@@ -937,8 +951,13 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
 		    &best_model, MaxAPosteriori);
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) )
 	{
+	/*  if (I==MixedInfection)
+	    {
+	      printf("Fusidic - called mixed\n");
+	      } */
+
 	      return false;
 	}
     }
