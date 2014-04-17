@@ -157,7 +157,6 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate
 				  );
-
 boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 

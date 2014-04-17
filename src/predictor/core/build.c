@@ -54,7 +54,7 @@ void set_all_coverages_to_zero(dBGraph* dbg, int colour)
 
 double estimate_err_rate(StrBuf* path, boolean is_list)
 {
-  return 0.005;
+  return 0.05;
 }
 
 //if boolean is_list==true, then path=list of fastq (or bams)

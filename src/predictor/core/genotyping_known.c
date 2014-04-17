@@ -120,6 +120,7 @@ ResVarInfo* alloc_and_init_res_var_info()
   rvi->gene = Unknown;
   rvi->some_resistant_allele_present = false;
   rvi->working_current_max_res_allele_present=0;
+  rvi->working_current_max_sus_allele_present=0;
   return rvi;
 }
 
@@ -138,6 +139,7 @@ void reset_res_var_info(ResVarInfo* rvi)
   memset(rvi,0, sizeof(ResVarInfo));
   rvi->some_resistant_allele_present=false;
   rvi->working_current_max_res_allele_present=0;
+  rvi->working_current_max_sus_allele_present=0;
 }
 
 
@@ -329,25 +331,33 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 
   //collect min, median covg on allele and also percentage of kmers with any covg
   boolean too_short=false;
-  rinfo->susceptible_allele.median_covg = 
-    median_covg_on_allele_in_specific_colour(array_nodes, 
-					     num_kmers, 
-					     working_ca, 
-					     0, 
-					     &too_short,
-					     ignore_first, ignore_last);
-  rinfo->susceptible_allele.min_covg = 
-    min_covg_on_allele_in_specific_colour(array_nodes, 
-					  num_kmers, 
-					  0, 
-					  &too_short,
-					  ignore_first, ignore_last);
-  rinfo->susceptible_allele.percent_nonzero = 
-    percent_nonzero_on_allele_in_specific_colour(array_nodes, 
-						 num_kmers, 
-						 0, 
-						 &too_short,
-						 ignore_first, ignore_last);
+
+  Covg stmp_med =   median_covg_on_allele_in_specific_colour(array_nodes, 
+							    num_kmers, 
+							    working_ca, 
+							    0, 
+							    &too_short,
+							    ignore_first, ignore_last);
+
+  Covg stmp_min =   min_covg_on_allele_in_specific_colour(array_nodes, 
+							  num_kmers, 
+							  0, 
+							  &too_short,
+							  ignore_first, ignore_last);
+
+  int stmp_perc =   percent_nonzero_on_allele_in_specific_colour(array_nodes, 
+								 num_kmers, 
+								 0, 
+								 &too_short,
+								 ignore_first, ignore_last);
+
+  if (stmp_perc> rinfo->working_current_max_sus_allele_present)
+    {
+      rinfo->working_current_max_sus_allele_present=stmp_perc;
+      rinfo->susceptible_allele.median_covg = stmp_med;
+      rinfo->susceptible_allele.min_covg = stmp_min;
+      rinfo->susceptible_allele.percent_nonzero = stmp_perc;
+    }
 
   int i;
   for (i=0; i<rinfo->num_resistant_alleles; i++)
