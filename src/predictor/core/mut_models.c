@@ -34,9 +34,11 @@
 
 //this is for SNPS and indels, not for gene presence, where the prior would depend
 //on divergence between the gene panel
+//epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
 								      ResVarInfo* rvi,
-								      int max_perc_covg_on_res_allele)
+								      int max_perc_covg_on_res_allele,
+								      double epsilon)
 
 {
   // prior probability that sample is resistant - look at covg gaps in resistant allele
@@ -45,11 +47,11 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
   //prob = 0.9 if p==100
   //     = 0.1 if p>80
   //     = 0 else
-  if (p==100)
+  if (p>=100*epsilon)
     {
       return log(0.9)+llk;
     }
-  else if (p>=80)
+  else if (p>=80*epsilon)
     {
       return log(0.1) + llk;
     }
@@ -63,7 +65,8 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
 									   ResVarInfo* rvi,
-									   int max_perc_covg_on_res_allele)
+									   int max_perc_covg_on_res_allele,
+									   double epsilon)
 {
 
   int p = max_perc_covg_on_res_allele;
@@ -286,7 +289,7 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 //max a posteriori
 void choose_map_model(ResVarInfo* rvi,
 		      double llk_R, double llk_S, double llk_M,
-		      Model* best_model)
+		      Model* best_model, double epsilon)
 {
 
   Model mR;
@@ -302,9 +305,11 @@ void choose_map_model(ResVarInfo* rvi,
   int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(rvi);
 
   mR.lp = llk_R + get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(llk_R, rvi,
-										       max_perc_covg_on_res);
+										 max_perc_covg_on_res,
+										 epsilon);
   mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, rvi,
-											    max_perc_covg_on_res);
+										      max_perc_covg_on_res,
+										      epsilon);
   mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, rvi,
 						       max_perc_covg_on_res);
 
@@ -318,7 +323,7 @@ void choose_map_model(ResVarInfo* rvi,
 
 
 InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
-			  double lambda_g, double lambda_e,
+			  double lambda_g, double lambda_e, double epsilon,
 			  Model* best_model,
 			  ModelChoiceMethod choice)
 {
@@ -337,7 +342,7 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
     }
   else
     {
-      choose_map_model(rvi, llk_R, llk_S, llk_M, best_model);
+      choose_map_model(rvi, llk_R, llk_S, llk_M, best_model, epsilon);
     }
 
   if (best_model->conf > MIN_CONFIDENCE)

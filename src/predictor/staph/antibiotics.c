@@ -387,7 +387,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
   abi->which_genes[0]=aacAaphD;
   abi->num_genes=1;
   abi->num_mutations = 0;//entirely determined by gene presence
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -432,7 +432,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
   abi->num_mutations = 0;//entirely determined by gene presence
   abi->which_genes[0]=blaZ;
   abi->num_genes=1;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -483,7 +483,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   abi->which_genes[0]=dfrA;
   abi->which_genes[1]=dfrG;
   abi->num_genes=2;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -503,7 +503,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
       Model best_model;
       InfectionType I=
 	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e,
+		    lambda_g, lambda_e, epsilon,
 		    &best_model, MaxAPosteriori);
       if (I==Resistant)// || (I==MixedInfection) )
 	{
@@ -567,7 +567,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
   abi->which_genes[3]=ermT;
   abi->which_genes[4]=msrA;
   abi->num_genes=5;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -632,7 +632,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
   abi->num_mutations = 0;
   abi->which_genes[0]=mecA;
   abi->num_genes=1;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -674,7 +674,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 
   abi->num_mutations = 94;
   abi->num_genes=0;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -697,7 +697,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
       Model best_model;
       InfectionType I=
 	resistotype(abi->mut[i],
-		   err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		    &best_model, MaxAPosteriori);
       if (I==Resistant) //|| (I==MixedInfection) )
 	{
@@ -739,7 +739,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 
   abi->num_mutations = 430;
   abi->num_genes=0;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -747,7 +747,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi,
 				    ignore_first, ignore_last, expected_covg,
-	install_dir);
+				    install_dir);
 
 
   //these aren't the first of ALL rifampicin/rpoB mutations
@@ -765,7 +765,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 
       InfectionType I=
 	resistotype(abi->mut[i],
-		    err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		    &best_model, MaxAPosteriori);
       if (I==Resistant)//|| (I==MixedInfection))
 	{	 
@@ -780,11 +780,11 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 
   InfectionType I_m470t=
     resistotype(abi->mut[rpoB_M470T],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   InfectionType I_d471g=
     resistotype(abi->mut[rpoB_D471G],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   
   if (I_m470t==Resistant && I_d471g==Resistant)
@@ -820,7 +820,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
   abi->which_genes[1]=tetL;
   abi->which_genes[2]=tetM;
   abi->num_genes=3;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -873,7 +873,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
   abi->which_genes[0]=mupA;
   abi->which_genes[1]=mupB;
   abi->num_genes=2;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -921,7 +921,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   abi->which_genes[0]=fusB;
   abi->which_genes[1]=fusC;
   abi->num_genes=2;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
 
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
@@ -949,7 +949,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
     InfectionType I=
       resistotype(abi->mut[i],
-		  err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		  err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		  &best_model, MaxAPosteriori);
     if (I==Resistant) //|| (I==MixedInfection) )
       {
@@ -966,11 +966,11 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   InfectionType I_f652s=
     resistotype(abi->mut[fusA_F652S],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   InfectionType I_y654n=
     resistotype(abi->mut[fusA_Y654N],
-	       err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
 
   if (I_f652s==Resistant && I_y654n==Resistant)
@@ -983,19 +983,19 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   InfectionType I_l461f=
     resistotype(abi->mut[fusA_L461F],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   InfectionType I_a376v=
     resistotype(abi->mut[fusA_A376V],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   InfectionType I_a655p=
     resistotype(abi->mut[fusA_A655P],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   InfectionType I_d463g=
     resistotype(abi->mut[fusA_D463G],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxAPosteriori);
   
   if ( (I_l461f==Resistant)
@@ -1012,7 +1012,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   InfectionType I_e444v;
   resistotype(abi->mut[fusA_E444V],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e,
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 	      &best_model, MaxAPosteriori);
 
   if ((I_l461f==Resistant)
@@ -1063,7 +1063,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
   abi->num_mutations = 0;
   abi->which_genes[0]=vga_A_LC;
   abi->num_genes=1;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
@@ -1109,7 +1109,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
   abi->num_mutations = 0;
   abi->which_genes[0]=vanA;
   abi->num_genes=1;
-
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
 				    file_reader,
 				    abi,
