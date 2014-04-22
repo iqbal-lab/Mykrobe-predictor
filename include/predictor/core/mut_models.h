@@ -55,7 +55,7 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
 									   ResVarInfo* rvi,
-									   int max_perc_covg_on_res_allele,
+									   int max_perc_covg_on_sus_allele,
 									   double epsilon);
 
 double get_log_posterior_of_mixed_infection(double llk,
@@ -98,7 +98,7 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 
 void choose_map_model(ResVarInfo* rvi,
 		      double llk_R, double llk_S, double llk_M,
-		      Model* best_model);
+		      Model* best_model, double epsilon);
 
 InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
 			  double lambda_g, double lambda_e, double epsilon,

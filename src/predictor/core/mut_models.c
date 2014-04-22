@@ -43,17 +43,26 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 {
   // prior probability that sample is resistant - look at covg gaps in resistant allele
   int p = max_perc_covg_on_res_allele;
-  
-  //prob = 0.9 if p==100
-  //     = 0.1 if p>80
-  //     = 0 else
+
   if (p>=100*epsilon)
     {
-      return log(0.9)+llk;
+      return log(1)+llk;
     }
   else if (p>=80*epsilon)
     {
-      return log(0.1) + llk;
+      return log(0.8) + llk;
+    }
+  else if (p>=60*epsilon)
+    {
+      return log(0.6) + llk;
+    }
+  else if (p>=40*epsilon)
+    {
+      return log(0.4) + llk;
+    }
+  else if (p>=20*epsilon)
+    {
+      return log(0.2) + llk;
     }
   else
     {
@@ -65,19 +74,35 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
 									   ResVarInfo* rvi,
-									   int max_perc_covg_on_res_allele,
+									   int max_perc_covg_on_sus_allele,
 									   double epsilon)
 {
 
-  int p = max_perc_covg_on_res_allele;
+  int p = max_perc_covg_on_sus_allele;
   
-  if (p==0)
+  if (p>=100*epsilon)
     {
-      return llk;
+      return log(1)+llk;
+    }
+  else if (p>=80*epsilon)
+    {
+      return log(0.8) + llk;
+    }
+  else if (p>=60*epsilon)
+    {
+      return log(0.6) + llk;
+    }
+  else if (p>=40*epsilon)
+    {
+      return log(0.4) + llk;
+    }
+  else if (p>=20*epsilon)
+    {
+      return log(0.2) + llk;
     }
   else
     {
-      return log(0.5) + llk;
+      return -99999999;
     }
 }
 
@@ -269,12 +294,18 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
   Model mR;
   mR.type=Resistant;
   mR.likelihood=llk_R;
+  mR.lp = 0;
+  mR.conf=0;
   Model mS;
   mS.type=Susceptible;
   mS.likelihood=llk_S;
+  mS.lp = 0;
+  mS.conf=0;
   Model mM;
   mM.type=MixedInfection;
   mM.likelihood=llk_M;
+  mM.lp = 0;
+  mM.conf=0;
 
   Model arr[3]={mR, mS, mM};
   qsort(arr, 3, sizeof(Model), model_cmp_loglik);
@@ -295,12 +326,18 @@ void choose_map_model(ResVarInfo* rvi,
   Model mR;
   mR.type=Resistant;
   mR.likelihood=llk_R;
+  mR.lp=0;
+  mR.conf=0;
   Model mS;
   mS.type=Susceptible;
   mS.likelihood=llk_S;
+  mS.lp=0;
+  mS.conf=0;
   Model mM;
   mM.type=MixedInfection;
   mM.likelihood=llk_M;
+  mM.lp=0;
+  mM.conf=0;
 
   int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(rvi);
 
