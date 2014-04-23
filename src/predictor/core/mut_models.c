@@ -44,7 +44,7 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
   // prior probability that sample is resistant - look at covg gaps in resistant allele
   int p = max_perc_covg_on_res_allele;
 
-  if (p>=10*epsilon)
+  if (p>=80*epsilon)
     {
       return log(1)+llk;
     }
@@ -62,15 +62,15 @@ double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(doubl
 									   double epsilon)
 {
 
-  int p = max_perc_covg_on_sus_allele;
+  int p = max_perc_covg_on_res_allele;
   
-  if (p>=10*epsilon)
+  if (p>=80*epsilon)
     {
-      return log(1)+llk;
+      return -99999999;
     }
   else
     {
-      return -99999999;
+      return log(1)+llk;;
     }
 }
 
