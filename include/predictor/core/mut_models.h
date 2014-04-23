@@ -55,7 +55,7 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
 									   ResVarInfo* rvi,
-									   int max_perc_covg_on_sus_allele,
+									   int max_perc_covg_on_res_allele,
 									   double epsilon);
 
 double get_log_posterior_of_mixed_infection(double llk,
