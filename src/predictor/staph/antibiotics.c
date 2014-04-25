@@ -611,6 +611,10 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_STANDARD);
       if (I==Resistant)
 	{
+	  if (i<4)
+	    {
+	      *any_erm_present=true;
+	    }
 	  return false;
 	}
     }
