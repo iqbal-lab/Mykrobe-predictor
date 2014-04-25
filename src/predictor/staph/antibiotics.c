@@ -31,6 +31,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include "mut_models.h"
+#include "gene_presence_models.h"
 
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
 {
@@ -396,11 +397,17 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				    tmp_gi, ignore_first, ignore_last, expected_covg,
 				    install_dir);
 
-  if (abi->genes[aacAaphD]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-
+  Model best_model;
+  InfectionType I=
+    resistotype_gene(abi->genes[aacAaphD], err_rate, db_graph->kmer_size, 
+		     lambda_g, epsilon,
+		     &best_model, MaxAPosteriori,
+		     MIN_PERC_COVG_STANDARD);
+  if (I==Resistant)
     {
       return false;
     }
+
   return true;
   
 }
@@ -446,11 +453,18 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				    install_dir);
 
   //  printf("Got blaZ percent %d\n", abi->genes[blaZ]->percent_nonzero);
-  
-  if (abi->genes[blaZ]->percent_nonzero > MIN_PERC_COVG_BLAZ)
+
+  Model best_model;
+  InfectionType I=
+    resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
+		     lambda_g, epsilon,
+		     &best_model, MaxAPosteriori,
+		     MIN_PERC_COVG_BLAZ);
+  if (I==Resistant)
     {
       return false;
     }
+
   return true;
 
 }
@@ -515,18 +529,25 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	}
     }
 
-  if (abi->genes[dfrA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+
+
+  for (i=0; i<=1; i++)
     {
-      return false;
+
+      Model best_model;
+      InfectionType I =
+	resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, epsilon,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_STANDARD);
+      if (I==Resistant)
+	{
+	  return false;
+	}
     }
-  else if (abi->genes[dfrG]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      return false;
-    }
-  else
-    {
-      return true;
-    }
+
+  return true;
 }
 
 /* reminder of how erythromycin and clindamycin resistance is related:
@@ -577,35 +598,24 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if (abi->genes[ermA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+  int i;
+  for (i=0; i<=4; i++)
     {
-      *any_erm_present=true;
-      return false;
-    }
-  else if (abi->genes[ermB]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      *any_erm_present=true;
-      return false;
-    }
-  else if (abi->genes[ermC]->percent_nonzero > MIN_PERC_COVG_STANDARD)
 
-    {
-      *any_erm_present=true;
-      return false;
+      Model best_model;
+      InfectionType I =
+	resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, epsilon,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_STANDARD);
+      if (I==Resistant)
+	{
+	  return false;
+	}
     }
-  else if (abi->genes[ermT]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      *any_erm_present=true;
-      return false;
-    }
-  else if (abi->genes[msrA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      return false;
-    }
- else
-   {
-     return true;
-   }
+
+  return true;
 }
 
 
@@ -642,10 +652,18 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if (abi->genes[mecA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+  Model best_model;
+  InfectionType I =
+    resistotype_gene(abi->genes[mecA], 
+		     err_rate, db_graph->kmer_size, 
+		     lambda_g, epsilon,
+		     &best_model, MaxAPosteriori,
+		     MIN_PERC_COVG_STANDARD);
+  if (I==Resistant)
     {
       return false;
-    }  
+    }
+
  return true;
 }
 
@@ -830,19 +848,23 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if (abi->genes[tetK]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      return false;
-    }  
-  else if (abi->genes[tetL]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      return false;
-    }  
-  else if (abi->genes[tetM]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      return false;
-    }  
 
+  int i;
+  for (i=0; i<=2; i++)
+    {
+
+      Model best_model;
+      InfectionType I =
+	resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, epsilon,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_STANDARD);
+      if (I==Resistant)
+	{
+	  return false;
+	}
+    }
 
  return true;
 }
@@ -883,14 +905,24 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 	install_dir);
 
-  if (abi->genes[mupA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+
+  int i;
+  for (i=0; i<=1; i++)
     {
-      return false;
-    }  
-  else if (abi->genes[mupB]->percent_nonzero > MIN_PERC_COVG_STANDARD)
-    {
-      return false;
-    }  
+
+      Model best_model;
+      InfectionType I =
+	resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, epsilon,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_STANDARD);
+      if (I==Resistant)
+	{
+	  return false;
+	}
+    }
+
  return true;
 }
 
@@ -1023,18 +1055,22 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     }
 
 
-  if (abi->genes[fusB]->percent_nonzero > MIN_PERC_COVG_FUSBC)
+
+  for (i=0; i<=1; i++)
     {
-      return false;
-    }  
-  else if (abi->genes[fusC]->percent_nonzero > MIN_PERC_COVG_FUSBC)
-    {
-      return false;
-    }  
-  else
-    {
-      return true;
+      Model best_model;
+      InfectionType I =
+	resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, epsilon,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_FUSBC);
+      if (I==Resistant)
+	{
+	  return false;
+	}
     }
+  return true;
 }
 
 
@@ -1074,10 +1110,18 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 	install_dir);
 
 
-  if (abi->genes[vga_A_LC]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+  Model best_model;
+  InfectionType I =
+    resistotype_gene(abi->genes[vga_A_LC], 
+		     err_rate, db_graph->kmer_size, 
+		     lambda_g, epsilon,
+		     &best_model, MaxAPosteriori,
+		     MIN_PERC_COVG_STANDARD);
+  if (I==Resistant)
     {
       return false;
-    }  
+    }
+
  return true;
 
 }
@@ -1119,10 +1163,18 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 				    install_dir);
 
-  if (abi->genes[vanA]->percent_nonzero > MIN_PERC_COVG_STANDARD)
+  Model best_model;
+  InfectionType I =
+    resistotype_gene(abi->genes[vanA], 
+		     err_rate, db_graph->kmer_size, 
+		     lambda_g, epsilon,
+		     &best_model, MaxAPosteriori,
+		     MIN_PERC_COVG_STANDARD);
+  if (I==Resistant)
     {
       return false;
-    }  
+    }
+
  return true;
 
 }
