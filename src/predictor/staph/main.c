@@ -182,7 +182,7 @@ int main(int argc, char **argv)
   
   //calculate expected read-arrival rates on true and error alleles
   double lambda_g_err = pow(1-err_rate, cmd_line->kmer_size) * lambda_g_err_free;
-  double lambda_e_err = err_rate* pow(1-err_rate, cmd_line->kmer_size-1)/3 ;//rate of arrival of reads on a sequencing error allele
+  double lambda_e_err = lambda_g_err_free* err_rate* pow(1-err_rate, cmd_line->kmer_size-1)/3 ;//rate of arrival of reads on a sequencing error allele
 
   int expected_depth_on_err_allele 
     = err_rate* pow(1-err_rate, cmd_line->kmer_size-1)
