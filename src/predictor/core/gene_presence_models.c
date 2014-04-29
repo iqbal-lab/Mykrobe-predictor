@@ -33,13 +33,13 @@
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_truly_resistant(double llk,
 					 GeneInfo* gi,
-					 double epsilon,
+					 double loss_due_to_sample_and_errors,
 					 int min_expected)//given known diversity of genes
 
 {
 
   int p = gi->percent_nonzero;
-  if (p>=epsilon* min_expected)
+  if (p>=loss_due_to_sample_and_errors* min_expected)
     {
       return log(1)+llk;
     }
@@ -53,13 +53,13 @@ double get_log_posterior_truly_resistant(double llk,
 
 double get_log_posterior_truly_susceptible(double llk,
 					   GeneInfo* gi,
-					   double epsilon,
+					   double loss_due_to_sample_and_errors,
 					   int min_expected)
 {
 
   int p = gi->percent_nonzero;
   
-  if (p>=epsilon*min_expected)
+  if (p>=loss_due_to_sample_and_errors*min_expected)
     {
       return -99999999;
     }
@@ -163,9 +163,13 @@ void choose_ml_gene_model(double llk_R, double llk_S,
 //max a posteriori
 void choose_map_gene_model(GeneInfo* gi,
 			   double llk_R, double llk_S, 
-			   Model* best_model, double epsilon,
+			   Model* best_model, double epsilon, int expected_covg,
 			   int min_expected_kmer_recovery_for_this_gene)
 {
+
+  //total length of gaps = length of gene * exp(-expected_covg)
+  // so percentage of kmers present = 1-exp(-expected_covg);
+  double loss = 1-exp(-expected_covg);
 
   Model mR;
   mR.type=Resistant;
@@ -182,14 +186,14 @@ void choose_map_gene_model(GeneInfo* gi,
     = llk_R 
     + get_log_posterior_truly_resistant(llk_R, 
 					gi,
-					epsilon,
+					loss,
 					min_expected_kmer_recovery_for_this_gene);
 
   mS.lp 
     = llk_S 
     + get_log_posterior_truly_susceptible(llk_S, 
 					  gi,
-					  epsilon,
+					  loss,
 					  min_expected_kmer_recovery_for_this_gene);
 
   Model arr[2]={mR, mS};
@@ -202,7 +206,7 @@ void choose_map_gene_model(GeneInfo* gi,
 
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
-			       double lambda_g,  double epsilon,
+			       double lambda_g,  double epsilon, int expected_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene)
@@ -222,7 +226,7 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   else
     {
       choose_map_gene_model(gi, llk_R, llk_S, 
-			    best_model, epsilon, 
+			    best_model, epsilon, expected_covg,
 			    min_expected_kmer_recovery_for_this_gene);
     }
 

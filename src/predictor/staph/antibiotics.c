@@ -400,7 +400,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
   Model best_model;
   InfectionType I=
     resistotype_gene(abi->genes[aacAaphD], err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,
+		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if (I==Resistant)
@@ -457,7 +457,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
   Model best_model;
   InfectionType I=
     resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,
+		     lambda_g, epsilon,expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
   if (I==Resistant)
@@ -538,7 +538,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon,
+			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if (I==Resistant)
@@ -606,7 +606,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon,
+			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if (I==Resistant)
@@ -660,7 +660,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[mecA], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,
+		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if (I==Resistant)
@@ -861,7 +861,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon,
+			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if (I==Resistant)
@@ -918,7 +918,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon,
+			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if (I==Resistant)
@@ -1066,7 +1066,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon,
+			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_FUSBC);
       if (I==Resistant)
@@ -1118,7 +1118,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[vga_A_LC], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,
+		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if (I==Resistant)
@@ -1171,7 +1171,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[vanA], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,
+		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if (I==Resistant)
