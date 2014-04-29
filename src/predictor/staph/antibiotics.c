@@ -518,7 +518,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
 		    lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxLikelihood);
       if (I==Resistant)// || (I==MixedInfection) )
 	{
 	  /* if (I==MixedInfection)
@@ -720,7 +720,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->mut[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxLikelihood);
       if (I==Resistant) //|| (I==MixedInfection) )
 	{
 	  /*  if (I==MixedInfection)
@@ -788,7 +788,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->mut[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxLikelihood);
       if (I==Resistant)//|| (I==MixedInfection))
 	{	 
 	  /* if (I==MixedInfection)
@@ -986,7 +986,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     InfectionType I=
       resistotype(abi->mut[i],
 		  err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		  &best_model, MaxAPosteriori);
+		  &best_model, MaxLikelihood);
     if (I==Resistant) //|| (I==MixedInfection) )
       {
 	/*  if (I==MixedInfection)
