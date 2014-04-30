@@ -221,6 +221,7 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
   
   int i;
 
+  KnownMutation m = NotSpecified;
   for (i=0; i<abi->num_mutations; i++)
     {
       get_next_mutation_allele_info(fp, 
@@ -234,7 +235,8 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 				    rutils->working_ca, 
 				    MAX_LEN_MUT_ALLELE,
 				    tmp1, tmp2, tmp3,
-				    ignore_first, ignore_last, expected_covg);
+				    ignore_first, ignore_last, 
+				    expected_covg, &m);
 
       copy_res_var_info(tmp_rvi, abi->mut[tmp_rvi->var_id]);
     }
