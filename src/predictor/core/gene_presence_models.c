@@ -211,12 +211,13 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene)
 {
-  double llk_R = get_log_lik_truly_resistant(gi, 
+  double llk_R = 1;
+  /*   get_log_lik_truly_resistant(gi, 
+			      lambda_g, 
+			      kmer);*/
+double llk_S = get_log_lik_truly_susceptible(gi, 
 					     lambda_g, 
 					     kmer);
-  double llk_S = get_log_lik_truly_susceptible(gi, 
-					       lambda_g, 
-					       kmer);
 
   best_model->conf=0;
   if (choice==MaxLikelihood)
