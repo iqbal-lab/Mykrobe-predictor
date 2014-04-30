@@ -63,13 +63,21 @@ GeneMutationGene map_gene_name_str_to_genename(StrBuf* name)
 }
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
 {
-  if ( (strcmp(sbuf->buff, "H31N")==0) && (gene==dfrB) )
+  if ( (strcmp(sbuf->buff, "L21V")==0) && (gene==dfrB) )
+    {
+      return dfrB_L21V;
+    } 
+  else if ( (strcmp(sbuf->buff, "H31N")==0) && (gene==dfrB) )
     {
       return dfrB_H31N;
     } 
   else if ( (strcmp(sbuf->buff, "L41F")==0) && (gene==dfrB) )
     {
       return dfrB_L41F;
+    } 
+  else if ( (strcmp(sbuf->buff, "N60I")==0) && (gene==dfrB) )
+    {
+      return dfrB_N60I;
     } 
   else if ( (strcmp(sbuf->buff, "F99Y")==0) && (gene==dfrB) )
     {
@@ -98,6 +106,10 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "Q115L")==0) && (gene==fusA) )
     {
       return fusA_Q115L;
+    } 
+  else if ( (strcmp(sbuf->buff, "T326I")==0) && (gene==fusA) )
+    {
+      return fusA_T326I;
     } 
   else if ( (strcmp(sbuf->buff, "A376V")==0) && (gene==fusA) )
     {
@@ -154,6 +166,10 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "M453I")==0) && (gene==fusA) )
     {
       return fusA_M453I;
+    } 
+  else if ( (strcmp(sbuf->buff, "L456F")==0) && (gene==fusA) )
+    {
+      return fusA_L456F;
     } 
   else if ( (strcmp(sbuf->buff, "H457Q")==0) && (gene==fusA) )
     {
@@ -278,6 +294,10 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
   else if ( (strcmp(sbuf->buff, "D471Y")==0) && (gene==rpoB) )
     {
       return rpoB_D471Y;
+    } 
+  else if ( (strcmp(sbuf->buff, "N474K")==0) && (gene==rpoB) )
+    {
+      return rpoB_N474K;
     } 
   else if ( (strcmp(sbuf->buff, "ins475G")==0) && (gene==rpoB) )
     {

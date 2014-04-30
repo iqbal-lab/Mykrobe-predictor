@@ -492,8 +492,8 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Trimethoprim;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/trimethoprim.fa");
-  abi->num_mutations = 73;
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/trimethoprim.fa");
+  abi->num_mutations = 113;
   abi->which_genes[0]=dfrA;
   abi->which_genes[1]=dfrG;
   abi->num_genes=2;
@@ -507,7 +507,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    ignore_first, ignore_last, expected_covg,
 				    install_dir);
 
-  int first_trim_mut = dfrB_H31N;
+  int first_trim_mut = dfrB_L21V;
   int last_trim_mut = dfrB_H150R;
   int i;
 
@@ -692,7 +692,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   abi->ab = Ciprofloxacin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
 
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/ciprofloxacin.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/ciprofloxacin.fa");
 
   abi->num_mutations = 94;
   abi->num_genes=0;
@@ -756,10 +756,10 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Rifampicin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/rifampicin.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/rifampicin.fa");
 
 
-  abi->num_mutations = 430;
+  abi->num_mutations = 453;
   abi->num_genes=0;
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
@@ -950,9 +950,9 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = FusidicAcid;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/fusidic_acid.fa");
 
-  abi->num_mutations = 898;
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/fusidic_acid.fa");
+  abi->num_mutations = 961;
 
   abi->which_genes[0]=fusB;
   abi->which_genes[1]=fusC;
@@ -966,8 +966,8 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    tmp_rvi,
 				    tmp_gi,
 				    ignore_first, ignore_last, expected_covg,
-	install_dir);
-
+				    install_dir);
+  
 
   // in terms of avoiding future bugs when people modify the code,
   // I'm not super-keen on what I've done here:
