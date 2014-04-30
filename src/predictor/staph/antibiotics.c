@@ -1015,6 +1015,23 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
       return false;
     }
+
+
+
+
+  InfectionType I_t326i=
+    resistotype(abi->mut[fusA_T326I],
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		&best_model, MaxAPosteriori);
+  InfectionType I_e468v=
+    resistotype(abi->mut[fusA_E468V],
+	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		&best_model, MaxAPosteriori);
+
+  if (I_t326i==Resistant && I_e468v==Resistant)
+    {
+      return false;
+    }
   
 
 
