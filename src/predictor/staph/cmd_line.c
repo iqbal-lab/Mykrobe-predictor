@@ -74,6 +74,8 @@ int default_opts(CmdLine * c)
   c->input_list=false;
   c->output_supernodes = false;
   c->machine=Illumina;
+  c->subsample_propn = (float) 1.0;
+  c->subsample=false;
   return 1;
 }
 
@@ -138,6 +140,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"sample_id", required_argument, NULL, 's'},
     {"install_dir", required_argument, NULL, 'i'},
     {"print_contigs", required_argument, NULL, 'c'},
+    {"subsample", required_argument, NULL, 'd'},
     {0,0,0,0}	
   };
   
@@ -148,7 +151,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   optind=1;
   
  
-  opt = getopt_long(argc, argv, "hf:l:m:s:i:c:", long_options, &longopt_index);
+  opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:", long_options, &longopt_index);
 
   while ((opt) > 0) {
 	       
@@ -262,6 +265,20 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	break;
       }
+    case 'd'://subsample
+      {
+	if (optarg==NULL)
+	  errx(1,"[--subsample] option requires a decimal number between 0 and 1 as argunemt\n");
+	
+	cmdline_ptr->subsample_propn = atof(optarg);
+	cmdline_ptr->subsample=true;
+
+	if ( (cmdline_ptr->subsample_propn<=0) || (cmdline_ptr->subsample_propn>1) )
+	  {
+	    errx(1,"[--subsample] option requires a decimal number between 0 and 1 as argunemt\n");
+	  }
+	break;
+      }
     default:
       {
 	errx(1, "Unknown option %c\n", opt);
@@ -269,7 +286,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }      
 
     }
-    opt = getopt_long(argc, argv, "hf:l:m:s:i:c:", long_options, &longopt_index);
+    opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:", long_options, &longopt_index);
     
   }   
   

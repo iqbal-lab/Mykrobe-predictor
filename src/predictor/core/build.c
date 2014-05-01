@@ -68,7 +68,8 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       uint64_t* kmer_covg_array, 
 				       int len_kmer_covg_array,
 				       boolean only_load_pre_existing_kmers,
-				       int into_colour)
+				       int into_colour,
+				       boolean (*subsample_function)() )
 {
   int ascii_fq_offset = 33;
   int qual_thresh = 10;
@@ -99,8 +100,9 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 					 &total_bases_loaded,
 					 readlen_distrib, 
 					 readlen_distrib_len, 
-					 &subsample_null,
+					 subsample_function,
 					 only_load_pre_existing_kmers);
+
     }
   else
     {
@@ -118,8 +120,9 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 					 &total_bases_loaded,
 					 readlen_distrib, 
 					 readlen_distrib_len, 
-					 &subsample_null,
+					 subsample_function,
 					 only_load_pre_existing_kmers);
+					 
     }
   db_graph_get_covg_distribution_array(db_graph, 0, &db_node_condition_always_true,
 				       kmer_covg_array, len_kmer_covg_array);

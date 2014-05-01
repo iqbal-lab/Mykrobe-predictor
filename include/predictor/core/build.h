@@ -47,7 +47,8 @@ double estimate_err_rate(StrBuf* path, boolean is_list);
 unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean is_list, uint16_t kmer,
 				       uint64_t* readlen_distrib, int readlen_distrib_len,
 				       uint64_t* kmer_covg_array, int len_kmer_covg_array,
-				       boolean only_load_pre_existing_kmers, int into_colour);
+				       boolean only_load_pre_existing_kmers, int into_colour,
+				       boolean (*subsample_function)());
 
 
 void db_graph_get_covg_distribution_array(dBGraph* db_graph, int colour,

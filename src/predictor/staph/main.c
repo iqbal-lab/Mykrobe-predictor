@@ -66,6 +66,33 @@ int main(int argc, char **argv)
   dBGraph * db_graph = NULL;
 
 
+
+    boolean (*subsample_function)();
+
+    //local func
+    boolean subsample_as_specified()
+    {
+      double ran = drand48();
+      if (ran <= cmd_line->subsample_propn)
+	{
+	  return true;
+	}
+      return false;
+    }
+    //end of local func
+
+    if (cmd_line->subsample==true)
+      {
+	subsample_function = &subsample_as_specified;
+      }
+    else
+      {
+	subsample_function = &subsample_null;
+      }
+
+
+
+
   int lim = cmd_line->max_expected_sup_len;
   CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
@@ -134,7 +161,8 @@ int main(int argc, char **argv)
 			  NULL, 0,
 			  NULL, 0,
 			  false,
-			  into_colour);
+			  into_colour,
+			  &subsample_null);
       set_all_coverages_to_zero(db_graph, 0);
       strbuf_free(skeleton_flist);
       only_load_pre_existing_kmers=true;
@@ -153,7 +181,7 @@ int main(int argc, char **argv)
 				  cmd_line->kmer_covg_array, 
 				  cmd_line->len_kmer_covg_array,
 				  only_load_pre_existing_kmers,
-				  into_colour);
+				  into_colour, subsample_function);
 
   if (bp_loaded==0)
     {

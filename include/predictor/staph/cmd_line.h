@@ -72,6 +72,8 @@ typedef struct
   boolean input_file;
   boolean input_list;
   boolean output_supernodes;
+  boolean subsample;
+  float subsample_propn;
   Sequencer machine;
 } CmdLine;
 
