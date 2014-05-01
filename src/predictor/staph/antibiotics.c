@@ -494,7 +494,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Trimethoprim;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/trimethoprim.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/trimethoprim.fa");
   abi->num_mutations = 113;
   abi->which_genes[0]=dfrA;
   abi->which_genes[1]=dfrG;
@@ -694,7 +694,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   abi->ab = Ciprofloxacin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
 
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/ciprofloxacin.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/ciprofloxacin.fa");
 
   abi->num_mutations = 94;
   abi->num_genes=0;
@@ -758,7 +758,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Rifampicin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/rifampicin.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/rifampicin.fa");
 
 
   abi->num_mutations = 453;
@@ -953,7 +953,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   abi->ab = FusidicAcid;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
 
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/updated/fusidic_acid.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/fusidic_acid.fa");
   abi->num_mutations = 961;
 
   abi->which_genes[0]=fusB;
