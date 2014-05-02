@@ -31,6 +31,8 @@
 #include <limits.h>
 #include <math.h>
 #include <inttypes.h>
+#include "seq_file.h"
+#include "seq_fastq.h"
 
 #include "element.h"
 #include "open_hash/hash_table.h"
@@ -38,6 +40,7 @@
 #include "file_reader.h"
 #include "build.h"
 #include "graph_info.h"
+
 
 
 void set_all_coverages_to_zero(dBGraph* dbg, int colour)
@@ -54,7 +57,57 @@ void set_all_coverages_to_zero(dBGraph* dbg, int colour)
 
 double estimate_err_rate(StrBuf* path, boolean is_list)
 {
-  return 0.005;
+
+  StrBuf* file = strbuf_new();
+  if (is_list==true)
+    {
+      FILE* f=fopen(path->buff, "r");
+      if (f==NULL)
+	{
+	  return 0;
+	}
+      strbuf_readline(file, f);
+      fclose(f);
+      strbuf_chomp(file);
+    }
+  else
+    {
+      strbuf_append_str(file, path->buff);
+    }
+  const char* p = file->buff;
+  SeqFile* sf = seq_file_open(p);
+
+
+  char ascii_qual_offset=33;
+  StrBuf* quals = strbuf_new();
+  int tot=0;
+  int sum=0;
+  int i=0;
+  int lim = 100000;
+  while (tot<lim)
+    {
+      seq_read_all_quals(sf, quals);
+      for (i=0;i<quals->len; i++)
+	{
+	  if ((int) quals->buff[i]>10)
+	    {
+	      sum += (int) quals->buff[i]-ascii_qual_offset;
+	      tot++;
+	    }
+	}
+      strbuf_reset(quals);
+      seq_next_read(sf);
+    }
+  double meanq = sum/tot;
+  seq_file_close(sf);
+
+  return pow(10, -meanq/10);
+
+  //if using simulated FASTA, then hardcode the answer here
+  //  return 0.05;
+
+
+
 }
 
 //if boolean is_list==true, then path=list of fastq (or bams)
@@ -71,6 +124,10 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       int into_colour,
 				       boolean (*subsample_function)() )
 {
+
+  double debug = estimate_err_rate(path, is_list);
+  printf("Estimated err rate is %f\n", debug);
+
   int ascii_fq_offset = 33;
   int qual_thresh = 10;
   int homopolymer_cutoff=0;
