@@ -126,7 +126,7 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 {
 
   double debug = estimate_err_rate(path, is_list);
-  printf("Estimated err rate is %f\n", debug);
+  //  printf("Estimated err rate is %f\n", debug);
 
   int ascii_fq_offset = 33;
   int qual_thresh = 10;
