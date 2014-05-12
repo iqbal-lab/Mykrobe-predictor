@@ -54,6 +54,7 @@ const char* usage=
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
 "   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" \
+"   [--format STRING] \t\t\t\t\t=\t Options are TEXT and JSON\n" \
 "   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
 
 int default_opts(CmdLine * c)
@@ -74,6 +75,7 @@ int default_opts(CmdLine * c)
   c->input_list=false;
   c->output_supernodes = false;
   c->machine=Illumina;
+  c->format=Text;
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
   return 1;
@@ -141,6 +143,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"install_dir", required_argument, NULL, 'i'},
     {"print_contigs", required_argument, NULL, 'c'},
     {"subsample", required_argument, NULL, 'd'},
+    {"format", required_argument, NULL, 'e'},
     {0,0,0,0}	
   };
   
@@ -279,6 +282,23 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	break;
       }
+    case 'e'://format
+      {
+	if (strcmp(optarg, "JSON")==0)
+	  {
+	    cmdline_ptr->format=JSON;
+	  }
+	else if (strcmp(optarg, "Text")==0)
+	  {
+	    cmdline_ptr->format=Text;
+	  }
+	else
+	  {
+	    errx(1,"[--format] needs argument Text (default) or JSON\n";
+	  }
+	break;
+      }
+
     default:
       {
 	errx(1, "Unknown option %c\n", opt);

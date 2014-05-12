@@ -125,6 +125,7 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       boolean (*subsample_function)() )
 {
 
+
   int ascii_fq_offset = 33;
   int qual_thresh = 10;
   int homopolymer_cutoff=0;

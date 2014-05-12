@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include "mut_models.h"
 #include "gene_presence_models.h"
+#include "json.h"
 
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
 {
@@ -1231,7 +1232,8 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last,
 					int expected_covg,
-					double lambda_g, double lambda_e, double err_rate
+					double lambda_g, double lambda_e, double err_rate,
+					OutputFormat format
 					)
 {
   boolean suc;
@@ -1252,14 +1254,28 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  printf("%s\t", tmpbuf->buff);
-  if (suc==true)
+  if (format==Text)
     {
-      printf("S\n");
+      printf("%s\t", tmpbuf->buff);
+      if (suc==true)
+	{
+	  printf("S\n");
+	}
+      else
+	{
+	  printf("R\n");
+	}
     }
   else
     {
-      printf("R\n");
+      if (suc==true)
+	{
+	  print_json_next_item(tmpbuf->buff, "S");
+	}
+      else
+	{
+	  print_json_next_item(tmpbuf->buff, "R");
+	}
     }
   return suc;
 }
