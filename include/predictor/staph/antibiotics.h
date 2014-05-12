@@ -34,7 +34,7 @@
 #include "genotyping_known.h"
 #include "known_mutations.h"
 #include "file_reader.h"
-
+#include "json.h"
 
 
 //#define MAX_MUTS_IN_ANY_GENE 129
@@ -332,7 +332,7 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last, int expected_covg,
-					double lambda_g, double lambda_e, double err_rate
+					double lambda_g, double lambda_e, double err_rate, OutputFormat format
 					);
 
 boolean print_erythromycin_susceptibility(dBGraph* db_graph,
@@ -357,12 +357,12 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 							  AntibioticInfo* abi,
 							  StrBuf* install_dir,
 							  int ignore_first, int ignore_last, int expected_covg,
-							  double lambda_g, double lambda_e, double err_rate,
+							  double lambda_g, double lambda_e, double err_rate, 
 							  boolean* any_erm_present),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
-					  double lambda_g, double lambda_e, double err_rate,
+					  double lambda_g, double lambda_e, double err_rate, OutputFormat format,
 					  boolean* any_erm_present
 					  );
 
@@ -393,7 +393,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate
+					 double lambda_g, double lambda_e, double err_rate, OutputFormat format
 					 );
 
 boolean is_pvl_positive(dBGraph* db_graph,
@@ -423,5 +423,5 @@ void print_pvl_presence(dBGraph* db_graph,
 					ReadingUtils* rutils,
 					GeneInfo* tmp_gi,
 					StrBuf* install_dir),
-			StrBuf* install_dir);
+			StrBuf* install_dir, OutputFormat format);
 #endif

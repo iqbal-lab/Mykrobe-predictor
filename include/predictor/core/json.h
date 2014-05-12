@@ -22,63 +22,29 @@
  * **********************************************************************
  */
 /*
-  json.c 
+  json.h
 */
 
-
-#include <stdio.h>
-#include <stdlib.h>
-
-void print_json_start()
-{
-  printf("{\n");
-}
-
-void print_json_end()
-{
-  printf("}\n");
-}
-
-void print_json_species_start()
-{
-  printf("\tSpecies:{\n");
-}
-
-void print_json_species_end()
-{
-  printf("\t},\n");
-}
-
-void print_json_susceptibility_start()
-{
-  printf("\tSusceptibility:{\n");
-}
-
-void print_json_susceptibility_end()
-{
-  printf("\t},\n");
-}
-
-void print_json_virulence_start()
-{
-  printf("\tVirulence/Toxins:{\n");
-}
-
-void print_json_virulence_end()
-{
-  printf("\t},\n");
-}
+#ifndef JSON_H_
+#define JSON_H_
 
 
-void print_json_next_item(char* str1, char* str2)
-{
-  printf("%s,%s\n", str1, str2);
-}
+typedef enum
+  {
+    Stdout = 0,
+    JSON = 1,
+  } OutputFormat;
 
-void print_json_last_item(char* str1, char* str2)
-{
-  printf("%s,%s\n", str1,str2);
-}
+void print_json_start();
+void print_json_end();
+void print_json_species_start();
+void print_json_species_end();
+void print_json_susceptibility_start();
+void print_json_susceptibility_end();
+void print_json_virulence_start();
+void print_json_virulence_end();
+void print_json_next_item(char* str1, char* str2);
+void print_json_last_item(char* str1, char* str2);
 
-
+#endif
 

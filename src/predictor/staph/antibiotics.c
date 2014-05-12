@@ -1254,7 +1254,7 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  if (format==Text)
+  if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
       if (suc==true)
@@ -1303,12 +1303,12 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 							  AntibioticInfo* abi,
 							  StrBuf* install_dir,
 							  int ignore_first, int ignore_last, int expected_covg,
-							  double lambda_g, double lambda_e, double err_rate,
+							  double lambda_g, double lambda_e, double err_rate, 
 							  boolean* any_erm_present),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
-					  double lambda_g, double lambda_e, double err_rate,
+					  double lambda_g, double lambda_e, double err_rate, OutputFormat format,
 					  boolean* any_erm_present
 					 )
 {
@@ -1368,7 +1368,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate
+					 double lambda_g, double lambda_e, double err_rate, OutputFormat format
 					 )
 {
   boolean suc;
@@ -1470,16 +1470,33 @@ void print_pvl_presence(dBGraph* db_graph,
 					ReadingUtils* rutils,
 					GeneInfo* tmp_gi,
 					StrBuf* install_dir),
-			StrBuf* install_dir)
+			StrBuf* install_dir, OutputFormat format)
 {
   printf("PVL\t");
   boolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  if (result==true)
+  
+  if (format==Stdout)
     {
-      printf("positive\n");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
     }
   else
     {
-      printf("negative\n");
+      print_json_virulence_start();
+      if (result==true)
+	{
+	  print_json_next_item("PVL", "positive");
+	}
+      else
+	{
+	  print_json_next_item("PVL", "negative");
+	}
+      print_json_virulence_end();
     }
 }

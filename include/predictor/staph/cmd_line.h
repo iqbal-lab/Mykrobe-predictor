@@ -31,15 +31,10 @@
 #include <stdio.h>
 
 #include "global.h"
+#include "json.h"
 
 #define MAX_FILENAME_LEN 1000
 #define LEN_ERROR_STRING 400
-
-typedef enum
-  {
-    Text = 0,
-    JSON = 1,
-  } OutputFormat;
 
 
 typedef enum

@@ -75,7 +75,7 @@ int default_opts(CmdLine * c)
   c->input_list=false;
   c->output_supernodes = false;
   c->machine=Illumina;
-  c->format=Text;
+  c->format=Stdout;
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
   return 1;
@@ -288,13 +288,13 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  {
 	    cmdline_ptr->format=JSON;
 	  }
-	else if (strcmp(optarg, "Text")==0)
+	else if (strcmp(optarg, "Stdout")==0)
 	  {
-	    cmdline_ptr->format=Text;
+	    cmdline_ptr->format=Stdout;
 	  }
 	else
 	  {
-	    errx(1,"[--format] needs argument Text (default) or JSON\n";
+	    errx(1,"[--format] needs argument Stdout (default) or JSON (it is case sensitive)\n");
 	  }
 	break;
       }
