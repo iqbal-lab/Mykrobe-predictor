@@ -373,9 +373,9 @@ inline void _process_read(SeqFile *sf, char* kmer_str, char* qual_str,
                           dBGraph *db_graph, int colour_index,
                           BinaryKmer curr_kmer, Element *curr_node,
                           Orientation curr_orient,
-                          unsigned long long *bases_loaded,
-                          unsigned long *readlen_count_array,
-                          unsigned long readlen_count_array_size,
+                          uint64_t *bases_loaded,
+                          uint64_t *readlen_count_array,
+                          uint64_t readlen_count_array_size,
 			  boolean only_load_pre_existing_kmers)
 {
   // Hash table stuff
@@ -1008,10 +1008,10 @@ void load_se_seq_data_into_graph_colour(
 					char ascii_fq_offset, int colour_index, dBGraph *db_graph,
 					unsigned long long *bad_reads, // number of reads that have no good kmers
 					unsigned long long *dup_reads, // number of reads that pcr duplicates
-					unsigned long long *bases_read, // total bases in file
-					unsigned long long *bases_loaded, // bases that make it into the graph
-					unsigned long *readlen_count_array, // histogram of contigs lengths
-					unsigned long readlen_count_array_size,// contigs bigger go in final bin
+					uint64_t *bases_read, // total bases in file
+					uint64_t *bases_loaded, // bases that make it into the graph
+					uint64_t *readlen_count_array, // histogram of contigs lengths
+					uint64_t readlen_count_array_size,// contigs bigger go in final bin
 					boolean (*subsample_func)(),
 					boolean only_load_pre_existing_kmers) 
 {
@@ -1138,10 +1138,10 @@ void load_pe_seq_data_into_graph_colour(
 					char ascii_fq_offset, int colour_index, dBGraph *db_graph,
 					unsigned long long *bad_reads, // number of reads that have no good kmers
 					unsigned long long *dup_reads, // number of reads that are pcr duplicates
-					unsigned long long *bases_read, // total bases in file
-					unsigned long long *bases_loaded, // bases that make it into the graph
-					unsigned long *readlen_count_array, // length of contigs loaded
-					unsigned long readlen_count_array_size, // contigs bigger go in final bin
+					uint64_t *bases_read, // total bases in file
+					uint64_t *bases_loaded, // bases that make it into the graph
+					uint64_t *readlen_count_array, // length of contigs loaded
+					uint64_t readlen_count_array_size, // contigs bigger go in final bin
 					boolean (*subsample_func)(),
 					boolean only_load_pre_existing_kmers)
 
@@ -1363,12 +1363,20 @@ StrBuf* file_reader_get_strbuf_of_dir_path(char* path)
 // got into the graph
 void load_se_filelist_into_graph_colour(
 					char* se_filelist_path,
-					int qual_thresh, int homopol_limit, boolean remove_dups_se,
-					char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_list,
+					int qual_thresh, 
+					int homopol_limit, 
+					boolean remove_dups_se,
+					char ascii_fq_offset, 
+					int colour, 
+					dBGraph* db_graph, 
+					char is_colour_list,
 					unsigned int *total_files_loaded,
-					unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-					unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-					unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					unsigned long long *total_bad_reads, 
+					unsigned long long *total_dup_reads,
+					uint64_t *total_bases_read, 
+					uint64_t *total_bases_loaded,
+					uint64_t *readlen_count_array, 
+					uint64_t readlen_count_array_size,
 					boolean (*subsample_func)(),
 					boolean only_load_pre_existing_kmers )
   
@@ -1408,8 +1416,8 @@ void load_se_filelist_into_graph_colour(
   unsigned long long se_bad_reads = 0;
   unsigned long long se_dup_reads = 0;
 
-  unsigned long long se_bases_read = 0;
-  unsigned long long se_bases_loaded = 0;
+  uint64_t se_bases_read = 0;
+  uint64_t se_bases_loaded = 0;
 
   StrBuf *line = strbuf_new();
 
@@ -1492,9 +1500,12 @@ void load_pe_filelists_into_graph_colour(
 					 int qual_thresh, int homopol_limit, boolean remove_dups_pe,
 					 char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_lists,
 					 unsigned int *total_file_pairs_loaded,
-					 unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-					 unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-					 unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					 unsigned long long *total_bad_reads, 
+					 unsigned long long *total_dup_reads,
+					 uint64_t *total_bases_read, 
+					 uint64_t *total_bases_loaded,
+					 uint64_t *readlen_count_array, 
+					 uint64_t readlen_count_array_size,
 					 boolean (*subsample_func)(),
 					 boolean only_load_pre_existing_kmers) 
 {
@@ -1544,8 +1555,8 @@ void load_pe_filelists_into_graph_colour(
   unsigned long long pe_bad_reads = 0;
   unsigned long long pe_dup_reads = 0;
 
-  unsigned long long pe_bases_read = 0;
-  unsigned long long pe_bases_loaded = 0;
+  uint64_t pe_bases_read = 0;
+  uint64_t pe_bases_loaded = 0;
 
   StrBuf *line1 = strbuf_new();
   StrBuf *line2 = strbuf_new();
@@ -1681,11 +1692,15 @@ void initialise_binary_header_info(BinaryHeaderInfo* binfo, GraphInfo* ginfo)
 // statistics on the length of reads, and needs to allow for the fact that we
 // CUT reads at N's, low quality bases
 void  load_kmers_from_sliding_window_into_graph_marking_read_starts_of_specific_person_or_pop(
-  KmerSlidingWindowSet * windows, boolean* prev_full_ent, //boolean* full_ent,
-  long long* bases_loaded, boolean mark_read_starts, dBGraph* db_graph,
-  int index, long long** read_len_count_array)
+  KmerSlidingWindowSet * windows, 
+  boolean* prev_full_ent, //boolean* full_ent,
+  uint64_t* bases_loaded, 
+  boolean mark_read_starts, 
+  dBGraph* db_graph,
+  int index, 
+  uint64_t** read_len_count_array)
 {
-  long long total_bases_loaded=0;
+  uint64_t total_bases_loaded=0;
 
   Element * current_node  = NULL;
   Element * previous_node  = NULL;
@@ -1698,7 +1713,7 @@ void  load_kmers_from_sliding_window_into_graph_marking_read_starts_of_specific_
 	KmerSlidingWindow * current_window = &(windows->window[i]);
 	
 	//update total bases loaded
-	long long length_this_window = (long long) (current_window->nkmers+db_graph->kmer_size-1);
+	uint64_t length_this_window = (long long) (current_window->nkmers+db_graph->kmer_size-1);
 	total_bases_loaded+=length_this_window;
 	
 	if (read_len_count_array !=NULL)

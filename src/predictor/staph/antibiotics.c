@@ -1328,14 +1328,29 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 	      any_erm_present);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  printf("%s\t", tmpbuf->buff);
-  if (suc==false)
+
+  if (format==Stdout)
     {
-      printf("R\n");
+      printf("%s\t", tmpbuf->buff);
+      if (suc==false)
+	{
+	  printf("R\n");
+	}
+      else
+	{
+	  printf("S\n");
+	}
     }
   else
     {
-      printf("S\n");
+      if (suc==true)
+	{
+	  print_json_next_item(tmpbuf->buff, "S");
+	}
+      else
+	{
+	  print_json_next_item(tmpbuf->buff, "R");
+	}
     }
   return suc;
 }
@@ -1387,18 +1402,37 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  printf("%s\t", tmpbuf->buff);
-  if (suc==false)
+
+  if (format==Stdout)
     {
-      printf("R(constitutive)\n");
-    }
-  else if (any_erm_present==true)
-    {
-      printf("R(inducible)\n");
+      printf("%s\t", tmpbuf->buff);
+      if (suc==false)
+	{
+	  printf("R(constitutive)\n");
+	}
+      else if (any_erm_present==true)
+	{
+	  printf("R(inducible)\n");
+	}
+      else
+	{
+	  printf("S\n");
+	}
     }
   else
     {
-      printf("S\n");
+      if (suc==false)
+	{
+	  print_json_next_item(tmpbuf->buff, "R(constitutive)");
+	}
+      else if (any_erm_present==true)
+	{
+	  print_json_next_item(tmpbuf->buff, "R(inducible)");
+	}
+      else
+	{
+	  print_json_next_item(tmpbuf->buff, "S");
+	}
     }
   return suc;
 }
@@ -1472,11 +1506,12 @@ void print_pvl_presence(dBGraph* db_graph,
 					StrBuf* install_dir),
 			StrBuf* install_dir, OutputFormat format)
 {
-  printf("PVL\t");
+
   boolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
   
   if (format==Stdout)
     {
+      printf("PVL\t");
       if (result==true)
 	{
 	  printf("positive\n");

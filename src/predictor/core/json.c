@@ -41,7 +41,7 @@ void print_json_end()
 
 void print_json_species_start()
 {
-  printf("\tSpecies:{\n");
+  printf("\t\"Species\": {\n");
 }
 
 void print_json_species_end()
@@ -51,7 +51,7 @@ void print_json_species_end()
 
 void print_json_susceptibility_start()
 {
-  printf("\tSusceptibility:{\n");
+  printf("\t\"Susceptibility\" :{\n");
 }
 
 void print_json_susceptibility_end()
@@ -61,7 +61,7 @@ void print_json_susceptibility_end()
 
 void print_json_virulence_start()
 {
-  printf("\tVirulence/Toxins:{\n");
+  printf("\t\"Virulence/Toxins\" :{\n");
 }
 
 void print_json_virulence_end()
@@ -72,12 +72,12 @@ void print_json_virulence_end()
 
 void print_json_next_item(char* str1, char* str2)
 {
-  printf("%s,%s\n", str1, str2);
+  printf("\t\t\"%s\": \"%s\",\n", str1, str2);
 }
 
 void print_json_last_item(char* str1, char* str2)
 {
-  printf("%s,%s\n", str1,str2);
+  printf("\t\t\"%s\": \"%s\"\n", str1,str2);
 }
 
 

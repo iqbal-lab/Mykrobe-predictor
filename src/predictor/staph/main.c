@@ -63,7 +63,6 @@ int main(int argc, char **argv)
     }
   
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
-  printf("Kmer size %d\n", cmd_line->kmer_size);
   dBGraph * db_graph = NULL;
 
 
@@ -134,10 +133,12 @@ int main(int argc, char **argv)
     }
   
 
-  printf("** Start time\n");
-  timestamp();
-  printf("** Sample:\n%s\n", cmd_line->id->buff);
-
+  if (cmd_line->format==Stdout)
+    {
+      printf("** Start time\n");
+      timestamp();
+      printf("** Sample:\n%s\n", cmd_line->id->buff);
+    }
  
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
@@ -150,7 +151,6 @@ int main(int argc, char **argv)
     }
   else if (cmd_line->method==InSilicoOligos)
     {
-      printf("Build skeleton\n");
       StrBuf* skeleton_flist = strbuf_new();
       strbuf_append_str(skeleton_flist, 
 			cmd_line->install_dir->buff);
@@ -174,7 +174,6 @@ int main(int argc, char **argv)
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
 
-  printf("Build sample\n");
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
@@ -190,6 +189,7 @@ int main(int argc, char **argv)
     {
       printf("No data\n");
       return 1;
+
     }
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
   
-  printf("Expected covg\t%d\n", expected_depth);
+  //printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   	      expected_depth, cmd_line->max_expected_sup_len);
   
@@ -242,16 +242,21 @@ int main(int argc, char **argv)
     }
   else
     {
-      /*      print_json_start();
+      print_json_start();
       print_json_species_start();
-      print_json_last_item(tmp_name->buff);
-      print_json_species_end(); */
+      print_json_last_item(tmp_name->buff, "1");
+      print_json_species_end(); 
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
+
+  if (cmd_line->format==JSON)
+    {
+      print_json_susceptibility_start();
+    }
 
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
 
@@ -295,12 +300,30 @@ int main(int argc, char **argv)
 				   &is_clindamycin_susceptible, tmp_name, 
 				   any_erm_present,cmd_line->install_dir,
 				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format);
-  printf("** Virulence markers\n");
+
+
+  if (cmd_line->format==JSON)
+    {
+      print_json_susceptibility_end();
+    }
+
+
+  if (cmd_line->format==Stdout)
+    {
+      printf("** Virulence markers\n");
+    }
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_pvl_positive, cmd_line->install_dir, cmd_line->format); 
-
-  timestamp();
-
+  
+  if (cmd_line->format==Stdout)
+    {
+      timestamp();
+    }
+  else
+    {
+      print_json_end();
+      printf("\n");
+    }
   if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )
     {
       printf("Print contigs\n");
