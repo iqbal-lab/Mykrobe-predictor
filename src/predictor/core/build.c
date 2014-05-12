@@ -76,7 +76,12 @@ double estimate_err_rate(StrBuf* path, boolean is_list)
     }
   const char* p = file->buff;
   SeqFile* sf = seq_file_open(p);
-
+  char read_qual = seq_has_quality_scores(sf);
+  if (read_qual==0)
+    {
+      //is FASTA
+      return 0.05;
+    }
 
   char ascii_qual_offset=33;
   StrBuf* quals = strbuf_new();
@@ -103,11 +108,6 @@ double estimate_err_rate(StrBuf* path, boolean is_list)
 
   return pow(10, -meanq/10);
 
-  //if using simulated FASTA, then hardcode the answer here
-  //  return 0.05;
-
-
-
 }
 
 //if boolean is_list==true, then path=list of fastq (or bams)
@@ -124,9 +124,6 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       int into_colour,
 				       boolean (*subsample_function)() )
 {
-
-  double debug = estimate_err_rate(path, is_list);
-  printf("Estimated err rate is %f\n", debug);
 
   int ascii_fq_offset = 33;
   int qual_thresh = 10;

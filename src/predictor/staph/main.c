@@ -67,29 +67,29 @@ int main(int argc, char **argv)
 
 
 
-    boolean (*subsample_function)();
-
-    //local func
-    boolean subsample_as_specified()
+  boolean (*subsample_function)();
+  
+  //local func
+  boolean subsample_as_specified()
+  {
+    double ran = drand48();
+    if (ran <= cmd_line->subsample_propn)
+      {
+	return true;
+      }
+    return false;
+  }
+  //end of local func
+  
+  if (cmd_line->subsample==true)
     {
-      double ran = drand48();
-      if (ran <= cmd_line->subsample_propn)
-	{
-	  return true;
-	}
-      return false;
+      subsample_function = &subsample_as_specified;
     }
-    //end of local func
-
-    if (cmd_line->subsample==true)
-      {
-	subsample_function = &subsample_as_specified;
-      }
-    else
-      {
-	subsample_function = &subsample_null;
-      }
-
+  else
+    {
+      subsample_function = &subsample_null;
+    }
+  
 
 
 
@@ -149,6 +149,7 @@ int main(int argc, char **argv)
     }
   else if (cmd_line->method==InSilicoOligos)
     {
+      printf("Build skeleton\n");
       StrBuf* skeleton_flist = strbuf_new();
       strbuf_append_str(skeleton_flist, 
 			cmd_line->install_dir->buff);
@@ -172,6 +173,7 @@ int main(int argc, char **argv)
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
 
+  printf("Build sample\n");
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
