@@ -150,22 +150,31 @@ int main(int argc, char **argv)
     }
   else if (cmd_line->method==InSilicoOligos)
     {
-      StrBuf* skeleton_flist = strbuf_new();
-      strbuf_append_str(skeleton_flist, 
-			cmd_line->install_dir->buff);
-      strbuf_append_str(skeleton_flist, 
-			"data/skeleton_binary/list_speciesbranches_genes_and_muts");
-      build_unclean_graph(db_graph, 
-			  skeleton_flist,
-			  true,
-			  cmd_line->kmer_size,
-			  NULL, 0,
-			  NULL, 0,
-			  false,
-			  into_colour,
-			  &subsample_null);
+      StrBuf* sk = strbuf_new();
+      strbuf_append_str(sk, cmd_line->install_dir->buff);
+      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15/ctx");
+      if (access(sk->buff,F_OK)!=0)
+	{
+	  StrBuf* skeleton_flist = strbuf_new();
+	  strbuf_append_str(skeleton_flist, 
+			    cmd_line->install_dir->buff);
+	  strbuf_append_str(skeleton_flist, 
+			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+	  build_unclean_graph(db_graph, 
+			      skeleton_flist,
+			      true,
+			      cmd_line->kmer_size,
+			      NULL, 0,
+			      NULL, 0,
+			      false,
+			      into_colour,
+			      &subsample_null);
+	  //dump binary so can reuse
+	  
+	  strbuf_free(skeleton_flist);
+	}
+      strbuf_free(sk);
       set_all_coverages_to_zero(db_graph, 0);
-      strbuf_free(skeleton_flist);
       only_load_pre_existing_kmers=true;
     }
   else
