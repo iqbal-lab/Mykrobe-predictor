@@ -142,7 +142,6 @@ int main(int argc, char **argv)
  
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
-  //  GraphInfo* gi = graph_info_alloc_and_init();
   uint64_t bp_loaded=0;
 
   if (cmd_line->method==WGAssemblyThenGenotyping)
