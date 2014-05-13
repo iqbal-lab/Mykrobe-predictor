@@ -168,8 +168,8 @@ int main(int argc, char **argv)
 			      NULL, 0,
 			      false,
 			      into_colour,
-			      &subsample_null,
-			      cmd_line->progress);
+			      &subsample_null);
+
 	  //dump binary so can reuse
 	  
 	  strbuf_free(skeleton_flist);
@@ -335,6 +335,9 @@ int main(int argc, char **argv)
   else
     {
       print_json_susceptibility_end();
+      print_json_virulence_start();
+      print_json_virulence_end();
+
     }
   if (cmd_line->format==Stdout)
     {
