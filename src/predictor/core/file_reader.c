@@ -942,6 +942,10 @@ boolean read_next_error_cleaning_object(FILE* fp, ErrorCleaning* cl)
 }
 
 
+
+
+
+
 //returns number of kmers loaded*kmer_length
  //array_mean_readlens and array_total_seqs are arrays of length NUMBER_OF_COLOURS, so they can hold the mean read length+total seq in every colour
 long long load_multicolour_binary_from_filename_into_graph(char* filename,  dBGraph* db_graph, GraphInfo* ginfo, int* num_cols_in_loaded_binary) 

@@ -155,6 +155,7 @@ int main(int argc, char **argv)
 			cmd_line->install_dir->buff);
       strbuf_append_str(skeleton_flist, 
 			"data/skeleton_binary/list_speciesbranches_genes_and_muts");
+      printf("Build skeleton\n");
       build_unclean_graph(db_graph, 
 			  skeleton_flist,
 			  true,
@@ -164,7 +165,13 @@ int main(int argc, char **argv)
 			  false,
 			  into_colour,
 			  &subsample_null);
+      
       set_all_coverages_to_zero(db_graph, 0);
+      db_graph_dump_binary(sk->buff, 
+			   &db_node_condition_always_true,
+			   db_graph,
+			   NULL,
+			   BINVERSION);
       strbuf_free(skeleton_flist);
       only_load_pre_existing_kmers=true;
     }

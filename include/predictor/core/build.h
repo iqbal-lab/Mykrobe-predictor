@@ -40,6 +40,11 @@
 #include "seq.h"
 #include "file_reader.h"
 
+void print_binary_signature_NEW(FILE * fp,int kmer_size, int num_cols, GraphInfo* ginfo, int first_col, int version);
+
+void print_error_cleaning_object(FILE* fp, GraphInfo* ginfo, int colour);
+
+
 
 void set_all_coverages_to_zero(dBGraph* dbg, int colour);
 
@@ -443,7 +448,10 @@ void print_standard_extra_supernode_info(dBNode** node_array,
 void print_no_extra_supernode_info(dBNode** node_array, Orientation* or_array,
                                    int len, FILE* fout);
 
+int db_graph_dump_binary(char * filename, boolean (*condition)(dBNode * node), dBGraph * db_graph, GraphInfo* db_graph_info, int version);
 
+void db_graph_dump_single_colour_binary_of_colour0(char * filename, boolean (*condition)(dBNode * node), 
+						   dBGraph * db_graph, GraphInfo* db_graph_info, int version);
 
 
 #endif
