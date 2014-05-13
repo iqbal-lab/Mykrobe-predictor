@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "global.h"
 
 void print_json_start()
 {
@@ -41,7 +42,7 @@ void print_json_end()
 
 void print_json_species_start()
 {
-  printf("\t\"Species\": {\n");
+  printf("\t\"species\": {\n");
 }
 
 void print_json_species_end()
@@ -51,7 +52,7 @@ void print_json_species_end()
 
 void print_json_susceptibility_start()
 {
-  printf("\t\"Susceptibility\" :{\n");
+  printf("\t\"susceptibility\" :{\n");
 }
 
 void print_json_susceptibility_end()
@@ -61,24 +62,23 @@ void print_json_susceptibility_end()
 
 void print_json_virulence_start()
 {
-  printf("\t\"Virulence/Toxins\" :{\n");
+  printf("\t\"virulence_toxins\" :{\n");
 }
 
 void print_json_virulence_end()
 {
-  printf("\t},\n");
+  printf("\t}\n");
 }
 
 
-void print_json_next_item(char* str1, char* str2)
+void print_json_item(char* str1, char* str2, boolean last)
 {
-  printf("\t\t\"%s\": \"%s\",\n", str1, str2);
+  printf("\t\t\"%s\": \"%s\"", str1, str2);
+  if (last==false)
+    {
+      printf(",");
+    }
+  printf("\n");
 }
-
-void print_json_last_item(char* str1, char* str2)
-{
-  printf("\t\t\"%s\": \"%s\"\n", str1,str2);
-}
-
 
 

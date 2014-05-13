@@ -332,7 +332,7 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last, int expected_covg,
-					double lambda_g, double lambda_e, double err_rate, OutputFormat format
+					double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last
 					);
 
 boolean print_erythromycin_susceptibility(dBGraph* db_graph,
@@ -363,6 +363,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
 					  double lambda_g, double lambda_e, double err_rate, OutputFormat format,
+					  boolean output_last,
 					  boolean* any_erm_present
 					  );
 
@@ -393,7 +394,8 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate, OutputFormat format
+					 double lambda_g, double lambda_e, double err_rate, OutputFormat format,
+					 boolean output_last
 					 );
 
 boolean is_pvl_positive(dBGraph* db_graph,

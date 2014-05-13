@@ -1233,7 +1233,8 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					int ignore_first, int ignore_last,
 					int expected_covg,
 					double lambda_g, double lambda_e, double err_rate,
-					OutputFormat format
+					OutputFormat format,
+					boolean output_last//for JSON
 					)
 {
   boolean suc;
@@ -1270,11 +1271,11 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
     {
       if (suc==true)
 	{
-	  print_json_next_item(tmpbuf->buff, "S");
+	    print_json_item(tmpbuf->buff, "S", output_last);
 	}
       else
 	{
-	  print_json_next_item(tmpbuf->buff, "R");
+	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
     }
   return suc;
@@ -1308,7 +1309,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
-					  double lambda_g, double lambda_e, double err_rate, OutputFormat format,
+					  double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last,//for JSON 
 					  boolean* any_erm_present
 					 )
 {
@@ -1345,11 +1346,11 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
     {
       if (suc==true)
 	{
-	  print_json_next_item(tmpbuf->buff, "S");
+	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
       else
 	{
-	  print_json_next_item(tmpbuf->buff, "R");
+	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
     }
   return suc;
@@ -1383,7 +1384,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate, OutputFormat format
+					 double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last//for JSON 
 					 )
 {
   boolean suc;
@@ -1423,15 +1424,15 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
     {
       if (suc==false)
 	{
-	  print_json_next_item(tmpbuf->buff, "R(constitutive)");
+	  print_json_item(tmpbuf->buff, "R(constitutive)", output_last);
 	}
       else if (any_erm_present==true)
 	{
-	  print_json_next_item(tmpbuf->buff, "R(inducible)");
+	  print_json_item(tmpbuf->buff, "R(inducible)", output_last);
 	}
       else
 	{
-	  print_json_next_item(tmpbuf->buff, "S");
+	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
     }
   return suc;
@@ -1526,11 +1527,11 @@ void print_pvl_presence(dBGraph* db_graph,
       print_json_virulence_start();
       if (result==true)
 	{
-	  print_json_next_item("PVL", "positive");
+	  print_json_item("PVL", "positive", true);
 	}
       else
 	{
-	  print_json_next_item("PVL", "negative");
+	  print_json_item("PVL", "negative", true);
 	}
       print_json_virulence_end();
     }

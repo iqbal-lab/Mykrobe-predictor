@@ -133,8 +133,8 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
   unsigned int num_files_loaded=0;
   unsigned long long total_bad_reads=0; 
   unsigned long long total_dup_reads=0;
-  unsigned long long total_bases_read=0; 
-  unsigned long long total_bases_loaded=0;
+  uint64_t total_bases_read=0; 
+  uint64_t total_bases_loaded=0;
 
 
   if (is_list==true)

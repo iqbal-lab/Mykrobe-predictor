@@ -43,8 +43,7 @@ void print_json_susceptibility_start();
 void print_json_susceptibility_end();
 void print_json_virulence_start();
 void print_json_virulence_end();
-void print_json_next_item(char* str1, char* str2);
-void print_json_last_item(char* str1, char* str2);
+void print_json_item(char* str1, char* str2, boolean output_last);
 
 #endif
 
