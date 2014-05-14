@@ -1767,10 +1767,10 @@ void  load_kmers_from_sliding_window_into_graph_marking_read_starts_of_specific_
 	  if (j>0){
 	    
 	    if (previous_node == NULL){
-	      die("i:%i j:%i bases loaded:%qd nkmers:%i prev_full_entry:%s\n"
-            "file_reader: problem - prev kmer not found\n",
-            i, j, *bases_loaded, current_window->nkmers,
-            *prev_full_ent == true ? "true" : "false");
+	      die("i:%i j:%i bases loaded:%" PRIu64 " nkmers:%i prev_full_entry:%s\n"
+		  "file_reader: problem - prev kmer not found\n",
+		  i, j, *bases_loaded, current_window->nkmers,
+		  *prev_full_ent == true ? "true" : "false");
 	    }
 	    else{ //this is the point at which the new element/node gets associated with the specific person
 	      db_node_add_edge(previous_node,current_node,previous_orientation,current_orientation, db_graph->kmer_size, index);

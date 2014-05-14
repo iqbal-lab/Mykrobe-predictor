@@ -150,29 +150,55 @@ int main(int argc, char **argv)
     }
   else if (cmd_line->method==InSilicoOligos)
     {
-      StrBuf* skeleton_flist = strbuf_new();
-      strbuf_append_str(skeleton_flist, 
-			cmd_line->install_dir->buff);
-      strbuf_append_str(skeleton_flist, 
-			"data/skeleton_binary/list_speciesbranches_genes_and_muts");
-      printf("Build skeleton\n");
-      build_unclean_graph(db_graph, 
-			  skeleton_flist,
-			  true,
-			  cmd_line->kmer_size,
-			  NULL, 0,
-			  NULL, 0,
-			  false,
-			  into_colour,
-			  &subsample_null);
-      
-      set_all_coverages_to_zero(db_graph, 0);
-      db_graph_dump_binary(sk->buff, 
-			   &db_node_condition_always_true,
-			   db_graph,
-			   NULL,
-			   BINVERSION);
-      strbuf_free(skeleton_flist);
+      StrBuf* sk = strbuf_new();
+      strbuf_append_str(sk, cmd_line->install_dir->buff);
+      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
+      if (access(sk->buff,F_OK)!=0)
+	{
+	  printf("Build skeleton\n");
+	  timestamp();
+	  StrBuf* skeleton_flist = strbuf_new();
+	  strbuf_append_str(skeleton_flist, 
+			    cmd_line->install_dir->buff);
+	  strbuf_append_str(skeleton_flist, 
+			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+	  build_unclean_graph(db_graph, 
+			      skeleton_flist,
+			      true,
+			      cmd_line->kmer_size,
+			      NULL, 0,
+			      NULL, 0,
+			      false,
+			      into_colour,
+			      &subsample_null);
+	  printf("Built\n");
+	  timestamp();
+	  printf("Dump skel\n");
+	  timestamp();
+	  //dump binary so can reuse
+	  set_all_coverages_to_zero(db_graph, 0);
+	  db_graph_dump_binary(sk->buff, 
+			       &db_node_condition_always_true,
+			       db_graph,
+			       NULL,
+			       BINVERSION);
+	  strbuf_free(skeleton_flist);
+	  printf("Dumped\n");
+	  timestamp();
+	}
+      else
+	{
+	  int num=0;
+	  printf("Load skeleton binary\n");
+	  timestamp();
+	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
+	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
+	  graph_info_free(ginfo);
+	  printf("Skeleton loaded\n");
+	  timestamp();
+	}
+      strbuf_free(sk);
+
       only_load_pre_existing_kmers=true;
     }
   else
@@ -242,7 +268,8 @@ int main(int argc, char **argv)
 	  return 1;
 	}
       else
-	{
+	{printf("Ready to start\n");
+	  timestamp();
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
     }
