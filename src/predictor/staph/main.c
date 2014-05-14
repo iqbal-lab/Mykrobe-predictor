@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 
   boolean output_last=false;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_gentamycin_susceptible, tmp_name, cmd_line->install_dir,
+				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,

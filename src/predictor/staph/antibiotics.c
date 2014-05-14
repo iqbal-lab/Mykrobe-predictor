@@ -41,10 +41,10 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
       strbuf_reset(name);
       strbuf_append_str(name, "NoDrug");
     }
-  else if (ab==Gentamycin)
+  else if (ab==Gentamicin)
     {
       strbuf_reset(name);
-      strbuf_append_str(name, "Gentamycin");
+      strbuf_append_str(name, "Gentamicin");
     }
   else if (ab==Penicillin)
     {
@@ -367,7 +367,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-Troolean is_gentamycin_susceptible(dBGraph* db_graph,
+Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -385,9 +385,9 @@ Troolean is_gentamycin_susceptible(dBGraph* db_graph,
   reset_antibiotic_info(abi);
   
   //setup antibiotic info object
-  abi->ab = Gentamycin;
+  abi->ab = Gentamicin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/gentamycin.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/gentamicin.fa");
   abi->which_genes[0]=aacAaphD;
   abi->num_genes=1;
   abi->num_mutations = 0;//entirely determined by gene presence

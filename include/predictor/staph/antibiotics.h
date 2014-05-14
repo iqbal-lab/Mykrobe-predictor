@@ -51,7 +51,7 @@
 typedef enum 
  {
    NoDrug=0,
-   Gentamycin=1,
+   Gentamicin=1,
    Penicillin=2,
    Trimethoprim=3,
    Erythromycin=4,
@@ -127,7 +127,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       int ignore_first, int ignore_last, int expected_covg,
 				       StrBuf* install_dir);
 
-Troolean is_gentamycin_susceptible(dBGraph* db_graph,
+Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
