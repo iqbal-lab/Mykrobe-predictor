@@ -171,10 +171,7 @@ int main(int argc, char **argv)
 			      false,
 			      into_colour,
 			      &subsample_null);
-	  printf("Built\n");
-	  timestamp();
-	  printf("Dump skel\n");
-	  timestamp();
+
 	  //dump binary so can reuse
 	  set_all_coverages_to_zero(db_graph, 0);
 	  db_graph_dump_binary(sk->buff, 
@@ -263,12 +260,12 @@ int main(int argc, char **argv)
       printf("** Species\n%s\n", tmp_name->buff);
       if (sp != Aureus)
 	{
-	  printf("** No AMR predictions for coag-negative\n** End time\n");
+	  printf("** No AMR predictions for coag-negative staphylococci\n** End time\n");
 	  timestamp();
-	  return 1;
+	  return 0;
 	}
       else
-	{printf("Ready to start\n");
+	{
 	  timestamp();
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
@@ -279,6 +276,15 @@ int main(int argc, char **argv)
       print_json_species_start();
       print_json_item(tmp_name->buff, "1", true);
       print_json_species_end(); 
+      if (sp != Aureus)
+	{
+	  print_json_susceptibility_start(); 
+	  print_json_susceptibility_end();
+	  print_json_virulence_start();
+	  print_json_virulence_end();
+	  print_json_end();
+	  return 0;
+	}
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
@@ -286,13 +292,13 @@ int main(int argc, char **argv)
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
 
+  //if we get here, is s. aureus
+
   if (cmd_line->format==JSON)
     {
       print_json_susceptibility_start();
     }
-
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
-
   boolean output_last=false;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
@@ -301,17 +307,16 @@ int main(int argc, char **argv)
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-    boolean any_erm_present=false;
+  boolean any_erm_present=false;
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
 				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
 				    &any_erm_present);
-
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
@@ -336,20 +341,19 @@ int main(int argc, char **argv)
 				   any_erm_present,cmd_line->install_dir,
 				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
 
-
+  
   if (cmd_line->format==JSON)
     {
       print_json_susceptibility_end();
     }
-
-
-  if (cmd_line->format==Stdout)
+  else
     {
       printf("** Virulence markers\n");
     }
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_pvl_positive, cmd_line->install_dir, cmd_line->format); 
-  
+		     &is_pvl_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+
   if (cmd_line->format==Stdout)
     {
       timestamp();
@@ -359,6 +363,8 @@ int main(int argc, char **argv)
       print_json_end();
       printf("\n");
     }
+
+
   if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )
     {
       printf("Print contigs\n");
