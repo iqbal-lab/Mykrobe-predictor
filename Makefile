@@ -18,7 +18,8 @@ IDIR_BAM = libs/htslib/htslib
 IDIR_BASIC = include/basic
 IDIR_BASE_ENCODING = ${IDIR_BASIC}/event_encoding/base_encoding
 IDIR_HASH = include/hash_table
-IDIR_PREDICTOR = include/predictor/staph
+IDIR_PREDICTOR_STAPH = include/predictor/staph
+IDIR_PREDICTOR_TB = include/predictor/tb
 IDIR_PREDICTOR_CORE = include/predictor/core
 
 
@@ -69,7 +70,10 @@ LIBINCS = -L/usr/local/lib  -I$(IDIR_BAM) \
 TEST_LIBINCS = -I$(IDIR_CUNIT) -L$(LDIR_CUNIT) $(LIBINCS)
 
 CFLAGS_BASIC      = -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
-CFLAGS_PREDICTOR = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+CFLAGS_PREDICTOR_STAPH = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_STAPH) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+CFLAGS_PREDICTOR_TB = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_TB) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+
+
 CFLAGS_BASIC_TESTS      = -I$(IDIR_BASIC_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(TEST_LIBINCS)
 CFLAGS_HASH_TABLE_TESTS = -I$(IDIR_HASH) -I$(IDIR_HASH_TABLE_TESTS) -I$(IDIR_CUNIT) -I$(IDIR_BASIC) $(TEST_LIBINCS) -I$(IDIR_BASE_ENCODING) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_PREDICTOR)
 CFLAGS_PREDICTOR_TESTS = -I$(IDIR_PREDICTOR_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR) -I$(IDIR_PREDICTOR_CORE) $(TEST_LIBINCS)
@@ -85,8 +89,11 @@ PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o src/obj/test/
 MAXK_AND_TEXT = $(join "", $(MAXK))
 NUMCOLS_AND_TEST = $(join "_c", $(NUM_COLS))
 
-predictor : remove_objects $(PREDICTOR_OBJ)
-	mkdir -p $(BIN); $(CC) $(CFLAGS_PREDICTOR) $(OPT) $(OPT_COLS) -o $(BIN)/myKrobe.predictor $(PREDICTOR_OBJ) $(LIBLIST)
+staph : remove_objects $(PREDICTOR_OBJ)
+	mkdir -p $(BIN); $(CC) $(CFLAGS_PREDICTOR_STAPH) $(OPT) $(OPT_COLS) -o $(BIN)/myKrobe.predictor.staph $(PREDICTOR_OBJ) $(LIBLIST)
+
+tb : remove_objects $(PREDICTOR_OBJ)
+	mkdir -p $(BIN); $(CC) $(CFLAGS_PREDICTOR_TB) $(OPT) $(OPT_COLS) -o $(BIN)/myKrobe.predictor.tb $(PREDICTOR_OBJ) $(LIBLIST)
 
 run_basic_tests : remove_objects $(BASIC_TESTS_OBJ)
 	mkdir -p $(BIN);  $(CC) $(CFLAGS_BASIC_TESTS) $(OPT) -o $(BIN)/run_basic_tests $(BASIC_TESTS_OBJ) $(TEST_LIBLIST)
@@ -112,6 +119,9 @@ src/obj/predictor/%.o : src/predictor/core/%.c include/predictor/core/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
 src/obj/predictor/%.o : src/predictor/staph/%.c include/predictor/staph/%.h
+	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
+
+src/obj/predictor/%.o : src/predictor/tb/%.c include/predictor/tb/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
 src/obj/basic/%.o : src/basic/%.c include/basic/%.h
