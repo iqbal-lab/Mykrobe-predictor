@@ -45,90 +45,45 @@
 
 void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
 {
-  if (sp==Scapitis)
+  if (sp==Mtuberculosis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.capitis");
+      strbuf_append_str(sbuf,"M.tuberculosis");
     }
-  else if (sp==Scaprae)
+  else if (sp==Mafricanum)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.caprae");
+      strbuf_append_str(sbuf,"M.africanum");
     }
-  else if (sp==Sepidermidis)
+  else if (sp==Mcanettii)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.epidermidis");
+      strbuf_append_str(sbuf,"M.canettii");
     }
-  else if (sp==Sequorum)
+  else if (sp==Mmicroti)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.equorum");
+      strbuf_append_str(sbuf,"M.microti");
     }
-  else if (sp==Shaemolyticus)
+  else if (sp==Mpinnipedii)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.haemolyticus");
+      strbuf_append_str(sbuf,"M.pinnipedii");
     }
-  else if (sp==Shominis)
+  else if (sp==Mbovis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.hominis");
+      strbuf_append_str(sbuf,"M.bovis");
     }
-  else if (sp==Slugdunensis)
+  else if (sp==Mcaprae)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.lugdunensis");
+      strbuf_append_str(sbuf,"M.caprae");
     }
-  else if (sp==Smassiliensis)
+  else if (sp==NTM)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.massiliensis");
-    }
-  else if (sp==Spettenkofer)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.pettenkofer");
-    }
-  else if (sp==Spseudintermedius)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.pseudintermedius");
-    }
-  else if (sp==Ssaprophyticus)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.saprophyticus");
-    }
-  else if (sp==Ssimiae)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.simiae");
-    }
-  else if (sp==Ssimulans)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"Ssimulans");
-    }
-  else if (sp==Ssphgb0015)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.sphgb0015");
-    }
-  else if (sp==Sspoj82)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.spoj82");
-    }
-  else if (sp==Aureus)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.aureus");
-    }
-  else if (sp==Swarneri)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.warneri");
+      strbuf_append_str(sbuf,"NTM");
     }
   else
     {
@@ -144,42 +99,30 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
   // Define the paths to the possible species
   StrBuf* species_file_paths[17];
   species_file_paths[0] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[0], "data/staph/species/Scapitis_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[0], "data/tb/species/Mtb_unique_branches.fasta");
   species_file_paths[1] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[1], "data/staph/species/Scaprae_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/Mafricanum_unique_branches.fasta");
+
   species_file_paths[2] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[2], "data/staph/species/Sepidermidis_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/Mcanettii_unique_branches.fasta");
+
   species_file_paths[3] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[3], "data/staph/species/Sequorum_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/Mmicroti_unique_branches.fasta");
+
   species_file_paths[4] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[4], "data/staph/species/Shaemolyticus_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/Mpinnipedii_unique_branches.fasta");
+
   species_file_paths[5] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[5], "data/staph/species/Shominis_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/Mbovis_unique_branches.fasta");
+
   species_file_paths[6] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[6], "data/staph/species/Slugdunensis_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/Mcaprae_unique_branches.fasta");
+
   species_file_paths[7] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[7], "data/staph/species/Smassiliensis_unique_branches.fasta");
-  species_file_paths[8] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[8], "data/staph/species/Spettenkofer_unique_branches.fasta");
-  species_file_paths[9] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[9], "data/staph/species/Spseudintermedius_unique_branches.fasta");
-  species_file_paths[10] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[10], "data/staph/species/Ssaprophyticus_unique_branches.fasta");
-  species_file_paths[11] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[11], "data/staph/species/Ssimiae_unique_branches.fasta");
-  species_file_paths[12] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[12], "data/staph/species/Ssimulans_unique_branches.fasta");
-  species_file_paths[13] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[13], "data/staph/species/S_sp_hgb0015_unique_branches.fasta");
-  species_file_paths[14] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[14], "data/staph/species/S_sp_oj82_unique_branches.fasta");
-  species_file_paths[15] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[15], "data/staph/species/staph_unique_branches.fasta");
-  species_file_paths[16] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[16], "data/staph/species/S_warneri_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/NTM_unique_branches.fasta");
 
   int i;
-  double pcov[17]; // for storing the percentage coverage of each reference
+  double pcov[8]; // for storing the percentage coverage of each reference
   int sumpcov;
   int number_of_reads;
 
@@ -297,7 +240,7 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
     }
 
 
-  Staph_species species_out =  location;
+  Myc_species species_out =  location;
   return species_out;
 
 }

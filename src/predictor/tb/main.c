@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 {
 
   // VERSION_STR is passed from the makefile -- usually last commit hash
-  printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
+  printf("myKrobe.predictor for Mycoplasma tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
          VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
 
   CmdLine* cmd_line = cmd_line_alloc();
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
     {
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
-      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
+      strbuf_append_str(sk, "data/skeleton_binary/tb/skeleton.k15.ctx");
       if (access(sk->buff,F_OK)!=0)
 	{
 	  printf("Build skeleton\n");
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 	  strbuf_append_str(skeleton_flist, 
 			    cmd_line->install_dir->buff);
 	  strbuf_append_str(skeleton_flist, 
-			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+			    "data/skeleton_binary/tb/list_speciesbranches_genes_and_muts");
 	  build_unclean_graph(db_graph, 
 			      skeleton_flist,
 			      true,
@@ -180,19 +180,14 @@ int main(int argc, char **argv)
 			       NULL,
 			       BINVERSION);
 	  strbuf_free(skeleton_flist);
-	  printf("Dumped\n");
 	  timestamp();
 	}
       else
 	{
 	  int num=0;
-	  printf("Load skeleton binary\n");
-	  timestamp();
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
-	  printf("Skeleton loaded\n");
-	  timestamp();
 	}
       strbuf_free(sk);
 
@@ -252,7 +247,7 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
+  Myc_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
 				 1,1);
   map_species_enum_to_str(sp,tmp_name);
   if (cmd_line->format==Stdout)
@@ -260,7 +255,7 @@ int main(int argc, char **argv)
       printf("** Species\n%s\n", tmp_name->buff);
       if (sp != Aureus)
 	{
-	  printf("** No AMR predictions for coag-negative staphylococci\n** End time\n");
+	  printf("** No AMR predictions for Non-Tuberculous Mycoplasma\n** End time\n");
 	  timestamp();
 	  return 0;
 	}
@@ -346,13 +341,6 @@ int main(int argc, char **argv)
     {
       print_json_susceptibility_end();
     }
-  else
-    {
-      printf("** Virulence markers\n");
-    }
-  print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_pvl_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
 
   if (cmd_line->format==Stdout)
     {

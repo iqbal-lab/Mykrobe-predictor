@@ -63,7 +63,7 @@ int default_opts(CmdLine * c)
   strbuf_reset(c->id);
   strbuf_append_str(c->id, "UnknownSample");
   strbuf_reset(c->install_dir);
-  c->genome_size = 2800000;
+  c->genome_size = 4000000;
   c->num_bases_around_mut_in_fasta=30;//our antibiotic fasta have 30 bases before/after the mutation
   c->kmer_size = 15;
   c->mem_width = 100;
@@ -164,7 +164,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     case 'h':
       {
 	printf("***********************\n");
-	printf("myKrobe.predictor for Staphylococcus\n");
+	printf("myKrobe.predictor for M. tuberculosis\n");
 	printf("***********************\n");
 
 	printf("%s",usage);
