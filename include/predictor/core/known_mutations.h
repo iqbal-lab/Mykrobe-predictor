@@ -30,7 +30,8 @@
 
 #include "string_buffer.h"
 
-typedef enum
+#ifdef STAPH
+  typedef enum
   {
     dfrB = 0,
     fusA = 1,
@@ -40,8 +41,8 @@ typedef enum
     grlB = 5,
     Unknown = 6,
   }GeneMutationGene;
-
-typedef enum
+  
+  typedef enum
   {
     dfrB_L21V  = 0,
     dfrB_H31N  = 1,
@@ -131,8 +132,30 @@ typedef enum
     grlA_S80Y = 76,
     NotSpecified = 77,
   } KnownMutation;
-
 #define NUM_KNOWN_MUTATIONS 77
+#endif
+
+
+#ifdef TB
+typedef enum
+  {
+    dfrB = 0,
+    Unknown = 6,
+  }GeneMutationGene;
+
+typedef enum
+  {
+    NotSpecified = 77,
+  } KnownMutation;
+#define NUM_KNOWN_MUTATIONS 77
+
+#endif
+
+
+
+
+
+
 
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene);
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name);

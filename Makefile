@@ -45,6 +45,30 @@ ifdef 32_BITS
 	ARCH =
 endif
 
+
+ifndef STAPH
+	STAPH=0
+endif
+ifndef TB
+  TB=0
+endif
+
+
+ifeq ($(STAPH),1)
+	ifeq ($(TB),1)
+	else
+		BINNAME="Mykrobe.predictor.staph"
+	endif
+endif
+ifeq ($(STAPH),0)
+	ifeq ($(TB),0)
+	else
+		BINNAME="Mykrobe.predictor.tb"
+	endif
+endif
+
+
+
 # Comment out this line to turn off adding the commit version
 # (it already checks if hg is installed)
 #VERSION_STR=$(shell if [ `command -v hg` ]; then echo ' (commit' `hg id --num --id`')'; else echo; fi)
@@ -52,6 +76,13 @@ endif
 OPT := $(ARCH) -Wall $(MACFLAG) -DVERSION_STR='"$(VERSION_STR)"' \
        -DNUMBER_OF_BITFIELDS_IN_BINARY_KMER=$(BITFIELDS) \
        -DNUMBER_OF_COLOURS=$(NUM_COLS)
+
+ifeq ($(STAPH),1)
+	OPT := $(OPT) -DSTAPH=$(STAPH)
+else
+	OPT := $(OPT) -DTB=$(TB)
+endif
+
 
 ifdef DEBUG
 	OPT := -O0 -g $(OPT)
@@ -70,8 +101,12 @@ LIBINCS = -L/usr/local/lib  -I$(IDIR_BAM) \
 TEST_LIBINCS = -I$(IDIR_CUNIT) -L$(LDIR_CUNIT) $(LIBINCS)
 
 CFLAGS_BASIC      = -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
-CFLAGS_PREDICTOR_STAPH = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_STAPH) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
-CFLAGS_PREDICTOR_TB = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_TB) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+CFLAGS_PREDICTOR_CORE = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH)  -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+ifeq ($(STAPH),1)
+	CFLAGS_PREDICTOR = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_STAPH) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+else
+	CFLAGS_PREDICTOR = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_TB) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+endif
 
 
 CFLAGS_BASIC_TESTS      = -I$(IDIR_BASIC_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(TEST_LIBINCS)
@@ -86,14 +121,9 @@ HASH_TABLE_TESTS_OBJ = src/obj/basic/global.o src/obj/test/hash_table/run_hash_t
 
 PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o src/obj/test/predictor/test_build.o src/obj/test/predictor/test_genotyping_known.o src/obj/test/predictor/test_gene_presence.o src/obj/test/predictor/test_species_prediction.o src/obj/predictor/global.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/genotyping_known.o src/obj/predictor/known_mutations.o src/obj/predictor/gene_presence.o src/obj/predictor/species.o src/obj/predictor/antibiotics.o src/obj/predictor/graph_info.o src/obj/predictor/mut_models.o src/obj/predictor/gene_presence_models.o  src/obj/predictor/json.o
 
-MAXK_AND_TEXT = $(join "", $(MAXK))
-NUMCOLS_AND_TEST = $(join "_c", $(NUM_COLS))
 
-staph : remove_objects $(PREDICTOR_OBJ)
-	mkdir -p $(BIN); $(CC) $(CFLAGS_PREDICTOR_STAPH) $(OPT) $(OPT_COLS) -o $(BIN)/myKrobe.predictor.staph $(PREDICTOR_OBJ) $(LIBLIST)
-
-tb : remove_objects $(PREDICTOR_OBJ)
-	mkdir -p $(BIN); $(CC) $(CFLAGS_PREDICTOR_TB) $(OPT) $(OPT_COLS) -o $(BIN)/myKrobe.predictor.tb $(PREDICTOR_OBJ) $(LIBLIST)
+predictor : remove_objects $(PREDICTOR_OBJ)
+	mkdir -p $(BIN); $(CC) $(CFLAGS_PREDICTOR) $(OPT) $(OPT_COLS) -o $(BIN)/$(BINNAME) $(PREDICTOR_OBJ) $(LIBLIST)
 
 run_basic_tests : remove_objects $(BASIC_TESTS_OBJ)
 	mkdir -p $(BIN);  $(CC) $(CFLAGS_BASIC_TESTS) $(OPT) -o $(BIN)/run_basic_tests $(BASIC_TESTS_OBJ) $(TEST_LIBLIST)
