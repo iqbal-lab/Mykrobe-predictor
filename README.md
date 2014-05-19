@@ -7,13 +7,13 @@ myKrobe-predictor
 
 To compile for Staphylococcus
 
-make staph
+make STAPH=1 predictor
 
 creates an executable bin/Mykrobe.predictor.staph
 
 To compile for Tuberculosis
 
-make tb
+make TB=1 predictor
 
 creates an executable bin/Mykrobe.predictor.tb
 
