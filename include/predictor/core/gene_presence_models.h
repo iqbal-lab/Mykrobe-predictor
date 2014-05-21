@@ -69,11 +69,11 @@ void choose_ml_gene_model(double llk_R, double llk_S,
 //max a posteriori
 void choose_map_gene_model(GeneInfo* gi,
 			   double llk_R, double llk_S, 
-			   Model* best_model, double epsilon,
+			   Model* best_model, double epsilon, int expected_covg,
 			   int min_expected_kmer_recovery_for_this_gene);
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
-			       double lambda_g, double epsilon,
+			       double lambda_g, double epsilon, int expected_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene);

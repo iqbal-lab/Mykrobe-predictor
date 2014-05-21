@@ -31,6 +31,8 @@
 #include <limits.h>
 #include <math.h>
 #include <inttypes.h>
+#include "seq_file.h"
+#include "seq_fastq.h"
 
 #include "element.h"
 #include "open_hash/hash_table.h"
@@ -38,6 +40,78 @@
 #include "file_reader.h"
 #include "build.h"
 #include "graph_info.h"
+
+//we assume we are dumping N consecutive colours from the graph (the UI only supports
+//1 colour (colour0) or all, but also I have a function for dumping one specific colour.
+//let's say we want to dump from first_col to first_col + num_cols-1. These colours
+//also correspond to those in the graph_info of course
+//the final argument, version, is always BINVERSION in normal use, but in testing it might be an old version
+// so I can test backward compatbility
+void print_binary_signature_NEW(FILE * fp,int kmer_size, int num_cols, GraphInfo* ginfo, int first_col, int version)
+{
+  char magic_number[6];
+  //  int version = BINVERSION;
+  
+  magic_number[0]='C';
+  magic_number[1]='O';
+  magic_number[2]='R';
+  magic_number[3]='T';
+  magic_number[4]='E';
+  magic_number[5]='X';
+  
+
+  int num_bitfields = NUMBER_OF_BITFIELDS_IN_BINARY_KMER;
+
+  fwrite(magic_number,sizeof(char),6,fp);
+  fwrite(&version,sizeof(int),1,fp);
+  fwrite(&kmer_size,sizeof(int),1,fp);
+  fwrite(&num_bitfields, sizeof(int),1,fp);
+  fwrite(&num_cols, sizeof(int), 1, fp);
+
+  int i;
+  for (i=first_col; i<first_col+num_cols; i++)
+    {
+      fwrite(&(ginfo->mean_read_length[i]), sizeof(int), 1, fp);
+    }
+  for (i=first_col; i<first_col+num_cols; i++)
+    {
+      fwrite(&(ginfo->total_sequence[i]), sizeof(long long), 1, fp);
+    }
+
+  if (version>5)
+    {
+      for (i=first_col; i<first_col+num_cols; i++)
+	{
+	  fwrite(&(ginfo->sample_id_lens[i]), sizeof(int), 1, fp);
+	  fwrite(ginfo->sample_ids[i], sizeof(char), ginfo->sample_id_lens[i], fp);
+	}
+      for (i=first_col; i<first_col+num_cols; i++)
+	{
+	  fwrite(&(ginfo->seq_err[i]), sizeof(long double), 1, fp);
+	}
+      for (i=first_col; i<first_col+num_cols; i++)
+	{
+	  print_error_cleaning_object(fp, ginfo, i);
+	}
+    }
+
+  fwrite(magic_number,sizeof(char),6,fp);
+
+}
+
+void print_error_cleaning_object(FILE* fp, GraphInfo* ginfo, int colour)
+{
+  fwrite(&(ginfo->cleaning[colour]->tip_clipping), sizeof(boolean), 1, fp);
+  fwrite(&(ginfo->cleaning[colour]->remv_low_cov_sups), sizeof(boolean), 1, fp);
+  fwrite(&(ginfo->cleaning[colour]->remv_low_cov_nodes), sizeof(boolean), 1, fp);
+  fwrite(&(ginfo->cleaning[colour]->cleaned_against_another_graph), sizeof(boolean), 1, fp);
+  fwrite(&(ginfo->cleaning[colour]->remv_low_cov_sups_thresh), sizeof(int), 1, fp);
+  fwrite(&(ginfo->cleaning[colour]->remv_low_cov_nodes_thresh), sizeof(int), 1, fp);
+  fwrite(&(ginfo->cleaning[colour]->len_name_of_graph_against_which_was_cleaned), sizeof(int), 1, fp);
+  fwrite(ginfo->cleaning[colour]->name_of_graph_against_which_was_cleaned, sizeof(char), 
+	 ginfo->cleaning[colour]->len_name_of_graph_against_which_was_cleaned, fp);
+  
+}
 
 
 void set_all_coverages_to_zero(dBGraph* dbg, int colour)
@@ -54,7 +128,57 @@ void set_all_coverages_to_zero(dBGraph* dbg, int colour)
 
 double estimate_err_rate(StrBuf* path, boolean is_list)
 {
-  return 0.005;
+
+  StrBuf* file = strbuf_new();
+  if (is_list==true)
+    {
+      FILE* f=fopen(path->buff, "r");
+      if (f==NULL)
+	{
+	  return 0;
+	}
+      strbuf_readline(file, f);
+      fclose(f);
+      strbuf_chomp(file);
+    }
+  else
+    {
+      strbuf_append_str(file, path->buff);
+    }
+  const char* p = file->buff;
+  SeqFile* sf = seq_file_open(p);
+  char read_qual = seq_has_quality_scores(sf);
+  if (read_qual==0)
+    {
+      //is FASTA
+      return 0.05;
+    }
+
+  char ascii_qual_offset=33;
+  StrBuf* quals = strbuf_new();
+  int tot=0;
+  int sum=0;
+  int i=0;
+  int lim = 100000;
+  while (tot<lim)
+    {
+      seq_read_all_quals(sf, quals);
+      for (i=0;i<quals->len; i++)
+	{
+	  if ((int) quals->buff[i]>10)
+	    {
+	      sum += (int) quals->buff[i]-ascii_qual_offset;
+	      tot++;
+	    }
+	}
+      strbuf_reset(quals);
+      seq_next_read(sf);
+    }
+  double meanq = sum/tot;
+  seq_file_close(sf);
+
+  return pow(10, -meanq/10);
+
 }
 
 //if boolean is_list==true, then path=list of fastq (or bams)
@@ -68,8 +192,11 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       uint64_t* kmer_covg_array, 
 				       int len_kmer_covg_array,
 				       boolean only_load_pre_existing_kmers,
-				       int into_colour)
+				       int into_colour,
+				       boolean (*subsample_function)() )
 {
+
+
   int ascii_fq_offset = 33;
   int qual_thresh = 10;
   int homopolymer_cutoff=0;
@@ -77,8 +204,8 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
   unsigned int num_files_loaded=0;
   unsigned long long total_bad_reads=0; 
   unsigned long long total_dup_reads=0;
-  unsigned long long total_bases_read=0; 
-  unsigned long long total_bases_loaded=0;
+  uint64_t total_bases_read=0; 
+  uint64_t total_bases_loaded=0;
 
 
   if (is_list==true)
@@ -99,8 +226,9 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 					 &total_bases_loaded,
 					 readlen_distrib, 
 					 readlen_distrib_len, 
-					 &subsample_null,
+					 subsample_function,
 					 only_load_pre_existing_kmers);
+
     }
   else
     {
@@ -118,8 +246,9 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 					 &total_bases_loaded,
 					 readlen_distrib, 
 					 readlen_distrib_len, 
-					 &subsample_null,
+					 subsample_function,
 					 only_load_pre_existing_kmers);
+					 
     }
   db_graph_get_covg_distribution_array(db_graph, 0, &db_node_condition_always_true,
 				       kmer_covg_array, len_kmer_covg_array);
@@ -2758,4 +2887,81 @@ void print_no_extra_supernode_info(dBNode** node_array, Orientation* or_array,
   (void)len;
   (void)fout;
 }
+
+
+//if you don't want to/care about graph_info, pass in NULL
+int db_graph_dump_binary(char * filename, boolean (*condition)(dBNode * node), dBGraph * db_graph, GraphInfo* db_graph_info, int version){
+
+  FILE* fout= fopen(filename, "w"); 
+  if (fout==NULL)
+    {
+      die("Unable to dump binary file %s, as cannot open it with write-access.Permissions issue? Directory does not exist? Out of disk?\n",
+	     filename);
+    }
+  
+  if (db_graph_info==NULL)
+    {
+      GraphInfo* ginfo_dummy=graph_info_alloc_and_init();//no need to check return - will abort if does not alloc
+      print_binary_signature_NEW(fout, db_graph->kmer_size, NUMBER_OF_COLOURS, ginfo_dummy, 0, version);//0 means start from colour 0,
+      graph_info_free(ginfo_dummy);
+    }
+  else
+    {
+      print_binary_signature_NEW(fout, db_graph->kmer_size, NUMBER_OF_COLOURS, db_graph_info, 0, version);
+    }
+
+  long long count=0;
+  //routine to dump graph
+  void print_node_multicolour_binary(dBNode * node){   
+    if (condition(node)){
+      count++;
+      db_node_print_multicolour_binary(fout,node);
+    }
+  }
+
+  hash_table_traverse(&print_node_multicolour_binary,db_graph); 
+  fclose(fout);
+
+  printf("%qd kmers dumped to file %s\n",count, filename);
+  return count;
+}
+
+
+
+void db_graph_dump_single_colour_binary_of_colour0(char * filename, boolean (*condition)(dBNode * node), 
+						   dBGraph * db_graph, GraphInfo* db_graph_info, int version){
+  FILE * fout; //binary output
+  fout= fopen(filename, "w"); 
+  if (fout==NULL)
+    {
+      die("Unable to open output file %s\n", filename);
+    }
+
+  if (db_graph_info==NULL)
+    {
+      GraphInfo* ginfo_dummy=graph_info_alloc_and_init();//no need to check return
+      print_binary_signature_NEW(fout, db_graph->kmer_size,1, ginfo_dummy, 0, version);
+      graph_info_free(ginfo_dummy);
+    }
+  else
+    {
+      print_binary_signature_NEW(fout, db_graph->kmer_size, 1, db_graph_info, 0, version);
+    }
+
+
+  long long count=0;
+  //routine to dump graph
+  void print_node_single_colour_binary_of_colour0(dBNode * node){   
+    if (condition(node) ){
+      count++;
+      db_node_print_single_colour_binary_of_colour0(fout,node);
+    }
+  }
+
+  hash_table_traverse(&print_node_single_colour_binary_of_colour0,db_graph); 
+  fclose(fout);
+
+  //printf("%qd kmers dumped\n",count);
+}
+
 

@@ -48,6 +48,14 @@ typedef signed char boolean;
 #define false 0
 #endif
 
+
+typedef enum
+  {
+    _True=0,
+    _False=1,
+    _Inconclusive=2,
+  } Troolean;
+
 typedef enum
 {
   forward = 0,

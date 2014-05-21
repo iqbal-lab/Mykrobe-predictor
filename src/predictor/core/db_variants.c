@@ -325,8 +325,6 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
  
   int i;
 
-  int index=0;
-
   Covg min_covg = COVG_MAX;
   for(i=ignore_first; i < len+1-ignore_last; i++)
     {

@@ -30,7 +30,8 @@
 
 #include "string_buffer.h"
 
-typedef enum
+#ifdef STAPH
+  typedef enum
   {
     dfrB = 0,
     fusA = 1,
@@ -40,8 +41,8 @@ typedef enum
     grlB = 5,
     Unknown = 6,
   }GeneMutationGene;
-
-typedef enum
+  
+  typedef enum
   {
     dfrB_L21V  = 0,
     dfrB_H31N  = 1,
@@ -56,82 +57,105 @@ typedef enum
     fusA_Y654N = 9,
     fusA_L456F = 10,
     fusA_L461F = 11,
-    fusA_A376V = 12,
-    fusA_A655P = 13,
-    fusA_D463G = 14,
-    fusA_E444V = 15,
+    fusA_T326I = 12,
+    fusA_A376V = 13,
+    fusA_A655P = 14,
+    fusA_D463G = 15,
+    fusA_E444V = 16,
+    fusA_E468V = 17,
     //end of fusA variants which only cause resistance when in combination
     
     //start of fusA variants, each enough on its own to cause resistance
-    fusA_V90I  = 16,
-    fusA_P114H = 17,
-    fusA_Q115L = 18,
-    fusA_T326I = 19,
-    fusA_T385N = 20,
-    fusA_P404L = 21,
-    fusA_P404Q = 22,
-    fusA_P406L = 23,
-    fusA_D434N = 24,
-    fusA_T436I = 25,
-    fusA_H438N = 26,
-    fusA_E444K = 27,
-    fusA_G451V = 28,
-    fusA_G452C = 29,
-    fusA_G452S = 30,
-    fusA_M453I = 31,
-    fusA_H457Q = 32,
-    fusA_H457Y = 33,
-    fusA_L461K = 34,
-    fusA_L461S = 35,
-    fusA_R464C = 36,
-    fusA_R464S = 37,
-    fusA_R464H = 38,
-    fusA_P478S = 39,
-    fusA_G556S = 40,
-    fusA_G617D = 41,
-    fusA_M651I = 42,
-    fusA_A655E = 43,
-    fusA_T656K = 44,
-    fusA_R659C = 45,
-    fusA_R659H = 46,
-    fusA_R659L = 47,
-    fusA_R659S = 48,
-    fusA_G664S = 49,
+    fusA_V90I  = 18,
+    fusA_P114H = 19,
+    fusA_Q115L = 20,
+    fusA_T385N = 21,
+    fusA_P404L = 22,
+    fusA_P404Q = 23,
+    fusA_P406L = 24,
+    fusA_D434N = 25,
+    fusA_T436I = 26,
+    fusA_H438N = 27,
+    fusA_E444K = 28,
+    fusA_G451V = 29,
+    fusA_G452C = 30,
+    fusA_G452S = 31,
+    fusA_M453I = 32,
+    fusA_H457Q = 33,
+    fusA_H457Y = 34,
+    fusA_L461K = 35,
+    fusA_L461S = 36,
+    fusA_R464C = 37,
+    fusA_R464S = 38,
+    fusA_R464H = 39,
+    fusA_P478S = 40,
+    fusA_G556S = 41,
+    fusA_G617D = 42,
+    fusA_M651I = 43,
+    fusA_A655E = 44,
+    fusA_T656K = 45,
+    fusA_R659C = 46,
+    fusA_R659H = 47,
+    fusA_R659L = 48,
+    fusA_R659S = 49,
+    fusA_G664S = 50,
 
     //start of rpoB mutations which must occur together
-    rpoB_M470T = 50,
-    rpoB_D471G = 51,
+    rpoB_M470T = 51,
+    rpoB_D471G = 52,
     //end of epistatic mutations
 
     //start of rpoB mutations which individually cause resistance
-    rpoB_S463P = 52,
-    rpoB_S464P = 53,
-    rpoB_Q468K = 54,
-    rpoB_Q468L = 55,
-    rpoB_Q468R = 56,
-    rpoB_D471Y = 57,
-    rpoB_N474K = 58,
-    rpoB_ins475G = 59,
-    rpoB_ins475H = 60,
-    rpoB_A477D = 61,
-    rpoB_A477V = 62,
-    rpoB_H481D = 63,
-    rpoB_H481N = 64,
-    rpoB_H481Y = 65,
-    rpoB_R484H = 66,
-    rpoB_S486L = 67,
-    rpoB_I527F = 68,
-    rpoB_D550G = 69,
-    gyrA_S84A = 70,
-    gyrA_S84L = 71,
-    gyrA_S85P = 72,
-    gyrA_E88K = 73,
-    grlA_S80F = 74,
-    grlA_S80Y = 75,
-    NotSpecified = 76,
+    rpoB_S463P = 53,
+    rpoB_S464P = 54,
+    rpoB_Q468K = 55,
+    rpoB_Q468L = 56,
+    rpoB_Q468R = 57,
+    rpoB_D471Y = 58,
+    rpoB_N474K = 59,
+    rpoB_ins475G = 60,
+    rpoB_ins475H = 61,
+    rpoB_A477D = 62,
+    rpoB_A477V = 63,
+    rpoB_H481D = 64,
+    rpoB_H481N = 65,
+    rpoB_H481Y = 66,
+    rpoB_R484H = 67,
+    rpoB_S486L = 68,
+    rpoB_I527F = 69,
+    rpoB_D550G = 70,
+    gyrA_S84A = 71,
+    gyrA_S84L = 72,
+    gyrA_S85P = 73,
+    gyrA_E88K = 74,
+    grlA_S80F = 75,
+    grlA_S80Y = 76,
+    NotSpecified = 77,
   } KnownMutation;
+#define NUM_KNOWN_MUTATIONS 77
+#endif
 
-#define NUM_KNOWN_MUTATIONS 76
+
+#ifdef TB
+typedef enum
+  {
+    dfrB = 0,
+    Unknown = 6,
+  }GeneMutationGene;
+
+typedef enum
+  {
+    NotSpecified = 77,
+  } KnownMutation;
+#define NUM_KNOWN_MUTATIONS 77
+
+#endif
+
+
+
+
+
+
 
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene);
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name);

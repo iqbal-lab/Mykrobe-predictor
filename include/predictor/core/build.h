@@ -40,6 +40,12 @@
 #include "seq.h"
 #include "file_reader.h"
 
+void print_binary_signature_NEW(FILE * fp,int kmer_size, int num_cols, GraphInfo* ginfo, int first_col, int version);
+
+void print_error_cleaning_object(FILE* fp, GraphInfo* ginfo, int colour);
+
+
+
 void set_all_coverages_to_zero(dBGraph* dbg, int colour);
 
 double estimate_err_rate(StrBuf* path, boolean is_list);
@@ -47,7 +53,8 @@ double estimate_err_rate(StrBuf* path, boolean is_list);
 unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean is_list, uint16_t kmer,
 				       uint64_t* readlen_distrib, int readlen_distrib_len,
 				       uint64_t* kmer_covg_array, int len_kmer_covg_array,
-				       boolean only_load_pre_existing_kmers, int into_colour);
+				       boolean only_load_pre_existing_kmers, int into_colour,
+				       boolean (*subsample_function)());
 
 
 void db_graph_get_covg_distribution_array(dBGraph* db_graph, int colour,
@@ -441,7 +448,10 @@ void print_standard_extra_supernode_info(dBNode** node_array,
 void print_no_extra_supernode_info(dBNode** node_array, Orientation* or_array,
                                    int len, FILE* fout);
 
+int db_graph_dump_binary(char * filename, boolean (*condition)(dBNode * node), dBGraph * db_graph, GraphInfo* db_graph_info, int version);
 
+void db_graph_dump_single_colour_binary_of_colour0(char * filename, boolean (*condition)(dBNode * node), 
+						   dBGraph * db_graph, GraphInfo* db_graph_info, int version);
 
 
 #endif

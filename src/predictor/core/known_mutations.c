@@ -111,6 +111,10 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     {
       return fusA_T326I;
     } 
+  else if ( (strcmp(sbuf->buff, "E468V")==0) && (gene==fusA) )
+    {
+      return fusA_E468V;
+    } 
   else if ( (strcmp(sbuf->buff, "A376V")==0) && (gene==fusA) )
     {
       return fusA_A376V;

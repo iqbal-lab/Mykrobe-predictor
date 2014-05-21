@@ -31,6 +31,7 @@
 #include <stdio.h>
 
 #include "global.h"
+#include "json.h"
 
 #define MAX_FILENAME_LEN 1000
 #define LEN_ERROR_STRING 400
@@ -72,7 +73,10 @@ typedef struct
   boolean input_file;
   boolean input_list;
   boolean output_supernodes;
+  boolean subsample;
+  float subsample_propn;
   Sequencer machine;
+  OutputFormat format;
 } CmdLine;
 
 

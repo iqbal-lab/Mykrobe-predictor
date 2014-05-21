@@ -95,7 +95,8 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   StrBuf* temp_readid_buf, 
 				   StrBuf* temp_mut_buf,
 				   StrBuf* temp_gene_name_buf,
-				   int ignore_first, int ignore_last, int expected_covg);
+				   int ignore_first, int ignore_last, 
+				   int expected_covg, KnownMutation* prev_mut);
 
 Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi);
 int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi);

@@ -33,7 +33,7 @@
 #include <inttypes.h>
 #include <string_buffer.h>
 
-// cortex_var headers
+// Mykrobe headers
 #include "element.h"
 #include "file_reader.h"
 #include "build.h"
@@ -45,6 +45,7 @@
 #include "genotyping_known.h"
 #include "antibiotics.h"
 #include "species.h"
+#include "json.h"
 
 void timestamp();
 
@@ -62,8 +63,34 @@ int main(int argc, char **argv)
     }
   
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
-  printf("Kmer size %d\n", cmd_line->kmer_size);
   dBGraph * db_graph = NULL;
+
+
+
+  boolean (*subsample_function)();
+  
+  //local func
+  boolean subsample_as_specified()
+  {
+    double ran = drand48();
+    if (ran <= cmd_line->subsample_propn)
+      {
+	return true;
+      }
+    return false;
+  }
+  //end of local func
+  
+  if (cmd_line->subsample==true)
+    {
+      subsample_function = &subsample_as_specified;
+    }
+  else
+    {
+      subsample_function = &subsample_null;
+    }
+  
+
 
 
   int lim = cmd_line->max_expected_sup_len;
@@ -106,14 +133,15 @@ int main(int argc, char **argv)
     }
   
 
-  printf("** Start time\n");
-  timestamp();
-  printf("** Sample:\n%s\n", cmd_line->id->buff);
-
+  if (cmd_line->format==Stdout)
+    {
+      printf("** Start time\n");
+      timestamp();
+      printf("** Sample:\n%s\n", cmd_line->id->buff);
+    }
  
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
-  //  GraphInfo* gi = graph_info_alloc_and_init();
   uint64_t bp_loaded=0;
 
   if (cmd_line->method==WGAssemblyThenGenotyping)
@@ -122,21 +150,52 @@ int main(int argc, char **argv)
     }
   else if (cmd_line->method==InSilicoOligos)
     {
-      StrBuf* skeleton_flist = strbuf_new();
-      strbuf_append_str(skeleton_flist, 
-			cmd_line->install_dir->buff);
-      strbuf_append_str(skeleton_flist, 
-			"data/skeleton_binary/list_speciesbranches_genes_and_muts");
-      build_unclean_graph(db_graph, 
-			  skeleton_flist,
-			  true,
-			  cmd_line->kmer_size,
-			  NULL, 0,
-			  NULL, 0,
-			  false,
-			  into_colour);
-      set_all_coverages_to_zero(db_graph, 0);
-      strbuf_free(skeleton_flist);
+      StrBuf* sk = strbuf_new();
+      strbuf_append_str(sk, cmd_line->install_dir->buff);
+      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
+      if (access(sk->buff,F_OK)!=0)
+	{
+	  printf("Build skeleton\n");
+	  timestamp();
+	  StrBuf* skeleton_flist = strbuf_new();
+	  strbuf_append_str(skeleton_flist, 
+			    cmd_line->install_dir->buff);
+	  strbuf_append_str(skeleton_flist, 
+			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+	  build_unclean_graph(db_graph, 
+			      skeleton_flist,
+			      true,
+			      cmd_line->kmer_size,
+			      NULL, 0,
+			      NULL, 0,
+			      false,
+			      into_colour,
+			      &subsample_null);
+
+	  //dump binary so can reuse
+	  set_all_coverages_to_zero(db_graph, 0);
+	  db_graph_dump_binary(sk->buff, 
+			       &db_node_condition_always_true,
+			       db_graph,
+			       NULL,
+			       BINVERSION);
+	  strbuf_free(skeleton_flist);
+	  printf("Dumped\n");
+	  timestamp();
+	}
+      else
+	{
+	  int num=0;
+	  printf("Load skeleton binary\n");
+	  timestamp();
+	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
+	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
+	  graph_info_free(ginfo);
+	  printf("Skeleton loaded\n");
+	  timestamp();
+	}
+      strbuf_free(sk);
+
       only_load_pre_existing_kmers=true;
     }
   else
@@ -153,12 +212,13 @@ int main(int argc, char **argv)
 				  cmd_line->kmer_covg_array, 
 				  cmd_line->len_kmer_covg_array,
 				  only_load_pre_existing_kmers,
-				  into_colour);
+				  into_colour, subsample_function);
 
   if (bp_loaded==0)
     {
       printf("No data\n");
       return 1;
+
     }
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
@@ -175,34 +235,56 @@ int main(int argc, char **argv)
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
   
-  printf("Expected covg\t%d\n", expected_depth);
+  //printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   	      expected_depth, cmd_line->max_expected_sup_len);
   
   
   //calculate expected read-arrival rates on true and error alleles
-  double lambda_g_err = pow(1-err_rate, cmd_line->kmer_size) * lambda_g_err_free;
-  double lambda_e_err = lambda_g_err_free * err_rate* pow(1-err_rate, cmd_line->kmer_size-1)/3 ;//rate of arrival of reads on a sequencing error allele
+  double lambda_g_err = 
+    lambda_g_err_free
+    * pow(1-err_rate, cmd_line->kmer_size) ;
 
-  int expected_depth_on_err_allele 
-    = err_rate* pow(1-err_rate, cmd_line->kmer_size-1)
-    * (mean_read_length-cmd_line->kmer_size+1)
-    * (bp_loaded/cmd_line->genome_size) / mean_read_length ;
+  //rate of arrival of reads on a sequencing error allele
+  double lambda_e_err = 
+    lambda_g_err_free
+    * err_rate/3
+    * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
   Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
 				 1,1);
   map_species_enum_to_str(sp,tmp_name);
-  printf("** Species\n%s\n", tmp_name->buff);
-  if (sp != Aureus)
+  if (cmd_line->format==Stdout)
     {
-      printf("** No AMR predictions for coag-negative\n** End time\n");
-      timestamp();
-      return 1;
+      printf("** Species\n%s\n", tmp_name->buff);
+      if (sp != Aureus)
+	{
+	  printf("** No AMR predictions for coag-negative staphylococci\n** End time\n");
+	  timestamp();
+	  return 0;
+	}
+      else
+	{
+	  timestamp();
+	  printf("** Antimicrobial susceptibility predictions\n");
+	}
     }
   else
     {
-      printf("** Antimicrobial susceptibility predictions\n");
+      print_json_start();
+      print_json_species_start();
+      print_json_item(tmp_name->buff, "1", true);
+      print_json_species_end(); 
+      if (sp != Aureus)
+	{
+	  print_json_susceptibility_start(); 
+	  print_json_susceptibility_end();
+	  print_json_virulence_start();
+	  print_json_virulence_end();
+	  print_json_end();
+	  return 0;
+	}
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
@@ -210,55 +292,80 @@ int main(int argc, char **argv)
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
 
-  int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
+  //if we get here, is s. aureus
 
+  if (cmd_line->format==JSON)
+    {
+      print_json_susceptibility_start();
+    }
+  int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
+  boolean output_last=false;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_gentamycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);  
+				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate); 
-    boolean any_erm_present=false;
-  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
-				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate,
-				    &any_erm_present);
-
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  boolean any_erm_present=false;
+  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
+				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
+				    &any_erm_present);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
+  output_last=true;
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
 				   any_erm_present,cmd_line->install_dir,
-				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate);
-  printf("** Virulence markers\n");
+				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
+
+  
+  if (cmd_line->format==JSON)
+    {
+      print_json_susceptibility_end();
+    }
+  else
+    {
+      printf("** Virulence markers\n");
+    }
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_pvl_positive, cmd_line->install_dir); 
+		     &is_pvl_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
 
-  timestamp();
+  if (cmd_line->format==Stdout)
+    {
+      timestamp();
+    }
+  else
+    {
+      print_json_end();
+      printf("\n");
+    }
 
-  if (cmd_line ->output_supernodes==true)
+
+  if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )
     {
       printf("Print contigs\n");
       db_graph_print_supernodes_defined_by_func_of_colours(cmd_line->contig_file->buff, "", 

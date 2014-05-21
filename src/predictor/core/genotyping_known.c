@@ -282,7 +282,7 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   StrBuf* temp_mut_buf,
 				   StrBuf* temp_gene_name_buf,
 				   int ignore_first, int ignore_last, 
-				   int expected_covg)
+				   int expected_covg, KnownMutation* prev_mut)
 				   
 {
 
@@ -329,6 +329,11 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
   find_mutation_name(temp_readid_buf, temp_mut_buf);
   rinfo->var_id = map_mutation_name_to_enum(temp_mut_buf ,rinfo->gene);
 
+  if (rinfo->var_id!= *prev_mut)
+    {
+      rinfo->working_current_max_sus_allele_present=0;
+      *prev_mut=rinfo->var_id; //for use in the next call to this function
+    }
   //collect min, median covg on allele and also percentage of kmers with any covg
   boolean too_short=false;
 

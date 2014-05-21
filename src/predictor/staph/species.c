@@ -295,7 +295,7 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
          location = c;
       }
     }
-  //  printf("Maximum element is present at location %i and it's value is %f.\n", location, maximum);
+
 
   Staph_species species_out =  location;
   return species_out;

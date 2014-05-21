@@ -34,8 +34,8 @@
 #include "genotyping_known.h"
 #include "known_mutations.h"
 #include "file_reader.h"
-
-
+#include "json.h"
+#include "global.h"
 
 //#define MAX_MUTS_IN_ANY_GENE 129
 #define MAX_LEN_MUT_ALLELE 100
@@ -51,7 +51,7 @@
 typedef enum 
  {
    NoDrug=0,
-   Gentamycin=1,
+   Gentamicin=1,
    Penicillin=2,
    Trimethoprim=3,
    Erythromycin=4,
@@ -127,7 +127,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       int ignore_first, int ignore_last, int expected_covg,
 				       StrBuf* install_dir);
 
-boolean is_gentamycin_susceptible(dBGraph* db_graph,
+Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -143,7 +143,7 @@ boolean is_gentamycin_susceptible(dBGraph* db_graph,
 				  );
 
 
-boolean is_penicillin_susceptible(dBGraph* db_graph,
+Troolean is_penicillin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -157,7 +157,7 @@ boolean is_penicillin_susceptible(dBGraph* db_graph,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate
 				  );
-boolean is_trimethoprim_susceptible(dBGraph* db_graph,
+Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -172,7 +172,7 @@ boolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    double lambda_g, double lambda_e, double err_rate
 				  );
 
-boolean is_erythromycin_susceptible(dBGraph* db_graph,
+Troolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -188,7 +188,7 @@ boolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    boolean* any_erm_present
 				    );
 
-boolean is_methicillin_susceptible(dBGraph* db_graph,
+Troolean is_methicillin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -203,7 +203,7 @@ boolean is_methicillin_susceptible(dBGraph* db_graph,
 				   double lambda_g, double lambda_e, double err_rate
 				  );
 
-boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
+Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     int (*file_reader)(FILE * fp, 
 							Sequence * seq, 
 							int max_read_length, 
@@ -218,7 +218,7 @@ boolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     double lambda_g, double lambda_e, double err_rate
 				     );
 
-boolean is_rifampicin_susceptible(dBGraph* db_graph,
+Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -233,7 +233,7 @@ boolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  double lambda_g, double lambda_e, double err_rate
 				  );
 
-boolean is_tetracycline_susceptible(dBGraph* db_graph,
+Troolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -247,7 +247,7 @@ boolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate);
 
-boolean is_mupirocin_susceptible(dBGraph* db_graph,
+Troolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
 						    Sequence * seq, 
 						    int max_read_length, 
@@ -262,7 +262,7 @@ boolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 double lambda_g, double lambda_e, double err_rate);
 
 
-boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
+Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -278,7 +278,7 @@ boolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
 //this really only asks if it is CONSTITUTIVELY susceptobe;/resistant.
 //inducible resistance covered elsewhere
-boolean is_clindamycin_susceptible(dBGraph* db_graph,
+Troolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -292,7 +292,7 @@ boolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   int ignore_first, int ignore_last, int expected_covg,
 				   double lambda_g, double lambda_e, double err_rate);
 
-boolean is_vancomycin_susceptible(dBGraph* db_graph,
+Troolean is_vancomycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -306,7 +306,7 @@ boolean is_vancomycin_susceptible(dBGraph* db_graph,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate);
 
-boolean print_antibiotic_susceptibility(dBGraph* db_graph,
+void print_antibiotic_susceptibility(dBGraph* db_graph,
 					int (*file_reader)(FILE * fp, 
 							   Sequence * seq, 
 							   int max_read_length, 
@@ -316,7 +316,7 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					ResVarInfo* tmp_rvi,
 					GeneInfo* tmp_gi,
 					AntibioticInfo* abi,
-					boolean (*func)(dBGraph* db_graph,
+					Troolean (*func)(dBGraph* db_graph,
 							int (*file_reader)(FILE * fp, 
 									   Sequence * seq, 
 									   int max_read_length, 
@@ -332,10 +332,10 @@ boolean print_antibiotic_susceptibility(dBGraph* db_graph,
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last, int expected_covg,
-					double lambda_g, double lambda_e, double err_rate
+					double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last
 					);
 
-boolean print_erythromycin_susceptibility(dBGraph* db_graph,
+void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  int (*file_reader)(FILE * fp, 
 							     Sequence * seq, 
 							     int max_read_length, 
@@ -345,7 +345,7 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 					  ResVarInfo* tmp_rvi,
 					  GeneInfo* tmp_gi,
 					  AntibioticInfo* abi,
-					  boolean (*func)(dBGraph* db_graph,
+					  Troolean (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -357,16 +357,17 @@ boolean print_erythromycin_susceptibility(dBGraph* db_graph,
 							  AntibioticInfo* abi,
 							  StrBuf* install_dir,
 							  int ignore_first, int ignore_last, int expected_covg,
-							  double lambda_g, double lambda_e, double err_rate,
+							  double lambda_g, double lambda_e, double err_rate, 
 							  boolean* any_erm_present),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
-					  double lambda_g, double lambda_e, double err_rate,
+					  double lambda_g, double lambda_e, double err_rate, OutputFormat format,
+					  boolean output_last,
 					  boolean* any_erm_present
 					  );
 
-boolean print_clindamycin_susceptibility(dBGraph* db_graph,
+void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 int (*file_reader)(FILE * fp, 
 							    Sequence * seq, 
 							    int max_read_length, 
@@ -376,7 +377,7 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 ResVarInfo* tmp_rvi,
 					 GeneInfo* tmp_gi,
 					 AntibioticInfo* abi,
-					 boolean (*func)(dBGraph* db_graph,
+					 Troolean (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -393,10 +394,11 @@ boolean print_clindamycin_susceptibility(dBGraph* db_graph,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate
+					 double lambda_g, double lambda_e, double err_rate, OutputFormat format,
+					 boolean output_last
 					 );
 
-boolean is_pvl_positive(dBGraph* db_graph,
+Troolean is_pvl_positive(dBGraph* db_graph,
 			int (*file_reader)(FILE * fp, 
 					   Sequence * seq, 
 					   int max_read_length, 
@@ -414,7 +416,7 @@ void print_pvl_presence(dBGraph* db_graph,
 					   boolean * full_entry),
 			ReadingUtils* rutils,
 			GeneInfo* tmp_gi,
-			boolean (*func)(dBGraph* db_graph,
+			Troolean (*func)(dBGraph* db_graph,
 					int (*file_reader)(FILE * fp, 
 							   Sequence * seq, 
 							   int max_read_length, 
@@ -423,5 +425,5 @@ void print_pvl_presence(dBGraph* db_graph,
 					ReadingUtils* rutils,
 					GeneInfo* tmp_gi,
 					StrBuf* install_dir),
-			StrBuf* install_dir);
+			StrBuf* install_dir, OutputFormat format);
 #endif

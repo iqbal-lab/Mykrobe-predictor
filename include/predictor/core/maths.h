@@ -39,7 +39,7 @@ float log_factorial(int number);
 float log_factorial_ll(long long number);
 int min_of_ints(int a, int b);
 int max_of_ints(int a, int b);
-unsigned long calculate_mean_uint64_t(uint64_t* array, uint64_t len);
+uint64_t calculate_mean_uint64_t(uint64_t* array, uint64_t len);
 long long calculate_mean(long long* array, long long len);
 
 //void set_int_array_to_zero(int* array, int len);

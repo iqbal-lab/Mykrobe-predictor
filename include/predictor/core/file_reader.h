@@ -108,8 +108,10 @@ void load_se_seq_data_into_graph_colour(
 					char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_se,
 					char ascii_fq_offset, int colour_index, dBGraph *db_graph,
 					unsigned long long *bad_reads, unsigned long long *dup_reads,
-					unsigned long long *bases_read, unsigned long long *bases_loaded,
-					unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					uint64_t *bases_read, 
+					uint64_t *bases_loaded,
+					uint64_t *readlen_count_array, 
+					uint64_t readlen_count_array_size,
 					boolean (*subsample_func)(),
 					boolean only_load_pre_existing_kmers);
 
@@ -118,8 +120,8 @@ void load_pe_seq_data_into_graph_colour(
   char quality_cutoff, int homopolymer_cutoff, boolean remove_dups_pe,
   char ascii_fq_offset, int colour_index, dBGraph *db_graph,
   unsigned long long *bad_reads, unsigned long long *dup_reads,
-  unsigned long long *bases_read, unsigned long long *bases_loaded,
-  unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+  uint64_t *bases_read, uint64_t *bases_loaded,
+  uint64_t *readlen_count_array, uint64_t readlen_count_array_size,
   boolean (*subsample_func)(), boolean only_load_pre_existing_kmers );
 
 void load_se_filelist_into_graph_colour(
@@ -127,9 +129,12 @@ void load_se_filelist_into_graph_colour(
 					int qual_thresh, int homopol_limit, boolean remove_dups_se,
 					char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_list,
 					unsigned int *total_files_loaded,
-					unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-					unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-					unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
+					unsigned long long *total_bad_reads, 
+					unsigned long long *total_dup_reads,
+					uint64_t *total_bases_read, 
+					uint64_t *total_bases_loaded,
+					uint64_t *readlen_count_array, 
+					uint64_t readlen_count_array_size,
 					boolean (*subsample_func)(),
 					boolean only_load_pre_existing_kmers);
 
@@ -138,10 +143,14 @@ void load_pe_filelists_into_graph_colour(
 					 int qual_thresh, int homopol_limit, boolean remove_dups_pe,
 					 char ascii_fq_offset, int colour, dBGraph* db_graph, char is_colour_lists,
 					 unsigned int *total_file_pairs_loaded,
-					 unsigned long long *total_bad_reads, unsigned long long *total_dup_reads,
-					 unsigned long long *total_bases_read, unsigned long long *total_bases_loaded,
-					 unsigned long *readlen_count_array, unsigned long readlen_count_array_size,
-					 boolean (*subsample_func)(),  boolean only_load_pre_existing_kmers );
+					 unsigned long long *total_bad_reads, 
+					 unsigned long long *total_dup_reads,
+					 uint64_t *total_bases_read, 
+					 uint64_t *total_bases_loaded,
+					 uint64_t *readlen_count_array, 
+					 uint64_t readlen_count_array_size,
+					 boolean (*subsample_func)(), 
+					 boolean only_load_pre_existing_kmers );
 
 // End of loading sequence data
 
@@ -149,14 +158,19 @@ void initialise_binary_header_info(BinaryHeaderInfo* binfo, GraphInfo* ginfo);
 
 
 void  load_kmers_from_sliding_window_into_graph_marking_read_starts_of_specific_person_or_pop(
-  KmerSlidingWindowSet * windows, boolean* prev_full_ent, //boolean* full_ent,
-  long long* bases_loaded, boolean mark_read_starts, dBGraph* db_graph,
-  int index, long long** read_len_count_array);
+  KmerSlidingWindowSet * windows, 
+  boolean* prev_full_ent, //boolean* full_ent,
+  uint64_t* bases_loaded, 
+  boolean mark_read_starts, 
+  dBGraph* db_graph,
+  int index, 
+  uint64_t** read_len_count_array);
 
 
 //pass in a single kmer sliding window and the Sequence* it was derived from. Will find the nodes correspinding to this seqeunce
 //and put them in array. Also will check that edges exist as expected from the Sequence*
-void load_kmers_from_sliding_window_into_array(KmerSlidingWindow* kmer_window, dBGraph* db_graph, dBNode** array_nodes, Orientation* array_orientations, 
+void load_kmers_from_sliding_window_into_array(KmerSlidingWindow* kmer_window, dBGraph* db_graph, 
+					       dBNode** array_nodes, Orientation* array_orientations, 
 					       int max_array_size, 
 					       boolean require_nodes_to_lie_in_given_colour, int colour);
 
