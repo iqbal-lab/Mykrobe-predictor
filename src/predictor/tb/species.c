@@ -43,7 +43,7 @@
 #include "genotyping_known.h"
 
 
-void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
+void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
 {
   if (sp==Mtuberculosis)
     {
@@ -93,7 +93,7 @@ void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
 }
 
 
-Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
+Myc_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
 			  int ignore_first, int ignore_last)
 {
   // Define the paths to the possible species

@@ -186,7 +186,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	}	
 	strbuf_append_str(cmdline_ptr->install_dir, tmp->buff);
-	strbuf_append_str(tmp, "data/staph/antibiotics/penicillin.fa");
+	strbuf_append_str(tmp, "data/tb/antibiotics/ethambutol.fa");
 	if (access(tmp->buff,F_OK)!=0)
 	  {
 	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of myKrobe.predictor. Cannot find %s\n", tmp->buff);

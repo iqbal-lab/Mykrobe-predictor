@@ -147,13 +147,13 @@ remove_objects:
 
 src/obj/predictor/%.o : src/predictor/core/%.c include/predictor/core/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
-
+ifeq ($(STAPH),1)
 src/obj/predictor/%.o : src/predictor/staph/%.c include/predictor/staph/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
-
+else
 src/obj/predictor/%.o : src/predictor/tb/%.c include/predictor/tb/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
-
+endif
 src/obj/basic/%.o : src/basic/%.c include/basic/%.h
 	mkdir -p src/obj/basic/; $(CC) $(CFLAGS_BASIC) $(OPT) -c $< -o $@
 
