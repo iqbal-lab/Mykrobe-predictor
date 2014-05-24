@@ -28,6 +28,7 @@
 #include "math.h"
 #include "maths.h"
 #include "mut_models.h"
+#include "string.h"
 
 // *** LOG LIKELIHOODS and POSTERIORS  FOR THE MODELS WITH CLONAL STRAIN + SEQUENCING ERRORS 
 
@@ -174,44 +175,55 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
 				      double err_rate,
 				      int kmer)
 {
+  static const double template1[] = {0.02, 0.1, 0.3, 0.6, 0.8};
+  static const double template2[] = {0.1, 0.2, 0.3, 0.6, 0.8};
+  static const double template3[] = {0.2, 0.3, 0.5, 0.6, 0.8};
+
   Covg r = get_max_covg_on_any_resistant_allele(rvi);
   Covg s = rvi->susceptible_allele.median_covg;
-  if (r+s==0)
-    {
-      return -99999999;
-    }
-  double estim_freq_res = (double) r/(double) (r+s);
 
-  if (estim_freq_res<= 3*err_rate)
+  //We look for sub pop with frequency >= 2*err_rate
+  //take a flat prior for minor resistant allele freq
+  double pr[5];
+  if (err_rate <= 0.01)
     {
-      return -999999999; //not allowing this model unless looks likes both res and susc freq > 3* error rate
+      memcpy(pr, template1, 5*sizeof(double));
     }
-  else if (estim_freq_res>= 1-3*err_rate)
+  else if (err_rate <= 0.05)
     {
-      return -999999999; 
+      memcpy(pr, template2, 5*sizeof(double));
     }
+  else if (err_rate <=0.1)
+    {
+      memcpy(pr, template3, 5*sizeof(double));
+    }
+  else
+    {
+      return -9999999;
+    }
+
+
+  int i;
+
+
+  // likelihood = 0.2*likelihood( |  freq of res allele =pr[0]) + 0.2* likelihood( | freq of res = pr[1]) +..
+  // llk = log (0.2p1+0.2p2+0.2p3+..)
+  //     = log(0.2) + log(p1+p2+..p5)
+  double llk = log(0.2);
+  double p=0;
+  for (i=0; i<5; i++)
+    {
+
+      double r_r = lambda_g * pr[i];
   
-  //Under this model, covg on the susceptible allele is Poisson distributed
-  //with rate at susc allele   r_s = (1-e)^k  *  (D/R) * s/(s+r)
-  double r_s = lambda_g * (1-estim_freq_res);
-  
-  // P(covg_model_susc) = exp(-r_s) * (r_s)^s /s!
-  
-  double log_lik_susc_allele  
-    = -r_s 
-    + s*log(r_s) 
-    - log_factorial(s);
-    
-  //Covg on the resistant allele is Poisson distributed with 
-  // rate at resistant allele = (1-e)^k * lambda * r/(r+s)
-  double r_r = lambda_g * estim_freq_res;
-  
-  double log_lik_res_allele  
-    = -r_r 
-    + r*log(r_r) 
-    - log_factorial(r);
-  
-  return log_lik_susc_allele+log_lik_res_allele;
+      double log_lik_res_allele  
+	= -r_r 
+	+ r*log(r_r) 
+	- log_factorial(r);
+      p += exp(log_lik_res_allele);
+    }
+  llk += log(p);
+  return llk;
   
 }
 
@@ -339,7 +351,13 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi, 
 									       lambda_g, lambda_e,
 									       kmer);
-  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
+  double llk_M=-9999999;
+
+  if (llk_R - llk_S <= MIN_CONFIDENCE )
+    {
+      //don't waste cycles on this unless necessary
+      llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
+    }
 
   best_model->conf=0;
   if (choice==MaxLikelihood)
