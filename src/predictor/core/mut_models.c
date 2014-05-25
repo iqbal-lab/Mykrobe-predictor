@@ -175,12 +175,18 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
 				      double err_rate,
 				      int kmer)
 {
+
   static const double template1[] = {0.02, 0.1, 0.3, 0.6, 0.8};
   static const double template2[] = {0.1, 0.2, 0.3, 0.6, 0.8};
   static const double template3[] = {0.2, 0.3, 0.5, 0.6, 0.8};
 
   Covg r = get_max_covg_on_any_resistant_allele(rvi);
   Covg s = rvi->susceptible_allele.median_covg;
+
+  if (r==0)
+    {
+      return -9999999;
+    }
 
   //We look for sub pop with frequency >= 2*err_rate
   //take a flat prior for minor resistant allele freq
@@ -206,7 +212,8 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
   int i;
 
 
-  // likelihood = 0.2*likelihood( |  freq of res allele =pr[0]) + 0.2* likelihood( | freq of res = pr[1]) +..
+  // likelihood = 0.2*likelihood( | freq of res allele =pr[0]) 
+  //            + 0.2*likelihood( | freq of res = pr[1]) +..
   // llk = log (0.2p1+0.2p2+0.2p3+..)
   //     = log(0.2) + log(p1+p2+..p5)
   double llk = log(0.2);
@@ -215,12 +222,19 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
     {
 
       double r_r = lambda_g * pr[i];
+      double r_s = lambda_g * (1-pr[i]);
   
       double log_lik_res_allele  
 	= -r_r 
 	+ r*log(r_r) 
 	- log_factorial(r);
-      p += exp(log_lik_res_allele);
+
+      double log_lik_sus_allele  
+	= -r_s
+	+ s*log(r_s) 
+	- log_factorial(s);
+
+      p += exp(log_lik_res_allele+log_lik_sus_allele);
     }
   llk += log(p);
   return llk;
@@ -277,11 +291,13 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
   mR.likelihood=llk_R;
   mR.lp = 0;
   mR.conf=0;
+
   Model mS;
   mS.type=Susceptible;
   mS.likelihood=llk_S;
   mS.lp = 0;
   mS.conf=0;
+
   Model mM;
   mM.type=MixedInfection;
   mM.likelihood=llk_M;
@@ -369,9 +385,29 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
       choose_map_model(rvi, llk_R, llk_S, llk_M, best_model, epsilon);
     }
 
-  if (best_model->conf > MIN_CONFIDENCE)
+
+
+  //  if (best_model->conf > MIN_CONFIDENCE)
+  if ( (best_model->type==Susceptible)
+       &&
+       (best_model->conf > MIN_CONFIDENCE) 
+       )
     {
       return best_model->type;
+    }
+  else if (best_model->type != Susceptible)
+    {
+      double m = MAX(llk_M-llk_S,
+		     llk_R-llk_S);
+      
+      if ( m > MIN_CONFIDENCE)
+	{
+	  return best_model->type;
+	}
+      else
+	{
+	  return Unsure;
+	}
     }
   else
     {
