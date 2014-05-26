@@ -363,6 +363,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
+
     Troolean is_amikacin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -385,7 +386,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/amikacin.fa");
 
-      abi->num_mutations = 3;
+      abi->num_mutations = 18;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
@@ -436,6 +437,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 }
 
 
+ 
     Troolean is_streptomycin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -458,7 +460,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/streptomycin.fa");
 
-      abi->num_mutations = 9;
+      abi->num_mutations = 47;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
@@ -584,6 +586,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
+
     Troolean is_quinolones_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -606,7 +609,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/quinolones.fa");
 
-      abi->num_mutations = 10;
+      abi->num_mutations = 60;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
@@ -657,6 +660,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 }
 
 
+
     Troolean is_pyrazinamide_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -679,7 +683,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/pyrazinamide.fa");
 
-      abi->num_mutations = 10;
+      abi->num_mutations = 50;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
@@ -730,6 +734,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 }
 
 
+
     Troolean is_kanamycin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -752,7 +757,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/kanamycin.fa");
 
-      abi->num_mutations = 1;
+      abi->num_mutations = 23;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
@@ -767,7 +772,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-      int first_mut = eis_Cu10T;
+      int first_mut = rrs_A1401X;
       int last_mut = eis_Cu10T;
 
       int i;
@@ -876,6 +881,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 }
 
 
+
     Troolean is_ethambutol_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -898,7 +904,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/ethambutol.fa");
 
-      abi->num_mutations = 3;
+      abi->num_mutations = 18;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
@@ -950,6 +956,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
+
     Troolean is_capreomycin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -972,7 +979,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/capreomycin.fa");
 
-      abi->num_mutations = 3;
+      abi->num_mutations = 18;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
       load_antibiotic_mut_and_gene_info(db_graph,
