@@ -178,7 +178,7 @@ int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi)
 }
 
 
-//finds the (single-digit_ number after the first minus sign
+//finds the (1or2-digit_ number after the first minus sign
 int find_number_resistant_alleles(StrBuf* sbuf)
 {
   uint32_t i;
@@ -187,11 +187,26 @@ int find_number_resistant_alleles(StrBuf* sbuf)
       char c = sbuf->buff[i];
       if (c=='-')
 	{
-	  char d = sbuf->buff[i+1];
-	  int id = d - '0';
-	  if (id>60)
+	  // is it a one or two digit number? 
+	  int id;
+	  char d;
+	  char cc = sbuf->buff[i+2];
+	    if (cc == "-")
+	      {
+	       d = sbuf->buff[i+1];
+	       id = d - '0';
+	      }
+	    else 
+	      {
+		d = sbuf->buff[i+1];
+		int idM = d - '0';
+		char dd = sbuf->buff[i+2];
+		int idd = dd - '0';
+		id = (idM*10) + idd;
+	      }
+	  if (id>99)
 	    {
-	      die("myKrobe is hardcoded to expect a max of 60 resistant alleles - you must have added more since that limit was set\n");
+	      die("myKrobe is hardcoded to expect a max of 99 resistant alleles - you must have added more since that limit was set\n");
 	    }
 	  return id;
 	}
