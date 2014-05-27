@@ -191,7 +191,7 @@ int find_number_resistant_alleles(StrBuf* sbuf)
 	  int id;
 	  char d;
 	  char cc = sbuf->buff[i+2];
-	    if (cc == "-")
+	    if (cc == '-')
 	      {
 	       d = sbuf->buff[i+1];
 	       id = d - '0';
