@@ -320,8 +320,9 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
     {
       return;
     }
-  //read- is in this format
+   // reset resinfo
 
+  //read- is in this format
   //>ref_F99I_panel_fasta_sub-3-dfrB        so this is >ref means susceptible allele, then identifier of which reference, then sub=susbstitution
   //                                          then 3 means there are 3 possibe resistance alleles all implying F-->Y, and finally the gene name
   //CATGTTTTTATATTTGGAGGGCAAACATTATTTGAAGAAATGATTGATAAAGTGGACGAC
@@ -347,6 +348,7 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
   if (rinfo->var_id!= *prev_mut)
     {
       rinfo->working_current_max_sus_allele_present=0;
+      rinfo->working_current_max_res_allele_present=0;
       *prev_mut=rinfo->var_id; //for use in the next call to this function
     }
   //collect min, median covg on allele and also percentage of kmers with any covg

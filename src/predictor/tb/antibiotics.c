@@ -364,6 +364,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
+
     Troolean is_amikacin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -406,7 +407,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       int i;
        //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
+  double max_conf=-9999999999;
   for (i=first_mut; i<=last_mut; i++)
     {
       Model best_model;
@@ -414,9 +415,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     resistotype(abi->mut[i],
            err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
             &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
+      if (max_conf < best_model.conf)
     {
-      min_conf=best_model.conf;
+      max_conf=best_model.conf;
     }
       if (I==Resistant)
     {
@@ -425,7 +426,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
 
 
-  if (min_conf>MIN_CONFIDENCE)
+  if (max_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -435,528 +436,6 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
 
 }
-
-
- 
-    Troolean is_streptomycin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = streptomycin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/streptomycin.fa");
-
-      abi->num_mutations = 47;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = gidB_A138V;
-      int last_mut = rpsL_K88R;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-
-    Troolean is_rifampicin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = rifampicin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/rifampicin.fa");
-
-      abi->num_mutations = 28;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = rpoB_F425X;
-      int last_mut = rpoB_L452X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-
-
-    Troolean is_quinolones_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = quinolones;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/quinolones.fa");
-
-      abi->num_mutations = 60;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = gyrA_H85X;
-      int last_mut = gyrA_D94X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-
-    Troolean is_pyrazinamide_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = pyrazinamide;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/pyrazinamide.fa");
-
-      abi->num_mutations = 50;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = pncA_D49N;
-      int last_mut = pncA_V21G;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-
-    Troolean is_kanamycin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = kanamycin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/kanamycin.fa");
-
-      abi->num_mutations = 23;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = rrs_A1401X;
-      int last_mut = eis_Cu10T;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-    Troolean is_isoniazid_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = isoniazid;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/isoniazid.fa");
-
-      abi->num_mutations = 4;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = katG_S315X;
-      int last_mut = fabG1_Au16X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-
-    Troolean is_ethambutol_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = ethambutol;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/ethambutol.fa");
-
-      abi->num_mutations = 18;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_rvi,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = embB_M306X;
-      int last_mut = embB_G406S;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-      Model best_model;
-      InfectionType I=
-    resistotype(abi->mut[i],
-           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
-    {
-      min_conf=best_model.conf;
-    }
-      if (I==Resistant)
-    {
-      return _False;
-    }
-    }
-
-
-  if (min_conf>MIN_CONFIDENCE)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-}
-
-
-
-
     Troolean is_capreomycin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
@@ -999,7 +478,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       int i;
        //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
+  double max_conf=-9999999999;
   for (i=first_mut; i<=last_mut; i++)
     {
       Model best_model;
@@ -1007,9 +486,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     resistotype(abi->mut[i],
            err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
             &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
+      if (max_conf < best_model.conf)
     {
-      min_conf=best_model.conf;
+      max_conf=best_model.conf;
     }
       if (I==Resistant)
     {
@@ -1018,7 +497,505 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
 
 
-  if (min_conf>MIN_CONFIDENCE)
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    Troolean is_ethambutol_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = ethambutol;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/ethambutol.fa");
+
+      abi->num_mutations = 18;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = embB_M306X;
+      int last_mut = embB_G406S;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    
+    Troolean is_isoniazid_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = isoniazid;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/isoniazid.fa");
+
+      abi->num_mutations = 20;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = katG_S315X;
+      int last_mut = fabG1_Au16X;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    Troolean is_kanamycin_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = kanamycin;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/kanamycin.fa");
+
+      abi->num_mutations = 23;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = rrs_A1401X;
+      int last_mut = eis_Cu10T;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    Troolean is_pyrazinamide_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = pyrazinamide;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/pyrazinamide.fa");
+
+      abi->num_mutations = 50;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = pncA_D49N;
+      int last_mut = pncA_V21G;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    Troolean is_quinolones_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = quinolones;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/quinolones.fa");
+
+      abi->num_mutations = 60;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = gyrA_H85X;
+      int last_mut = gyrA_D94X;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    Troolean is_rifampicin_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = rifampicin;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/rifampicin.fa");
+
+      abi->num_mutations = 168;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = rpoB_F425X;
+      int last_mut = rpoB_L452X;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
+    {
+      return _True;
+    }
+  else
+    {
+      return _Inconclusive;
+    }
+
+}
+    Troolean is_streptomycin_susceptible(dBGraph* db_graph,
+               int (*file_reader)(FILE * fp, 
+                          Sequence * seq, 
+                          int max_read_length, 
+                          boolean new_entry, 
+                          boolean * full_entry),
+                 ReadingUtils* rutils,
+                 ResVarInfo* tmp_rvi,
+                 GeneInfo* tmp_gi,
+                 AntibioticInfo* abi,
+                 StrBuf* install_dir,
+                 int ignore_first, int ignore_last, int expected_covg,
+                 double lambda_g, double lambda_e, double err_rate)
+    {
+      reset_antibiotic_info(abi);
+      
+      //setup antibiotic info object
+      abi->ab = streptomycin;
+      strbuf_append_str(abi->m_fasta, install_dir->buff);
+
+      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/streptomycin.fa");
+
+      abi->num_mutations = 47;
+      abi->num_genes=0;
+      double epsilon = pow(1-err_rate, db_graph->kmer_size);
+      load_antibiotic_mut_and_gene_info(db_graph,
+                        file_reader,
+                        abi,
+                        rutils,
+                        tmp_rvi,
+                        tmp_gi,
+                        ignore_first, ignore_last, expected_covg,
+        install_dir);
+
+
+
+
+      int first_mut = gidB_A138V;
+      int last_mut = rpsL_K88R;
+
+      int i;
+       //if you have any of these resistance alleles - call resistant
+  double max_conf=-9999999999;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      Model best_model;
+      InfectionType I=
+    resistotype(abi->mut[i],
+           err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            &best_model, MaxLikelihood);
+      if (max_conf < best_model.conf)
+    {
+      max_conf=best_model.conf;
+    }
+      if (I==Resistant)
+    {
+      return _False;
+    }
+    }
+
+
+  if (max_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
