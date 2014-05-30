@@ -543,6 +543,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	{
 	  continue;
 	}
+      printf("Test mut %d\n", i);
       any_allele_non_null=true;
       Model best_model;
       InfectionType I=
@@ -561,6 +562,16 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
+
+	  if (I==MixedInfection)
+	    {
+	      printf("MIXED\n");
+	    }
+	  else
+	    {
+	      printf("RES\n");
+	    }
+
 	  return _False;
 	}
 
