@@ -406,7 +406,7 @@ Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant) 
+  if ( (I==Resistant) || (I==MixedInfection) ) 
     {
       return _False;
     }
@@ -470,7 +470,7 @@ Troolean is_penicillin_susceptible(dBGraph* db_graph,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
 
-  if (I==Resistant) 
+  if ( (I==Resistant) || (I==MixedInfection) ) 
     {
       return _False;
     }
@@ -559,7 +559,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	{
 	  min_conf = best_model.conf;
 	}
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -580,7 +580,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -678,7 +678,7 @@ Troolean is_erythromycin_susceptible(dBGraph* db_graph,
 	  min_conf = best_model.conf;
 	}
 
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  if (i<4)
 	    {
@@ -743,7 +743,7 @@ Troolean is_methicillin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant) 
+  if ( (I==Resistant) || (I==MixedInfection) ) 
     {
       return _False;
     }
@@ -825,7 +825,7 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 	  min_conf = best_model.conf;
 	}
 
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -922,7 +922,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 	  min_conf = best_model.conf;
 	}
 
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{	 
 	  return _False;
 	}
@@ -1039,7 +1039,7 @@ Troolean is_tetracycline_susceptible(dBGraph* db_graph,
 	{
 	  min_conf = best_model.conf;
 	}
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -1108,7 +1108,7 @@ Troolean is_mupirocin_susceptible(dBGraph* db_graph,
 			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -1192,7 +1192,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 	{
 	  min_conf = best_model.conf;
 	}
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -1204,19 +1204,11 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     resistotype(abi->mut[fusA_F652S],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
 
   InfectionType I_y654n=
     resistotype(abi->mut[fusA_Y654N],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
       return _False;
@@ -1229,20 +1221,11 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     resistotype(abi->mut[fusA_T326I],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
-
 
   InfectionType I_e468v=
     resistotype(abi->mut[fusA_E468V],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
 
 
   if (I_t326i==Resistant && I_e468v==Resistant)
@@ -1257,37 +1240,21 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     resistotype(abi->mut[fusA_L461F],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
 
   InfectionType I_a376v=
     resistotype(abi->mut[fusA_A376V],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
 
   InfectionType I_a655p=
     resistotype(abi->mut[fusA_A655P],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
 
   InfectionType I_d463g=
     resistotype(abi->mut[fusA_D463G],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
   
   if ( (I_l461f==Resistant)
        &&
@@ -1305,11 +1272,6 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   resistotype(abi->mut[fusA_E444V],
 	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 	      &best_model, MaxLikelihood);
-  if (best_model.conf<min_conf)
-    {
-      min_conf = best_model.conf;
-    }
-
   if ((I_l461f==Resistant)
        &&
       (I_e444v==Resistant) )
@@ -1328,7 +1290,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_FUSBC);
-      if (I==Resistant) 
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  return _False;
 	}
@@ -1397,7 +1359,7 @@ Troolean is_clindamycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant) 
+  if ( (I==Resistant) || (I==MixedInfection) ) 
     {
       return _False;
     }
@@ -1456,7 +1418,7 @@ Troolean is_vancomycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant) 
+  if ( (I==Resistant) || (I==MixedInfection) ) 
     {
       return _False;
     }
