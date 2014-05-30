@@ -67,6 +67,10 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 								double lambda_g, double lambda_e,
 								int kmer);
 
+double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
+				       double lambda_g, double lambda_e,
+				       int kmer);
+
 double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(ResVarInfo* rvi,
 								     double lambda_g, double lambda_e,
 								     int kmer);

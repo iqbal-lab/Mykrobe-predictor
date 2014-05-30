@@ -101,7 +101,7 @@ double get_log_posterior_of_mixed_infection(double llk,
 
 
 
-
+//major population of resistant, assume poisson at 0.75 * expected. ideally dispersed poisson
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
@@ -111,7 +111,18 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 {
   Covg c = get_max_covg_on_any_resistant_allele(rvi);
   return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
-			       lambda_g, lambda_e, kmer);
+			       0.75*lambda_g, lambda_e, kmer);
+
+}
+
+
+double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
+				       double lambda_g, double lambda_e,
+				       int kmer)
+{
+  Covg c = get_max_covg_on_any_resistant_allele(rvi);
+  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+			       0.25*lambda_g, 0.75*lambda_g, kmer);
 
 }
 
@@ -168,8 +179,7 @@ double get_biallelic_log_lik(Covg covg_model_true,//covg on allele the model say
 
 // ***** MIXED INFECTIONS *********
 
-//llk for model where frequency of resistant allele is the point
-//estimate given by allele balance from covgs.
+//minor population of resistant
 double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
 				      double lambda_g,
 				      double err_rate,
@@ -347,8 +357,8 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi, 
 									       lambda_g, lambda_e,
 									       kmer);
-  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
-    
+  //  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
+  double llk_M = get_log_lik_minor_pop_resistant(rvi,lambda_g, lambda_e, kmer);
 
   best_model->conf=0;
   if (choice==MaxLikelihood)
