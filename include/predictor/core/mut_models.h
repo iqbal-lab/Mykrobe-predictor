@@ -32,7 +32,7 @@
 #include "genotyping_known.h"
 
 
-#define MIN_CONFIDENCE 3
+#define MIN_CONFIDENCE 2
 
 typedef enum
   {
