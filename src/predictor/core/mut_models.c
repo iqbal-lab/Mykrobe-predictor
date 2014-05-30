@@ -176,32 +176,28 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
 				      int kmer)
 {
 
-  static const double template1[] = {0.02, 0.1, 0.3, 0.6, 0.8};
-  static const double template2[] = {0.1, 0.2, 0.3, 0.6, 0.8};
-  static const double template3[] = {0.2, 0.3, 0.5, 0.6, 0.8};
-
   Covg r = get_max_covg_on_any_resistant_allele(rvi);
   Covg s = rvi->susceptible_allele.median_covg;
 
-  if (r==0)
+  if ( (r==0) || (s==0) )
     {
       return -9999999;
-    }
+    } 
 
   //We look for sub pop with frequency >= 2*err_rate
   //take a flat prior for minor resistant allele freq
-  double pr[5];
+  double pr;
   if (err_rate <= 0.01)
     {
-      memcpy(pr, template1, 5*sizeof(double));
+      pr=0.1;
     }
   else if (err_rate <= 0.05)
     {
-      memcpy(pr, template2, 5*sizeof(double));
+      pr=0.2;
     }
   else if (err_rate <=0.1)
     {
-      memcpy(pr, template3, 5*sizeof(double));
+      pr=0.3;
     }
   else
     {
@@ -212,32 +208,16 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
   int i;
 
 
-  // likelihood = 0.2*likelihood( | freq of res allele =pr[0]) 
-  //            + 0.2*likelihood( | freq of res = pr[1]) +..
-  // llk = log (0.2p1+0.2p2+0.2p3+..)
-  //     = log(0.2) + log(p1+p2+..p5)
-  double llk = log(0.2);
-  double p=0;
-  for (i=0; i<5; i++)
-    {
-
-      double r_r = lambda_g * pr[i];
-      double r_s = lambda_g * (1-pr[i]);
+  // likelihood = likelihood( | freq of res allele =pr) 
+  double llk = 0;
+  double r_r = lambda_g * pr;
   
-      double log_lik_res_allele  
-	= -r_r 
-	+ r*log(r_r) 
-	- log_factorial(r);
-
-      double log_lik_sus_allele  
-	= -r_s
-	+ s*log(r_s) 
-	- log_factorial(s);
-
-      p += exp(log_lik_res_allele+log_lik_sus_allele);
-    }
-  llk += log(p);
-  return llk;
+  double log_lik_res_allele  
+    = -r_r 
+    + r*log(r_r) 
+    - log_factorial(r);
+  
+  return log_lik_res_allele;
   
 }
 
@@ -367,13 +347,8 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi, 
 									       lambda_g, lambda_e,
 									       kmer);
-  double llk_M=-9999999;
-
-  if (llk_R - llk_S <= MIN_CONFIDENCE )
-    {
-      //don't waste cycles on this unless necessary
-      llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
-    }
+  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
+    
 
   best_model->conf=0;
   if (choice==MaxLikelihood)
@@ -387,18 +362,18 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
 
 
 
-  //  if (best_model->conf > MIN_CONFIDENCE)
-  if ( (best_model->type==Susceptible)
+  if (best_model->conf > MIN_CONFIDENCE)
+  /* if ( ( (best_model->type==Susceptible) || (best_model->type==Resistant) )
        &&
        (best_model->conf > MIN_CONFIDENCE) 
-       )
+       ) */
     {
       return best_model->type;
     }
-  else if (best_model->type != Susceptible)
+  /* else if (best_model->type ==MixedInfection)
     {
-      double m = MAX(llk_M-llk_S,
-		     llk_R-llk_S);
+      double m = MIN(llk_M-llk_S,
+		     llk_M-llk_R);
       
       if ( m > MIN_CONFIDENCE)
 	{
@@ -408,7 +383,7 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
 	{
 	  return Unsure;
 	}
-    }
+	}*/
   else
     {
       return Unsure;

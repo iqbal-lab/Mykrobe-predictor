@@ -235,7 +235,7 @@ int main(int argc, char **argv)
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
   
-  //printf("Expected covg\t%d\n", expected_depth);
+  printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   	      expected_depth, cmd_line->max_expected_sup_len);
   
