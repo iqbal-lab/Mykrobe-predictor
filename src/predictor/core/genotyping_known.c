@@ -178,7 +178,7 @@ int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi)
 }
 
 
-//finds the (1or2-digit_ number after the first minus sign
+//finds the (number after the first minus sign
 int find_number_resistant_alleles(StrBuf* sbuf)
 {
   uint32_t i;
@@ -187,27 +187,55 @@ int find_number_resistant_alleles(StrBuf* sbuf)
       char c = sbuf->buff[i];
       if (c=='-')
 	{
-	  // is it a one or two digit number? 
+	  
 	  int id;
 	  char d;
-	  char cc = sbuf->buff[i+2];
-	    if (cc == '-')
+	  // 4 digit max 
+	    if (sbuf->buff[i+2] == '-')
 	      {
 	       d = sbuf->buff[i+1];
 	       id = d - '0';
 	      }
-	    else 
+	    else if (sbuf->buff[i+3] == '-')
 	      {
-		d = sbuf->buff[i+1];
-		int idM = d - '0';
-		char dd = sbuf->buff[i+2];
-		int idd = dd - '0';
-		id = (idM*10) + idd;
+			d = sbuf->buff[i+1];
+			int idM = d - '0';
+			char dd = sbuf->buff[i+2];
+			int idd = dd - '0';
+			id = (idM*10) + idd;
 	      }
-	  if (id>99)
-	    {
-	      die("myKrobe is hardcoded to expect a max of 99 resistant alleles - you must have added more since that limit was set\n");
-	    }
+	      else if (sbuf->buff[i+4] == '-'){
+	      	d = sbuf->buff[i+1];
+			int idM = d - '0';
+
+			char dd = sbuf->buff[i+2];
+			int idd = dd - '0';
+
+			char ddd = sbuf->buff[i+3];
+			int iddd = ddd - '0';
+
+			id = (idM*100) + (idd*10) + iddd;
+
+	      }
+	      else if (sbuf->buff[i+5] == '-'){
+	      	d = sbuf->buff[i+1];
+			int idM = d - '0';
+
+			char dd = sbuf->buff[i+2];
+			int idd = dd - '0';
+
+			char ddd = sbuf->buff[i+3];
+			int iddd = ddd - '0';
+
+			char dddd = sbuf->buff[i+4];
+			int idddd = dddd - '0';
+
+			id = (idM*1000) + (idd*100) + (iddd*10) + idddd;
+	      	
+	      }
+	      else{
+	      	 die("Too many alternates ");
+	      }
 	  return id;
 	}
     }
@@ -348,7 +376,7 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
   if (rinfo->var_id!= *prev_mut)
     {
       rinfo->working_current_max_sus_allele_present=0;
-      rinfo->working_current_max_res_allele_present=0;
+      // rinfo->working_current_max_res_allele_present=0;
       *prev_mut=rinfo->var_id; //for use in the next call to this function
     }
   //collect min, median covg on allele and also percentage of kmers with any covg
