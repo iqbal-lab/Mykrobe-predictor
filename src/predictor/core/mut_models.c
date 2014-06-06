@@ -119,11 +119,25 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 
 double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
 				       double lambda_g, double lambda_e,
-				       int kmer)
+				       int kmer, double err_rate)
 {
   Covg c = get_max_covg_on_any_resistant_allele(rvi);
+
+  double frac;
+  if (err_rate<0.02)
+    {
+      frac=0.1;
+    }
+  else if (err_rate<=0.1)
+    {
+      frac=0.25;
+    }
+  else
+    {
+      return -999999999;
+    }
   return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
-			       0.25*lambda_g, 0.75*lambda_g, kmer);
+			       frac*lambda_g, 0.75*lambda_g, kmer);
 
 }
 
@@ -359,7 +373,7 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
 									       lambda_g, lambda_e,
 									       kmer);
   //  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
-  double llk_M = get_log_lik_minor_pop_resistant(rvi,lambda_g, lambda_e, kmer);
+  double llk_M = get_log_lik_minor_pop_resistant(rvi,lambda_g, lambda_e, kmer, err_rate);
 
   best_model->conf=0;
   if (choice==MaxLikelihood)
