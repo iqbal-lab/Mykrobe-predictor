@@ -373,7 +373,7 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     }
   else 
     {
-      die("Parsing error - unknown mutation %s\n", sbuf->buff);
+      die("Parsing error - unknown mutation %s for gene %d\n", sbuf->buff, (int) gene);
       return NotSpecified;
     } 
 

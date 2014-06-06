@@ -110,7 +110,7 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 								int kmer)
 {
   Covg c = get_max_covg_on_any_resistant_allele(rvi);
-  printf("Test res model, R covg=%d and S covg=%d\n", c, rvi->susceptible_allele.median_covg);
+  //printf("Test res model, R covg=%d and S covg=%d\n", c, rvi->susceptible_allele.median_covg);
   return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
 			       0.75*lambda_g, lambda_e, kmer);
 
