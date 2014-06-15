@@ -1058,7 +1058,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   strbuf_append_str(abi->m_fasta, install_dir->buff);
 
   strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/fusidic_acid.fa");
-  abi->num_mutations = 961;
+  abi->num_mutations = 984;
 
   abi->which_genes[0]=fusB;
   abi->which_genes[1]=fusC;
