@@ -418,7 +418,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
       if (I==Resistant)
     {
-      return _False;
+      printf("%i\n", abi->mut[i]->var_id );
+      // return _False;
     }
     }
 
@@ -489,7 +490,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
       if (I==Resistant)
     {
-      return _False;
+      printf("%i\n", abi->mut[i]->var_id) ;
+      // return _False;
     }
     }
 
@@ -560,7 +562,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
       if (I==Resistant)
     {
-      return _False;
+      printf("%i\n", abi->mut[i]->var_id) ;
+      // return _False;
     }
     }
 
@@ -629,9 +632,11 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     {
       max_conf=best_model.conf;
     }
+
       if (I==Resistant)
     {
-      return _False;
+       printf("%i\n", abi->mut[i]->var_id) ;
+      // return _False;
     }
     }
 
@@ -702,7 +707,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
       if (I==Resistant)
     {
-      return _False;
+      printf("%i\n", abi->mut[i]->var_id) ;
+      // return _False;
     }
     }
 
@@ -844,7 +850,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
       if (I==Resistant)
     {
-      return _False;
+      printf("%i\n", abi->mut[i]->var_id) ;
+      // return _False;
     }
     }
 
@@ -915,7 +922,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     }
       if (I==Resistant)
     {
-      return _False;
+      printf("%i\n", abi->mut[i]->var_id) ;
+      // return _False;
     }
     }
 
@@ -1052,36 +1060,36 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  if (format==Stdout)
-    {
-      printf("%s\t", tmpbuf->buff);
-      if (suc==_True)
-	{
-	  printf("S\n");
-	}
-      else if (suc==_False)
-	{
-	  printf("R\n");
-	}
-      else
-	{
-	  printf("N\n");
-	}
-    }
-  else
-    {
-      if (suc==_True)
-	{
-	    print_json_item(tmpbuf->buff, "S", output_last);
-	}
-      else if (suc==_False)
-	{
-	  print_json_item(tmpbuf->buff, "R", output_last);
-	}
-      else
-	{
-	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);
-	}
-    }
+ //  if (format==Stdout)
+ //    {
+ //      printf("%s\t", tmpbuf->buff);
+ //      if (suc==_True)
+	// {
+	//   printf("S\n");
+	// }
+ //      else if (suc==_False)
+	// {
+	//   printf("R\n");
+	// }
+ //      else
+	// {
+	//   printf("N\n");
+	// }
+ //    }
+ //  else
+ //    {
+ //      if (suc==_True)
+	// {
+	//     print_json_item(tmpbuf->buff, "S", output_last);
+	// }
+ //      else if (suc==_False)
+	// {
+	//   print_json_item(tmpbuf->buff, "R", output_last);
+	// }
+ //      else
+	// {
+	//   print_json_item(tmpbuf->buff, "Inconclusive", output_last);
+	// }
+ //    }
 
 }
