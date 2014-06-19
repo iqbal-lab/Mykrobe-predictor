@@ -530,6 +530,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 
   //we will call it susceptible, if the least
   //confidnece when calling it not resistant, is > a min
+  double max_sus_conf=0;
   double min_conf=9999999999;
 
 
@@ -548,7 +549,10 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 		    lambda_g, lambda_e, epsilon,
 		    &best_model, MaxLikelihood);
 
-
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
       if ( (best_model.conf<min_conf) && (best_model.conf>0) )
 	{
 	  min_conf = best_model.conf;
@@ -588,7 +592,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
     {
       return _Inconclusive;
     }
-  else if (min_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -787,7 +791,9 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   int i;
 
   //if you have any of these resistance alleles - call resistant
+  double max_sus_conf=0;
   double min_conf=9999999999;
+
   boolean any_allele_non_null=false;
   for (i=first_cip_mut; i<=last_cip_mut; i++)
     {
@@ -801,6 +807,11 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 	resistotype(abi->mut[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		    &best_model, MaxLikelihood);
+
+      if (max_sus_conf<best_model.conf)
+	{
+	  max_sus_conf=best_model.conf;
+	}
       if (min_conf>best_model.conf)
 	{
 	  min_conf=best_model.conf;
@@ -815,7 +826,7 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
     {
       return _Inconclusive;
     }
-  else if (min_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -872,6 +883,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
   //covers all except the two mutations that have to occur together
 
   Model best_model;
+  double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
   for (i=first_rif_mut; i<=last_rif_mut; i++)
@@ -887,6 +899,10 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		    &best_model, MaxLikelihood);
 
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
       if ( (best_model.conf<min_conf) && (best_model.conf>0) )
 	{
 	  min_conf = best_model.conf;
@@ -902,6 +918,10 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
 
+  if ( (I_m470t==Susceptible) && (best_model.conf>max_sus_conf) )
+    {
+      max_sus_conf = best_model.conf;
+    }
   if ( (best_model.conf<min_conf) && (best_model.conf>0) )
     {
       min_conf = best_model.conf;
@@ -912,6 +932,10 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		&best_model, MaxLikelihood);
 
+  if ( (I_d471g ==Susceptible) && (best_model.conf>max_sus_conf) )
+    {
+      max_sus_conf = best_model.conf;
+    }
   if ( (best_model.conf<min_conf) && (best_model.conf>0) )
     {
       min_conf = best_model.conf;
@@ -927,7 +951,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
     {
       return _Inconclusive;
     }
-  else if (min_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -1116,6 +1140,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   int i;
 
   Model best_model;
+  double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
   for (i=first_fus_mut; i<=last_fus_mut; i++)
@@ -1131,6 +1156,10 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		    &best_model, MaxLikelihood);
       
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
       if ( (best_model.conf<min_conf) && (best_model.conf>0) )
 	{
 	  min_conf = best_model.conf;
@@ -1285,7 +1314,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
     {
       return _Inconclusive;
     }
-  else if (min_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
