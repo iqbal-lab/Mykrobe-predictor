@@ -83,6 +83,8 @@ void free_res_var_info(ResVarInfo* rvi);
 void reset_res_var_info(ResVarInfo* rvi);
 void copy_res_var_info(ResVarInfo* from_rvi, ResVarInfo* to_rvi);
 
+boolean both_alleles_null(ResVarInfo* rvi);
+
 void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinfo,
 				   Sequence* seq, KmerSlidingWindow* kmer_window,
 				   int (*file_reader)(FILE * fp, 
