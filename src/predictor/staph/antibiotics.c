@@ -534,8 +534,14 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 
 
   //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
   for (i=first_trim_mut; i<=last_trim_mut; i++)
     {
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
       Model best_model;
       InfectionType I=
 	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
@@ -578,7 +584,11 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	}
     }
 
-  if (min_conf>MIN_CONFIDENCE)
+  if (any_allele_non_null==false) 
+    {
+      return _Inconclusive;
+    }
+  else if (min_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -778,8 +788,14 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 
   //if you have any of these resistance alleles - call resistant
   double min_conf=9999999999;
+  boolean any_allele_non_null=false;
   for (i=first_cip_mut; i<=last_cip_mut; i++)
     {
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
       Model best_model;
       InfectionType I=
 	resistotype(abi->mut[i],
@@ -795,8 +811,11 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 	}
     }
 
-
-  if (min_conf>MIN_CONFIDENCE)
+  if (any_allele_non_null==false)
+    {
+      return _Inconclusive;
+    }
+  else if (min_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -854,9 +873,15 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 
   Model best_model;
   double min_conf=9999999999;
+  boolean any_allele_non_null=false;
   for (i=first_rif_mut; i<=last_rif_mut; i++)
     {
 
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
       InfectionType I=
 	resistotype(abi->mut[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
@@ -897,8 +922,12 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
       return _False; //ignoring mixed infections for epistatic case
     }
 
-  
-  if (min_conf>MIN_CONFIDENCE)
+
+  if (any_allele_non_null==false)
+    {
+      return _Inconclusive;
+    }
+  else if (min_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
@@ -1088,22 +1117,29 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   Model best_model;
   double min_conf=9999999999;
+  boolean any_allele_non_null=false;
   for (i=first_fus_mut; i<=last_fus_mut; i++)
     {
-    InfectionType I=
-      resistotype(abi->mut[i],
-		  err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		  &best_model, MaxLikelihood);
-
-    if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-      {
-	min_conf = best_model.conf;
-      }
-
-    if (I==Resistant)
-      {
-	return _False;
-      }
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
+      
+      InfectionType I=
+	resistotype(abi->mut[i],
+		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		    &best_model, MaxLikelihood);
+      
+      if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+	{
+	  min_conf = best_model.conf;
+	}
+      
+      if (I==Resistant)
+	{
+	  return _False;
+	}
     }
 
   
@@ -1245,7 +1281,11 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 	}
     }
 
-  if (min_conf>MIN_CONFIDENCE)
+  if (any_allele_non_null==false)
+    {
+      return _Inconclusive;
+    }
+  else if (min_conf>MIN_CONFIDENCE)
     {
       return _True;
     }
