@@ -33,12 +33,13 @@
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,
-					 double epsilon,
+					 double recovery_given_sample_and_errors,
+					 double err_rate,
 					 int min_expected);//given known diversity of genes
 
 double get_log_posterior_minor_resistant(double llk,
 					 GeneInfo* gi,
-					 double loss_due_to_sample_and_errors,
+					 double recovery_given_sample_and_errors,
 					 double err_rate,
 					 int min_expected);//given known diversity of genes
 

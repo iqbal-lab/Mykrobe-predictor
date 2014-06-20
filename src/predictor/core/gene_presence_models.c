@@ -33,15 +33,43 @@
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,
-					 double loss_due_to_sample_and_errors,
+					 double recovery_given_sample_and_errors,
+					 double err_rate,
 					 int min_expected)//given known diversity of genes
 
 {
 
   int p = gi->percent_nonzero;
-  if (p>=loss_due_to_sample_and_errors* min_expected)
+
+
+  double freq;
+  if (err_rate<0.001)
+    {
+      //i don't believe the error rate is that low, so fix
+      err_rate=0.005;
+    }
+
+  if (err_rate<0.2)
+    {
+      freq=5*err_rate;
+    }
+  else if (err_rate<0.1)
+    {
+      freq=0.25;
+    }
+  else
+    {
+      freq=0.5;
+    }
+
+
+  if (p>= 0.75*recovery_given_sample_and_errors* min_expected)
     {
       return log(1)+llk;
+    }
+  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
+    {
+      return log(0.5)+llk;
     }
   else
     {
@@ -53,7 +81,7 @@ double get_log_posterior_major_resistant(double llk,
 
 double get_log_posterior_minor_resistant(double llk,
 					 GeneInfo* gi,
-					 double loss_due_to_sample_and_errors,
+					 double recovery_given_sample_and_errors,
 					 double err_rate,
 					 int min_expected)//given known diversity of genes
 
@@ -61,21 +89,31 @@ double get_log_posterior_minor_resistant(double llk,
 
   int p = gi->percent_nonzero;
 
-  double e;
+  double freq;
+
+  if (err_rate<0.001)
+    {
+      //i don't believe the error rate is that low, so fix
+      err_rate=0.005;
+    }
+
   if (err_rate<0.2)
     {
-      e=5*err_rate;
+      freq=5*err_rate;
     }
   else if (err_rate<0.1)
     {
-      e=0.25;
+      freq=0.25;
     }
   else
     {
       return -99999999;
     }
 
-  if (p>=e*loss_due_to_sample_and_errors* min_expected)
+  //double step function
+  if ( (p>= freq * recovery_given_sample_and_errors* min_expected)
+    &&
+       (p<= ((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected) )
     {
       return log(1)+llk;
     }
@@ -89,13 +127,13 @@ double get_log_posterior_minor_resistant(double llk,
 
 double get_log_posterior_truly_susceptible(double llk,
 					   GeneInfo* gi,
-					   double loss_due_to_sample_and_errors,
+					   double recovery_given_sample_and_errors,
 					   int min_expected)
 {
 
   int p = gi->percent_nonzero;
   
-  if (p>=loss_due_to_sample_and_errors*min_expected)
+  if (p>=recovery_given_sample_and_errors*min_expected)
     {
       return -99999999;
     }
@@ -269,6 +307,7 @@ void choose_map_gene_model(GeneInfo* gi,
     = get_log_posterior_major_resistant(llk_R, 
 					gi,
 					loss,
+					err_rate,
 					min_expected_kmer_recovery_for_this_gene);
 
   mM.lp 
