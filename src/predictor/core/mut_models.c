@@ -234,7 +234,6 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
 
 
   // likelihood = likelihood( | freq of res allele =pr) 
-  double llk = 0;
   double r_r = lambda_g * pr;
   
   double log_lik_res_allele  
