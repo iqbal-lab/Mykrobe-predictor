@@ -300,8 +300,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene)
 {
-  double llk_R=1;
-  double llk_M=1;
+  double llk_R=0;
+  double llk_M=0;
   double llk_S = get_log_lik_truly_susceptible(gi, 
 					       lambda_g, 
 					       kmer);
