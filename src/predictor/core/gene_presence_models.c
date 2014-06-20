@@ -239,8 +239,9 @@ void choose_ml_gene_model(double llk_R, double llk_S, double llk_M,
 
 //max a posteriori
 void choose_map_gene_model(GeneInfo* gi,
-			   double llk_R, double llk_S,  double llkM,
-			   Model* best_model, double epsilon, double err_rate, int expected_covg,
+			   double llk_R, double llk_S,  double llk_M,
+			   Model* best_model, double epsilon, 
+			   double err_rate, int expected_covg,
 			   int min_expected_kmer_recovery_for_this_gene)
 {
 
@@ -260,7 +261,7 @@ void choose_map_gene_model(GeneInfo* gi,
   mS.conf=0;
   Model mM;
   mM.type=Susceptible;
-  mM.likelihood=llk_S;
+  mM.likelihood=llk_M;
   mM.lp=0;
   mM.conf=0;
 
@@ -271,7 +272,7 @@ void choose_map_gene_model(GeneInfo* gi,
 					min_expected_kmer_recovery_for_this_gene);
 
   mM.lp 
-    = get_log_posterior_minor_resistant(llk_R, 
+    = get_log_posterior_minor_resistant(llk_M, 
 					gi,
 					loss,
 					err_rate,
