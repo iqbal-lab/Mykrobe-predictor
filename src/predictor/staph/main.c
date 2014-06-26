@@ -162,6 +162,7 @@ int main(int argc, char **argv)
 			    cmd_line->install_dir->buff);
 	  strbuf_append_str(skeleton_flist, 
 			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+	  uint64_t dummy=0;
 	  build_unclean_graph(db_graph, 
 			      skeleton_flist,
 			      true,
@@ -170,7 +171,8 @@ int main(int argc, char **argv)
 			      NULL, 0,
 			      false,
 			      into_colour,
-			      &subsample_null);
+			      &subsample_null,
+			      false, &dummy, 0);
 
 	  //dump binary so can reuse
 	  set_all_coverages_to_zero(db_graph, 0);
@@ -203,6 +205,17 @@ int main(int argc, char **argv)
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
 
+
+  //only need this for progress
+  uint64_t total_reads = 0;
+  uint64_t count_so_far=0;
+  if (cmd_line->progress==true)
+    {
+      timestamp();
+      total_reads=count_all_reads(cmd_line->seq_path, cmd_line->input_list);
+      timestamp();
+    }
+  printf("Total reads is %" PRIu64 "\n", total_reads);
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
@@ -212,7 +225,8 @@ int main(int argc, char **argv)
 				  cmd_line->kmer_covg_array, 
 				  cmd_line->len_kmer_covg_array,
 				  only_load_pre_existing_kmers,
-				  into_colour, subsample_function);
+				  into_colour, subsample_function,
+				  cmd_line->progress, &count_so_far, total_reads);
 
   if (bp_loaded==0)
     {
