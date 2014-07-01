@@ -180,7 +180,10 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
 
   int i;
   double pcov[17]; // for storing the percentage coverage of each reference
-  int sumpcov;
+  double mcov[17]; //median covg
+  double tot_pos_kmers;;
+  double tot_kmers;
+  double med;
   int number_of_reads;
 
 
@@ -246,7 +249,9 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
       // while the entry is valid iterate through the fasta file
       number_of_reads = 0;
       int num_kmers=0;
-      sumpcov = 0;
+      tot_pos_kmers = 0;
+      tot_kmers=0;
+      med=0;
       do {
 	
 	num_kmers= get_next_single_allele_info(fp, db_graph, ai,
@@ -256,18 +261,26 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
 					       working_ca, max_branch_len,
 					       ignore_first, ignore_last);
 	number_of_reads = number_of_reads + 1;
-	sumpcov = sumpcov + ai->percent_nonzero;
-	
+
+	//calculate a running pseudo median, before you update the tots
+	if (tot_kmers+num_kmers>0)
+	  {
+	    med = (med*tot_kmers + (double)ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
+	    tot_kmers += num_kmers;
+	    tot_pos_kmers += num_kmers * (double) (ai->percent_nonzero)/100;
+	  }
+
       } while ( num_kmers>0);
       if (number_of_reads>0)
 	{
-	  pcov[i] = sumpcov / number_of_reads;
+	  pcov[i] = tot_pos_kmers/tot_kmers;
+	  mcov[i] = med;
 	}
       else
 	{
 	  pcov[i]=0;
+	  mcov[i]=0;
 	}
-      
     }
 
   
@@ -287,13 +300,10 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
   int c=0;
   int location=0;
   double maximum=0;
+  double prior[17];
+  double lik[17];
   for (c = 0; c < 17; c++)
     {
-      if (pcov[c] > maximum)
-      {
-         maximum  = pcov[c];
-         location = c;
-      }
     }
 
 

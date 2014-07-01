@@ -46,6 +46,22 @@ typedef enum
   Swarneri = 16,
   } Staph_species ;
 
+typedef enum
+  {
+    PureStaphAureus =0,
+    MajorStaphAureusAndMinorNonCoag = 1,
+    MinorStaphAureusAndMajorNonCoag = 2,
+    NonStaphylococcal = 3,
+  } SampleType;
+
+typedef struct
+{
+  SampleType type;
+  double likelihood;//log likelihood
+  double lp; //log posterior
+  double conf;
+} SampleModel;
+
 void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf);
 Staph_species get_species(dBGraph *db_graph,int max_gene_len, StrBuf* install_dir,
 			  int ignore_first, int ignore_last);
