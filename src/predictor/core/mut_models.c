@@ -272,7 +272,7 @@ int model_cmp_logpost(const void *a, const void *b)
   const Model *ia = (const Model *)a;
   const Model *ib = (const Model *)b;
 
-  //actually log likelihood.
+
   if (ia->lp < ib->lp)
     {
       return -1;

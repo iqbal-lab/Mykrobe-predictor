@@ -34,6 +34,7 @@
 #include <string_buffer.h>
 
 #include "build.h" 
+#include "maths.h" 
 #include "element.h"
 #include "seq.h"
 #include "open_hash/hash_table.h"
@@ -42,104 +43,149 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 
+SampleModel* alloc_and_init_sample_model()
+{
+  SampleModel* sm = (SampleModel*) malloc(sizeof(SampleModel));
+  if (sm==NULL)
+    {
+      die("Cannot malloc tiny object - your computer must be about to die\n");
+    }
+  sm->type=PureStaphAureus;
+  sm->likelihood = 0;
+  sm->lp=0;
+  sm->conf=0;
+  sm->name_of_non_aureus_species = strbuf_new();
+  return sm;
+}
 
+void free_sample_model(SampleModel* sm)
+{
+  strbuf_free(sm->name_of_non_aureus_species);
+  free(sm);
+}
 void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
 {
   if (sp==Scapitis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.capitis");
+      strbuf_append_str(sbuf,"S. capitis");
     }
   else if (sp==Scaprae)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.caprae");
+      strbuf_append_str(sbuf,"S. caprae");
     }
   else if (sp==Sepidermidis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.epidermidis");
+      strbuf_append_str(sbuf,"S. epidermidis");
     }
   else if (sp==Sequorum)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.equorum");
+      strbuf_append_str(sbuf,"S. equorum");
     }
   else if (sp==Shaemolyticus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.haemolyticus");
+      strbuf_append_str(sbuf,"S. haemolyticus");
     }
   else if (sp==Shominis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.hominis");
+      strbuf_append_str(sbuf,"S. hominis");
     }
   else if (sp==Slugdunensis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.lugdunensis");
+      strbuf_append_str(sbuf,"S. lugdunensis");
     }
   else if (sp==Smassiliensis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.massiliensis");
+      strbuf_append_str(sbuf,"S. massiliensis");
     }
   else if (sp==Spettenkofer)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.pettenkofer");
+      strbuf_append_str(sbuf,"S. pettenkofer");
     }
   else if (sp==Spseudintermedius)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.pseudintermedius");
+      strbuf_append_str(sbuf,"S. pseudintermedius");
     }
   else if (sp==Ssaprophyticus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.saprophyticus");
+      strbuf_append_str(sbuf,"S. saprophyticus");
     }
   else if (sp==Ssimiae)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.simiae");
+      strbuf_append_str(sbuf,"S. simiae");
     }
   else if (sp==Ssimulans)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"Ssimulans");
+      strbuf_append_str(sbuf,"S. simulans");
     }
   else if (sp==Ssphgb0015)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.sphgb0015");
+      strbuf_append_str(sbuf,"Staphylococcus sp. HGB0015");
     }
   else if (sp==Sspoj82)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.spoj82");
+      strbuf_append_str(sbuf,"Staphylococcus sp. OJ82");
     }
   else if (sp==Aureus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.aureus");
+      strbuf_append_str(sbuf,"S. aureus");
     }
   else if (sp==Swarneri)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S.warneri");
+      strbuf_append_str(sbuf,"S. warneri");
     }
   else
     {
-      die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value - got %d\n", (int) sp);
     }
   
 }
 
 
-Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
-			  int ignore_first, int ignore_last)
+
+int sample_model_cmp_logpost(const void *a, const void *b)
+{
+  // casting pointer types
+  const SampleModel *ia = *(const SampleModel **)a;
+  const SampleModel *ib = *(const SampleModel **)b;
+
+
+  if (ia->lp < ib->lp)
+    {
+      return -1;
+    }
+  else if (ia->lp > ib->lp)
+    {
+      return 1;
+    }
+  else
+    {
+      return 0;
+    }
+}
+
+SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
+			     double lambda_g_err, double lambda_e_err, double err_rate,
+			     int expected_covg,
+			     int ignore_first, int ignore_last,
+			     SampleModel* best_model)
+
 {
   // Define the paths to the possible species
   StrBuf* species_file_paths[17];
@@ -296,18 +342,245 @@ Staph_species get_species(dBGraph *db_graph,int max_branch_len, StrBuf* install_
     {
       strbuf_free(species_file_paths[i]);
     }
-  // Look at the max of the pcov
-  int c=0;
-  int location=0;
-  double maximum=0;
-  double prior[17];
-  double lik[17];
-  for (c = 0; c < 17; c++)
+
+
+  
+  SampleModel* M_pure_sa=alloc_and_init_sample_model();
+  SampleModel* M_maj_sa=alloc_and_init_sample_model();
+  SampleModel* M_min_sa=alloc_and_init_sample_model();
+  SampleModel* M_non_staph=alloc_and_init_sample_model();
+
+  get_stats_pure_aureus(expected_covg, err_rate,
+			lambda_g_err, lambda_e_err,
+			pcov, mcov,
+			M_pure_sa);
+  get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
+				lambda_g_err,
+				pcov, mcov, 
+				0.9, M_maj_sa);
+  get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
+				lambda_g_err,
+				pcov, mcov, 
+				0.1, M_min_sa);
+
+  get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
+		      pcov, mcov, M_non_staph);
+
+  SampleModel* marray[4] = {M_pure_sa, M_maj_sa, M_min_sa, M_non_staph};
+  qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
+  best_model->conf = marray[3]->lp - marray[2]->lp;
+  best_model->type = marray[3]->type;
+  best_model->likelihood = marray[3]->likelihood;
+  best_model->lp = marray[3]->lp;
+  strbuf_reset(best_model->name_of_non_aureus_species);
+  strbuf_append_str(best_model->name_of_non_aureus_species, 
+		    marray[3]->name_of_non_aureus_species->buff);
+  //cleanup
+  free_sample_model(M_pure_sa);
+  free_sample_model(M_maj_sa);
+  free_sample_model(M_min_sa);
+  free_sample_model(M_non_staph);
+
+  return best_model->type;
+  
+}
+
+
+Staph_species get_best_hit(double* arr_perc_cov, 
+			   double* arr_median, 
+			   boolean* found, 
+			   boolean exclude_aureus)
+{
+  int i;
+  double prod=0;
+  int curr=-1;
+  for (i=0; i<NUM_SPECIES; i++)
     {
+      if ((Staph_species)i==Aureus)
+	{
+	  continue;
+	}
+      if (arr_perc_cov[i] * arr_median[i]>prod)
+	{
+	  prod = arr_perc_cov[i] * arr_median[i];
+	  curr=i;
+	}
+    }
+  if (curr==-1)
+    {
+      *found=false;
+      return Aureus;
+    }
+  else
+    {
+      *found=true;
+      return (Staph_species) curr;
+    }
+}
+
+void get_stats_pure_aureus(int expected_covg, double err_rate, 
+			     double lambda_g_err,double lambda_e,
+			     double* arr_perc_covg, double* arr_median,
+			     SampleModel* sm)
+
+{
+
+  //which Staph non-aureus is best hit
+  boolean found=true;
+  boolean exclude_aureus=true;
+  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_aureus);
+
+
+  //now deal with aureus
+  double recovery_expected = 1-exp(-expected_covg);
+  
+  double lpr;
+  if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
+    {
+      lpr=log(1);
+    }
+  else if (arr_perc_covg[Aureus] > 0.5*recovery_expected)
+    {
+      lpr=log(0.5);
+    }
+  else
+    {
+      lpr=-99999999;
     }
 
 
-  Staph_species species_out =  location;
-  return species_out;
+  double llk = -lambda_g_err + arr_median[Aureus]*log(lambda_g_err) - log_factorial(arr_median[Aureus]);
 
+
+  //now we need to account for coverage on non-aureus
+  double lpe=0;
+  double llke = -lambda_e + arr_median[best]*log(lambda_e) - log_factorial(arr_median[best]);
+
+  sm->likelihood = llk+llke;
+  sm->lp=llk+lpr;
+  map_species_enum_to_str(Aureus, sm->name_of_non_aureus_species);
+  sm->type=PureStaphAureus;
 }
+
+
+
+//CONG=coag neg
+void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double lambda_g_err,
+				     double* arr_perc_covg, double* arr_median,
+				     double frac_aureus,
+				     SampleModel* sm)
+{
+  if ( (frac_aureus<0.001) || (frac_aureus>0.999) )
+    {
+      die("Do not call get_stats_mix_aureus_and_CONG when frac==0 or 1 -= programming error\n");
+    }
+  boolean found=true;
+  boolean exclude_aureus=true;
+  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_aureus);
+  if (found==true)
+    {
+      map_species_enum_to_str((Staph_species) best, sm->name_of_non_aureus_species);
+    }
+  else
+    {
+      strbuf_append_str(sm->name_of_non_aureus_species, "Failed to find coag-neg - this is default text only - if you see it, it is a bug\n");
+    }
+
+  if (found==false)
+    {
+      sm->likelihood=-9999999;
+      sm->lp=-99999999;
+    }
+  else
+    {
+      double aureus_recovery_expected = frac_aureus*(1-exp(-expected_covg));
+
+      double aureus_lpr;
+      if (arr_perc_covg[Aureus] > 0.75*aureus_recovery_expected)
+	{
+	  aureus_lpr=log(1);
+	}
+      else if (arr_perc_covg[Aureus] > 0.5*aureus_recovery_expected)
+        {
+          aureus_lpr=log(0.5);
+        }
+      else
+	{
+	  aureus_lpr=-999999;
+	}
+      double llk_aureus = -frac_aureus*lambda_g_err + arr_median[Aureus]*log(frac_aureus*lambda_g_err) - log_factorial(arr_median[Aureus]);
+
+
+      //now do the same for the minor population
+      double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg));
+
+      double cong_lpr;
+      if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
+	{
+	  cong_lpr=log(1);
+	}
+      else if (arr_perc_covg[best] > 0.5*cong_recovery_expected)
+        {
+          cong_lpr=log(0.5);
+        }
+      else
+	{
+	  cong_lpr=-999999;
+	}
+      double llk_cong = -(1-frac_aureus)*lambda_g_err 
+	+ arr_median[best]*log((1-frac_aureus)*lambda_g_err) 
+	- log_factorial(arr_median[best]);
+
+
+      sm->likelihood = llk_aureus+llk_cong;
+      sm->lp =sm->likelihood+aureus_lpr+cong_lpr;;
+
+    }
+  if (frac_aureus>0.5)
+    {
+      sm->type=MajorStaphAureusAndMinorNonCoag;
+    }
+  else
+    {
+      sm->type = MinorStaphAureusAndMajorNonCoag;
+    }
+}
+
+
+void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
+			   double* arr_perc_covg, double* arr_median,
+			   SampleModel* sm)
+{
+  strbuf_append_str(sm->name_of_non_aureus_species, "Non-staphylococcal");
+  boolean found=true;
+  boolean exclude_aureus=false;
+  //do ANY staphylococci get a decent hit?
+  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_aureus);
+
+  if (found==false)
+    {
+      //found no evidence of any Staphylococcus at all
+      sm->likelihood=0;
+      sm->lp=0;
+    }
+
+
+  else
+    {
+      //all coverage must be errors
+      double llk = -lambda_e + arr_median[best]*log(lambda_e) -log_factorial(arr_median[best]);
+      double lpr;
+      if (arr_perc_covg[best]>0.1)
+	{
+	  lpr=-9999999;
+	}
+      else
+	{
+	  lpr=0;
+	}
+      sm->likelihood=llk;
+      sm->lp = llk+lpr;
+    }  
+  sm->type = NonStaphylococcal;
+}
+

@@ -215,7 +215,7 @@ int main(int argc, char **argv)
       total_reads=count_all_reads(cmd_line->seq_path, cmd_line->input_list);
       timestamp();
     }
-  printf("Total reads is %" PRIu64 "\n", total_reads);
+  //  printf("Total reads is %" PRIu64 "\n", total_reads);
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
@@ -266,21 +266,47 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
-				 1,1);
-  map_species_enum_to_str(sp,tmp_name);
+  SampleModel* species_mod = alloc_and_init_sample_model();
+  SampleType st = get_species_model(db_graph, 10000, cmd_line->install_dir,
+				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
+				    1,1,
+				    species_mod);
+
   if (cmd_line->format==Stdout)
     {
-      printf("** Species\n%s\n", tmp_name->buff);
-      if (sp != Aureus)
+      printf("** Species\n");
+      if (st == MajorStaphAureusAndMinorNonCoag)
 	{
-	  printf("** No AMR predictions for coag-negative staphylococci\n** End time\n");
+	  strbuf_append_str(tmp_name, "S. aureus + (minor population/contaminant) ");
+	  strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+	  printf("** %s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
+	  free_sample_model(species_mod);
 	  return 0;
 	}
+      else if (st == MinorStaphAureusAndMajorNonCoag)
+	{
+	  strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+	  strbuf_append_str(tmp_name, " + (minor population/contaminant) S. aureus");
+	  printf("** %s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
+	  timestamp();
+	  free_sample_model(species_mod);
+	  return 0;
+	}
+      else if (st == NonStaphylococcal)
+	{
+	  strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+	  printf("** %s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
+	  timestamp();
+	  free_sample_model(species_mod);
+	  return 0;
+	}
+
       else
 	{
+	  printf("S. aureus\n");
 	  timestamp();
+	  free_sample_model(species_mod);
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
     }
@@ -290,7 +316,7 @@ int main(int argc, char **argv)
       print_json_species_start();
       print_json_item(tmp_name->buff, "1", true);
       print_json_species_end(); 
-      if (sp != Aureus)
+      if (st != PureStaphAureus)
 	{
 	  print_json_susceptibility_start(); 
 	  print_json_susceptibility_end();
