@@ -396,7 +396,7 @@ Staph_species get_best_hit(double* arr_perc_cov,
   int curr=-1;
   for (i=0; i<NUM_SPECIES; i++)
     {
-      if ((Staph_species)i==Aureus)
+      if ( (exclude_aureus==true) && ((Staph_species)i==Aureus))
 	{
 	  continue;
 	}
@@ -563,8 +563,6 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
       sm->likelihood=0;
       sm->lp=0;
     }
-
-
   else
     {
       //all coverage must be errors
