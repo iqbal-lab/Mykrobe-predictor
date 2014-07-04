@@ -211,9 +211,9 @@ int main(int argc, char **argv)
   uint64_t count_so_far=0;
   if (cmd_line->progress==true)
     {
-      timestamp();
+      //timestamp();
       total_reads=count_all_reads(cmd_line->seq_path, cmd_line->input_list);
-      timestamp();
+      //timestamp();
     }
   //  printf("Total reads is %" PRIu64 "\n", total_reads);
   bp_loaded = build_unclean_graph(db_graph, 
@@ -249,7 +249,6 @@ int main(int argc, char **argv)
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
   
-  printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   	      expected_depth, cmd_line->max_expected_sup_len);
   
@@ -272,50 +271,67 @@ int main(int argc, char **argv)
 				    1,1,
 				    species_mod);
 
+  if (st == MajorStaphAureusAndMinorNonCoag)
+    {
+      strbuf_append_str(tmp_name, "S. aureus + (minor pop.) ");
+      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+    }
+  else if (st == MinorStaphAureusAndMajorNonCoag)
+    {
+      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+      strbuf_append_str(tmp_name, " + (minor pop.) S. aureus");
+    }
+  else if (st == NonStaphylococcal)
+    {
+      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+    }
+  else
+    {
+      strbuf_append_str(tmp_name, "S. aureus");
+    }
+
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n");
-      if (st == MajorStaphAureusAndMinorNonCoag)
+      if (st != PureStaphAureus)
 	{
-	  strbuf_append_str(tmp_name, "S. aureus + (minor population/contaminant) ");
-	  strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
-	  printf("** %s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
+	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
 	  free_sample_model(species_mod);
 	  return 0;
 	}
-      else if (st == MinorStaphAureusAndMajorNonCoag)
-	{
-	  strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
-	  strbuf_append_str(tmp_name, " + (minor population/contaminant) S. aureus");
-	  printf("** %s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
-	  timestamp();
-	  free_sample_model(species_mod);
-	  return 0;
-	}
-      else if (st == NonStaphylococcal)
-	{
-	  strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
-	  printf("** %s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
-	  timestamp();
-	  free_sample_model(species_mod);
-	  return 0;
-	}
-
       else
 	{
-	  printf("S. aureus\n");
+
 	  timestamp();
 	  free_sample_model(species_mod);
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
     }
-  else
+  else//JSON
     {
       print_json_start();
       print_json_species_start();
-      print_json_item(tmp_name->buff, "1", true);
+      if (st == PureStaphAureus)
+	{
+	  print_json_item("S. aureus", "Major", true);
+	}
+      else if (st == MajorStaphAureusAndMinorNonCoag) 
+	{
+	  print_json_item("S. aureus", "Major",false);
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
+	}
+      else if (st==MinorStaphAureusAndMajorNonCoag) 
+	{
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", false);
+	  print_json_item("S. aureus", "Minor", true);
+	}
+      else
+	{
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", true);
+	}
       print_json_species_end(); 
+
       if (st != PureStaphAureus)
 	{
 	  print_json_susceptibility_start(); 

@@ -3109,7 +3109,7 @@ uint64_t count_reads_in_file(StrBuf* file)
     }
 
   seq_file_close(sf);
-  printf("Found %" PRIu64 " reads\n", count);
+  //  printf("Found %" PRIu64 " reads\n", count);
   return count;
   
 }
