@@ -158,6 +158,18 @@ boolean both_alleles_null(ResVarInfo* rvi)
 
 //util funcs
 
+//if both alleles have median zero
+boolean both_alleles_null(ResVarInfo* rvi)
+{
+  Covg c = get_max_perc_covg_on_any_resistant_allele(rvi);
+
+  if ( (rvi->susceptible_allele.percent_nonzero==0)
+       && (c==0) )
+    {
+      return true;
+    }
+  return false;
+}
 Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi)
 {
   int i;
@@ -335,17 +347,23 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
   strbuf_reset(temp_readid_buf);
   strbuf_reset(temp_mut_buf);
   strbuf_append_str(temp_readid_buf, seq->name);
-  rinfo->num_resistant_alleles = find_number_resistant_alleles(temp_readid_buf);
+  int r = find_number_resistant_alleles(temp_readid_buf);
   find_gene_name(temp_readid_buf, temp_gene_name_buf);
-  rinfo->gene = map_gene_name_str_to_genename(temp_gene_name_buf);
+  GeneMutationGene g  = map_gene_name_str_to_genename(temp_gene_name_buf);
   find_mutation_name(temp_readid_buf, temp_mut_buf);
-  rinfo->var_id = map_mutation_name_to_enum(temp_mut_buf ,rinfo->gene);
+  KnownMutation km = map_mutation_name_to_enum(temp_mut_buf ,g);
 
   if (rinfo->var_id!= *prev_mut)
     {
-      rinfo->working_current_max_sus_allele_present=0;
-      *prev_mut=rinfo->var_id; //for use in the next call to this function
+      reset_res_var_info(rinfo);
+      //rinfo->working_current_max_sus_allele_present=0;
+      //rinfo->working_current_max_res_allele_present=0;
+      *prev_mut=km; //for use in the next call to this function
     }
+  rinfo->gene=g;
+  rinfo->var_id=km;
+  rinfo->num_resistant_alleles=r;
+
   //collect min, median covg on allele and also percentage of kmers with any covg
   boolean too_short=false;
 
