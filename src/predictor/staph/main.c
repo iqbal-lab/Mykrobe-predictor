@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 	}
       else
 	{
-	  printf("%s\n", tmp_name->buff);)
+	  printf("%s\n", tmp_name->buff);
 	  timestamp();
 	  free_sample_model(species_mod);
 	  printf("** Antimicrobial susceptibility predictions\n");
