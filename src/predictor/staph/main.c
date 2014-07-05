@@ -273,13 +273,12 @@ int main(int argc, char **argv)
 
   if (st == MajorStaphAureusAndMinorNonCoag)
     {
-      strbuf_append_str(tmp_name, "S. aureus + (minor pop.) ");
+      strbuf_append_str(tmp_name, "S.aureus + (minor pop.) ");
       strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
     }
   else if (st == MinorStaphAureusAndMajorNonCoag)
     {
       strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
-      strbuf_append_str(tmp_name, " + (minor pop.) S. aureus");
     }
   else if (st == NonStaphylococcal)
     {
@@ -287,7 +286,7 @@ int main(int argc, char **argv)
     }
   else
     {
-      strbuf_append_str(tmp_name, "S. aureus");
+      strbuf_append_str(tmp_name, "S.aureus");
     }
 
   if (cmd_line->format==Stdout)
@@ -314,17 +313,16 @@ int main(int argc, char **argv)
       print_json_species_start();
       if (st == PureStaphAureus)
 	{
-	  print_json_item("S. aureus", "Major", true);
+	  print_json_item("S.aureus", "Major", true);
 	}
       else if (st == MajorStaphAureusAndMinorNonCoag) 
 	{
-	  print_json_item("S. aureus", "Major",false);
+	  print_json_item("S.aureus", "Major",false);
 	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
 	}
       else if (st==MinorStaphAureusAndMajorNonCoag) 
 	{
-	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", false);
-	  print_json_item("S. aureus", "Minor", true);
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", true);
 	}
       else
 	{

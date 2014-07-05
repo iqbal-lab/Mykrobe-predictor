@@ -68,67 +68,67 @@ void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
   if (sp==Scapitis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. capitis");
+      strbuf_append_str(sbuf,"S.capitis");
     }
   else if (sp==Scaprae)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. caprae");
+      strbuf_append_str(sbuf,"S.caprae");
     }
   else if (sp==Sepidermidis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. epidermidis");
+      strbuf_append_str(sbuf,"S.epidermidis");
     }
   else if (sp==Sequorum)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. equorum");
+      strbuf_append_str(sbuf,"S.equorum");
     }
   else if (sp==Shaemolyticus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. haemolyticus");
+      strbuf_append_str(sbuf,"S.haemolyticus");
     }
   else if (sp==Shominis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. hominis");
+      strbuf_append_str(sbuf,"S.hominis");
     }
   else if (sp==Slugdunensis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. lugdunensis");
+      strbuf_append_str(sbuf,"S.lugdunensis");
     }
   else if (sp==Smassiliensis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. massiliensis");
+      strbuf_append_str(sbuf,"S.massiliensis");
     }
   else if (sp==Spettenkofer)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. pettenkofer");
+      strbuf_append_str(sbuf,"S.pettenkofer");
     }
   else if (sp==Spseudintermedius)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. pseudintermedius");
+      strbuf_append_str(sbuf,"S.pseudintermedius");
     }
   else if (sp==Ssaprophyticus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. saprophyticus");
+      strbuf_append_str(sbuf,"S.saprophyticus");
     }
   else if (sp==Ssimiae)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. simiae");
+      strbuf_append_str(sbuf,"S.simiae");
     }
   else if (sp==Ssimulans)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. simulans");
+      strbuf_append_str(sbuf,"S.simulans");
     }
   else if (sp==Ssphgb0015)
     {
@@ -143,12 +143,12 @@ void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf)
   else if (sp==Aureus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. aureus");
+      strbuf_append_str(sbuf,"S.aureus");
     }
   else if (sp==Swarneri)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"S. warneri");
+      strbuf_append_str(sbuf,"S.warneri");
     }
   else
     {
