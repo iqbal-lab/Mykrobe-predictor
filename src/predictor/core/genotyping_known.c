@@ -142,18 +142,6 @@ void reset_res_var_info(ResVarInfo* rvi)
   rvi->working_current_max_sus_allele_present=0;
 }
 
-//if both alleles have median zero
-boolean both_alleles_null(ResVarInfo* rvi)
-{
-  Covg c = get_max_perc_covg_on_any_resistant_allele(rvi);
-
-  if ( (rvi->susceptible_allele.percent_nonzero==0)
-       && (c==0) )
-    {
-      return true;
-    }
-  return false;
-}
 
 
 //util funcs
