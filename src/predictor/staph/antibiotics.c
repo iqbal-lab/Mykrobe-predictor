@@ -561,16 +561,6 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-
-	  if (I==MixedInfection)
-	    {
-	      printf("MIXED\n");
-	    }
-	  else
-	    {
-	      printf("RES\n");
-	    }
-
 	  return _False;
 	}
 
