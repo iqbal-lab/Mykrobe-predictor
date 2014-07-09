@@ -51,6 +51,7 @@ void timestamp();
 
 int main(int argc, char **argv)
 {
+  setvbuf(stdout, NULL, _IOLBF, 0);
 
   // VERSION_STR is passed from the makefile -- usually last commit hash
   printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
