@@ -44,6 +44,8 @@
 
 extern int MAX_FILENAME_LENGTH;
 extern int MAX_READ_LENGTH;
+#define PROGRESS_STEP 50000
+
 
 typedef enum {
   EValid                        = 0,
