@@ -1063,6 +1063,7 @@ void load_se_seq_data_into_graph_colour(
     if ( (print_progress==true) && (*count_so_far % 50000==0) )
       {
 	printf("Progress %" PRIu64 "/%" PRIu64 "\n", *count_so_far, denom_for_progress);
+	fflush(stdout);
       }
     if(_read_first_kmer(sf, kmer_str, qual_str, kmer_size, read_qual,
                         quality_cutoff, homopolymer_cutoff, 0, 0))
