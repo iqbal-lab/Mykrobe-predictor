@@ -43,14 +43,19 @@ double get_log_posterior_major_resistant(double llk,
 
 
   double freq;
+
+  //prevent having too small err rate
   if (err_rate<0.001)
     {
       //i don't believe the error rate is that low, so fix
       err_rate=0.005;
     }
-  else if (err_rate<0.02)
+
+
+  //depending on err rate, set freq
+  if (err_rate<0.02)
     {
-      freq=5;
+      freq=0.05;
     }
   else if (err_rate<0.1)
     {
