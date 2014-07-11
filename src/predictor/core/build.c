@@ -196,7 +196,8 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       boolean (*subsample_function)(),
 				       boolean print_progress_info,
 				       uint64_t* count_so_far,
-				       uint64_t total_reads_in_dataset)
+				       uint64_t total_reads_in_dataset,
+				       boolean* is_a_remainder)
 {
 
 
@@ -262,6 +263,10 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
   db_graph_get_covg_distribution_array(db_graph, 0, &db_node_condition_always_true,
 				       kmer_covg_array, len_kmer_covg_array);
 
+  if (*count_so_far % PROGRESS_STEP==0)
+    {
+      is_a_remainder=false;
+    }
   return total_bases_loaded;
 }
 

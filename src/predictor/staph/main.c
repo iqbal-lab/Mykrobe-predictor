@@ -164,6 +164,7 @@ int main(int argc, char **argv)
 	  strbuf_append_str(skeleton_flist, 
 			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
 	  uint64_t dummy=0;
+	  boolean is_rem=true;
 	  build_unclean_graph(db_graph, 
 			      skeleton_flist,
 			      true,
@@ -173,7 +174,7 @@ int main(int argc, char **argv)
 			      false,
 			      into_colour,
 			      &subsample_null,
-			      false, &dummy, 0);
+			      false, &dummy, 0, &is_rem);
 
 	  //dump binary so can reuse
 	  set_all_coverages_to_zero(db_graph, 0);
@@ -217,6 +218,7 @@ int main(int argc, char **argv)
       //timestamp();
     }
   //  printf("Total reads is %" PRIu64 "\n", total_reads);
+  boolean progressbar_remainder=true;
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
@@ -227,8 +229,13 @@ int main(int argc, char **argv)
 				  cmd_line->len_kmer_covg_array,
 				  only_load_pre_existing_kmers,
 				  into_colour, subsample_function,
-				  cmd_line->progress, &count_so_far, total_reads);
-
+				  cmd_line->progress, &count_so_far, total_reads,
+				  &progressbar_remainder);
+  if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
+    {
+      printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
+      fflush(stdout);
+    }
   if (bp_loaded==0)
     {
       printf("No data\n");

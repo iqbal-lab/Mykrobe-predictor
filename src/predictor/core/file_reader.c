@@ -1060,7 +1060,7 @@ void load_se_seq_data_into_graph_colour(
   {
     //printf("Started seq read: %s\n", seq_get_read_name(sf));
     (*count_so_far)=(*count_so_far)+1;
-    if ( (print_progress==true) && (*count_so_far % 50000==0) )
+    if ( (print_progress==true) && (*count_so_far % PROGRESS_STEP==0) )
       {
 	printf("Progress %" PRIu64 "/%" PRIu64 "\n", *count_so_far, denom_for_progress);
 	fflush(stdout);
