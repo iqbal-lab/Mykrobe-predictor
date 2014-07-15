@@ -34,6 +34,7 @@
 #include "genotyping_known.h"
 #include "known_mutations.h"
 #include "file_reader.h"
+#include "mut_models.h"
 #include "json.h"
 #include "global.h"
 
@@ -127,7 +128,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       int ignore_first, int ignore_last, int expected_covg,
 				       StrBuf* install_dir);
 
-Troolean is_gentamicin_susceptible(dBGraph* db_graph,
+InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -143,7 +144,7 @@ Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 				  );
 
 
-Troolean is_penicillin_susceptible(dBGraph* db_graph,
+InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -157,7 +158,7 @@ Troolean is_penicillin_susceptible(dBGraph* db_graph,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate
 				  );
-Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
+InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -172,7 +173,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 				    double lambda_g, double lambda_e, double err_rate
 				  );
 
-Troolean is_erythromycin_susceptible(dBGraph* db_graph,
+InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -188,7 +189,7 @@ Troolean is_erythromycin_susceptible(dBGraph* db_graph,
 				    boolean* any_erm_present
 				    );
 
-Troolean is_methicillin_susceptible(dBGraph* db_graph,
+InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -203,7 +204,7 @@ Troolean is_methicillin_susceptible(dBGraph* db_graph,
 				   double lambda_g, double lambda_e, double err_rate
 				  );
 
-Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
+InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     int (*file_reader)(FILE * fp, 
 							Sequence * seq, 
 							int max_read_length, 
@@ -218,7 +219,7 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     double lambda_g, double lambda_e, double err_rate
 				     );
 
-Troolean is_rifampicin_susceptible(dBGraph* db_graph,
+InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -233,7 +234,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 				  double lambda_g, double lambda_e, double err_rate
 				  );
 
-Troolean is_tetracycline_susceptible(dBGraph* db_graph,
+InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -247,7 +248,7 @@ Troolean is_tetracycline_susceptible(dBGraph* db_graph,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate);
 
-Troolean is_mupirocin_susceptible(dBGraph* db_graph,
+InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
 						    Sequence * seq, 
 						    int max_read_length, 
@@ -262,7 +263,7 @@ Troolean is_mupirocin_susceptible(dBGraph* db_graph,
 				 double lambda_g, double lambda_e, double err_rate);
 
 
-Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
+InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -278,7 +279,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
 //this really only asks if it is CONSTITUTIVELY susceptobe;/resistant.
 //inducible resistance covered elsewhere
-Troolean is_clindamycin_susceptible(dBGraph* db_graph,
+InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -292,7 +293,7 @@ Troolean is_clindamycin_susceptible(dBGraph* db_graph,
 				   int ignore_first, int ignore_last, int expected_covg,
 				   double lambda_g, double lambda_e, double err_rate);
 
-Troolean is_vancomycin_susceptible(dBGraph* db_graph,
+InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -316,7 +317,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					ResVarInfo* tmp_rvi,
 					GeneInfo* tmp_gi,
 					AntibioticInfo* abi,
-					Troolean (*func)(dBGraph* db_graph,
+					InfectionType (*func)(dBGraph* db_graph,
 							int (*file_reader)(FILE * fp, 
 									   Sequence * seq, 
 									   int max_read_length, 
@@ -345,7 +346,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  ResVarInfo* tmp_rvi,
 					  GeneInfo* tmp_gi,
 					  AntibioticInfo* abi,
-					  Troolean (*func)(dBGraph* db_graph,
+					  InfectionType (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -377,7 +378,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 ResVarInfo* tmp_rvi,
 					 GeneInfo* tmp_gi,
 					 AntibioticInfo* abi,
-					 Troolean (*func)(dBGraph* db_graph,
+					 InfectionType (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 

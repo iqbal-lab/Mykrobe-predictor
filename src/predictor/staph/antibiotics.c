@@ -370,7 +370,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-Troolean is_gentamicin_susceptible(dBGraph* db_graph,
+InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -409,23 +409,13 @@ Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if ( (I==Resistant) || (I==MixedInfection) ) 
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
+
+  return I;
 
 }
 
 
-Troolean is_penicillin_susceptible(dBGraph* db_graph,
+InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -473,24 +463,11 @@ Troolean is_penicillin_susceptible(dBGraph* db_graph,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
 
-  if ( (I==Resistant) || (I==MixedInfection) ) 
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-
+  return I;
 }
 
 
-Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
+InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -564,7 +541,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
 
     }
@@ -585,7 +562,7 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
@@ -595,15 +572,15 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
       (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
        )
     {
-      return _Inconclusive;
+      return Unsure;
     }
   else if (max_sus_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 }
 
@@ -615,7 +592,7 @@ vga(A)LC           S                     R                   n/a                
 */
 
 
-Troolean is_erythromycin_susceptible(dBGraph* db_graph,
+InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -687,26 +664,26 @@ Troolean is_erythromycin_susceptible(dBGraph* db_graph,
 	    {
 	      *any_erm_present=true;
 	    }
-	  return _False;
+	  return I;
 	}
     }
   if (min_conf<MIN_CONFIDENCE)
     {
-      return _Inconclusive;
+      return Unsure;
     }
   if (max_sus_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_methicillin_susceptible(dBGraph* db_graph,
+InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -748,21 +725,21 @@ Troolean is_methicillin_susceptible(dBGraph* db_graph,
 		     MIN_PERC_COVG_STANDARD);
   if ( (I==Resistant) || (I==MixedInfection) ) 
     {
-      return _False;
+      return I;
     }
   else if (best_model.conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
+InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -830,7 +807,7 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
@@ -841,21 +818,21 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
       )
 
     {
-       return _Inconclusive;
+      return Unsure;
     }
   else if (max_sus_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_rifampicin_susceptible(dBGraph* db_graph,
+InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -927,7 +904,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{	 
-	  return _False;
+	  return I;
 	}
     }
 
@@ -961,7 +938,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
 
   if (I_m470t==Resistant && I_d471g==Resistant)
     {
-      return _False; //ignoring mixed infections for epistatic case
+      return Resistant; //ignoring mixed infections for epistatic case
     }
 
   if (
@@ -971,20 +948,20 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
       )
 
     {
-       return _Inconclusive;
+      return Unsure;
     }
   else if (max_sus_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
-Troolean is_tetracycline_susceptible(dBGraph* db_graph,
+InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -1044,27 +1021,27 @@ Troolean is_tetracycline_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
   if (min_conf<MIN_CONFIDENCE)
     {
-      return _Inconclusive;
+      return Unsure;
     }
   else if (max_sus_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_mupirocin_susceptible(dBGraph* db_graph,
+InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
 						    Sequence * seq, 
 						    int max_read_length, 
@@ -1113,15 +1090,15 @@ Troolean is_mupirocin_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
- return _True;
+ return Susceptible;
 }
 
 
-Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
+InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -1197,7 +1174,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
   
@@ -1214,7 +1191,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 		&best_model, MaxAPosteriori);
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
-      return _False;
+      return Unsure;
     }
 
 
@@ -1233,7 +1210,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   if (I_t326i==Resistant && I_e468v==Resistant)
     {
-      return _False;
+      return Resistant;
     }
   
 
@@ -1268,7 +1245,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
        (I_d463g==Resistant)
        )
     {
-      return _False;
+      return Resistant;
     }
 
   InfectionType I_e444v=Susceptible;
@@ -1279,7 +1256,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
        &&
       (I_e444v==Resistant) )
     {
-      return _False;
+      return Resistant;
     }
 
 
@@ -1295,7 +1272,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_FUSBC);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
@@ -1306,20 +1283,20 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
       )
 
     {
-       return _Inconclusive;
+      return Unsure;
     }
   else if (max_sus_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 }
 
 
-Troolean is_clindamycin_susceptible(dBGraph* db_graph,
+InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -1362,23 +1339,13 @@ Troolean is_clindamycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if ( (I==Resistant) || (I==MixedInfection) ) 
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
+
+  return I;
 
 }
 
 
-Troolean is_vancomycin_susceptible(dBGraph* db_graph,
+InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -1421,19 +1388,8 @@ Troolean is_vancomycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if ( (I==Resistant) || (I==MixedInfection) ) 
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
 
+  return I;
 
 }
 
@@ -1449,7 +1405,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					ResVarInfo* tmp_rvi,
 					GeneInfo* tmp_gi,
 					AntibioticInfo* abi,
-					Troolean (*func)(dBGraph* db_graph,
+					InfectionType (*func)(dBGraph* db_graph,
 							int (*file_reader)(FILE * fp, 
 									   Sequence * seq, 
 									   int max_read_length, 
@@ -1471,7 +1427,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					boolean output_last//for JSON
 					)
 {
-  Troolean suc;
+  InfectionType suc;
   
   suc  = func(db_graph,
 	      file_reader,
@@ -1492,11 +1448,15 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
   if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
-      if (suc==_True)
+      if (suc==Susceptible)
 	{
 	  printf("S\n");
 	}
-      else if (suc==_False)
+      else if (suc==MixedInfection)
+	{
+	  printf("r\n");
+	}
+      else if (suc==Resistant)
 	{
 	  printf("R\n");
 	}
@@ -1507,11 +1467,11 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
     }
   else
     {
-      if (suc==_True)
+      if (suc==Susceptible)
 	{
 	    print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if (suc==_False)
+      else if ( (suc==MixedInfection) || (suc==Resistant) )
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
@@ -1534,7 +1494,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  ResVarInfo* tmp_rvi,
 					  GeneInfo* tmp_gi,
 					  AntibioticInfo* abi,
-					  Troolean (*func)(dBGraph* db_graph,
+					  InfectionType (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -1555,7 +1515,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  boolean* any_erm_present
 					 )
 {
-  Troolean suc;
+  InfectionType suc;
   
   suc  = func(db_graph,
 	      file_reader,
@@ -1575,13 +1535,17 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
   if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
-      if (suc==_False)
-	{
-	  printf("R\n");
-	}
-      else if (suc==_True)
+      if (suc==Susceptible)
 	{
 	  printf("S\n");
+	}
+      else if (suc==MixedInfection)
+	{
+	  printf("r\n");
+	}
+      else if (suc==Resistant)
+	{
+	  printf("R\n");
 	}
       else
 	{
@@ -1590,11 +1554,11 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
     }
   else
     {
-      if (suc==_True)
+      if (suc==Susceptible)
 	{
 	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if (suc==_False)
+      else if ( (suc==MixedInfection)||(suc==Resistant) )
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
@@ -1617,7 +1581,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 ResVarInfo* tmp_rvi,
 					 GeneInfo* tmp_gi,
 					 AntibioticInfo* abi,
-					 Troolean (*func)(dBGraph* db_graph,
+					 InfectionType (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -1637,7 +1601,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last//for JSON 
 					 )
 {
-  Troolean suc;
+  InfectionType suc;
   
   suc  = func(db_graph,
 	      file_reader,
@@ -1657,15 +1621,20 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
   if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
-      if (suc==_False)
+      //the ordering of these if's matters
+      if (suc==MixedInfection)
+	{
+	  printf("r(constitutive)\n");
+	}
+      else if (suc==Resistant)
 	{
 	  printf("R(constitutive)\n");
 	}
-      else if ( (suc==_True) && (any_erm_present==true) )
+      else if ( (suc==Susceptible) && (any_erm_present==true) )
 	{
 	  printf("R(inducible)\n");
 	}
-      else if (suc==_True)
+      else if (suc==Susceptible)
 	{
 	  printf("S\n");
 	}
@@ -1673,18 +1642,23 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 	{
 	  printf("N\n");
 	}
+
     }
   else
     {
-      if (suc==_False)
+      if (suc==Resistant)
 	{
 	  print_json_item(tmpbuf->buff, "R(constitutive)", output_last);
 	}
-      else if ( (suc==_True) && (any_erm_present==true) )
+      else if (suc==MixedInfection)
+	{
+	  print_json_item(tmpbuf->buff, "r(constitutive)", output_last);
+	}
+      else if ( (suc==Susceptible) && (any_erm_present==true) )
 	{
 	  print_json_item(tmpbuf->buff, "R(inducible)", output_last);
 	}
-      else if (suc==_True)
+      else if (suc==Susceptible)
 	{
 	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
