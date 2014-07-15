@@ -101,7 +101,6 @@ double get_log_posterior_of_mixed_infection(double llk,
 
 
 
-//major population of resistant, assume poisson at 0.75 * expected. ideally dispersed poisson
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
@@ -115,6 +114,24 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 			       0.75*lambda_g, lambda_e, kmer);
 
 }
+
+
+
+//major population of resistant, assume poisson at 0.75 * expected. ideally dispersed poisson
+// epsilon = (1-e)^k
+// delta = e(1-e)^(k-1)
+// lambda = expected_covg/mean_read_len
+double get_log_lik_major_pop_resistant(ResVarInfo* rvi,
+				       double lambda_g, double lambda_e,
+				       int kmer)
+{
+  Covg c = get_max_covg_on_any_resistant_allele(rvi);
+  //printf("Test res model, R covg=%d and S covg=%d\n", c, rvi->susceptible_allele.median_covg);
+  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+			       0.9*lambda_g, 0.1*lambda_g, kmer);
+
+}
+
 
 
 double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
@@ -136,8 +153,10 @@ double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
     {
       return -999999999;
     }
+  //  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+  //			       frac*lambda_g, 0.75*lambda_g, kmer);
   return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
-			       frac*lambda_g, 0.75*lambda_g, kmer);
+			       frac*lambda_g, (1-frac)*lambda_g, kmer);
 
 }
 
