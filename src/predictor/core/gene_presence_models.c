@@ -103,7 +103,7 @@ double get_log_posterior_minor_resistant(double llk,
 
   if (err_rate<0.02)
     {
-      freq=5*err_rate;
+      freq=0.05;
     }
   else if (err_rate<0.1)
     {

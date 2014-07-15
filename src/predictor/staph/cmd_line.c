@@ -126,6 +126,7 @@ void cmd_line_free(CmdLine* cmd)
   strbuf_free(cmd->id);
   strbuf_free(cmd->contig_file);
   free(cmd->readlen_distrib);
+  free(cmd->kmer_covg_array);
   free(cmd);
 }
 
@@ -194,7 +195,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  {
 	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of myKrobe.predictor. Cannot find %s\n", tmp->buff);
 	  }
-	
+	strbuf_free(tmp);
 	break;
       }
     case 'l':

@@ -177,6 +177,8 @@ double estimate_err_rate(StrBuf* path, boolean is_list)
   double meanq = sum/tot;
   seq_file_close(sf);
 
+  strbuf_free(file);
+  strbuf_free(quals);
   return pow(10, -meanq/10);
 
 }
@@ -372,11 +374,13 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
   if ( (firstPosD1!=0) && (firstPosD1< 0.75*expected_depth) )
     {
       //printf("Use D1 threshold %d\n", firstPosD1);
+      free(d1); free(d2);
       return firstPosD1;
     }
   else if (firstPosD2!=0)
     {
       //printf("Use D2 threshold %d\n", firstPosD2);
+      free(d1); free(d2);
       return firstPosD2;
     }
   else
@@ -385,11 +389,13 @@ int choose_cleaning_threshold(uint64_t* kmer_covg_array,
       if (ed>1)
 	{
 	  //printf("Use threshold ed %d\n", ed);
+	  free(d1); free(d2);
 	  return ed;
 	} 
       else
 	{
 	  //printf("Fall back on threshold 1\n");
+	  free(d1); free(d2);
 	  return 1;
 	}
     }
@@ -702,14 +708,15 @@ int db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_co
 										       void (*node_action)(dBNode * node),dBGraph * db_graph, 
 										       Edges (*get_colour)(const dBNode*),
 										      void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
-										       void (*apply_reset_to_colour)(dBNode*)
+										      void (*apply_reset_to_colour)(dBNode*),
+										      dBNode** nodes
 										       )
 { 
 
   Nucleotide nucleotide, reverse_nucleotide;
   int length = 0;
   int i;
-  dBNode** nodes=(dBNode**) malloc(sizeof(dBNode*)*limit);
+  //  dBNode** nodes=(dBNode**) malloc(sizeof(dBNode*)*limit);
 
   Orientation next_orientation;
   dBNode * next_node;
@@ -775,7 +782,7 @@ int db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_co
      }
       
     }
-  free(nodes);
+  //free(nodes);
   return length;
 }
 
@@ -791,17 +798,18 @@ int db_graph_db_node_clip_tip_in_subgraph_defined_by_func_of_colours(dBNode * no
 								     dBGraph * db_graph, 
 								     Edges (*get_colour)(const dBNode*),
 								     void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
-								     void (*apply_reset_to_colour)(dBNode*)
+								     void (*apply_reset_to_colour)(dBNode*),
+								     dBNode** nodes
 								     )
 {
 
   int length_tip = 0;
 
   
-  length_tip = db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_colours(node,forward,limit,node_action,db_graph, get_colour, apply_reset_to_specific_edge_in_colour, apply_reset_to_colour );
+  length_tip = db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_colours(node,forward,limit,node_action,db_graph, get_colour, apply_reset_to_specific_edge_in_colour, apply_reset_to_colour, nodes );
   
   if (length_tip==0){
-    length_tip = db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_colours(node,reverse,limit,node_action,db_graph, get_colour, apply_reset_to_specific_edge_in_colour, apply_reset_to_colour);
+    length_tip = db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_colours(node,reverse,limit,node_action,db_graph, get_colour, apply_reset_to_specific_edge_in_colour, apply_reset_to_colour, nodes);
     
   }
   
@@ -1614,18 +1622,21 @@ void db_graph_clip_tips_in_subgraph_defined_by_func_of_colours(dBGraph * db_grap
 							       void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
 							       void (*apply_reset_to_colour)(dBNode*))
 {
-  
+  int limit = 1+db_graph->kmer_size;
+  dBNode** nodes=(dBNode**) malloc(sizeof(dBNode*)*(limit+1));    
+
   void clip_tips(dBNode * node){
     
     //use max length k+1, which is what you would get with a single base error - a bubble of that length
     if (db_node_check_status_none(node)){
-      db_graph_db_node_clip_tip_in_subgraph_defined_by_func_of_colours(node, 1+db_graph->kmer_size,&db_node_action_set_status_pruned,db_graph, 
-								       get_colour, apply_reset_to_specific_edge_in_colour, apply_reset_to_colour);
+      db_graph_db_node_clip_tip_in_subgraph_defined_by_func_of_colours(node, limit, &db_node_action_set_status_pruned,db_graph, 
+								       get_colour, apply_reset_to_specific_edge_in_colour, apply_reset_to_colour,
+								       nodes);
     }
   }
 
   hash_table_traverse(&clip_tips,db_graph);
-  
+  free(nodes);
 }
 
 

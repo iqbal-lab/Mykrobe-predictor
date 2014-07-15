@@ -95,11 +95,11 @@ int main(int argc, char **argv)
 
 
   int lim = cmd_line->max_expected_sup_len;
-  CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
+  /*  CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
       return -1;
-    }
+      }*/
 
   //Create the de Bruijn graph/hash table
   int max_retries=15;
@@ -125,6 +125,24 @@ int main(int argc, char **argv)
   }
 
   ReadingUtils* ru = alloc_reading_utils(MAX_LEN_GENE, db_graph->kmer_size);
+  
+  //init the dbNodes
+  timestamp();
+  printf("Start init dbnode\n");
+  int i;
+  BinaryKmer b;
+  binary_kmer_initialise_to_zero(&b);
+  dBNode dummy_node;
+  element_initialise(&dummy_node, &b, cmd_line->kmer_size);
+  for (i=0; i<MAX_LEN_GENE; i++)
+    {
+      ru->array_nodes[i]=&dummy_node;
+    }
+
+  printf("end init dbnode\n");
+  timestamp();
+
+
   ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
@@ -305,6 +323,17 @@ int main(int argc, char **argv)
 	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
 	  free_sample_model(species_mod);
+
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_res_var_info(tmp_rvi);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
 	  return 0;
 	}
       else
@@ -312,6 +341,7 @@ int main(int argc, char **argv)
 	  printf("%s\n", tmp_name->buff);
 	  timestamp();
 	  free_sample_model(species_mod);
+
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
     }
@@ -345,6 +375,17 @@ int main(int argc, char **argv)
 	  print_json_virulence_start();
 	  print_json_virulence_end();
 	  print_json_end();
+
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_res_var_info(tmp_rvi);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
 	  return 0;
 	}
     }
@@ -446,7 +487,7 @@ int main(int argc, char **argv)
   free_res_var_info(tmp_rvi);
   free_gene_info(tmp_gi);
   free_reading_utils(ru);
-
+  
   cmd_line_free(cmd_line);
   hash_table_free(&db_graph);
   return 0;

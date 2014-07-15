@@ -175,10 +175,13 @@ void free_antibiotic_info(AntibioticInfo* abi)
 	{
 	  free_res_var_info(abi->mut[i]);
 	}
+      free(abi->mut);
       for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
 	{
 	  free_gene_info(abi->genes[i]);
 	}
+      free(abi->genes);
+      free(abi->which_genes);
       free(abi);
     }
 }
@@ -1738,6 +1741,7 @@ Troolean is_pvl_positive(dBGraph* db_graph,
 	}
     }
   fclose(fp);
+  strbuf_free(fa);
   return is_pos;
 
 }

@@ -3042,7 +3042,8 @@ ReadingUtils* alloc_reading_utils(int max_read_length, int kmer_size)
     }
   
 
-  ru->kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_read_length-kmer_size+1));
+  ru->kmer_window->kmer = 
+    (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_read_length-kmer_size+1));
   if (ru->kmer_window->kmer==NULL)
     {
       free(ru->kmer_window);

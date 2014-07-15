@@ -115,7 +115,8 @@ int db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_co
 										      dBGraph * db_graph, 
 										      Edges (*get_colour)(const dBNode*),
 										      void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
-										      void (*apply_reset_to_colour)(dBNode*)
+										      void (*apply_reset_to_colour)(dBNode*),
+										      dBNode** nodes
 										      );
 
 
@@ -128,7 +129,8 @@ int db_graph_db_node_clip_tip_in_subgraph_defined_by_func_of_colours(dBNode * no
 								     dBGraph * db_graph, 
 								     Edges (*get_colour)(const dBNode*),
 								     void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
-								     void (*apply_reset_to_colour)(dBNode*)
+								     void (*apply_reset_to_colour)(dBNode*),
+								     dBNode** nodes
 								     );
 
 
