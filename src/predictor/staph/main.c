@@ -126,9 +126,8 @@ int main(int argc, char **argv)
 
   ReadingUtils* ru = alloc_reading_utils(MAX_LEN_GENE, db_graph->kmer_size);
   
-  //init the dbNodes
+  //init the dbNodes, mostly to keep valgrind happy
   timestamp();
-  printf("Start init dbnode\n");
   int i;
   BinaryKmer b;
   binary_kmer_initialise_to_zero(&b);
@@ -139,7 +138,6 @@ int main(int argc, char **argv)
       ru->array_nodes[i]=&dummy_node;
     }
 
-  printf("end init dbnode\n");
   timestamp();
 
 
