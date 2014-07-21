@@ -227,6 +227,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   int i;
   double pcov[17]; // for storing the percentage coverage of each reference
   double mcov[17]; //median covg
+  int tkmers[17];//total kmers in the unique branches
   double tot_pos_kmers;;
   double tot_kmers;
   double med;
@@ -321,11 +322,13 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	{
 	  pcov[i] = tot_pos_kmers/tot_kmers;
 	  mcov[i] = med;
+	  tkmers[i] = tot_kmers;
 	}
       else
 	{
 	  pcov[i]=0;
 	  mcov[i]=0;
+	  tkmers[i]=0;
 	}
     }
 
@@ -352,7 +355,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
   get_stats_pure_aureus(expected_covg, err_rate,
 			lambda_g_err, lambda_e_err,
-			pcov, mcov,
+			pcov, mcov, tkmers,
 			M_pure_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
@@ -364,7 +367,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 				0.1, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
-		      pcov, mcov, M_non_staph);
+		      pcov, mcov, tkmers, M_non_staph);
 
   SampleModel* marray[4] = {M_pure_sa, M_maj_sa, M_min_sa, M_non_staph};
   qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
@@ -419,9 +422,9 @@ Staph_species get_best_hit(double* arr_perc_cov,
 }
 
 void get_stats_pure_aureus(int expected_covg, double err_rate, 
-			     double lambda_g_err,double lambda_e,
-			     double* arr_perc_covg, double* arr_median,
-			     SampleModel* sm)
+			   double lambda_g_err,double lambda_e,
+			   double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+			   SampleModel* sm)
 
 {
 
@@ -454,10 +457,11 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
   //now we need to account for coverage on non-aureus
   double lpe=0;
-  double llke = -lambda_e + arr_median[best]*log(lambda_e) - log_factorial(arr_median[best]);
+  double t = arr_perc_covg[best]*arr_tkmers[best]*arr_median[best];
+  double llke = -lambda_e +t*log(lambda_e)- log_factorial(t);
 
   sm->likelihood = llk+llke;
-  sm->lp=llk+lpr;
+  sm->lp= sm->likelihood +lpr;
   map_species_enum_to_str(Aureus, sm->name_of_non_aureus_species);
   sm->type=PureStaphAureus;
 }
@@ -548,8 +552,8 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
 void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
-			   double* arr_perc_covg, double* arr_median,
-			   SampleModel* sm)
+			 double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+			 SampleModel* sm)
 {
   strbuf_append_str(sm->name_of_non_aureus_species, "Non-staphylococcal");
   boolean found=true;
@@ -566,7 +570,9 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
   else
     {
       //all coverage must be errors
-      double llk = -lambda_e + arr_median[best]*log(lambda_e) -log_factorial(arr_median[best]);
+      double t = arr_tkmers[best]*arr_median[best]*arr_perc_covg[best];
+      double llk = -lambda_e 
+	+ t*log(lambda_e) -log_factorial(t);
       double lpr;
       if (arr_perc_covg[best]>0.1)
 	{
