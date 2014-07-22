@@ -355,7 +355,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
   get_stats_pure_aureus(expected_covg, err_rate,
 			lambda_g_err, lambda_e_err,
-			pcov, mcov, tkmers,
+			pcov, mcov, tkmers, db_graph->kmer_size,
 			M_pure_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
@@ -367,7 +367,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 				0.1, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
-		      pcov, mcov, tkmers, M_non_staph);
+		      pcov, mcov, tkmers, db_graph->kmer_size, M_non_staph);
 
   SampleModel* marray[4] = {M_pure_sa, M_maj_sa, M_min_sa, M_non_staph};
   qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
@@ -405,7 +405,8 @@ Staph_species get_best_hit(double* arr_perc_cov,
 	}
       if (arr_perc_cov[i] * arr_median[i]>prod)
 	{
-	  prod = arr_perc_cov[i] * arr_median[i];
+	  //prod = arr_perc_cov[i]* arr_median[i];
+	  prod = arr_median[i];
 	  curr=i;
 	}
     }
@@ -424,6 +425,7 @@ Staph_species get_best_hit(double* arr_perc_cov,
 void get_stats_pure_aureus(int expected_covg, double err_rate, 
 			   double lambda_g_err,double lambda_e,
 			   double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+			   int kmer_size,
 			   SampleModel* sm)
 
 {
@@ -446,6 +448,10 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       lpr=log(0.5);
     }
+  else if (arr_perc_covg[Aureus] > 0.1*recovery_expected)
+    {
+      lpr=log(0.1);
+    }
   else
     {
       lpr=-99999999;
@@ -457,11 +463,33 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
   //now we need to account for coverage on non-aureus
   double lpe=0;
-  double t = arr_perc_covg[best]*arr_tkmers[best]*arr_median[best];
-  double llke = -lambda_e +t*log(lambda_e)- log_factorial(t);
-
+  int numk;
+  if (arr_tkmers[best]>kmer_size)
+    {
+      numk=arr_tkmers[best]-kmer_size;
+    }
+  else
+    {
+      numk=1;
+    }
+  //  double t = arr_perc_covg[best]*numk*arr_median[best]/100;// /100 since perc is percent in numebrs
+  //double llke = -lambda_e +t*log(lambda_e)- log_factorial(t);
+  double llke =  -lambda_e + arr_median[best]*log(lambda_e)-log_factorial(arr_median[best]);
+  double lpre=0;
+  if ( (arr_perc_covg[best]>0.5) && (arr_median[best]>0.1*arr_median[Aureus]) )
+    {
+      lpre=-99999;
+    }
+  else if (arr_perc_covg[best]>0.1)
+    {
+      lpre -= log(100);
+    }
+  else
+    {
+      lpre -=log(1);
+    }
   sm->likelihood = llk+llke;
-  sm->lp= sm->likelihood +lpr;
+  sm->lp= sm->likelihood +lpr+lpre;
   map_species_enum_to_str(Aureus, sm->name_of_non_aureus_species);
   sm->type=PureStaphAureus;
 }
@@ -553,6 +581,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 			 double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+			 int kmer_size,
 			 SampleModel* sm)
 {
   strbuf_append_str(sm->name_of_non_aureus_species, "Non-staphylococcal");
@@ -570,17 +599,32 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
   else
     {
       //all coverage must be errors
-      double t = arr_tkmers[best]*arr_median[best]*arr_perc_covg[best];
-      double llk = -lambda_e 
-	+ t*log(lambda_e) -log_factorial(t);
-      double lpr;
-      if (arr_perc_covg[best]>0.1)
+      int numk;
+      if (arr_tkmers[best]>kmer_size)
 	{
-	  lpr=-9999999;
+	  numk=arr_tkmers[best]-kmer_size;
 	}
       else
 	{
-	  lpr=0;
+	  numk=1;
+	}
+
+      //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
+      double llk = -lambda_e 
+	+  arr_perc_covg[best]*arr_median[best]*log(lambda_e) 
+	-log_factorial(arr_perc_covg[best]*arr_median[best]);
+      double lpr;
+      if ( (arr_perc_covg[best]>0.1) && (arr_median[best]>0.1*expected_covg) )
+	{
+	  lpr=-9999999;
+	}
+      else if (arr_perc_covg[best]>0.05)
+	{
+	  lpr=-log(100);
+	}
+      else
+	{
+	  lpr=log(1);
 	}
       sm->likelihood=llk;
       sm->lp = llk+lpr;

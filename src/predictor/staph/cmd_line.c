@@ -69,7 +69,7 @@ int default_opts(CmdLine * c)
   c->kmer_size = 15;
   c->mem_width = 100;
   //c->mem_height= 22;
-  c->mem_height= 19;
+  c->mem_height= 23;
   c->max_expected_sup_len=50000;
   c->method=WGAssemblyThenGenotyping;//other options InSilicoOligos and WGAssemblyAndTranslation
   c->input_file=false;

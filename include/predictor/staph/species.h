@@ -79,7 +79,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
 void get_stats_pure_aureus(int expected_covg, double err_rate, 
 			   double lambda_g_err,double lambda_e,
-			   double* arr_perc_covg, double* arr_median,int* arr_tkmers,
+			   double* arr_perc_covg, double* arr_median,int* arr_tkmers, int kmer_size,
 			   SampleModel* sm);
 
 void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, 
@@ -90,7 +90,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate,
 
 
 void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
-			 double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+			 double* arr_perc_covg, double* arr_median, int* arr_tkmers, int kmer_size,
 			 SampleModel* sm);
 
 
