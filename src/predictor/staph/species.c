@@ -458,7 +458,9 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     }
 
 
-  double llk = -lambda_g_err + arr_median[Aureus]*log(lambda_g_err) - log_factorial(arr_median[Aureus]);
+  double llk = -lambda_g_err 
+    + arr_median[Aureus]*log(lambda_g_err) 
+    - log_factorial(arr_median[Aureus]);
 
 
   //now we need to account for coverage on non-aureus
@@ -474,9 +476,12 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     }
   //  double t = arr_perc_covg[best]*numk*arr_median[best]/100;// /100 since perc is percent in numebrs
   //double llke = -lambda_e +t*log(lambda_e)- log_factorial(t);
-  double llke =  -lambda_e + arr_median[best]*log(lambda_e)-log_factorial(arr_median[best]);
+  double llke =  -lambda_e 
+    + numk*arr_median[best]*log(lambda_e)
+    -log_factorial(numk*arr_median[best]);
+
   double lpre=0;
-  if ( (arr_perc_covg[best]>0.5) && (arr_median[best]>0.1*arr_median[Aureus]) )
+  if ( (arr_perc_covg[best]>0.9) && (arr_median[best]>0.1*arr_median[Aureus]) )
     {
       lpre=-99999;
     }
@@ -547,14 +552,10 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
       double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg));
 
       double cong_lpr;
-      if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
+      if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
 	{
 	  cong_lpr=log(1);
 	}
-      else if (arr_perc_covg[best] > 0.5*cong_recovery_expected)
-        {
-          cong_lpr=log(0.5);
-        }
       else
 	{
 	  cong_lpr=-999999;
@@ -611,8 +612,8 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 
       //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
       double llk = -lambda_e 
-	+  arr_perc_covg[best]*arr_median[best]*log(lambda_e) 
-	-log_factorial(arr_perc_covg[best]*arr_median[best]);
+	+  numk*arr_median[best]*log(lambda_e) 
+	-log_factorial(numk*arr_median[best]);
       double lpr;
       if ( (arr_perc_covg[best]>0.1) && (arr_median[best]>0.1*expected_covg) )
 	{
