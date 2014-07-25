@@ -32,7 +32,7 @@
 ../staph/antibiotics/fusB.fa
 ../staph/antibiotics/fusC.fa
 ../staph/antibiotics/fusidic_acid.fa
-../staph/antibiotics/gentamycin.fa
+../staph/antibiotics/gentamicin.fa
 ../staph/antibiotics/mecA.fa
 ../staph/antibiotics/methicillin.fa
 ../staph/antibiotics/msrA.fa
