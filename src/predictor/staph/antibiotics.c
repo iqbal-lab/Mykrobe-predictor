@@ -175,10 +175,13 @@ void free_antibiotic_info(AntibioticInfo* abi)
 	{
 	  free_res_var_info(abi->mut[i]);
 	}
+      free(abi->mut);
       for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
 	{
 	  free_gene_info(abi->genes[i]);
 	}
+      free(abi->genes);
+      free(abi->which_genes);
       free(abi);
     }
 }
@@ -367,7 +370,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-Troolean is_gentamicin_susceptible(dBGraph* db_graph,
+InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -406,23 +409,13 @@ Troolean is_gentamicin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant)
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
+
+  return I;
 
 }
 
 
-Troolean is_penicillin_susceptible(dBGraph* db_graph,
+InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -470,24 +463,11 @@ Troolean is_penicillin_susceptible(dBGraph* db_graph,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
 
-  if (I==Resistant)
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
-
-
+  return I;
 }
 
 
-Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
+InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -528,28 +508,40 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
   int last_trim_mut = dfrB_H150R;
   int i;
 
-  //we will call it susceptible, if the least
-  //confidnece when calling it not resistant, is > a min
-  double min_conf=9999999999;
-
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  
+  double max_sus_conf=0;
+  double min_conf=9999999;//min across all sites
 
   //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
   for (i=first_trim_mut; i<=last_trim_mut; i++)
     {
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
       Model best_model;
       InfectionType I=
 	resistotype(abi->mut[i], err_rate, db_graph->kmer_size, 
 		    lambda_g, lambda_e, epsilon,
-		    &best_model, MaxLikelihood);
+		    &best_model, MaxAPosteriori);
 
 
-      if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
+      if (best_model.conf<min_conf)
 	{
 	  min_conf = best_model.conf;
 	}
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
 
     }
@@ -568,23 +560,27 @@ Troolean is_trimethoprim_susceptible(dBGraph* db_graph,
 			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
-      /*      if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  min_conf = best_model.conf;
-	  } */
-      if (I==Resistant)
-	{
-	  return _False;
+	  return I;
 	}
     }
 
-  if (min_conf>MIN_CONFIDENCE)
+  if ( 
+      (any_allele_non_null==false) //all alleles have zero covg
+      || 
+      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+       )
     {
-      return _True;
+      return Unsure;
+    }
+  else if (max_sus_conf>MIN_CONFIDENCE)
+    {
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 }
 
@@ -596,7 +592,7 @@ vga(A)LC           S                     R                   n/a                
 */
 
 
-Troolean is_erythromycin_susceptible(dBGraph* db_graph,
+InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -640,8 +636,8 @@ Troolean is_erythromycin_susceptible(dBGraph* db_graph,
 
   //we will call it susceptible, if the least
   //confidnece when calling it not resistant, is > a min
-  double min_conf=9999999999;
-
+  double max_sus_conf=0;
+  double min_conf=9999999; //min across sites
   for (i=0; i<=4; i++)
     {
 
@@ -653,33 +649,41 @@ Troolean is_erythromycin_susceptible(dBGraph* db_graph,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       
-      if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
+	{
+	  max_sus_conf = best_model.conf;
+	}
+      if (best_model.conf<min_conf)
 	{
 	  min_conf = best_model.conf;
 	}
 
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
 	  if (i<4)
 	    {
 	      *any_erm_present=true;
 	    }
-	  return _False;
+	  return I;
 	}
     }
-  if (min_conf>MIN_CONFIDENCE)
+  if (min_conf<MIN_CONFIDENCE)
     {
-      return _True;
+      return Unsure;
+    }
+  if (max_sus_conf>MIN_CONFIDENCE)
+    {
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_methicillin_susceptible(dBGraph* db_graph,
+InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -719,23 +723,23 @@ Troolean is_methicillin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant)
+  if ( (I==Resistant) || (I==MixedInfection) ) 
     {
-      return _False;
+      return I;
     }
   else if (best_model.conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
+InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -777,38 +781,58 @@ Troolean is_ciprofloxacin_susceptible(dBGraph* db_graph,
   int i;
 
   //if you have any of these resistance alleles - call resistant
-  double min_conf=9999999999;
+  double max_sus_conf=0;
+  double min_conf=9999999;
+  boolean any_allele_non_null=false;
   for (i=first_cip_mut; i<=last_cip_mut; i++)
     {
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
       Model best_model;
       InfectionType I=
 	resistotype(abi->mut[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxLikelihood);
-      if (min_conf>best_model.conf)
+		    &best_model, MaxAPosteriori);
+      if (max_sus_conf<best_model.conf)
 	{
-	  min_conf=best_model.conf;
+	  max_sus_conf=best_model.conf;
 	}
-      if (I==Resistant)
+      if (best_model.conf<min_conf)
 	{
-	  return _False;
+	  min_conf = best_model.conf;
+	}
+
+      if ( (I==Resistant) || (I==MixedInfection) ) 
+	{
+	  return I;
 	}
     }
 
+  if (
+      (any_allele_non_null==false)
+      ||
+      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      )
 
-  if (min_conf>MIN_CONFIDENCE)
     {
-      return _True;
+      return Unsure;
+    }
+  else if (max_sus_conf>MIN_CONFIDENCE)
+    {
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_rifampicin_susceptible(dBGraph* db_graph,
+InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -853,31 +877,47 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
   //covers all except the two mutations that have to occur together
 
   Model best_model;
-  double min_conf=9999999999;
+  double max_sus_conf=0;
+  double min_conf=9999999;
+  boolean any_allele_non_null=false;
   for (i=first_rif_mut; i<=last_rif_mut; i++)
     {
 
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
       InfectionType I=
 	resistotype(abi->mut[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxLikelihood);
+		    &best_model, MaxAPosteriori);
 
-      if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
+      if (best_model.conf<min_conf)
 	{
 	  min_conf = best_model.conf;
 	}
-      if (I==Resistant)
+
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{	 
-	  return _False;
+	  return I;
 	}
     }
 
   InfectionType I_m470t=
     resistotype(abi->mut[rpoB_M470T],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
+		&best_model, MaxAPosteriori);
 
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+  if ( (I_m470t==Susceptible) && (best_model.conf>max_sus_conf) )
+    {
+      max_sus_conf = best_model.conf;
+    }
+  if (best_model.conf<min_conf)
     {
       min_conf = best_model.conf;
     }
@@ -885,31 +925,43 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
   InfectionType I_d471g=
     resistotype(abi->mut[rpoB_D471G],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
+		&best_model, MaxAPosteriori);
 
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+  if ( (I_d471g ==Susceptible) && (best_model.conf>max_sus_conf) )
+    {
+      max_sus_conf = best_model.conf;
+    }
+  if (best_model.conf<min_conf)
     {
       min_conf = best_model.conf;
     }
-  
+
   if (I_m470t==Resistant && I_d471g==Resistant)
     {
-      return _False; //ignoring mixed infections for epistatic case
+      return Resistant; //ignoring mixed infections for epistatic case
     }
 
-  
-  if (min_conf>MIN_CONFIDENCE)
+  if (
+      (any_allele_non_null==false)
+      ||
+      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      )
+
     {
-      return _True;
+      return Unsure;
+    }
+  else if (max_sus_conf>MIN_CONFIDENCE)
+    {
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
-Troolean is_tetracycline_susceptible(dBGraph* db_graph,
+InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -946,7 +998,8 @@ Troolean is_tetracycline_susceptible(dBGraph* db_graph,
 
 
   int i;
-  double min_conf=9999999999;
+  double max_sus_conf=0;
+  double min_conf=9999999;
   for (i=0; i<=2; i++)
     {
 
@@ -958,29 +1011,37 @@ Troolean is_tetracycline_susceptible(dBGraph* db_graph,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
 
-      if ( (best_model.conf<min_conf) && (best_model.conf>0) )
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
+	{
+	  max_sus_conf = best_model.conf;
+	}
+      if (best_model.conf<min_conf)
 	{
 	  min_conf = best_model.conf;
 	}
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
-  if (min_conf>MIN_CONFIDENCE)
+  if (min_conf<MIN_CONFIDENCE)
     {
-      return _True;
+      return Unsure;
+    }
+  else if (max_sus_conf>MIN_CONFIDENCE)
+    {
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 
 }
 
 
-Troolean is_mupirocin_susceptible(dBGraph* db_graph,
+InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
 						    Sequence * seq, 
 						    int max_read_length, 
@@ -1027,17 +1088,17 @@ Troolean is_mupirocin_susceptible(dBGraph* db_graph,
 			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
- return _True;
+ return Susceptible;
 }
 
 
-Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
+InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -1058,7 +1119,7 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   strbuf_append_str(abi->m_fasta, install_dir->buff);
 
   strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/fusidic_acid.fa");
-  abi->num_mutations = 961;
+  abi->num_mutations = 984;
 
   abi->which_genes[0]=fusB;
   abi->which_genes[1]=fusC;
@@ -1087,49 +1148,50 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   int i;
 
   Model best_model;
-  double min_conf=9999999999;
+  double max_sus_conf=0;
+  double min_conf=9999999;
+  boolean any_allele_non_null=false;
   for (i=first_fus_mut; i<=last_fus_mut; i++)
     {
-    InfectionType I=
-      resistotype(abi->mut[i],
-		  err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		  &best_model, MaxLikelihood);
 
-    if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-      {
-	min_conf = best_model.conf;
-      }
-
-    if (I==Resistant)
-      {
-	return _False;
-      }
+      if (both_alleles_null(abi->mut[i])==true)
+	{
+	  continue;
+	}
+      any_allele_non_null=true;
+      InfectionType I=
+	resistotype(abi->mut[i],
+		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		    &best_model, MaxAPosteriori);
+      
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
+      if (best_model.conf<min_conf)
+	{
+	  min_conf = best_model.conf;
+	}
+      if ( (I==Resistant) || (I==MixedInfection) ) 
+	{
+	  return I;
+	}
     }
-
+  
   
 
   InfectionType I_f652s=
     resistotype(abi->mut[fusA_F652S],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
+		&best_model, MaxAPosteriori);
 
   InfectionType I_y654n=
     resistotype(abi->mut[fusA_Y654N],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
-
+		&best_model, MaxAPosteriori);
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
-      return _False;
+      return Unsure;
     }
 
 
@@ -1138,26 +1200,17 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   InfectionType I_t326i=
     resistotype(abi->mut[fusA_T326I],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
+		&best_model, MaxAPosteriori);
 
   InfectionType I_e468v=
     resistotype(abi->mut[fusA_E468V],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
+		&best_model, MaxAPosteriori);
 
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
 
   if (I_t326i==Resistant && I_e468v==Resistant)
     {
-      return _False;
+      return Resistant;
     }
   
 
@@ -1166,38 +1219,22 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
   InfectionType I_l461f=
     resistotype(abi->mut[fusA_L461F],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
+		&best_model, MaxAPosteriori);
 
   InfectionType I_a376v=
     resistotype(abi->mut[fusA_A376V],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
+		&best_model, MaxAPosteriori);
 
   InfectionType I_a655p=
     resistotype(abi->mut[fusA_A655P],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
+		&best_model, MaxAPosteriori);
 
   InfectionType I_d463g=
     resistotype(abi->mut[fusA_D463G],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxLikelihood);
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
+		&best_model, MaxAPosteriori);
   
   if ( (I_l461f==Resistant)
        &&
@@ -1208,24 +1245,18 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
        (I_d463g==Resistant)
        )
     {
-      return _False;
+      return Resistant;
     }
 
   InfectionType I_e444v=Susceptible;
   resistotype(abi->mut[fusA_E444V],
 	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-	      &best_model, MaxLikelihood);
-
-  if ( (best_model.conf<min_conf) && (best_model.conf>0) )
-    {
-      min_conf = best_model.conf;
-    }
-
+	      &best_model, MaxAPosteriori);
   if ((I_l461f==Resistant)
        &&
       (I_e444v==Resistant) )
     {
-      return _False;
+      return Resistant;
     }
 
 
@@ -1239,24 +1270,33 @@ Troolean is_fusidic_acid_susceptible(dBGraph* db_graph,
 			 lambda_g, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_FUSBC);
-      if (I==Resistant)
+      if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-	  return _False;
+	  return I;
 	}
     }
 
-  if (min_conf>MIN_CONFIDENCE)
+  if (
+      (any_allele_non_null==false)
+      ||
+      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      )
+
     {
-      return _True;
+      return Unsure;
+    }
+  else if (max_sus_conf>MIN_CONFIDENCE)
+    {
+      return Susceptible;
     }
   else
     {
-      return _Inconclusive;
+      return Unsure;
     }
 }
 
 
-Troolean is_clindamycin_susceptible(dBGraph* db_graph,
+InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -1299,23 +1339,13 @@ Troolean is_clindamycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant)
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
+
+  return I;
 
 }
 
 
-Troolean is_vancomycin_susceptible(dBGraph* db_graph,
+InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
@@ -1358,19 +1388,8 @@ Troolean is_vancomycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-  if (I==Resistant)
-    {
-      return _False;
-    }
-  else if (I==Susceptible)
-    {
-      return _True;
-    }
-  else
-    {
-      return _Inconclusive;
-    }
 
+  return I;
 
 }
 
@@ -1386,7 +1405,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					ResVarInfo* tmp_rvi,
 					GeneInfo* tmp_gi,
 					AntibioticInfo* abi,
-					Troolean (*func)(dBGraph* db_graph,
+					InfectionType (*func)(dBGraph* db_graph,
 							int (*file_reader)(FILE * fp, 
 									   Sequence * seq, 
 									   int max_read_length, 
@@ -1408,7 +1427,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					boolean output_last//for JSON
 					)
 {
-  Troolean suc;
+  InfectionType suc;
   
   suc  = func(db_graph,
 	      file_reader,
@@ -1429,11 +1448,15 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
   if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
-      if (suc==_True)
+      if (suc==Susceptible)
 	{
 	  printf("S\n");
 	}
-      else if (suc==_False)
+      else if (suc==MixedInfection)
+	{
+	  printf("r\n");
+	}
+      else if (suc==Resistant)
 	{
 	  printf("R\n");
 	}
@@ -1444,11 +1467,11 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
     }
   else
     {
-      if (suc==_True)
+      if (suc==Susceptible)
 	{
 	    print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if (suc==_False)
+      else if ( (suc==MixedInfection) || (suc==Resistant) )
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
@@ -1471,7 +1494,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  ResVarInfo* tmp_rvi,
 					  GeneInfo* tmp_gi,
 					  AntibioticInfo* abi,
-					  Troolean (*func)(dBGraph* db_graph,
+					  InfectionType (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -1492,7 +1515,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  boolean* any_erm_present
 					 )
 {
-  Troolean suc;
+  InfectionType suc;
   
   suc  = func(db_graph,
 	      file_reader,
@@ -1512,13 +1535,17 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
   if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
-      if (suc==_False)
-	{
-	  printf("R\n");
-	}
-      else if (suc==_True)
+      if (suc==Susceptible)
 	{
 	  printf("S\n");
+	}
+      else if (suc==MixedInfection)
+	{
+	  printf("r\n");
+	}
+      else if (suc==Resistant)
+	{
+	  printf("R\n");
 	}
       else
 	{
@@ -1527,11 +1554,11 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
     }
   else
     {
-      if (suc==_True)
+      if (suc==Susceptible)
 	{
 	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if (suc==_False)
+      else if ( (suc==MixedInfection)||(suc==Resistant) )
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
@@ -1554,7 +1581,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 ResVarInfo* tmp_rvi,
 					 GeneInfo* tmp_gi,
 					 AntibioticInfo* abi,
-					 Troolean (*func)(dBGraph* db_graph,
+					 InfectionType (*func)(dBGraph* db_graph,
 							 int (*file_reader)(FILE * fp, 
 									    Sequence * seq, 
 									    int max_read_length, 
@@ -1574,7 +1601,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last//for JSON 
 					 )
 {
-  Troolean suc;
+  InfectionType suc;
   
   suc  = func(db_graph,
 	      file_reader,
@@ -1594,15 +1621,20 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
   if (format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
-      if (suc==_False)
+      //the ordering of these if's matters
+      if (suc==MixedInfection)
+	{
+	  printf("r(constitutive)\n");
+	}
+      else if (suc==Resistant)
 	{
 	  printf("R(constitutive)\n");
 	}
-      else if ( (suc==_True) && (any_erm_present==true) )
+      else if ( (suc==Susceptible) && (any_erm_present==true) )
 	{
 	  printf("R(inducible)\n");
 	}
-      else if (suc==_True)
+      else if (suc==Susceptible)
 	{
 	  printf("S\n");
 	}
@@ -1610,18 +1642,23 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 	{
 	  printf("N\n");
 	}
+
     }
   else
     {
-      if (suc==_False)
+      if (suc==Resistant)
 	{
 	  print_json_item(tmpbuf->buff, "R(constitutive)", output_last);
 	}
-      else if ( (suc==_True) && (any_erm_present==true) )
+      else if (suc==MixedInfection)
+	{
+	  print_json_item(tmpbuf->buff, "r(constitutive)", output_last);
+	}
+      else if ( (suc==Susceptible) && (any_erm_present==true) )
 	{
 	  print_json_item(tmpbuf->buff, "R(inducible)", output_last);
 	}
-      else if (suc==_True)
+      else if (suc==Susceptible)
 	{
 	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
@@ -1678,6 +1715,7 @@ Troolean is_pvl_positive(dBGraph* db_graph,
 	}
     }
   fclose(fp);
+  strbuf_free(fa);
   return is_pos;
 
 }

@@ -54,7 +54,12 @@ unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean 
 				       uint64_t* readlen_distrib, int readlen_distrib_len,
 				       uint64_t* kmer_covg_array, int len_kmer_covg_array,
 				       boolean only_load_pre_existing_kmers, int into_colour,
-				       boolean (*subsample_function)());
+				       boolean (*subsample_function)(),
+				       boolean print_progress_info,
+				       uint64_t* count_so_far,
+				       uint64_t total_reads_in_dataset,
+				       boolean* is_a_remainder);
+
 
 
 void db_graph_get_covg_distribution_array(dBGraph* db_graph, int colour,
@@ -110,7 +115,8 @@ int db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_co
 										      dBGraph * db_graph, 
 										      Edges (*get_colour)(const dBNode*),
 										      void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
-										      void (*apply_reset_to_colour)(dBNode*)
+										      void (*apply_reset_to_colour)(dBNode*),
+										      dBNode** nodes
 										      );
 
 
@@ -123,7 +129,8 @@ int db_graph_db_node_clip_tip_in_subgraph_defined_by_func_of_colours(dBNode * no
 								     dBGraph * db_graph, 
 								     Edges (*get_colour)(const dBNode*),
 								     void (*apply_reset_to_specific_edge_in_colour)(dBNode*, Orientation, Nucleotide),
-								     void (*apply_reset_to_colour)(dBNode*)
+								     void (*apply_reset_to_colour)(dBNode*),
+								     dBNode** nodes
 								     );
 
 

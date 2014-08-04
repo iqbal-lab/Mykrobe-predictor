@@ -55,6 +55,7 @@ const char* usage=
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
 "   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" \
 "   [--format STRING] \t\t\t\t\t=\t Options are TEXT and JSON\n" \
+"   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
 "   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
 
 int default_opts(CmdLine * c)
@@ -68,7 +69,7 @@ int default_opts(CmdLine * c)
   c->kmer_size = 15;
   c->mem_width = 100;
   //c->mem_height= 22;
-  c->mem_height= 19;
+  c->mem_height= 23;
   c->max_expected_sup_len=50000;
   c->method=WGAssemblyThenGenotyping;//other options InSilicoOligos and WGAssemblyAndTranslation
   c->input_file=false;
@@ -78,6 +79,7 @@ int default_opts(CmdLine * c)
   c->format=Stdout;
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
+  c->progress=false;
   return 1;
 }
 
@@ -124,6 +126,7 @@ void cmd_line_free(CmdLine* cmd)
   strbuf_free(cmd->id);
   strbuf_free(cmd->contig_file);
   free(cmd->readlen_distrib);
+  free(cmd->kmer_covg_array);
   free(cmd);
 }
 
@@ -144,6 +147,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"print_contigs", required_argument, NULL, 'c'},
     {"subsample", required_argument, NULL, 'd'},
     {"format", required_argument, NULL, 'e'},
+    {"progress", no_argument, NULL, 'g'},
     {0,0,0,0}	
   };
   
@@ -154,7 +158,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   optind=1;
   
  
-  opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:", long_options, &longopt_index);
+  opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:e:g", long_options, &longopt_index);
 
   while ((opt) > 0) {
 	       
@@ -191,7 +195,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  {
 	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of myKrobe.predictor. Cannot find %s\n", tmp->buff);
 	  }
-	
+	strbuf_free(tmp);
 	break;
       }
     case 'l':
@@ -298,6 +302,12 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	break;
       }
+    case 'g'://progress
+      {
+	cmdline_ptr->progress=true;
+	break;
+      }
+
 
     default:
       {
@@ -306,7 +316,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }      
 
     }
-    opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:", long_options, &longopt_index);
+    opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:e:g", long_options, &longopt_index);
     
   }   
   

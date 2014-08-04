@@ -83,6 +83,8 @@ void free_res_var_info(ResVarInfo* rvi);
 void reset_res_var_info(ResVarInfo* rvi);
 void copy_res_var_info(ResVarInfo* from_rvi, ResVarInfo* to_rvi);
 
+boolean both_alleles_null(ResVarInfo* rvi);
+
 void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinfo,
 				   Sequence* seq, KmerSlidingWindow* kmer_window,
 				   int (*file_reader)(FILE * fp, 
@@ -98,6 +100,8 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   int ignore_first, int ignore_last, 
 				   int expected_covg, KnownMutation* prev_mut);
 
+
+boolean both_alleles_null(ResVarInfo* rvi);
 Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi);
 int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi);
 #endif

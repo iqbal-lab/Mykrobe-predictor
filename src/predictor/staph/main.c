@@ -51,6 +51,7 @@ void timestamp();
 
 int main(int argc, char **argv)
 {
+  setvbuf(stdout, NULL, _IOLBF, 0);
 
   // VERSION_STR is passed from the makefile -- usually last commit hash
   printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
@@ -94,11 +95,11 @@ int main(int argc, char **argv)
 
 
   int lim = cmd_line->max_expected_sup_len;
-  CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
+  /*  CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
       return -1;
-    }
+      }*/
 
   //Create the de Bruijn graph/hash table
   int max_retries=15;
@@ -124,6 +125,22 @@ int main(int argc, char **argv)
   }
 
   ReadingUtils* ru = alloc_reading_utils(MAX_LEN_GENE, db_graph->kmer_size);
+  
+  //init the dbNodes, mostly to keep valgrind happy
+  timestamp();
+  int i;
+  BinaryKmer b;
+  binary_kmer_initialise_to_zero(&b);
+  dBNode dummy_node;
+  element_initialise(&dummy_node, &b, cmd_line->kmer_size);
+  for (i=0; i<MAX_LEN_GENE; i++)
+    {
+      ru->array_nodes[i]=&dummy_node;
+    }
+
+  timestamp();
+
+
   ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
@@ -162,6 +179,8 @@ int main(int argc, char **argv)
 			    cmd_line->install_dir->buff);
 	  strbuf_append_str(skeleton_flist, 
 			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+	  uint64_t dummy=0;
+	  boolean is_rem=true;
 	  build_unclean_graph(db_graph, 
 			      skeleton_flist,
 			      true,
@@ -170,7 +189,8 @@ int main(int argc, char **argv)
 			      NULL, 0,
 			      false,
 			      into_colour,
-			      &subsample_null);
+			      &subsample_null,
+			      false, &dummy, 0, &is_rem);
 
 	  //dump binary so can reuse
 	  set_all_coverages_to_zero(db_graph, 0);
@@ -203,6 +223,18 @@ int main(int argc, char **argv)
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
 
+
+  //only need this for progress
+  uint64_t total_reads = 0;
+  uint64_t count_so_far=0;
+  if (cmd_line->progress==true)
+    {
+      //timestamp();
+      total_reads=count_all_reads(cmd_line->seq_path, cmd_line->input_list);
+      //timestamp();
+    }
+  //  printf("Total reads is %" PRIu64 "\n", total_reads);
+  boolean progressbar_remainder=true;
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
@@ -212,8 +244,14 @@ int main(int argc, char **argv)
 				  cmd_line->kmer_covg_array, 
 				  cmd_line->len_kmer_covg_array,
 				  only_load_pre_existing_kmers,
-				  into_colour, subsample_function);
-
+				  into_colour, subsample_function,
+				  cmd_line->progress, &count_so_far, total_reads,
+				  &progressbar_remainder);
+  if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
+    {
+      printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
+      fflush(stdout);
+    }
   if (bp_loaded==0)
     {
       printf("No data\n");
@@ -235,7 +273,6 @@ int main(int argc, char **argv)
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
   
-  //printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   	      expected_depth, cmd_line->max_expected_sup_len);
   
@@ -252,37 +289,101 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  Staph_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
-				 1,1);
-  map_species_enum_to_str(sp,tmp_name);
+  SampleModel* species_mod = alloc_and_init_sample_model();
+  SampleType st = get_species_model(db_graph, 10000, cmd_line->install_dir,
+				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
+				    1,1,
+				    species_mod);
+
+  if (st == MajorStaphAureusAndMinorNonCoag)
+    {
+      strbuf_append_str(tmp_name, "S.aureus + (minor pop.) ");
+      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+    }
+  else if (st == MinorStaphAureusAndMajorNonCoag)
+    {
+      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+    }
+  else if (st == NonStaphylococcal)
+    {
+      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+    }
+  else
+    {
+      strbuf_append_str(tmp_name, "S.aureus");
+    }
+
   if (cmd_line->format==Stdout)
     {
-      printf("** Species\n%s\n", tmp_name->buff);
-      if (sp != Aureus)
+      printf("** Species\n");
+      if (st != PureStaphAureus)
 	{
-	  printf("** No AMR predictions for coag-negative staphylococci\n** End time\n");
+	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
+	  free_sample_model(species_mod);
+
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_res_var_info(tmp_rvi);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
 	  return 0;
 	}
       else
 	{
+	  printf("%s\n", tmp_name->buff);
 	  timestamp();
+	  free_sample_model(species_mod);
+
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
     }
-  else
+  else//JSON
     {
       print_json_start();
       print_json_species_start();
-      print_json_item(tmp_name->buff, "1", true);
+      if (st == PureStaphAureus)
+	{
+	  print_json_item("S.aureus", "Major", true);
+	}
+      else if (st == MajorStaphAureusAndMinorNonCoag) 
+	{
+	  print_json_item("S.aureus", "Major",false);
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
+	}
+      else if (st==MinorStaphAureusAndMajorNonCoag) 
+	{
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", true);
+	}
+      else
+	{
+	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", true);
+	}
       print_json_species_end(); 
-      if (sp != Aureus)
+
+      if (st != PureStaphAureus)
 	{
 	  print_json_susceptibility_start(); 
 	  print_json_susceptibility_end();
 	  print_json_virulence_start();
 	  print_json_virulence_end();
 	  print_json_end();
+
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_res_var_info(tmp_rvi);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
 	  return 0;
 	}
     }
@@ -384,7 +485,7 @@ int main(int argc, char **argv)
   free_res_var_info(tmp_rvi);
   free_gene_info(tmp_gi);
   free_reading_utils(ru);
-
+  
   cmd_line_free(cmd_line);
   hash_table_free(&db_graph);
   return 0;

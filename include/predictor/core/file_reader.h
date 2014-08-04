@@ -44,6 +44,8 @@
 
 extern int MAX_FILENAME_LENGTH;
 extern int MAX_READ_LENGTH;
+#define PROGRESS_STEP 50000
+
 
 typedef enum {
   EValid                        = 0,
@@ -113,7 +115,12 @@ void load_se_seq_data_into_graph_colour(
 					uint64_t *readlen_count_array, 
 					uint64_t readlen_count_array_size,
 					boolean (*subsample_func)(),
-					boolean only_load_pre_existing_kmers);
+					boolean only_load_pre_existing_kmers,
+					boolean print_progress,
+					uint64_t* count_so_far,
+					uint64_t denom_for_progress);
+
+
 
 void load_pe_seq_data_into_graph_colour(
   const char *file_path1, const char *file_path2,
@@ -136,7 +143,11 @@ void load_se_filelist_into_graph_colour(
 					uint64_t *readlen_count_array, 
 					uint64_t readlen_count_array_size,
 					boolean (*subsample_func)(),
-					boolean only_load_pre_existing_kmers);
+					boolean only_load_pre_existing_kmers,
+					boolean print_progress,
+					uint64_t* count_so_far,
+					uint64_t denom_for_progress);
+
 
 void load_pe_filelists_into_graph_colour(
 					 char* pe_filelist_path1, char* pe_filelist_path2,
@@ -318,5 +329,9 @@ typedef struct
 ReadingUtils* alloc_reading_utils(int max_read_len, int kmer_size);
 void free_reading_utils(ReadingUtils* rutils);
 void reset_reading_utils(ReadingUtils* rutils);
+uint64_t count_reads_in_file(StrBuf* file);
+uint64_t count_all_reads(StrBuf* path, //may be file or list of files
+			 boolean is_list);
+
 
 #endif /* FILE_READER_H_ */

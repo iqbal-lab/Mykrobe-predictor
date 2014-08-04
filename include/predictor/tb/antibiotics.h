@@ -34,6 +34,7 @@
 #include "genotyping_known.h"
 #include "known_mutations.h"
 #include "file_reader.h"
+#include "mut_models.h"
 #include "json.h"
 #include "global.h"
 
@@ -121,7 +122,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       StrBuf* install_dir);
 
 
-Troolean is_streptomycin_susceptible(dBGraph* db_graph,
+InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -136,7 +137,7 @@ Troolean is_streptomycin_susceptible(dBGraph* db_graph,
                      double lambda_g, double lambda_e, double err_rate
                      );
 
-Troolean is_rifampicin_susceptible(dBGraph* db_graph,
+InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -150,7 +151,7 @@ Troolean is_rifampicin_susceptible(dBGraph* db_graph,
                      int ignore_first, int ignore_last, int expected_covg,
                      double lambda_g, double lambda_e, double err_rate
                      );
-Troolean is_quinolones_susceptible(dBGraph* db_graph,
+InfectionType is_quinolones_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -164,7 +165,7 @@ Troolean is_quinolones_susceptible(dBGraph* db_graph,
                      int ignore_first, int ignore_last, int expected_covg,
                      double lambda_g, double lambda_e, double err_rate
                      );
-Troolean is_pyrazinamide_susceptible(dBGraph* db_graph,
+InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -178,7 +179,7 @@ Troolean is_pyrazinamide_susceptible(dBGraph* db_graph,
                      int ignore_first, int ignore_last, int expected_covg,
                      double lambda_g, double lambda_e, double err_rate
                      );
-Troolean is_kanamycin_susceptible(dBGraph* db_graph,
+InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -192,7 +193,7 @@ Troolean is_kanamycin_susceptible(dBGraph* db_graph,
                      int ignore_first, int ignore_last, int expected_covg,
                      double lambda_g, double lambda_e, double err_rate
                      );
-Troolean is_isoniazid_susceptible(dBGraph* db_graph,
+InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -206,7 +207,7 @@ Troolean is_isoniazid_susceptible(dBGraph* db_graph,
                      int ignore_first, int ignore_last, int expected_covg,
                      double lambda_g, double lambda_e, double err_rate
                      );
-Troolean is_ethambutol_susceptible(dBGraph* db_graph,
+InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -220,7 +221,7 @@ Troolean is_ethambutol_susceptible(dBGraph* db_graph,
                      int ignore_first, int ignore_last, int expected_covg,
                      double lambda_g, double lambda_e, double err_rate
                      );
-Troolean is_capreomycin_susceptible(dBGraph* db_graph,
+InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -235,7 +236,7 @@ Troolean is_capreomycin_susceptible(dBGraph* db_graph,
                      double lambda_g, double lambda_e, double err_rate
                      );
 
-Troolean is_amikacin_susceptible(dBGraph* db_graph,
+InfectionType is_amikacin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
                             Sequence * seq, 
                             int max_read_length, 
@@ -251,32 +252,32 @@ Troolean is_amikacin_susceptible(dBGraph* db_graph,
                      );
 
 void print_antibiotic_susceptibility(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					ResVarInfo* tmp_rvi,
-					GeneInfo* tmp_gi,
-					AntibioticInfo* abi,
-					Troolean (*func)(dBGraph* db_graph,
-							int (*file_reader)(FILE * fp, 
-									   Sequence * seq, 
-									   int max_read_length, 
-									   boolean new_entry, 
-									   boolean * full_entry),
-							ReadingUtils* rutils,
-							ResVarInfo* tmp_rvi,
-							GeneInfo* tmp_gi,
-							AntibioticInfo* abi,
-							StrBuf* install_dir,
-							int ignore_first, int ignore_last, int expected_covg,
-							double lambda_g, double lambda_e, double err_rate),
-					StrBuf* tmpbuf,
-					StrBuf* install_dir,
-					int ignore_first, int ignore_last, int expected_covg,
-					double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last
-					);
+                    int (*file_reader)(FILE * fp, 
+                               Sequence * seq, 
+                               int max_read_length, 
+                               boolean new_entry, 
+                               boolean * full_entry),
+                    ReadingUtils* rutils,
+                    ResVarInfo* tmp_rvi,
+                    GeneInfo* tmp_gi,
+                    AntibioticInfo* abi,
+                    InfectionType (*func)(dBGraph* db_graph,
+                            int (*file_reader)(FILE * fp, 
+                                       Sequence * seq, 
+                                       int max_read_length, 
+                                       boolean new_entry, 
+                                       boolean * full_entry),
+                            ReadingUtils* rutils,
+                            ResVarInfo* tmp_rvi,
+                            GeneInfo* tmp_gi,
+                            AntibioticInfo* abi,
+                            StrBuf* install_dir,
+                            int ignore_first, int ignore_last, int expected_covg,
+                            double lambda_g, double lambda_e, double err_rate),
+                    StrBuf* tmpbuf,
+                    StrBuf* install_dir,
+                    int ignore_first, int ignore_last, int expected_covg,
+                    double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last
+                    );
 
 #endif

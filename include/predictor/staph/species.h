@@ -46,6 +46,52 @@ typedef enum
   Swarneri = 16,
   } Staph_species ;
 
+#define NUM_SPECIES 17
+
+typedef enum
+  {
+    PureStaphAureus =0,
+    MajorStaphAureusAndMinorNonCoag = 1,
+    MinorStaphAureusAndMajorNonCoag = 2,
+    NonStaphylococcal = 3,
+  } SampleType;
+
+typedef struct
+{
+  SampleType type;
+  double likelihood;//log likelihood
+  double lp; //log posterior
+  double conf;
+  StrBuf* name_of_non_aureus_species;//how we interpret this depends on the model type.
+} SampleModel;
+
+SampleModel* alloc_and_init_sample_model();
+void free_sample_model(SampleModel* sm);
+
 void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf);
-Staph_species get_species(dBGraph *db_graph,int max_gene_len, StrBuf* install_dir,
-			  int ignore_first, int ignore_last);
+		
+SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
+			     double lambda_g_err, double lambda_e_err, 
+			     double err_rate, int expected_covg,
+			     int ignore_first, int ignore_last,
+			     SampleModel* best_model);
+
+
+void get_stats_pure_aureus(int expected_covg, double err_rate, 
+			   double lambda_g_err,double lambda_e,
+			   double* arr_perc_covg, double* arr_median,int* arr_tkmers, int kmer_size,
+			   SampleModel* sm);
+
+void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, 
+				   double lambda_g_err,
+				   double* arr_perc_covg, double* arr_median,
+				   double frac_aureus,
+				   SampleModel* sm);
+
+
+void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
+			 double* arr_perc_covg, double* arr_median, int* arr_tkmers, int kmer_size,
+			 SampleModel* sm);
+
+
+

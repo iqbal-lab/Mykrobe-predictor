@@ -1017,7 +1017,10 @@ void load_se_seq_data_into_graph_colour(
 					uint64_t *readlen_count_array, // histogram of contigs lengths
 					uint64_t readlen_count_array_size,// contigs bigger go in final bin
 					boolean (*subsample_func)(),
-					boolean only_load_pre_existing_kmers) 
+					boolean only_load_pre_existing_kmers,
+					boolean print_progress,
+					uint64_t* count_so_far,
+					uint64_t denom_for_progress) 
 {
   short kmer_size = db_graph->kmer_size;
 
@@ -1056,7 +1059,12 @@ void load_se_seq_data_into_graph_colour(
   while(seq_next_read(sf))
   {
     //printf("Started seq read: %s\n", seq_get_read_name(sf));
-
+    (*count_so_far)=(*count_so_far)+1;
+    if ( (print_progress==true) && (*count_so_far % PROGRESS_STEP==0) )
+      {
+	printf("Progress %" PRIu64 "/%" PRIu64 "\n", *count_so_far, denom_for_progress);
+	fflush(stdout);
+      }
     if(_read_first_kmer(sf, kmer_str, qual_str, kmer_size, read_qual,
                         quality_cutoff, homopolymer_cutoff, 0, 0))
     {
@@ -1382,7 +1390,11 @@ void load_se_filelist_into_graph_colour(
 					uint64_t *readlen_count_array, 
 					uint64_t readlen_count_array_size,
 					boolean (*subsample_func)(),
-					boolean only_load_pre_existing_kmers )
+					boolean only_load_pre_existing_kmers,
+					boolean print_progress,
+					uint64_t* count_so_far,
+					uint64_t denom_for_progress) 
+
   
 {
   qual_thresh += ascii_fq_offset;
@@ -1454,7 +1466,8 @@ void load_se_filelist_into_graph_colour(
 					   &se_bad_reads, &se_dup_reads,
 					   &se_bases_read, &se_bases_loaded,
 					   readlen_count_array, readlen_count_array_size,
-					   subsample_func,  only_load_pre_existing_kmers);
+					   subsample_func,  only_load_pre_existing_kmers,
+					   print_progress, count_so_far, denom_for_progress);
 
         colour++;
       }
@@ -1466,7 +1479,8 @@ void load_se_filelist_into_graph_colour(
 					   &se_bad_reads, &se_dup_reads,
 					   &se_bases_read, &se_bases_loaded,
 					   readlen_count_array, readlen_count_array_size,
-					   subsample_func,  only_load_pre_existing_kmers);
+					   subsample_func,  only_load_pre_existing_kmers,
+					   print_progress, count_so_far, denom_for_progress);
       }
 
       se_files_loaded++;
@@ -3028,7 +3042,8 @@ ReadingUtils* alloc_reading_utils(int max_read_length, int kmer_size)
     }
   
 
-  ru->kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_read_length-kmer_size+1));
+  ru->kmer_window->kmer = 
+    (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_read_length-kmer_size+1));
   if (ru->kmer_window->kmer==NULL)
     {
       free(ru->kmer_window);
@@ -3077,3 +3092,87 @@ void reset_reading_utils(ReadingUtils* ru)
   ru->seq->qual[ru->max_read_length]='\0';
 }
 
+
+
+uint64_t count_reads_in_file(StrBuf* file)
+{
+
+  SeqFile *sf = seq_file_open(file->buff);
+
+  if(sf == NULL)
+    {
+      return 0;
+    }
+  uint64_t count=0;
+
+  while(seq_next_read(sf))
+    {
+      count++;
+    }
+
+  seq_file_close(sf);
+  //  printf("Found %" PRIu64 " reads\n", count);
+  return count;
+  
+}
+
+uint64_t count_all_reads(StrBuf* path, //may be file or list of files
+			 boolean is_list)
+{
+  uint64_t count=0;
+  
+  if (is_list==false)
+    {
+      return count_reads_in_file(path);
+    }
+  else//is a list
+    {
+      // Get absolute path
+      char absolute_path[PATH_MAX+1];
+      char* abs_path = realpath(path->buff, absolute_path);
+      
+      if(abs_path == NULL)
+	{
+	  die("Cannot get absolute path to filelist of files: %s\n", path->buff);
+	}
+      
+      
+      // Get directory path
+      StrBuf *dir = file_reader_get_strbuf_of_dir_path(abs_path);
+      
+      StrBuf *line = strbuf_new();
+      FILE* fp = fopen(path->buff, "r");
+      if (fp==NULL)
+	{
+	  printf("Failed to open %s - carrying on\n", path->buff);
+	  return count;
+	}
+      while(strbuf_reset_readline(line, fp))
+	{
+	  strbuf_chomp(line);
+	  
+	  if(strbuf_len(line) > 0)
+	    {
+	      // Get paths relative to filelist dir
+	      if(strbuf_get_char(line, 0) != '/')
+		strbuf_insert(line, 0, dir, 0, strbuf_len(dir));
+	      
+	      // Get absolute paths
+	      char* path_ptr = realpath(line->buff, absolute_path);
+	      
+	      if(path_ptr == NULL)
+		{
+		  die("Cannot find sequence file: %s\n",
+		      line->buff);
+		}
+	      StrBuf* newf=strbuf_create(path_ptr);
+	      count += count_reads_in_file(newf);
+	      strbuf_free(newf);
+	      
+	    }
+	}
+      strbuf_free(line);
+    }
+
+  return count;
+}
