@@ -400,7 +400,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
       int first_mut = rrs_A1401X;
-      int last_mut = rrs_A1401X_C1402X;
+      int last_mut = rrs_G1484X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
@@ -492,7 +492,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
       int first_mut = rrs_A1401X;
-      int last_mut = rrs_A1401X_C1402X;
+      int last_mut = rrs_G1484X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
@@ -676,7 +676,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
       int first_mut = katG_S315X;
-      int last_mut = fabG1_Au16X;
+      int last_mut = fabG1_Gu17X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
@@ -768,7 +768,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
       int first_mut = rrs_A1401X;
-      int last_mut = rrs_A1401X_C1402X;
+      int last_mut = rrs_G1484X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
@@ -934,7 +934,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
       int first_mut = gyrA_H85X;
-      int last_mut = gyrA_Y93X_D94X;
+      int last_mut = gyrA_D94X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
@@ -1026,7 +1026,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
       int first_mut = rpoB_F425X;
-      int last_mut = rpoB_A451X_L452X;
+      int last_mut = rpoB_L452X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
