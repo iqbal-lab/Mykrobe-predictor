@@ -52,6 +52,7 @@ void free_allele_info(AlleleInfo* ai)
 //ie we have fasta with 30 bases before/after a SNP, but if we are using k=21,
 //then we must ignore the first 9 and last 9 bases
 int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
+				boolean get_median_on_nonzero,
 				Sequence* seq, KmerSlidingWindow* kmer_window,
 				int (*file_reader)(FILE * fp, 
 						    Sequence * seq, 
@@ -103,6 +104,16 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 						     0, 
 						     &too_short,
 						     ignore_first, ignore_last);
+      if (get_median_on_nonzero==true)
+	{
+	  ainfo->median_covg_on_nonzero_nodes = 
+	    median_covg_ignoring_zeroes_on_allele_in_specific_colour(array_nodes, 
+								     num_kmers, 
+								     working_ca,
+								     0, 
+								     &too_short,
+								     ignore_first, ignore_last);
+	}
     }
   return num_kmers;
 

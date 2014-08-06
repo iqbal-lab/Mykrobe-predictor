@@ -46,14 +46,17 @@
 typedef struct
 {
   Covg median_covg;
+  Covg median_covg_on_nonzero_nodes;
   Covg min_covg;
   int  percent_nonzero;
+
 } AlleleInfo;
 
 AlleleInfo* alloc_allele_info();
 void free_allele_info(AlleleInfo* ai);
 
 int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
+				boolean get_median_on_nonzero,
 				Sequence* seq, KmerSlidingWindow* kmer_window,
 				int (*file_reader)(FILE * fp, 
 						   Sequence * seq, 

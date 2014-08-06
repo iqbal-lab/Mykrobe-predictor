@@ -311,6 +311,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       do {
 	
 	num_kmers= get_next_single_allele_info(fp, db_graph, ai,
+					       true,
 					       seq, kmer_window,
 					       &file_reader_fasta,
 					       array_nodes, array_or, 
@@ -318,13 +319,22 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 					       ignore_first, ignore_last);
 
 	number_of_reads = number_of_reads + 1;
-
+	int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
 	//calculate a running pseudo median, before you update the tots
 	if  (tot_kmers+num_kmers>0)
 	  {
+
+	    if ( (pos_kmers< 0.15 * num_kmers) //ignore repeat kmers
+		 && ( ai->median_covg_on_nonzero_nodes > 3*err_rate * expected_covg) )
+	      {
+		ai->median_covg=0;
+		ai->percent_nonzero=0;
+		pos_kmers=0;
+	      }
+
 	    med = (med*tot_kmers + (double)ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
 	    tot_kmers += num_kmers;
-	    int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
+
 	    tot_pos_kmers += pos_kmers;
 
 	  if (num_kmers<=db_graph->kmer_size)
@@ -348,8 +358,9 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	  }
 
       } while ( num_kmers>0);
-      if (number_of_reads>0)
+      if ( (number_of_reads>0) && (tot_kmers>0) )
 	{
+	  
 	  pcov[i] = tot_pos_kmers/tot_kmers;
 	  mcov[i] = med;
 	  tkmers[i] = tot_pos_kmers;
@@ -403,7 +414,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
 				pcov, mcov, 
-				0.1, M_min_sa);
+				0.05, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
 		      pcov, mcov, tkmers, db_graph->kmer_size, M_non_staph);
@@ -442,10 +453,11 @@ Staph_species get_best_hit(double* arr_perc_cov,
 	{
 	  continue;
 	}
-      if (arr_perc_cov[i] * arr_median[i]>prod)
+      //      if (arr_perc_cov[i] * arr_median[i]>prod)
+      if (arr_perc_cov[i] > prod)
 	{
 	  //prod = arr_perc_cov[i]* arr_median[i];
-	  prod = arr_median[i];
+	  prod =arr_perc_cov[i];
 	  curr=i;
 	}
     }
@@ -480,7 +492,8 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   //now deal with aureus
   double recovery_expected = 1-exp(-expected_covg);
   
-  double lpr;
+  double lpr=0;
+
   if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
     {
       lpr=0;
@@ -503,6 +516,8 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     + arr_median[Aureus]*log(lambda_g_err) 
     - log_factorial(arr_median[Aureus]);
 
+
+  //  llk = - (double) arr_tkmers[Aureus] * ((double) (100-arr_perc_covg[Aureus]/100) * recovery_expected; //prob of a gap of that length
 
   //now we need to account for coverage on non-aureus
   //must be due to
@@ -541,14 +556,9 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
       } */
   
   //  else if (arr_perc_covg[best]>0.1)
-  if (arr_prop_snps[best]>0.05)
-    {
-      lpre -= log(100);
-    }
-  else
-    {
-      lpre -=log(1);
-    }
+
+  lpre=0;
+  
   sm->likelihood = llk+llke;
   sm->lp= sm->likelihood +lpr+lpre;
   map_species_enum_to_str(Aureus, sm->name_of_non_aureus_species);
