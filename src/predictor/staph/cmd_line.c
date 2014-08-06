@@ -160,6 +160,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
  
   opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:e:g", long_options, &longopt_index);
 
+
   while ((opt) > 0) {
 	       
     //Parse the default options
