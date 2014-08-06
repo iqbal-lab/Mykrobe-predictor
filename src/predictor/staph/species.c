@@ -229,6 +229,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   double mcov[17]; //median covg
   int tkmers[17];//total kmers in the unique branches
   int tkmers_snps[17];//total kmers in the unique branches which are SNPs
+  int tkmers_mobile[17];
   double p_snps[17];//what propn of the reads which are SNP length, have >0 covg
   double p_mobile[17];
   double tot_pos_kmers;;
@@ -319,7 +320,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	number_of_reads = number_of_reads + 1;
 
 	//calculate a running pseudo median, before you update the tots
-	if (tot_kmers+num_kmers>0)
+	if  (tot_kmers+num_kmers>0)
 	  {
 	    med = (med*tot_kmers + (double)ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
 	    tot_kmers += num_kmers;
@@ -355,7 +356,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	  tkmers_snps[i]=tot_snps;
 	  p_snps[i]=(double)tot_snps_pos/ (double)tot_snps;
 	  p_mobile[i]=(double)tot_mobile_pos/ (double)tot_mobile;
-	  
+	  tkmers_mobile[i]=tot_mobile_pos;
 	}
       else
 	{
@@ -365,6 +366,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	  tkmers_snps[i]=0;
 	  p_snps[i]=0;
 	  p_mobile[i]=0;
+	  tkmers_mobile[i]=0;
 	}
     }
 
@@ -391,7 +393,8 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
   get_stats_pure_aureus(expected_covg, err_rate,
 			lambda_g_err, lambda_e_err,
-			pcov, mcov, tkmers, tkmers_snps, p_snps, p_mobile, db_graph->kmer_size,
+			pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
+			p_snps, p_mobile, db_graph->kmer_size,
 			M_pure_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
@@ -461,7 +464,7 @@ Staph_species get_best_hit(double* arr_perc_cov,
 void get_stats_pure_aureus(int expected_covg, double err_rate, 
 			   double lambda_g_err,double lambda_e,
 			   double* arr_perc_covg, double* arr_median, int* arr_tkmers, 
-			   int* arr_tkmers_snps,
+			   int* arr_tkmers_snps, int* arr_tkmers_mobile, 
 			   double* arr_prop_snps, double* arr_prop_mobile,
 			   int kmer_size,
 			   SampleModel* sm)
@@ -508,7 +511,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
   double lpe=0;
   int numk;
-  if (arr_tkmers[best]>kmer_size)
+  if (arr_tkmers_snps[best]>kmer_size)
     {
       numk=(int) (arr_tkmers_snps[best]/kmer_size);
     }
@@ -516,6 +519,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=1;
     }
+  numk += arr_tkmers_mobile[best];
 
 
   double llke =  -lambda_e 
@@ -600,20 +604,21 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
       double llk_aureus = -frac_aureus*lambda_g_err + arr_median[Aureus]*log(frac_aureus*lambda_g_err) - log_factorial(arr_median[Aureus]);
 
 
-      //now do the same for the minor population
+      //now do the same for the other population
       double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg));
 
       double cong_lpr;
       //want to avoid calling CONG just because of small number of repeat kmers
-      if (arr_perc_covg[best] < 0.3)
+      printf("Got %f perc covg of the cong and we expect %f\n", arr_perc_covg[best], cong_recovery_expected );
+      /*      if (arr_perc_covg[best] < 0.3)
 	{
 	  cong_lpr=-999999;
-	}
-      else if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
+	  }*/
+      if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
 	{
 	  cong_lpr=0;
 	}
-      else if (arr_perc_covg[best] > 0.5*cong_recovery_expected)
+      else if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
 	{
 	  cong_lpr=log(0.1);
 	}
