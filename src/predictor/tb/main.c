@@ -51,7 +51,8 @@ void timestamp();
 
 int main(int argc, char **argv)
 {
-
+  setvbuf(stdout, NULL, _IOLBF, 0);
+  
   // VERSION_STR is passed from the makefile -- usually last commit hash
   printf("myKrobe.predictor for Mycoplasma tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
          VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
@@ -265,7 +266,7 @@ int main(int argc, char **argv)
   // Myc_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
 		// 		 1,1);
   Myc_species sp = Mtuberculosis;
-  map_species_enum_to_str(sp,tmp_name);
+  // map_species_enum_to_str(sp,tmp_name);
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n%s\n", tmp_name->buff);
@@ -317,9 +318,9 @@ int main(int argc, char **argv)
 print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
                       &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-// print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-//                       &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
-//                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+                      &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
+                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
 print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
                       &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
@@ -335,9 +336,9 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_g
 print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
                       &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-// print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-//                       &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
-//                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+                      &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
+                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
 print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
                       &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 

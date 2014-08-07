@@ -670,9 +670,141 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                           }
                         
   
+                        else if ( (strcmp(sbuf->buff, "D49N")==0) && (gene==pncA) )
+                          {
+                            return pncA_D49N;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "D8N")==0) && (gene==pncA) )
+                          {
+                            return pncA_D8N;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "G162D")==0) && (gene==pncA) )
+                          {
+                            return pncA_G162D;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "H57D")==0) && (gene==pncA) )
+                          {
+                            return pncA_H57D;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "H57R")==0) && (gene==pncA) )
+                          {
+                            return pncA_H57R;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "H71Y")==0) && (gene==pncA) )
+                          {
+                            return pncA_H71Y;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "L172P")==0) && (gene==pncA) )
+                          {
+                            return pncA_L172P;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "Q141X")==0) && (gene==pncA) )
+                          {
+                            return pncA_Q141X;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "V125G")==0) && (gene==pncA) )
+                          {
+                            return pncA_V125G;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "V21G")==0) && (gene==pncA) )
+                          {
+                            return pncA_V21G;
+                          }
+                        
+  
                         else if ( (strcmp(sbuf->buff, "M306X")==0) && (gene==embB) )
                           {
                             return embB_M306X;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "G406D")==0) && (gene==embB) )
+                          {
+                            return embB_G406D;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "G406S")==0) && (gene==embB) )
+                          {
+                            return embB_G406S;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "Cu10T")==0) && (gene==eis) )
+                          {
+                            return eis_Cu10T;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "A138V")==0) && (gene==gidB) )
+                          {
+                            return gidB_A138V;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "A200E")==0) && (gene==gidB) )
+                          {
+                            return gidB_A200E;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "L91P")==0) && (gene==gidB) )
+                          {
+                            return gidB_L91P;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "P75L")==0) && (gene==gidB) )
+                          {
+                            return gidB_P75L;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "R137W")==0) && (gene==gidB) )
+                          {
+                            return gidB_R137W;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "V65G")==0) && (gene==gidB) )
+                          {
+                            return gidB_V65G;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "V88A")==0) && (gene==gidB) )
+                          {
+                            return gidB_V88A;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "K43R")==0) && (gene==rpsL) )
+                          {
+                            return rpsL_K43R;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "K88R")==0) && (gene==rpsL) )
+                          {
+                            return rpsL_K88R;
                           }
                         
   
@@ -742,5 +874,4 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                         } 
 
 }
-
 #endif
