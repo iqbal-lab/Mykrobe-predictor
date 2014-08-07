@@ -263,7 +263,10 @@ int main(int argc, char **argv)
 							   cmd_line->readlen_distrib_size);
 
   double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
-
+  if (err_rate<0.005)
+    {
+      err_rate=0.005;
+    }
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
