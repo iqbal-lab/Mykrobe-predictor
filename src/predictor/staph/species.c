@@ -522,7 +522,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   //now we need to account for coverage on non-aureus
   //must be due to
   // a) SNP error (single base errors)s
-  // b) plasmids/mobile elements. What % of our unique-to-species panel will be mobile? Say max 40%
+  // b) plasmids/mobile elements. 
 
   double lpe=0;
   int numk;
@@ -534,11 +534,23 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=1;
     }
-  numk += arr_tkmers_mobile[best];
+  numk += arr_tkmers_mobile[best]/kmer_size;
 
 
-  double llke =  -lambda_e 
-    + numk*arr_median[best]*log(lambda_e)
+  //now - in this model we expect errors from Aureus to give covg on cong.
+  int exp_extra_cov = (int) (arr_tkmers_snps[Aureus]+arr_tkmers_mobile[Aureus]) * err_rate;
+  if (numk> exp_extra_cov)
+    {
+      numk -= exp_extra_cov;
+    }
+  else
+    {
+      numk=0;
+    }
+
+  double lambda_err = lambda_e*err_rate;
+  double llke =  -lambda_err* 
+    + numk*arr_median[best]*log(lambda_err)
     -log_factorial(numk*arr_median[best]);
 
   double lpre=0;
@@ -615,7 +627,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
       //now do the same for the other population
-      double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg));
+      double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg)) + err_rate*aureus_recovery_expected;
 
       double cong_lpr;
       //want to avoid calling CONG just because of small number of repeat kmers
