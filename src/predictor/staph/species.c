@@ -228,7 +228,6 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   double pcov[17]; // for storing the percentage coverage of each reference
   double mcov[17]; //median covg
   int tkmers[17];//total kmers in the unique branches
-  double p_mobile[17];
   double tot_pos_kmers;;
   double tot_kmers;
   double med;
