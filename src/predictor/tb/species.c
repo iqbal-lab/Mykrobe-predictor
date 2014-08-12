@@ -125,7 +125,6 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   strbuf_append_str(species_file_paths[1], "data/tb/species/M.africanum.fa");
   species_file_paths[2] = strbuf_create(install_dir->buff);
   strbuf_append_str(species_file_paths[2], "data/tb/species/M.bovis.fa");
-  species_file_paths[3] = strbuf_create(install_dir->buff);
 
   int i;
   double pcov[NUM_SPECIES]; // for storing the percentage coverage of each reference
@@ -300,29 +299,29 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
 
   
-  SampleModel* M_pure_sa=alloc_and_init_sample_model();
-  SampleModel* M_maj_sa=alloc_and_init_sample_model();
-  SampleModel* M_min_sa=alloc_and_init_sample_model();
-  SampleModel* M_non_staph=alloc_and_init_sample_model();
+  SampleModel* M_pure_MTB=alloc_and_init_sample_model();
+  SampleModel* M_maj_MTB=alloc_and_init_sample_model();
+  SampleModel* M_min_MTB=alloc_and_init_sample_model();
+  SampleModel* M_non_MTB=alloc_and_init_sample_model();
 
   get_stats_pure_mtb(expected_covg, err_rate,
       lambda_g_err, lambda_e_err,
       pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
       p_snps, p_mobile, db_graph->kmer_size,
-      M_pure_sa);
+      M_pure_MTB);
   get_stats_mix_mtb_and_non_mtb(expected_covg, err_rate,
         lambda_g_err,
         pcov, mcov, 
-        0.9, M_maj_sa);
+        0.9, M_maj_MTB);
   get_stats_mix_mtb_and_non_mtb(expected_covg, err_rate,
         lambda_g_err,
         pcov, mcov, 
-        0.05, M_min_sa);
+        0.05, M_min_MTB);
 
-  get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
-          pcov, mcov, tkmers, db_graph->kmer_size, M_non_staph);
+  get_stats_non_MTB(expected_covg, err_rate,lambda_e_err,
+          pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
 
-  SampleModel* marray[4] = {M_pure_sa, M_maj_sa, M_min_sa, M_non_staph};
+  SampleModel* marray[4] = {M_pure_MTB, M_maj_MTB, M_min_MTB, M_non_MTB};
   qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
   best_model->conf = marray[3]->lp - marray[2]->lp;
   best_model->type = marray[3]->type;
@@ -332,10 +331,10 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   strbuf_append_str(best_model->name_of_non_mtb_species, 
         marray[3]->name_of_non_mtb_species->buff);
   //cleanup
-  free_sample_model(M_pure_sa);
-  free_sample_model(M_maj_sa);
-  free_sample_model(M_min_sa);
-  free_sample_model(M_non_staph);
+  free_sample_model(M_pure_MTB);
+  free_sample_model(M_maj_MTB);
+  free_sample_model(M_min_MTB);
+  free_sample_model(M_non_MTB);
 
   return best_model->type;
   
@@ -386,7 +385,7 @@ void get_stats_pure_mtb(int expected_covg, double err_rate,
 
 {
 
-  //which Staph non-aureus is best hit
+  //which non-MTB
   boolean found=true;
   boolean exclude_mtb=true;
   int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_mtb);
@@ -522,7 +521,7 @@ void get_stats_mix_mtb_and_non_mtb(int expected_covg, double err_rate, double la
 
       double cong_lpr;
       //want to avoid calling CONG just because of small number of repeat kmers
-      printf("Got %f perc covg of the cong and we expect %f\n", arr_perc_covg[best], cong_recovery_expected );
+      printf("Got %f perc covg of the non-MTB and we expect %f\n", arr_perc_covg[best], cong_recovery_expected );
       /*      if (arr_perc_covg[best] < 0.3)
   {
     cong_lpr=-999999;
@@ -559,20 +558,20 @@ void get_stats_mix_mtb_and_non_mtb(int expected_covg, double err_rate, double la
 }
 
 
-void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
+void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
        double* arr_perc_covg, double* arr_median, int* arr_tkmers,
        int kmer_size,
        SampleModel* sm)
 {
-  strbuf_append_str(sm->name_of_non_mtb_species, "Non-staphylococcal");
+  strbuf_append_str(sm->name_of_non_mtb_species, "Non-MTBC");
   boolean found=true;
   boolean exclude_mtb=false;
-  //do ANY staphylococci get a decent hit?
+  //do ANY MTB get a decent hit?
   int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_mtb);
 
   if (found==false)
     {
-      //found no evidence of any Staphylococcus at all
+      //found no evidence of any MTB at all
       sm->likelihood=0;
       sm->lp=0;
     }
@@ -609,7 +608,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
       sm->likelihood=llk;
       sm->lp = llk+lpr;
     }  
-  sm->type = NonStaphylococcal;
+  sm->type = NonMTB;
 }
 
 // /*
@@ -910,29 +909,29 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 
 
   
-//   SampleModel* M_pure_sa=alloc_and_init_sample_model();
-//   SampleModel* M_maj_sa=alloc_and_init_sample_model();
-//   SampleModel* M_min_sa=alloc_and_init_sample_model();
+//   SampleModel* M_pure_MTB=alloc_and_init_sample_model();
+//   SampleModel* M_maj_MTB=alloc_and_init_sample_model();
+//   SampleModel* M_min_MTB=alloc_and_init_sample_model();
 //   SampleModel* M_non_myc=alloc_and_init_sample_model();
 
 //   get_stats_pure_myc(expected_covg, err_rate,
 //       lambda_g_err, lambda_e_err,
 //       pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
 //       p_snps, p_mobile, db_graph->kmer_size,
-//       M_pure_sa);
+//       M_pure_MTB);
 //   get_stats_mix_myc_and_non_myc(expected_covg, err_rate,
 //         lambda_g_err,
 //         pcov, mcov, 
-//         0.9, M_maj_sa);
+//         0.9, M_maj_MTB);
 //   get_stats_mix_myc_and_non_myc(expected_covg, err_rate,
 //         lambda_g_err,
 //         pcov, mcov, 
-//         0.05, M_min_sa);
+//         0.05, M_min_MTB);
 
 //   get_stats_non_myc(expected_covg, err_rate,lambda_e_err,
 //           pcov, mcov, tkmers, db_graph->kmer_size, M_non_myc);
 
-//   SampleModel* marray[4] = {M_pure_sa, M_maj_sa, M_min_sa, M_non_myc};
+//   SampleModel* marray[4] = {M_pure_MTB, M_maj_MTB, M_min_MTB, M_non_myc};
 //   qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
 //   best_model->conf = marray[3]->lp - marray[2]->lp;
 //   best_model->type = marray[3]->type;
@@ -942,9 +941,9 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 //   strbuf_append_str(best_model->name_of_non_myc_species, 
 //         marray[3]->name_of_non_myc_species->buff);
 //   //cleanup
-//   free_sample_model(M_pure_sa);
-//   free_sample_model(M_maj_sa);
-//   free_sample_model(M_min_sa);
+//   free_sample_model(M_pure_MTB);
+//   free_sample_model(M_maj_MTB);
+//   free_sample_model(M_min_MTB);
 //   free_sample_model(M_non_myc);
 
 //   return best_model->type;

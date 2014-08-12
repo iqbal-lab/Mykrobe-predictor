@@ -36,8 +36,8 @@ typedef enum
 typedef enum
   {
     PureMTB =0,
-    // MajorMTBAndMinorNonMTB = 1,
-    // MinorMTBAndMajorNonMTB = 2,
+    MajorMTBAndMinorNonMTB = 1,
+    MinorMTBAndMajorNonMTB = 2,
     NonMTB = 3,
   } SampleType;
 
@@ -77,6 +77,6 @@ void get_stats_mix_mtb_and_non_mtb(int expected_covg, double err_rate,
            SampleModel* sm);
 
 
-void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
+void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
        double* arr_perc_covg, double* arr_median, int* arr_tkmers, int kmer_size,
        SampleModel* sm);

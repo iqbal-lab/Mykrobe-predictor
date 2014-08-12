@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     double ran = drand48();
     if (ran <= cmd_line->subsample_propn)
       {
-	return true;
+  return true;
       }
     return false;
   }
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
 
 
   int lim = cmd_line->max_expected_sup_len;
-  CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
+    CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
       return -1;
@@ -104,9 +104,9 @@ int main(int argc, char **argv)
   //Create the de Bruijn graph/hash table
   int max_retries=15;
   db_graph = hash_table_new(cmd_line->mem_height,
-			    cmd_line->mem_width,
-			    max_retries, 
-			    cmd_line->kmer_size);
+          cmd_line->mem_width,
+          max_retries, 
+          cmd_line->kmer_size);
   if (db_graph==NULL)
     {
       return -1;
@@ -125,6 +125,22 @@ int main(int argc, char **argv)
   }
 
   ReadingUtils* ru = alloc_reading_utils(MAX_LEN_GENE, db_graph->kmer_size);
+  
+  //init the dbNodes, mostly to keep valgrind happy
+  timestamp();
+  int i;
+  BinaryKmer b;
+  binary_kmer_initialise_to_zero(&b);
+  dBNode dummy_node;
+  element_initialise(&dummy_node, &b, cmd_line->kmer_size);
+  for (i=0; i<MAX_LEN_GENE; i++)
+    {
+      ru->array_nodes[i]=&dummy_node;
+    }
+
+  timestamp();
+
+
   ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
@@ -153,46 +169,51 @@ int main(int argc, char **argv)
     {
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
-      strbuf_append_str(sk, "data/skeleton_binary/tb/skeleton.k15.ctx");
+      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
       if (access(sk->buff,F_OK)!=0)
-	{
-	  printf("Build skeleton\n");
-	  timestamp();
-	  StrBuf* skeleton_flist = strbuf_new();
-	  strbuf_append_str(skeleton_flist, 
-			    cmd_line->install_dir->buff);
-	  strbuf_append_str(skeleton_flist, 
-			    "data/skeleton_binary/tb/list_speciesbranches_genes_and_muts");
+  {
+    printf("Build skeleton\n");
+    timestamp();
+    StrBuf* skeleton_flist = strbuf_new();
+    strbuf_append_str(skeleton_flist, 
+          cmd_line->install_dir->buff);
+    strbuf_append_str(skeleton_flist, 
+          "data/skeleton_binary/list_speciesbranches_genes_and_muts");
     uint64_t dummy=0;
     boolean is_rem=true;
-	  build_unclean_graph(db_graph, 
-			      skeleton_flist,
-			      true,
-			      cmd_line->kmer_size,
-			      NULL, 0,
-			      NULL, 0,
-			      false,
-			      into_colour,
-			      &subsample_null,
+    build_unclean_graph(db_graph, 
+            skeleton_flist,
+            true,
+            cmd_line->kmer_size,
+            NULL, 0,
+            NULL, 0,
+            false,
+            into_colour,
+            &subsample_null,
             false, &dummy, 0, &is_rem);
 
-	  //dump binary so can reuse
-	  set_all_coverages_to_zero(db_graph, 0);
-	  db_graph_dump_binary(sk->buff, 
-			       &db_node_condition_always_true,
-			       db_graph,
-			       NULL,
-			       BINVERSION);
-	  strbuf_free(skeleton_flist);
-	  timestamp();
-	}
+    //dump binary so can reuse
+    set_all_coverages_to_zero(db_graph, 0);
+    db_graph_dump_binary(sk->buff, 
+             &db_node_condition_always_true,
+             db_graph,
+             NULL,
+             BINVERSION);
+    strbuf_free(skeleton_flist);
+    printf("Dumped\n");
+    timestamp();
+  }
       else
-	{
-	  int num=0;
-	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
-	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
-	  graph_info_free(ginfo);
-	}
+  {
+    int num=0;
+    printf("Load skeleton binary\n");
+    timestamp();
+    GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
+    load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
+    graph_info_free(ginfo);
+    printf("Skeleton loaded\n");
+    timestamp();   
+  }
       strbuf_free(sk);
 
       only_load_pre_existing_kmers=true;
@@ -201,6 +222,8 @@ int main(int argc, char **argv)
     {
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
+  
+
   //only need this for progress
   uint64_t total_reads = 0;
   uint64_t count_so_far=0;
@@ -224,7 +247,11 @@ int main(int argc, char **argv)
           into_colour, subsample_function,
           cmd_line->progress, &count_so_far, total_reads,
           &progressbar_remainder);
-
+  if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
+    {
+      printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
+      fflush(stdout);
+    }
   if (bp_loaded==0)
     {
       printf("No data\n");
@@ -233,22 +260,24 @@ int main(int argc, char **argv)
     }
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
-							   cmd_line->readlen_distrib_size);
+                 cmd_line->readlen_distrib_size);
 
   double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
-
+  if (err_rate<0.005)
+    {
+      err_rate=0.005;
+    }
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
   
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
-	      * (mean_read_length-cmd_line->kmer_size+1)
-	      * lambda_g_err_free );
+        * (mean_read_length-cmd_line->kmer_size+1)
+        * lambda_g_err_free );
   
-  //printf("Expected covg\t%d\n", expected_depth);
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-  	      expected_depth, cmd_line->max_expected_sup_len);
+          expected_depth, cmd_line->max_expected_sup_len);
   
   
   //calculate expected read-arrival rates on true and error alleles
@@ -262,41 +291,104 @@ int main(int argc, char **argv)
     * err_rate/3
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
-  StrBuf* tmp_name = strbuf_new();
-  // Myc_species sp = get_species(db_graph, 10000, cmd_line->install_dir,
-		// 		 1,1);
-  Myc_species sp = Mtuberculosis;
-  // map_species_enum_to_str(sp,tmp_name);
-  if (cmd_line->format==Stdout)
+StrBuf* tmp_name = strbuf_new();
+  SampleModel* species_mod = alloc_and_init_sample_model();
+  SampleType st = get_species_model(db_graph, 11000, cmd_line->install_dir,
+            lambda_g_err, lambda_e_err, err_rate, expected_depth,
+            1,1,
+            species_mod);
+
+  if (st == MajorMTBAndMinorNonMTB)
     {
-      printf("** Species\n%s\n", tmp_name->buff);
-      if (sp != Mtuberculosis)
-	{
-	  printf("** No AMR predictions for Non-Tuberculous Mycoplasma\n** End time\n");
-	  timestamp();
-	  return 0;
-	}
-      else
-	{
-	  timestamp();
-	  printf("** Antimicrobial susceptibility predictions\n");
-	}
+      strbuf_append_str(tmp_name, "M.TB + (minor pop.) ");
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+    }
+  else if (st == MinorMTBAndMajorNonMTB)
+    {
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+    }
+  else if (st == NonMTB)
+    {
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
     }
   else
     {
+      strbuf_append_str(tmp_name, "M.TB");
+    }
+  
+  if (cmd_line->format==Stdout)
+    {
+      printf("** Species\n");
+      if (st != PureMTB)
+  {
+    printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
+    timestamp();
+    free_sample_model(species_mod);
+
+    //cleanup
+    strbuf_free(tmp_name);
+    free_antibiotic_info(abi);
+    free_res_var_info(tmp_rvi);
+    free_gene_info(tmp_gi);
+    free_reading_utils(ru);
+    
+    cmd_line_free(cmd_line);
+    hash_table_free(&db_graph);
+    
+    return 0;
+  }
+      else
+  {
+    printf("%s\n", tmp_name->buff);
+    timestamp();
+    free_sample_model(species_mod);
+
+    printf("** Antimicrobial susceptibility predictions\n");
+  }
+    }
+  else//JSON
+    {
       print_json_start();
       print_json_species_start();
-      print_json_item(tmp_name->buff, "1", true);
+      if (st == PureMTB)
+  {
+    print_json_item("M.TB", "Major", true);
+  }
+      else if (st == MajorMTBAndMinorNonMTB) 
+  {
+    print_json_item("M.TB", "Major",false);
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Minor", true);
+  }
+      else if (st==MinorMTBAndMajorNonMTB) 
+  {
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
+  }
+      else
+  {
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
+  }
       print_json_species_end(); 
-      if (sp != Mtuberculosis)
-	{
-	  print_json_susceptibility_start(); 
-	  print_json_susceptibility_end();
-	  print_json_virulence_start();
-	  print_json_virulence_end();
-	  print_json_end();
-	  return 0;
-	}
+
+      if (st != PureMTB)
+  {
+    print_json_susceptibility_start(); 
+    print_json_susceptibility_end();
+    print_json_virulence_start();
+    print_json_virulence_end();
+    print_json_end();
+
+    //cleanup
+    strbuf_free(tmp_name);
+    free_antibiotic_info(abi);
+    free_res_var_info(tmp_rvi);
+    free_gene_info(tmp_gi);
+    free_reading_utils(ru);
+    
+    cmd_line_free(cmd_line);
+    hash_table_free(&db_graph);
+    
+    return 0;
+  }
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
@@ -304,7 +396,7 @@ int main(int argc, char **argv)
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
 
-  //if we get here, is s. aureus
+  //if we get here, is MTB
 
   if (cmd_line->format==JSON)
     {
@@ -364,11 +456,11 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_g
     {
       printf("Print contigs\n");
       db_graph_print_supernodes_defined_by_func_of_colours(cmd_line->contig_file->buff, "", 
-							   cmd_line->max_expected_sup_len,
-							   db_graph, 
-							   &element_get_colour_union_of_all_colours, 
-							   &element_get_covg_union_of_all_covgs, 
-							   &print_no_extra_supernode_info);
+                 cmd_line->max_expected_sup_len,
+                 db_graph, 
+                 &element_get_colour_union_of_all_colours, 
+                 &element_get_covg_union_of_all_covgs, 
+                 &print_no_extra_supernode_info);
       printf("Completed printing contigs\n");
     }
 
