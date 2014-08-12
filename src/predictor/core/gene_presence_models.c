@@ -302,7 +302,7 @@ void choose_map_gene_model(GeneInfo* gi,
   mS.lp=0;
   mS.conf=0;
   Model mM;
-  mM.type=Susceptible;
+  mM.type=MixedInfection;
   mM.likelihood=llk_M;
   mM.lp=0;
   mM.conf=0;
