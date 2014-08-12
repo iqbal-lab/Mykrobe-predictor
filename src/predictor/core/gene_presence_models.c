@@ -86,6 +86,7 @@ double get_log_posterior_major_resistant(double llk,
 double get_log_posterior_minor_resistant(double llk,
 					 GeneInfo* gi,
 					 double recovery_given_sample_and_errors,
+					 int expected_covg,
 					 double err_rate,
 					 int min_expected)//given known diversity of genes
 
@@ -114,10 +115,18 @@ double get_log_posterior_minor_resistant(double llk,
       return -99999999;
     }
 
-  //double step function
-  if ( (p>= freq * recovery_given_sample_and_errors* min_expected)
+  //what % of the gene do you expect to see at this frequency?
+  double exp_rec = 1-exp(-expected_covg*freq);
+
+
+  //double step function. Coverage gap as might expect for this low frequency
+  /*  if ( (p>= freq * recovery_given_sample_and_errors* min_expected)
     &&
-       (p<= ((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected) )
+    (p<= ((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected) ) */
+
+  if ( (p>=exp_rec)//need to see enough of the gene
+    &&
+       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
     {
       return log(1)+llk;
     }
@@ -318,6 +327,7 @@ void choose_map_gene_model(GeneInfo* gi,
     = get_log_posterior_minor_resistant(llk_M, 
 					gi,
 					loss,
+					expected_covg,
 					err_rate,
 					min_expected_kmer_recovery_for_this_gene);
 
