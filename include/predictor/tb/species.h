@@ -29,21 +29,16 @@ typedef enum
  {
    Mtuberculosis = 0,
    Mafricanum = 1,
-   Mcanettii = 2,
-   Mmicroti = 3,
-   Mpinnipedii = 4,
-   Mbovis = 5,
-   Mcaprae = 6,
-   NTM = 7,
-  } Myc_species ;
+   Mbovis = 2 
+ } Myc_species ;
 
-#define NUM_SPECIES 7
+#define NUM_SPECIES 3
 typedef enum
   {
     PureMTB =0,
-    MajorMTBAndMinorNonMTB = 1,
-    MinorMTBAndMajorNonMTB = 2,
-    NonStaphylococcal = 3,
+    // MajorMTBAndMinorNonMTB = 1,
+    // MinorMTBAndMajorNonMTB = 2,
+    NonMTB = 3,
   } SampleType;
 
 typedef struct

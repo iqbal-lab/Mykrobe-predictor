@@ -75,35 +75,10 @@ void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
       strbuf_reset(sbuf);
       strbuf_append_str(sbuf,"M.africanum");
     }
-  else if (sp==Mcanettii)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.canettii");
-    }
-  else if (sp==Mmicroti)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.microti");
-    }
-  else if (sp==Mpinnipedii)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.pinnipedii");
-    }
   else if (sp==Mbovis)
     {
       strbuf_reset(sbuf);
       strbuf_append_str(sbuf,"M.bovis");
-    }
-  else if (sp==Mcaprae)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.caprae");
-    }
-  else if (sp==NTM)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"NTM");
     }
   else
     {
@@ -143,50 +118,23 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
 {
   // Define the paths to the possible species
-  StrBuf* species_file_paths[17];
+  StrBuf* species_file_paths[NUM_SPECIES];
   species_file_paths[0] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[0], "data/staph/species/Scapitis_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[0], "data/tb/species/M.tuberculosis.fa");
   species_file_paths[1] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[1], "data/staph/species/Scaprae_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/M.africanum.fa");
   species_file_paths[2] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[2], "data/staph/species/Sepidermidis_unique_branches.fasta");
+  strbuf_append_str(species_file_paths[2], "data/tb/species/M.bovis.fa");
   species_file_paths[3] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[3], "data/staph/species/Sequorum_unique_branches.fasta");
-  species_file_paths[4] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[4], "data/staph/species/Shaemolyticus_unique_branches.fasta");
-  species_file_paths[5] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[5], "data/staph/species/Shominis_unique_branches.fasta");
-  species_file_paths[6] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[6], "data/staph/species/Slugdunensis_unique_branches.fasta");
-  species_file_paths[7] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[7], "data/staph/species/Smassiliensis_unique_branches.fasta");
-  species_file_paths[8] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[8], "data/staph/species/Spettenkofer_unique_branches.fasta");
-  species_file_paths[9] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[9], "data/staph/species/Spseudintermedius_unique_branches.fasta");
-  species_file_paths[10] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[10], "data/staph/species/Ssaprophyticus_unique_branches.fasta");
-  species_file_paths[11] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[11], "data/staph/species/Ssimiae_unique_branches.fasta");
-  species_file_paths[12] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[12], "data/staph/species/Ssimulans_unique_branches.fasta");
-  species_file_paths[13] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[13], "data/staph/species/S_sp_hgb0015_unique_branches.fasta");
-  species_file_paths[14] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[14], "data/staph/species/S_sp_oj82_unique_branches.fasta");
-  species_file_paths[15] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[15], "data/staph/species/staph_unique_branches.fasta");
-  species_file_paths[16] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[16], "data/staph/species/S_warneri_unique_branches.fasta");
 
   int i;
-  double pcov[17]; // for storing the percentage coverage of each reference
-  double mcov[17]; //median covg
-  int tkmers[17];//total kmers in the unique branches
-  int tkmers_snps[17];//total kmers in the unique branches which are SNPs
-  int tkmers_mobile[17];
-  double p_snps[17];//what propn of the reads which are SNP length, have >0 covg
-  double p_mobile[17];
+  double pcov[NUM_SPECIES]; // for storing the percentage coverage of each reference
+  double mcov[NUM_SPECIES]; //median covg
+  int tkmers[NUM_SPECIES];//total kmers in the unique branches
+  int tkmers_snps[NUM_SPECIES];//total kmers in the unique branches which are SNPs
+  int tkmers_mobile[NUM_SPECIES];
+  double p_snps[NUM_SPECIES];//what propn of the reads which are SNP length, have >0 covg
+  double p_mobile[NUM_SPECIES];
   double tot_pos_kmers;;
   double tot_kmers;
   double med;
@@ -241,7 +189,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       die("Cannot alloc array of nodes or of orientations");
     }
   
-  for (i = 0; i < 17; i++)
+  for (i = 0; i < NUM_SPECIES; i++)
     {
       
       
@@ -345,7 +293,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   free(kmer_window);
   free_sequence(&seq);
 
-  for (i=0; i<17; i++)
+  for (i=0; i<NUM_SPECIES; i++)
     {
       strbuf_free(species_file_paths[i]);
     }
@@ -764,7 +712,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 // 			  int ignore_first, int ignore_last)
 // {
 //   // Define the paths to the possible species
-//   StrBuf* species_file_paths[17];
+//   StrBuf* species_file_paths[NUM_SPECIES];
 //   species_file_paths[0] = strbuf_create(install_dir->buff);
 //   strbuf_append_str(species_file_paths[0], "data/tb/species/Mtb_unique_branches.fasta");
 //   species_file_paths[1] = strbuf_create(install_dir->buff);
@@ -790,13 +738,13 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 
   
 //   int i;
-//   double pcov[17]; // for storing the percentage coverage of each reference
-//   double mcov[17]; //median covg
-//   int tkmers[17];//total kmers in the unique branches
-//   int tkmers_snps[17];//total kmers in the unique branches which are SNPs
-//   int tkmers_mobile[17];
-//   double p_snps[17];//what propn of the reads which are SNP length, have >0 covg
-//   double p_mobile[17];
+//   double pcov[NUM_SPECIES]; // for storing the percentage coverage of each reference
+//   double mcov[NUM_SPECIES]; //median covg
+//   int tkmers[NUM_SPECIES];//total kmers in the unique branches
+//   int tkmers_snps[NUM_SPECIES];//total kmers in the unique branches which are SNPs
+//   int tkmers_mobile[NUM_SPECIES];
+//   double p_snps[NUM_SPECIES];//what propn of the reads which are SNP length, have >0 covg
+//   double p_mobile[NUM_SPECIES];
 //   double tot_pos_kmers;;
 //   double tot_kmers;
 //   double med;
@@ -851,7 +799,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 //       die("Cannot alloc array of nodes or of orientations");
 //     }
   
-//   for (i = 0; i < 17; i++)
+//   for (i = 0; i < NUM_SPECIES; i++)
 //     {
       
       
@@ -955,7 +903,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 //   free(kmer_window);
 //   free_sequence(&seq);
 
-//   for (i=0; i<17; i++)
+//   for (i=0; i<NUM_SPECIES; i++)
 //     {
 //       strbuf_free(species_file_paths[i]);
 //     }
