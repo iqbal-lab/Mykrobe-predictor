@@ -124,7 +124,7 @@ double get_log_posterior_minor_resistant(double llk,
     &&
     (p<= ((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected) ) */
 
-  if ( (p>=exp_rec)//need to see enough of the gene
+  if ( (p>=exp_rec*100)//need to see enough of the gene
     &&
        (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
     {

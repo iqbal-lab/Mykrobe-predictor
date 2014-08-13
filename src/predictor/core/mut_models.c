@@ -66,14 +66,14 @@ double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(doubl
 
   int p = max_perc_covg_on_res_allele;
   
-  if (p>=80*epsilon)
+  /*  if (p>=80*epsilon)
     {
       return -99999999;
     }
   else
-    {
+  { */
       return log(1)+llk;;
-    }
+      //}
 }
 
 double get_log_posterior_of_mixed_infection(double llk,
