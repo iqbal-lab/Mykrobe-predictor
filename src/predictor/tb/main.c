@@ -298,28 +298,28 @@ StrBuf* tmp_name = strbuf_new();
             1,1,
             species_mod);
 
-  if (st == MajorMTBAndMinorNonMTB)
+  // if (st == MixedMTB)
+  //   {
+  //     strbuf_append_str(tmp_name, "Mixed M.TB + ");
+  //     strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+  //   }
+  // else if (st == MinorMTBAndMajorNonMTB)
+  //   {
+  //     strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+  //   }
+  if (st == NonMTB)
     {
-      strbuf_append_str(tmp_name, "M.TB + (minor pop.) ");
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
     }
-  else if (st == MinorMTBAndMajorNonMTB)
+  else if (st == PureMTBC)
     {
-      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-    }
-  else if (st == NonMTB)
-    {
-      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-    }
-  else
-    {
-      strbuf_append_str(tmp_name, "M.TB");
+      strbuf_append_str(tmp_name, species_mod->name_of_pure_mtbc_species->buff);
     }
   
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n");
-      if (st != PureMTB)
+      if (st == NonMTB )
   {
     printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
     timestamp();
@@ -350,26 +350,27 @@ StrBuf* tmp_name = strbuf_new();
     {
       print_json_start();
       print_json_species_start();
-      if (st == PureMTB)
+  
+  if (st == PureMTBC)
   {
-    print_json_item("M.TB", "Major", true);
+    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
   }
-      else if (st == MajorMTBAndMinorNonMTB) 
-  {
-    print_json_item("M.TB", "Major",false);
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Minor", true);
-  }
-      else if (st==MinorMTBAndMajorNonMTB) 
-  {
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
-  }
+  // else if (st == MixedMTB) 
+  // {
+  //   print_json_item("M.TB", "Major",true);
+  //   print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
+  // }
+  //     else if (st==MinorMTBAndMajorNonMTB) 
+  // {
+  //   print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
+  // }
       else
   {
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", false);
   }
       print_json_species_end(); 
 
-      if (st != PureMTB)
+      if (st == NonMTB)
   {
     print_json_susceptibility_start(); 
     print_json_susceptibility_end();

@@ -35,10 +35,11 @@ typedef enum
 #define NUM_SPECIES 3
 typedef enum
   {
-    PureMTB =0,
-    MajorMTBAndMinorNonMTB = 1,
-    MinorMTBAndMajorNonMTB = 2,
-    NonMTB = 3,
+    PureMTBC =0,
+    // MixedMTB =1,
+    // MajorMTBAndMinorNonMTB = 1,
+    // MinorMTBAndMajorNonMTB = 2,
+    NonMTB = 2,
   } SampleType;
 
 typedef struct
@@ -47,6 +48,7 @@ typedef struct
   double likelihood;//log likelihood
   double lp; //log posterior
   double conf;
+  StrBuf* name_of_pure_mtbc_species;//how we interpret this depends on the model type.
   StrBuf* name_of_non_mtb_species;//how we interpret this depends on the model type.
 } SampleModel;
 
@@ -62,19 +64,20 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
            SampleModel* best_model);
 
 
-void get_stats_pure_mtb(int expected_covg, double err_rate, 
+void get_stats_pure_MTBC(int expected_covg, double err_rate, 
          double lambda_g_err,double lambda_e,
          double* arr_perc_covg, double* arr_median,int* arr_tkmers, 
          int* arr_tkmers_snps, int* arr_tkmers_mobile,
          double* arr_prop_snps, double* arr_prop_mobile,
          int kmer_size,
-         SampleModel* sm);
+         SampleModel* sm,
+         Myc_species sp);
 
-void get_stats_mix_mtb_and_non_mtb(int expected_covg, double err_rate, 
-           double lambda_g_err,
-           double* arr_perc_covg, double* arr_median,
-           double frac_myc,
-           SampleModel* sm);
+// void get_stats_mix_mtb_and_non_mtb(int expected_covg, double err_rate, 
+//            double lambda_g_err,
+//            double* arr_perc_covg, double* arr_median,
+//            double frac_myc,
+//            SampleModel* sm);
 
 
 void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
