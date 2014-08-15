@@ -304,7 +304,10 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   SampleModel* M_pure_Mtuberculosis=alloc_and_init_sample_model();
   SampleModel* M_pure_Mafricanum=alloc_and_init_sample_model();
   SampleModel* M_pure_Mbovis=alloc_and_init_sample_model();
-  // SampleModel* M_min_MTB=alloc_and_init_sample_model();
+  // Mixed Models
+  // SampleModel* M_maj_mixture=alloc_and_init_sample_model();
+  // SampleModel* M_min_mixture=alloc_and_init_sample_model();
+  
   SampleModel* M_non_MTB=alloc_and_init_sample_model();
 
   get_stats_pure_MTBC(expected_covg, err_rate,
@@ -323,14 +326,14 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       p_snps, p_mobile, db_graph->kmer_size,
       M_pure_Mbovis,Mbovis);
 
-  // get_stats_mix_mtb(expected_covg, err_rate,
+  // get_stats_mix_mtbc(expected_covg, err_rate,
   //       lambda_g_err,
   //       pcov, mcov, 
-  //       0.9, M_mixed_MTB);
-  // get_stats_mix_mtb_and_non_mtb(expected_covg, err_rate,
+  //       0.9, M_maj_mixture);
+  // get_stats_mix_mtbc(expected_covg, err_rate,
   //       lambda_g_err,
   //       pcov, mcov, 
-  //       0.05, M_min_MTB);
+  //       0.1, M_min_mixture);
 
   get_stats_non_MTB(expected_covg, err_rate,lambda_e_err,
           pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
@@ -348,11 +351,15 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
         marray[3]->name_of_non_mtb_species->buff);
   strbuf_append_str(best_model->name_of_pure_mtbc_species, 
         marray[3]->name_of_pure_mtbc_species->buff);
-  
+
   //cleanup
   free_sample_model(M_pure_Mtuberculosis);
   free_sample_model(M_pure_Mafricanum);
   free_sample_model(M_pure_Mbovis);
+
+  // free_sample_model(M_maj_mixture);
+  // free_sample_model(M_min_mixture);
+
   free_sample_model(M_non_MTB);
 
   return best_model->type;
@@ -363,14 +370,15 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 Myc_species get_best_hit(double* arr_perc_cov, 
          double* arr_median, 
          boolean* found, 
-         boolean exclude_mtb)
+         boolean exclude_sp, 
+         Myc_species sp)
 {
   int i;
   double prod=0;
   int curr=-1;
   for (i=0; i<NUM_SPECIES; i++)
     {
-      if ( (exclude_mtb==true) && ((Myc_species)i==Mtuberculosis))
+      if ( (exclude_sp==true) && ((Myc_species)i==sp))
   {
     continue;
   }
@@ -385,7 +393,7 @@ Myc_species get_best_hit(double* arr_perc_cov,
   if (curr==-1)
     {
       *found=false;
-      return Mtuberculosis;
+      return sp;
     }
   else
     {
@@ -407,13 +415,18 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
 
   //which non-MTB
   boolean found=true;
-  boolean exclude_mtb=true;
-  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_mtb);
+  boolean exclude_sp=true;
+  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_sp, sp);
+  // printf("Best Alternate is : %i\n",best );
 
 
-  //now deal with aureus
+  //now deal with sp
   double recovery_expected = 1-exp(-expected_covg);
-  
+  printf("recovery_expected %f\n", recovery_expected);
+  printf("Species : %i\n",sp );
+  printf("Covg : %f\n",arr_perc_covg[sp] );
+  printf("coverage_expected %i\n", expected_covg);
+  printf("median Covg  : %f\n",arr_median[sp] );
   double lpr=0;
 
   if (arr_perc_covg[sp] > 0.75*recovery_expected)
@@ -489,89 +502,84 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
 
 
 
-// void get_stats_mix_mtb(int expected_covg, double err_rate, double lambda_g_err,
-//            double* arr_perc_covg, double* arr_median, 
-//            double frac_MTB,
-//            SampleModel* sm)
-// {
-//   if ( (frac_MTB<0.001) || (frac_MTB>0.999) )
-//     {
-//       die("Do not call get_stats_mix_mtb_and_non_mtb when frac==0 or 1 -= programming error\n");
-//     }
-//   boolean found=true;
-//   boolean exclude_mtb=true;
-//   int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_mtb);
-//   if (found==true)
-//     {
-//       map_species_enum_to_str((Myc_species) best, sm->name_of_non_mtb_species);
-//     }
-//   else
-//     {
-//       strbuf_append_str(sm->name_of_non_mtb_species, "Failed to find coag-neg - this is default text only - if you see it, it is a bug\n");
-//     }
+void get_stats_mix_mtbc(int expected_covg, double err_rate, double lambda_g_err,
+           double* arr_perc_covg, double* arr_median, 
+           double frac_MTB,
+           SampleModel* sm)
+{
+  if ( (frac_MTB<0.001) || (frac_MTB>0.999) )
+    {
+      die("Do not call get_stats_mix_mtb_and_non_mtb when frac==0 or 1 -= programming error\n");
+    }
+  boolean found=true;
+  // Get the best 2 species, if it's a mixture it will be between these two. 
+  boolean exclude=false;
+  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude,9999);
+  // Get the best hit of the remainder
+  int second_best = get_best_hit(arr_perc_covg,arr_median, &found, true,best);
 
-//   if (found==false)
-//     {
-//       sm->likelihood=-9999999;
-//       sm->lp=-99999999;
-//     }
-//   else
-//     {
-//       double MTB_recovery_expected = frac_MTB*(1-exp(-expected_covg));
+  // The naming of these is confusing but for now its just a way of storing both species.
+  map_species_enum_to_str((Myc_species) best, sm->name_of_pure_mtbc_species);
+  map_species_enum_to_str((Myc_species) second_best, sm->name_of_non_mtb_species);  
 
-//       double MTB_lpr;
-//       if (arr_perc_covg[Mtuberculosis] > 0.75*MTB_recovery_expected)
-//   {
-//     MTB_lpr=log(1);
-//   }
-//       else if (arr_perc_covg[Mtuberculosis] > 0.5*MTB_recovery_expected)
-//         {
-//           MTB_lpr=log(0.5);
-//         }
-//       else
-//   {
-//     MTB_lpr=-999999;
-//   }
-//       double llk_aureus = -frac_MTB*lambda_g_err + arr_median[Mtuberculosis]*log(frac_MTB*lambda_g_err) - log_factorial(arr_median[Mtuberculosis]);
+  if (found==false)
+    {
+      sm->likelihood=-9999999;
+      sm->lp=-99999999;
+    }
+  else
+    {
+      double MTB_recovery_expected = frac_MTB*(1-exp(-expected_covg));
 
+      double MTB_lpr;
+      if (arr_perc_covg[best] > 0.75*MTB_recovery_expected)
+  {
+    MTB_lpr=log(1);
+  }
+      else if (arr_perc_covg[best] > 0.5*MTB_recovery_expected)
+        {
+          MTB_lpr=log(0.5);
+        }
+      else
+  {
+    MTB_lpr=-999999;
+  }
+      double llk_aureus = -frac_MTB*lambda_g_err + arr_median[best]*log(frac_MTB*lambda_g_err) - log_factorial(arr_median[best]);
+      //now do the same for the other population
+      double cong_recovery_expected = (1-frac_MTB)*(1-exp(-expected_covg));
 
-//       //now do the same for the other population
-//       double cong_recovery_expected = (1-frac_MTB)*(1-exp(-expected_covg));
-
-//       double cong_lpr;
-//       //want to avoid calling CONG just because of small number of repeat kmers
-//       printf("Got %f perc covg of the non-MTB and we expect %f\n", arr_perc_covg[best], cong_recovery_expected );
-//       /*      if (arr_perc_covg[best] < 0.3)
-//   {
-//     cong_lpr=-999999;
-//     }*/
-//       if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
-//   {
-//     cong_lpr=0;
-//   }
-//       else if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
-//   {
-//     cong_lpr=log(0.1);
-//   }
-//       else
-//   {
-//     cong_lpr=-999999;
-//   }
-//       double llk_cong = -(1-frac_MTB)*lambda_g_err 
-//   + arr_median[best]*log((1-frac_MTB)*lambda_g_err) 
-//   - log_factorial(arr_median[best]);
+      double cong_lpr;
+      //want to avoid calling CONG just because of small number of repeat kmers
+      printf("Got %f perc covg of the minor and we expect %f\n", arr_perc_covg[second_best], cong_recovery_expected );
+      /*      if (arr_perc_covg[second_best] < 0.3)
+  {
+    cong_lpr=-999999;
+    }*/
+      if (arr_perc_covg[second_best] > 0.9*cong_recovery_expected)
+  {
+    cong_lpr=0;
+  }
+      else if (arr_perc_covg[second_best] > 0.75*cong_recovery_expected)
+  {
+    cong_lpr=log(0.1);
+  }
+      else
+  {
+    cong_lpr=-999999;
+  }
+      double llk_cong = -(1-frac_MTB)*lambda_g_err 
+  + arr_median[second_best]*log((1-frac_MTB)*lambda_g_err) 
+  - log_factorial(arr_median[second_best]);
 
 
-//       sm->likelihood = llk_aureus+llk_cong;
-//       sm->lp =sm->likelihood+MTB_lpr+cong_lpr;;
+      sm->likelihood = llk_aureus+llk_cong;
+      sm->lp =sm->likelihood+MTB_lpr+cong_lpr;;
 
-//     }
-//   if (frac_MTB>0.9)
-//     {
-//       sm->type=MixedMTB;
-//     }
+    }
 
-// }
+    sm->type=MixedMTB;
+
+}
 
 
 void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
@@ -583,7 +591,7 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
   boolean found=true;
   boolean exclude_mtb=false;
   //do ANY MTB get a decent hit?
-  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_mtb);
+  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_mtb, 9999);
 
   if (found==false)
     {
@@ -926,8 +934,8 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
 
   
 //   SampleModel* M_pure_MTB=alloc_and_init_sample_model();
-//   SampleModel* M_maj_MTB=alloc_and_init_sample_model();
-//   SampleModel* M_min_MTB=alloc_and_init_sample_model();
+//   SampleModel* M_maj_mixture=alloc_and_init_sample_model();
+//   SampleModel* M_min_mixture=alloc_and_init_sample_model();
 //   SampleModel* M_non_myc=alloc_and_init_sample_model();
 
 //   get_stats_pure_myc(expected_covg, err_rate,
@@ -938,7 +946,7 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
 //   get_stats_mix_myc_and_non_myc(expected_covg, err_rate,
 //         lambda_g_err,
 //         pcov, mcov, 
-//         0.9, M_maj_MTB);
+//         0.9, M_maj_mixture);
 //   get_stats_mix_myc_and_non_myc(expected_covg, err_rate,
 //         lambda_g_err,
 //         pcov, mcov, 
@@ -947,7 +955,7 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
 //   get_stats_non_myc(expected_covg, err_rate,lambda_e_err,
 //           pcov, mcov, tkmers, db_graph->kmer_size, M_non_myc);
 
-//   SampleModel* marray[4] = {M_pure_MTB, M_maj_MTB, M_min_MTB, M_non_myc};
+//   SampleModel* marray[4] = {M_pure_MTB, M_maj_mixture, M_min_MTB, M_non_myc};
 //   qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
 //   best_model->conf = marray[3]->lp - marray[2]->lp;
 //   best_model->type = marray[3]->type;
@@ -958,7 +966,7 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
 //         marray[3]->name_of_non_myc_species->buff);
 //   //cleanup
 //   free_sample_model(M_pure_MTB);
-//   free_sample_model(M_maj_MTB);
+//   free_sample_model(M_maj_mixture);
 //   free_sample_model(M_min_MTB);
 //   free_sample_model(M_non_myc);
 

@@ -297,17 +297,16 @@ StrBuf* tmp_name = strbuf_new();
             lambda_g_err, lambda_e_err, err_rate, expected_depth,
             1,1,
             species_mod);
+  printf("Sample Type: %i\n",st);
+  if (st == MixedMTB)
+    {
+      strbuf_append_str(tmp_name, "Mixed");
+      strbuf_append_str(tmp_name, species_mod->name_of_pure_mtbc_species->buff);
+      strbuf_append_str(tmp_name, " + ");
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
 
-  // if (st == MixedMTB)
-  //   {
-  //     strbuf_append_str(tmp_name, "Mixed M.TB + ");
-  //     strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-  //   }
-  // else if (st == MinorMTBAndMajorNonMTB)
-  //   {
-  //     strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-  //   }
-  if (st == NonMTB)
+    }
+  else if (st == NonMTB)
     {
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
     }
@@ -355,15 +354,12 @@ StrBuf* tmp_name = strbuf_new();
   {
     print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
   }
-  // else if (st == MixedMTB) 
-  // {
-  //   print_json_item("M.TB", "Major",true);
-  //   print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
-  // }
-  //     else if (st==MinorMTBAndMajorNonMTB) 
-  // {
-  //   print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
-  // }
+  else if (st == MixedMTB) 
+  {
+    print_json_item("M.TB", "Mixed",true);
+    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", true);
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
+  }
       else
   {
     print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", false);

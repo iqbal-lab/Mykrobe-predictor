@@ -36,7 +36,7 @@ typedef enum
 typedef enum
   {
     PureMTBC =0,
-    // MixedMTB =1,
+    MixedMTB =1,
     // MajorMTBAndMinorNonMTB = 1,
     // MinorMTBAndMajorNonMTB = 2,
     NonMTB = 2,
@@ -73,11 +73,11 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
          SampleModel* sm,
          Myc_species sp);
 
-// void get_stats_mix_mtb_and_non_mtb(int expected_covg, double err_rate, 
-//            double lambda_g_err,
-//            double* arr_perc_covg, double* arr_median,
-//            double frac_myc,
-//            SampleModel* sm);
+void get_stats_mix_mtbc(int expected_covg, double err_rate, 
+           double lambda_g_err,
+           double* arr_perc_covg, double* arr_median,
+           double frac_myc,
+           SampleModel* sm);
 
 
 void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
