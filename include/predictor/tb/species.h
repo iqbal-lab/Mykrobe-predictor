@@ -27,12 +27,21 @@
 #include "dB_graph.h"
 typedef enum 
  {
-   Mtuberculosis = 0,
-   Mafricanum = 1,
-   Mbovis = 2 
- } Myc_species ;
+   // Mtuberculosis = 0,
+   // Mafricanum = 1,
+   // Mbovis = 2 
+  beijing = 0,
+  animal = 1, 
+  lineage1 = 2,
+  lineage2 = 3, 
+  lineage3 = 4, 
+  lineage4 = 5, 
+  lineage5 = 6, 
+  lineage6 = 7, 
+  lineage7 = 8
+  } Myc_species ;
 
-#define NUM_SPECIES 3
+#define NUM_SPECIES 9
 typedef enum
   {
     PureMTBC =0,
@@ -83,3 +92,10 @@ void get_stats_mix_mtbc(int expected_covg, double err_rate,
 void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
        double* arr_perc_covg, double* arr_median, int* arr_tkmers, int kmer_size,
        SampleModel* sm);
+
+Myc_species get_best_hit(double* arr_perc_cov, 
+         double* arr_median, 
+         boolean* found, 
+         boolean exclude_sp, 
+         Myc_species sp);
+

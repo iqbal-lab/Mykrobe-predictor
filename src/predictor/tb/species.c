@@ -67,21 +67,55 @@ void free_sample_model(SampleModel* sm)
 }
 void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
 {
-  if (sp==Mtuberculosis)
+  if (sp==beijing)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.tuberculosis");
+      strbuf_append_str(sbuf,"beijing");
     }
-  else if (sp==Mafricanum)
+  else if (sp==animal)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.africanum");
+      strbuf_append_str(sbuf,"animal");
     }
-  else if (sp==Mbovis)
+  else if (sp==lineage1)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M.bovis");
+      strbuf_append_str(sbuf,"lineage_1");
     }
+  else if (sp==lineage2)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"lineage_2");
+    }
+  else if (sp==lineage3)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"lineage_3");
+    }
+  else if (sp==lineage4)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"lineage_4");
+    }
+  else if (sp==lineage5)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"lineage_5");
+    }
+  else if (sp==lineage6)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"lineage_6");
+    }
+  else if (sp==lineage7)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"lineage_7");
+    }
+
+
+
+
   else
     {
       die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
@@ -121,12 +155,30 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 {
   // Define the paths to the possible species
   StrBuf* species_file_paths[NUM_SPECIES];
+  // species_file_paths[0] = strbuf_create(install_dir->buff);
+  // strbuf_append_str(species_file_paths[0], "data/tb/species/M.tuberculosis.fa");
+  // species_file_paths[1] = strbuf_create(install_dir->buff);
+  // strbuf_append_str(species_file_paths[1], "data/tb/species/M.africanum.fa");
+  // species_file_paths[2] = strbuf_create(install_dir->buff);
+  // strbuf_append_str(species_file_paths[2], "data/tb/species/M.bovis.fa");
   species_file_paths[0] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[0], "data/tb/species/M.tuberculosis.fa");
+  strbuf_append_str(species_file_paths[0], "data/tb/species/beijing_sublineage.fa");
   species_file_paths[1] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[1], "data/tb/species/M.africanum.fa");
+  strbuf_append_str(species_file_paths[1], "data/tb/species/animal_lineage.fa");
   species_file_paths[2] = strbuf_create(install_dir->buff);
-  strbuf_append_str(species_file_paths[2], "data/tb/species/M.bovis.fa");
+  strbuf_append_str(species_file_paths[2], "data/tb/species/lineage_1.fa");
+  species_file_paths[3] = strbuf_create(install_dir->buff);
+  strbuf_append_str(species_file_paths[3], "data/tb/species/lineage_2.fa");
+  species_file_paths[4] = strbuf_create(install_dir->buff);
+  strbuf_append_str(species_file_paths[4], "data/tb/species/lineage_3.fa");
+  species_file_paths[5] = strbuf_create(install_dir->buff);
+  strbuf_append_str(species_file_paths[5], "data/tb/species/lineage_4.fa");
+  species_file_paths[6] = strbuf_create(install_dir->buff);
+  strbuf_append_str(species_file_paths[6], "data/tb/species/lineage_5.fa");
+  species_file_paths[7] = strbuf_create(install_dir->buff);
+  strbuf_append_str(species_file_paths[7], "data/tb/species/lineage_6.fa");
+  species_file_paths[8] = strbuf_create(install_dir->buff);
+  strbuf_append_str(species_file_paths[8], "data/tb/species/lineage_7.fa");
 
   int i;
   double pcov[NUM_SPECIES]; // for storing the percentage coverage of each reference
@@ -299,11 +351,15 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       strbuf_free(species_file_paths[i]);
     }
 
+  boolean found=true;
+  boolean exclude_sp=false;
+  Myc_species best = get_best_hit(pcov, mcov, &found, exclude_sp, 9999);
+  SampleModel* M_pure_MTBC=alloc_and_init_sample_model();
+  // SampleModel* M_pure_Mtuberculosis=alloc_and_init_sample_model();
+  // SampleModel* M_pure_Mafricanum=alloc_and_init_sample_model();
+  // SampleModel* M_pure_Mbovis=alloc_and_init_sample_model();
+    
 
-  
-  SampleModel* M_pure_Mtuberculosis=alloc_and_init_sample_model();
-  SampleModel* M_pure_Mafricanum=alloc_and_init_sample_model();
-  SampleModel* M_pure_Mbovis=alloc_and_init_sample_model();
   // Mixed Models
   // SampleModel* M_maj_mixture=alloc_and_init_sample_model();
   // SampleModel* M_min_mixture=alloc_and_init_sample_model();
@@ -314,17 +370,17 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       lambda_g_err, lambda_e_err,
       pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
       p_snps, p_mobile, db_graph->kmer_size,
-      M_pure_Mtuberculosis, Mtuberculosis );
-  get_stats_pure_MTBC(expected_covg, err_rate,
-      lambda_g_err, lambda_e_err,
-      pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
-      p_snps, p_mobile, db_graph->kmer_size,
-      M_pure_Mafricanum ,Mafricanum );
-  get_stats_pure_MTBC(expected_covg, err_rate,
-      lambda_g_err, lambda_e_err,
-      pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
-      p_snps, p_mobile, db_graph->kmer_size,
-      M_pure_Mbovis,Mbovis);
+      M_pure_MTBC, best );
+  // get_stats_pure_MTBC(expected_covg, err_rate,
+  //     lambda_g_err, lambda_e_err,
+  //     pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
+  //     p_snps, p_mobile, db_graph->kmer_size,
+  //     M_pure_Mafricanum ,Mafricanum );
+  // get_stats_pure_MTBC(expected_covg, err_rate,
+  //     lambda_g_err, lambda_e_err,
+  //     pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
+  //     p_snps, p_mobile, db_graph->kmer_size,
+  //     M_pure_Mbovis,Mbovis);
 
   // get_stats_mix_mtbc(expected_covg, err_rate,
   //       lambda_g_err,
@@ -338,24 +394,25 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   get_stats_non_MTB(expected_covg, err_rate,lambda_e_err,
           pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
 
-  SampleModel* marray[4] = {M_pure_Mtuberculosis, M_pure_Mafricanum , M_pure_Mbovis, M_non_MTB};
-  qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
-  best_model->conf = marray[3]->lp - marray[2]->lp;
-  best_model->type = marray[3]->type;
-  best_model->likelihood = marray[3]->likelihood;
-  best_model->lp = marray[3]->lp;
+  SampleModel* marray[2] = {M_pure_MTBC, M_non_MTB};
+  qsort(marray, 2, sizeof(SampleModel*), sample_model_cmp_logpost);
+  best_model->conf = marray[1]->lp - marray[0]->lp;
+  best_model->type = marray[1]->type;
+  best_model->likelihood = marray[1]->likelihood;
+  best_model->lp = marray[1]->lp;
   strbuf_reset(best_model->name_of_non_mtb_species);
   strbuf_reset(best_model->name_of_pure_mtbc_species);
 
   strbuf_append_str(best_model->name_of_non_mtb_species, 
-        marray[3]->name_of_non_mtb_species->buff);
+        marray[1]->name_of_non_mtb_species->buff);
   strbuf_append_str(best_model->name_of_pure_mtbc_species, 
-        marray[3]->name_of_pure_mtbc_species->buff);
+        marray[1]->name_of_pure_mtbc_species->buff);
 
   //cleanup
-  free_sample_model(M_pure_Mtuberculosis);
-  free_sample_model(M_pure_Mafricanum);
-  free_sample_model(M_pure_Mbovis);
+  // free_sample_model(M_pure_Mtuberculosis);
+  // free_sample_model(M_pure_Mafricanum);
+  // free_sample_model(M_pure_Mbovis);
+  free_sample_model(M_pure_MTBC);
 
   // free_sample_model(M_maj_mixture);
   // free_sample_model(M_min_mixture);
@@ -416,7 +473,7 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
   //which non-MTB
   boolean found=true;
   boolean exclude_sp=true;
-  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_sp, sp);
+  Myc_species best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_sp, sp);
   // printf("Best Alternate is : %i\n",best );
 
 

@@ -297,7 +297,8 @@ StrBuf* tmp_name = strbuf_new();
             lambda_g_err, lambda_e_err, err_rate, expected_depth,
             1,1,
             species_mod);
-  printf("Sample Type: %i\n",st);
+  // printf("Sample Type: %i\n",st);
+  // printf("Speces Type: %s\n",species_mod->name_of_pure_mtbc_species->buff);
   if (st == MixedMTB)
     {
       strbuf_append_str(tmp_name, "Mixed");
