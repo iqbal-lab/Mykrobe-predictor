@@ -479,11 +479,11 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
 
   //now deal with sp
   double recovery_expected = 1-exp(-expected_covg);
-  printf("recovery_expected %f\n", recovery_expected);
-  printf("Species : %i\n",sp );
-  printf("Covg : %f\n",arr_perc_covg[sp] );
-  printf("coverage_expected %i\n", expected_covg);
-  printf("median Covg  : %f\n",arr_median[sp] );
+  // printf("recovery_expected %f\n", recovery_expected);
+  // printf("Species : %i\n",sp );
+  // printf("Covg : %f\n",arr_perc_covg[sp] );
+  // printf("coverage_expected %i\n", expected_covg);
+  // printf("median Covg  : %f\n",arr_median[sp] );
   double lpr=0;
 
   if (arr_perc_covg[sp] > 0.75*recovery_expected)
