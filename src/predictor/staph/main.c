@@ -95,11 +95,11 @@ int main(int argc, char **argv)
 
 
   int lim = cmd_line->max_expected_sup_len;
-    CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
+    /* CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
       return -1;
-    }
+    }*/
 
   //Create the de Bruijn graph/hash table
   int max_retries=15;

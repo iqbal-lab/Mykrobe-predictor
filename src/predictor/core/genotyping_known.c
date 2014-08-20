@@ -398,9 +398,10 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 
   if (rinfo->var_id!= *prev_mut)
     {
-      rinfo->working_current_max_sus_allele_present=0;
-      rinfo->working_current_max_res_allele_present=0;
-      *prev_mut=rinfo->var_id; //for use in the next call to this function
+      reset_res_var_info(rinfo);
+      //rinfo->working_current_max_sus_allele_present=0;
+      //rinfo->working_current_max_res_allele_present=0;
+      *prev_mut=km; //for use in the next call to this function
     }
   rinfo->gene=g;
   rinfo->var_id=km;
