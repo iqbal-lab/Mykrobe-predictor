@@ -277,7 +277,7 @@ int main(int argc, char **argv)
 	      * lambda_g_err_free );
   
   clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-  	      expected_depth, cmd_line->max_expected_sup_len);
+       expected_depth, cmd_line->max_expected_sup_len); 
   
   
   //calculate expected read-arrival rates on true and error alleles

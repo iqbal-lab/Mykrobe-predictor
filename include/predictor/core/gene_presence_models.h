@@ -40,6 +40,7 @@ double get_log_posterior_major_resistant(double llk,
 double get_log_posterior_minor_resistant(double llk,
 					 GeneInfo* gi,
 					 double recovery_given_sample_and_errors,
+					 int expected_covg,
 					 double err_rate,
 					 int min_expected);//given known diversity of genes
 

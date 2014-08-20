@@ -582,7 +582,6 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
       double cong_lpr;
       //want to avoid calling CONG just because of small number of repeat kmers
-      printf("Got %f perc covg of the cong and we expect %f\n", arr_perc_covg[best], cong_recovery_expected );
 
       if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
 	{
