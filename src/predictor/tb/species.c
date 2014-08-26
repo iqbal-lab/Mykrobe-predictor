@@ -516,7 +516,6 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
   // a) SNP error (single base errors)s
   // b) plasmids/mobile elements. What % of our unique-to-species panel will be mobile? Say max 40%
 
-  double lpe=0;
   int numk;
   if (arr_tkmers_snps[best]>kmer_size)
     {

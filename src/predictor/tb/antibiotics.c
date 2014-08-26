@@ -119,17 +119,17 @@ AntibioticInfo* alloc_antibiotic_info()
     {
       abi->m_fasta = strbuf_new();
       abi->num_genes = 0;
-      abi->mut = (ResVarInfo**) malloc(sizeof(ResVarInfo*)*NUM_KNOWN_MUTATIONS);
-      if (abi->mut==NULL)
+      abi->vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);
+      if (abi->vars==NULL)
 	{
 	  strbuf_free(abi->m_fasta);
-	  free(abi);
+          free(abi);
 	  return NULL;
 	}
       abi->genes = (GeneInfo**) malloc(sizeof(GeneInfo*)*NUM_GENE_PRESENCE_GENES);
       if (abi->genes==NULL)
 	{
-	  free(abi->mut);
+	  free(abi->vars);
 	  strbuf_free(abi->m_fasta);
 	  free(abi);
 	  return NULL;
@@ -138,7 +138,7 @@ AntibioticInfo* alloc_antibiotic_info()
       if (abi->which_genes==NULL)
 	{
 	  free(abi->genes);
-	  free(abi->mut);
+	  free(abi->vars);
 	  strbuf_free(abi->m_fasta);
 	  free(abi);
 	  return NULL;
@@ -147,11 +147,27 @@ AntibioticInfo* alloc_antibiotic_info()
       int i;
       for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
 	{
-	  abi->mut[i] = alloc_and_init_res_var_info();
+	  abi->vars[i] = alloc_var();
+	  if (abi->vars[i]==NULL)
+	    {
+	      free(abi->vars);
+	      free(abi->genes); 
+	      strbuf_free(abi->m_fasta);
+	      free(abi);
+	      return NULL; //creates a leak if i>0
+	    }
 	}
       for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
 	{
 	  abi->genes[i] = alloc_and_init_gene_info();
+	  if (abi->genes[i]==NULL)
+	    {
+	      free(abi->vars);
+              free(abi->genes);
+              strbuf_free(abi->m_fasta);
+              free(abi);
+              return NULL; 
+	    }
 	  abi->genes[i]->name = (GenePresenceGene) i;
 	}
 
@@ -170,12 +186,15 @@ void free_antibiotic_info(AntibioticInfo* abi)
       int i;
       for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
 	{
-	  free_res_var_info(abi->mut[i]);
+	  free_var(abi->vars[i]);
 	}
+      free(abi->vars);
       for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
 	{
 	  free_gene_info(abi->genes[i]);
 	}
+      free(abi->genes);
+      free(abi->which_genes);
       free(abi);
     }
 }
@@ -189,7 +208,8 @@ void reset_antibiotic_info(AntibioticInfo* abi)
   int i;
   for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
     {
-      reset_res_var_info(abi->mut[i]);
+      reset_var_on_background(abi->vars[i]->vob_best_sus);
+      reset_var_on_background(abi->vars[i]->vob_best_res);
     }
   for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
     {
@@ -206,37 +226,37 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 								 boolean * full_entry),
 					      AntibioticInfo* abi,
 					      ReadingUtils* rutils,
-					      ResVarInfo* tmp_rvi,	
+					      VarOnBackground* tmp_vob,	
 					      int ignore_first, int ignore_last, int expected_covg)
 {
   reset_reading_utils(rutils);
-  reset_res_var_info(tmp_rvi);
+  reset_var_on_background(tmp_vob);
 
   StrBuf* tmp1 = strbuf_new();
   StrBuf* tmp2 = strbuf_new();
   StrBuf* tmp3 = strbuf_new();
 
   
-  int i;
-
   KnownMutation m = NotSpecified;
-  for (i=0; i<abi->num_mutations; i++)
-    {
-      get_next_mutation_allele_info(fp, 
-				    db_graph, 
-				    tmp_rvi,
-				    rutils->seq, 
-				    rutils->kmer_window, 
-				    file_reader,
-				    rutils->array_nodes, 
-				    rutils->array_or,
-				    rutils->working_ca, 
-				    MAX_LEN_MUT_ALLELE,
-				    tmp1, tmp2, tmp3,
-				    ignore_first, ignore_last, 
-				    expected_covg, &m);
+  boolean ret=true;
 
-      copy_res_var_info(tmp_rvi, abi->mut[tmp_rvi->var_id]);
+  while (ret==true)
+    {
+      get_next_var_on_background(fp, 
+				 db_graph, 
+				 tmp_vob, abi->vars,
+				 rutils->seq, 
+				 rutils->kmer_window, 
+				 file_reader,
+				 rutils->array_nodes, 
+				 rutils->array_or,
+				 rutils->working_ca, 
+				 MAX_LEN_MUT_ALLELE,
+				 tmp1, tmp2, tmp3,
+				 ignore_first, ignore_last, 
+				 expected_covg, &m);
+
+
     }
   
   strbuf_free(tmp1);
@@ -305,7 +325,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 							  boolean * full_entry),
 				       AntibioticInfo* abi,
 				       ReadingUtils* rutils,
-				       ResVarInfo* tmp_rvi,
+				       VarOnBackground* tmp_vob,
 				       GeneInfo* tmp_gi,
 				       int ignore_first, int ignore_last, int expected_covg,
 				       StrBuf* install_dir)
@@ -328,7 +348,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 					      file_reader,
 					      abi,
 					      rutils, 
-					      tmp_rvi,
+					      tmp_vob,
 					      ignore_first, ignore_last, expected_covg);
       fclose(fp);
     }
@@ -369,7 +389,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -391,7 +411,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -411,13 +431,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -461,7 +481,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -483,7 +503,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -503,13 +523,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -553,7 +573,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -575,7 +595,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -595,13 +615,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -645,7 +665,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -667,7 +687,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -687,13 +707,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -737,7 +757,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -759,7 +779,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -779,13 +799,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -829,7 +849,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -851,7 +871,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -871,13 +891,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -921,7 +941,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -943,7 +963,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -963,13 +983,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -1013,7 +1033,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -1035,7 +1055,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -1055,13 +1075,13 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -1106,7 +1126,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                           boolean new_entry, 
                           boolean * full_entry),
                  ReadingUtils* rutils,
-                 ResVarInfo* tmp_rvi,
+                 VarOnBackground* tmp_vob,
                  GeneInfo* tmp_gi,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
@@ -1128,7 +1148,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                         file_reader,
                         abi,
                         rutils,
-                        tmp_rvi,
+                        tmp_vob,
                         tmp_gi,
                         ignore_first, ignore_last, expected_covg,
         install_dir);
@@ -1148,13 +1168,13 @@ boolean any_allele_non_null=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
-      if (both_alleles_null(abi->mut[i])==true)
+      if (both_alleles_null(abi->vars[i])==true)
   {
     continue;
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->mut[i],
+  resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         &best_model, MaxAPosteriori);
 
@@ -1200,7 +1220,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
                  boolean new_entry, 
                  boolean * full_entry),
           ReadingUtils* rutils,
-          ResVarInfo* tmp_rvi,
+          VarOnBackground* tmp_vob,
           GeneInfo* tmp_gi,
           AntibioticInfo* abi,
           InfectionType (*func)(dBGraph* db_graph,
@@ -1210,7 +1230,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
                      boolean new_entry, 
                      boolean * full_entry),
               ReadingUtils* rutils,
-              ResVarInfo* tmp_rvi,
+              VarOnBackground* tmp_vob,
               GeneInfo* tmp_gi,
               AntibioticInfo* abi,
               StrBuf* install_dir,
@@ -1230,7 +1250,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
   suc  = func(db_graph,
         file_reader,
         rutils,
-        tmp_rvi,
+        tmp_vob,
         tmp_gi,
         abi, 
         install_dir,
