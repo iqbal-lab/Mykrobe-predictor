@@ -242,19 +242,19 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 
   while (ret==true)
     {
-      get_next_var_on_background(fp, 
-				 db_graph, 
-				 tmp_vob, abi->vars,
-				 rutils->seq, 
-				 rutils->kmer_window, 
-				 file_reader,
-				 rutils->array_nodes, 
-				 rutils->array_or,
-				 rutils->working_ca, 
-				 MAX_LEN_MUT_ALLELE,
-				 tmp1, tmp2, tmp3,
-				 ignore_first, ignore_last, 
-				 expected_covg, &m);
+      ret = get_next_var_on_background(fp, 
+				       db_graph, 
+				       tmp_vob, abi->vars,
+				       rutils->seq, 
+				       rutils->kmer_window, 
+				       file_reader,
+				       rutils->array_nodes, 
+				       rutils->array_or,
+				       rutils->working_ca, 
+				       MAX_LEN_MUT_ALLELE,
+				       tmp1, tmp2, tmp3,
+				       ignore_first, ignore_last, 
+				       expected_covg, &m);
 
 
     }
