@@ -72,7 +72,7 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 typedef struct
 {
   AlleleInfo susceptible_allele;
-  AlleleInfo resistant_alleles[100];
+  AlleleInfo resistant_alleles[60];
   int num_resistant_alleles;
   boolean some_resistant_allele_present;
   int working_current_max_res_allele_present;
