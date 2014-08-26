@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 
 
-  int lim = cmd_line->max_expected_sup_len;
+  //  int lim = cmd_line->max_expected_sup_len;
     /* CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
@@ -141,10 +141,10 @@ int main(int argc, char **argv)
   timestamp();
 
 
-  ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
+  VarOnBackground* tmp_vob = alloc_and_init_var_on_background();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
-  if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) )
+  if ( (ru==NULL) || (tmp_vob==NULL) || (abi==NULL) || (tmp_gi==NULL) )
     {
       return -1;
     }
@@ -328,7 +328,7 @@ int main(int argc, char **argv)
 	  //cleanup
 	  strbuf_free(tmp_name);
 	  free_antibiotic_info(abi);
-	  free_res_var_info(tmp_rvi);
+	  free_var_on_background(tmp_vob);
 	  free_gene_info(tmp_gi);
 	  free_reading_utils(ru);
 	  
@@ -380,7 +380,7 @@ int main(int argc, char **argv)
 	  //cleanup
 	  strbuf_free(tmp_name);
 	  free_antibiotic_info(abi);
-	  free_res_var_info(tmp_rvi);
+	  free_var_on_background(tmp_vob);
 	  free_gene_info(tmp_gi);
 	  free_reading_utils(ru);
 	  
@@ -404,43 +404,43 @@ int main(int argc, char **argv)
     }
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);  
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
   boolean any_erm_present=false;
-  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
 				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
 				    &any_erm_present);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   output_last=true;
-  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
 				   any_erm_present,cmd_line->install_dir,
 				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
@@ -485,7 +485,7 @@ int main(int argc, char **argv)
   //cleanup
   strbuf_free(tmp_name);
   free_antibiotic_info(abi);
-  free_res_var_info(tmp_rvi);
+  free_var_on_background(tmp_vob);
   free_gene_info(tmp_gi);
   free_reading_utils(ru);
   

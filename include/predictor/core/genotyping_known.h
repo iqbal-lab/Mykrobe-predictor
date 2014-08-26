@@ -72,11 +72,11 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 typedef struct
 {
   AlleleInfo susceptible_allele;
-  AlleleInfo resistant_alleles[10000];
+  AlleleInfo resistant_alleles[100];
   int num_resistant_alleles;
   boolean some_resistant_allele_present;
   int working_current_max_res_allele_present;
-  int working_current_max_sus_allele_present;
+  //  int working_current_max_sus_allele_present;
   KnownMutation var_id;
   GeneMutationGene gene;
 }VarOnBackground;
@@ -86,17 +86,20 @@ void free_var_on_background(VarOnBackground* vob);
 void reset_var_on_background(VarOnBackground* vob);
 void copy_var_on_background(VarOnBackground* from_vob, VarOnBackground* to_vob);
 
-boolean both_alleles_null(VarOnBackground* vob);
 
 typedef struct
 {
-  KnownMutation var_id;
-  GeneMutationGene gene;
-  
+  VarOnBackground* vob_best_sus;
+  VarOnBackground* vob_best_res;
 } Var;//corresponds to an enum - so encapsulates info across backgrounds
 
-void get_next_var_on_background(FILE* fp, dBGraph* db_graph, 
-				VarOnBackground* rinfo,
+Var* alloc_var();
+void free_var(Var* v);
+boolean both_alleles_null(Var* var);
+
+boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph, 
+				VarOnBackground* vob,
+				Var** array_vars,
 				Sequence* seq, KmerSlidingWindow* kmer_window,
 				int (*file_reader)(FILE * fp, 
 						   Sequence * seq, 
@@ -112,7 +115,7 @@ void get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 				int expected_covg, KnownMutation* prev_mut);
 
 
-boolean both_alleles_null(VarOnBackground* vob);
+
 Covg get_max_covg_on_any_resistant_allele(VarOnBackground* vob);
 int get_max_perc_covg_on_any_resistant_allele(VarOnBackground* vob);
 #endif

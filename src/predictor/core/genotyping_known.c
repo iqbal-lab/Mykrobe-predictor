@@ -124,14 +124,14 @@ VarOnBackground* alloc_and_init_var_on_background()
   VarOnBackground* vob = calloc(1, sizeof(VarOnBackground));
   if (vob==NULL)
     {
-      die("Disaster - cant evben alloc a tiny resvarinfo object");
+      return vob;
     }
   vob->num_resistant_alleles = 0;
   vob->var_id = NotSpecified;
   vob->gene = Unknown;
   vob->some_resistant_allele_present = false;
   vob->working_current_max_res_allele_present=0;
-  vob->working_current_max_sus_allele_present=0;
+  //  vob->working_current_max_sus_allele_present=0;
   return vob;
 }
 
@@ -150,7 +150,7 @@ void reset_var_on_background(VarOnBackground* vob)
   memset(vob,0, sizeof(VarOnBackground));
   vob->some_resistant_allele_present=false;
   vob->working_current_max_res_allele_present=0;
-  vob->working_current_max_sus_allele_present=0;
+  //  vob->working_current_max_sus_allele_present=0;
 }
 
 
@@ -158,11 +158,11 @@ void reset_var_on_background(VarOnBackground* vob)
 //util funcs
 
 //if both alleles have median zero
-boolean both_alleles_null(VarOnBackground* vob)
+boolean both_alleles_null(Var* var)
 {
-  Covg c = get_max_perc_covg_on_any_resistant_allele(vob);
+  Covg c = get_max_perc_covg_on_any_resistant_allele(var->vob_best_res);
 
-  if ( (vob->susceptible_allele.percent_nonzero==0)
+  if ( (var->vob_best_sus->susceptible_allele.percent_nonzero==0)
        && (c==0) )
     {
       return true;
@@ -338,7 +338,7 @@ void find_mutation_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
 //return false if no more var
 boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph, 
 				   VarOnBackground* vob, 
-				   Var* var_to_update,
+				   Var** array_vars,//this is the array indexed by var enums in the antibio info
 				   Sequence* seq, KmerSlidingWindow* kmer_window,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
@@ -398,13 +398,11 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
   GeneMutationGene g  = map_gene_name_str_to_genename(temp_gene_name_buf);
   find_mutation_name(temp_readid_buf, temp_mut_buf);
   KnownMutation km = map_mutation_name_to_enum(temp_mut_buf ,g);
+  Var* var_to_update=array_vars[km];
   vob->var_id=km;
   if (vob->var_id!= *prev_mut)
     {
-      if (prev_mut!=Unspecified)
-	{
-	  update_var(vob, var_to_update);
-	}
+      //this is a new enum/mutation
       reset_var_on_background(vob);
       *prev_mut=km; //for use in the next call to this function
     }
@@ -415,34 +413,35 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
   //collect min, median covg on allele and also percentage of kmers with any covg
   boolean too_short=false;
 
-  Covg stmp_med =   median_covg_on_allele_in_specific_colour(array_nodes, 
-							     num_kmers, 
-							     working_ca, 
-							     0, 
-							     &too_short,
-							     ignore_first, 
-							     ignore_last);
+  vob->susceptible_allele.median_covg =   median_covg_on_allele_in_specific_colour(array_nodes, 
+										   num_kmers, 
+										   working_ca, 
+										   0, 
+										   &too_short,
+										   ignore_first, 
+										   ignore_last);
   
-  Covg stmp_min =   min_covg_on_allele_in_specific_colour(array_nodes, 
-							  num_kmers, 
-							  0, 
-							  &too_short,
-							  ignore_first, 
-							  ignore_last);
+  vob->susceptible_allele.min_covg =  min_covg_on_allele_in_specific_colour(array_nodes, 
+									    num_kmers, 
+									    0, 
+									    &too_short,
+									    ignore_first, 
+									    ignore_last);
 
-  int stmp_perc =   percent_nonzero_on_allele_in_specific_colour(array_nodes, 
-								 num_kmers, 
-								 0, 
-								 &too_short,
-								 ignore_first, 
-								 ignore_last);
+  vob->susceptible_allele.percent_nonzero =   
+    percent_nonzero_on_allele_in_specific_colour(array_nodes, 
+						 num_kmers, 
+						 0, 
+						 &too_short,
+						 ignore_first, 
+						 ignore_last);
+  boolean store_in_best_sus=false;
+  boolean store_in_best_res=false;
 
-  if (stmp_perc> vob->working_current_max_sus_allele_present)
+  if ( vob->susceptible_allele.percent_nonzero > 
+      var_to_update->vob_best_sus->susceptible_allele.percent_nonzero)
     {
-      vob->working_current_max_sus_allele_present=stmp_perc;
-      vob->susceptible_allele.median_covg = stmp_med;
-      vob->susceptible_allele.min_covg = stmp_min;
-      vob->susceptible_allele.percent_nonzero = stmp_perc;
+      store_in_best_sus=true;
     }
 
   int i;
@@ -466,7 +465,7 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 	}
       too_short=false;
       
-      int tmp_med = 
+      vob->resistant_alleles[i].median_covg = 
 	median_covg_on_allele_in_specific_colour(array_nodes, 
 						 num_kmers, 
 						 working_ca,
@@ -474,7 +473,7 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 						 &too_short,
 						 ignore_first, ignore_last);
       
-      int tmp_min = 
+      vob->resistant_alleles[i].min_covg =
 	min_covg_on_allele_in_specific_colour(array_nodes,
 					      num_kmers,
 					      0,
@@ -482,28 +481,75 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 					      ignore_first, ignore_last);
       
       
-      int tmp_perc = 
+      vob->resistant_alleles[i].percent_nonzero = 
 	percent_nonzero_on_allele_in_specific_colour(array_nodes,
 						     num_kmers,
 						     0,
 						     &too_short,
 						     ignore_first, ignore_last);
-      //if more of the kmers of this version of this mutation
-      //i.e this version of the mutation on this background
-      //are recovered, then keep it - we want to keep the best match
-      vob->resistant_alleles[i].median_covg = tmp_med;
-      vob->resistant_alleles[i].min_covg = tmp_min;  
-      vob->resistant_alleles[i].percent_nonzero = tmp_perc;
-      if (tmp_perc==100)
+      if (vob->resistant_alleles[i].percent_nonzero==100)
 	{
-	  // we have a complete resistance allele, no need to go further
+	  // we have a complete resistance allele
 	  vob->some_resistant_allele_present=true;
 	}
-      if (tmp_perc > vob->working_current_max_res_allele_present)
+      if (vob->resistant_alleles[i].percent_nonzero 
+	  > 
+	  vob->working_current_max_res_allele_present)
 	{
-	  //update current best
-	  vob->working_current_max_res_allele_present = tmp_perc;
+	  vob->working_current_max_res_allele_present 
+	    = vob->resistant_alleles[i].percent_nonzero;
 	}
       
     }
+  if (vob->working_current_max_res_allele_present
+      > var_to_update->vob_best_res->working_current_max_res_allele_present)
+    {
+      store_in_best_res=true;
+    }
+
+  //now do copies
+  if (store_in_best_sus==true)
+    {
+      copy_var_on_background(vob, var_to_update->vob_best_sus);
+    }
+  if (store_in_best_res==true)
+    {
+      copy_var_on_background(vob, var_to_update->vob_best_res);
+    }
+  return true;
+  
 }
+
+
+
+Var* alloc_var()
+{
+  Var* ret = calloc(1, sizeof(Var));
+  if (ret==NULL)
+    {
+      return NULL;
+    }
+  ret->vob_best_sus=alloc_and_init_var_on_background();
+  if (ret->vob_best_sus==NULL)
+    {
+      free(ret);
+      return NULL;
+    }
+
+  ret->vob_best_res=alloc_and_init_var_on_background();
+  if (ret->vob_best_res==NULL)
+    {
+      free_var_on_background(ret->vob_best_sus);
+      free(ret);
+      return NULL;
+    }
+  return ret;
+}
+
+void free_var(Var* v)
+{
+  free_var_on_background(v->vob_best_sus);
+  free_var_on_background(v->vob_best_res);
+  free(v);
+}
+
