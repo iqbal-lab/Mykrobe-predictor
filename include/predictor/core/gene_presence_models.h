@@ -60,6 +60,14 @@ double get_log_posterior_truly_susceptible(double llk,
 				     double lambda_e,
 				     int kmer); 
 
+double get_log_lik_resistant(GeneInfo* gi,
+			     double lambda_g,
+			     double freq,//between 0 and 1
+			     int expected_covg,
+			     int kmer);
+
+double log_prob_gaps(GeneInfo* gi, int expected_covg);
+
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len
 double get_gene_log_lik(Covg covg,//median covg on parts of gene that are present
@@ -67,6 +75,8 @@ double get_gene_log_lik(Covg covg,//median covg on parts of gene that are presen
 			int kmer);
 
 double get_log_lik_covg_due_to_errors(Covg covg,
+				      int percent_nonzero,
+				      int gene_len,
 				      double lambda_e,
 				      int kmer);
 

@@ -76,5 +76,10 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
 int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
 						 int ignore_first, int ignore_last);
 
+int num_gaps_on_allele_in_specific_colour(dBNode** allele, 
+					  int len, 
+					  int colour, 
+					  boolean* too_short, 
+					  int ignore_first, int ignore_last);
 
 #endif /* DB_VARIANTS_H_ */
