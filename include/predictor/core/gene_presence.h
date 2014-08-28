@@ -74,7 +74,7 @@ typedef struct
   Covg median_covg;
   Covg min_covg;
   Covg median_covg_on_nonzero_nodes;
-  int num_gaps;
+  int longest_gap;
   int len;
   int  percent_nonzero;
   StrBuf* strbuf;
@@ -98,7 +98,8 @@ int get_next_gene_info(FILE* fp,
 					  boolean * full_entry),
 		       dBNode** array_nodes, 
 		       Orientation*  array_or,
-		       CovgArray* working_ca, int max_read_length);
+		       CovgArray* working_ca, int max_read_length,
+		       int expected_covg);
 
 
 

@@ -62,13 +62,23 @@ Covg count_reads_on_allele_in_specific_func_of_colours(
 						       Covg (*sum_of_covgs_in_desired_colours)(const Element *),
 						       boolean* too_short);
 
+int scan_allele_and_remove_repeats_in_covgarray(dBNode** allele, int len, CovgArray* working_ca,
+						 int colour, 
+						int ignore_first, int ignore_last, int expected_covg,
+						int* len_populated_in_covg_array);
+
 Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
 					      int colour, boolean* too_short,
-					      int ignore_first, int ignore_last);
+					      int ignore_first, int ignore_last,
+					      boolean working_ca_pre_initialised);
 
 Covg median_covg_ignoring_zeroes_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
 							      int colour, boolean* too_short, 
 							      int ignore_first, int ignore_last);
+
+Covg median_of_nonzero_values_of_sorted_covg_array(int len_populated_in_array, CovgArray* working_ca,
+						   int colour, 
+						   int ignore_first, int ignore_last);
 
 Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
 					   int ignore_first, int ignore_last);
@@ -76,10 +86,10 @@ Covg min_covg_on_allele_in_specific_colour(dBNode** allele, int len, int colour,
 int percent_nonzero_on_allele_in_specific_colour(dBNode** allele, int len, int colour, boolean* too_short,
 						 int ignore_first, int ignore_last);
 
-int num_gaps_on_allele_in_specific_colour(dBNode** allele, 
-					  int len, 
-					  int colour, 
-					  boolean* too_short, 
-					  int ignore_first, int ignore_last);
+int longest_gap_on_allele_in_specific_colour(dBNode** allele, 
+					     int len, 
+					     int colour, 
+					     boolean* too_short, 
+					     int ignore_first, int ignore_last);
 
 #endif /* DB_VARIANTS_H_ */

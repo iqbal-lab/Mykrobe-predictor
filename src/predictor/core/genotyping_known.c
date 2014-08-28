@@ -91,7 +91,7 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 						 working_ca, 
 						 0, 
 						 &too_short,
-						 ignore_first, ignore_last);
+						 ignore_first, ignore_last, false);
       ainfo->min_covg = 
 	min_covg_on_allele_in_specific_colour(array_nodes, 
 					      num_kmers, 
@@ -419,7 +419,8 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 										   0, 
 										   &too_short,
 										   ignore_first, 
-										   ignore_last);
+										   ignore_last,
+										   false);
   
   vob->susceptible_allele.min_covg =  min_covg_on_allele_in_specific_colour(array_nodes, 
 									    num_kmers, 
@@ -471,7 +472,7 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 						 working_ca,
 						 0,
 						 &too_short,
-						 ignore_first, ignore_last);
+						 ignore_first, ignore_last, false);
       
       vob->resistant_alleles[i].min_covg =
 	min_covg_on_allele_in_specific_colour(array_nodes,

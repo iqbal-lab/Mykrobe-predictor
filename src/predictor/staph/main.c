@@ -263,9 +263,11 @@ int main(int argc, char **argv)
 							   cmd_line->readlen_distrib_size);
 
   double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
-  if (err_rate<0.005)
+  
+
+  if (err_rate<0.01)
     {
-      err_rate=0.005;
+      err_rate=0.01;
     }
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
@@ -458,7 +460,7 @@ int main(int argc, char **argv)
     }
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_pvl_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
+		     cmd_line->install_dir, cmd_line->format, expected_depth); 
 
   if (cmd_line->format==Stdout)
     {

@@ -239,7 +239,7 @@ void copy_gene_info(GeneInfo* from_gi, GeneInfo* to_gi)
   to_gi->min_covg = from_gi->min_covg;
   to_gi->percent_nonzero = from_gi->percent_nonzero;
   to_gi->median_covg_on_nonzero_nodes = from_gi->median_covg_on_nonzero_nodes;
-  to_gi->num_gaps=from_gi->num_gaps;
+  to_gi->longest_gap=from_gi->longest_gap;
   to_gi->len=from_gi->len;
   strbuf_reset(to_gi->strbuf);
   strbuf_append_str(to_gi->strbuf, from_gi->strbuf->buff);
@@ -257,7 +257,7 @@ void reset_gene_info(GeneInfo* gi)
   gi->percent_nonzero=0;
   gi->median_covg_on_nonzero_nodes=0;
   gi->len=0;
-  gi->num_gaps=0;
+  gi->longest_gap=0;
   if (gi->strbuf!=NULL)
     {
       strbuf_reset(gi->strbuf);
@@ -280,7 +280,8 @@ int get_next_gene_info(FILE* fp,
 		       dBNode** array_nodes, 
 		       Orientation*  array_or,
 		       CovgArray* working_ca, 
-		       int max_read_length)
+		       int max_read_length,
+		       int expected_covg)
 
 {
 
@@ -317,7 +318,8 @@ int get_next_gene_info(FILE* fp,
 					     working_ca,
 					     0,
 					     &too_short,
-					     ignore_first, ignore_last);
+					     ignore_first, ignore_last, false);
+
   gene_info->min_covg = 
     min_covg_on_allele_in_specific_colour(array_nodes,
 					  num_kmers,
@@ -339,13 +341,92 @@ int get_next_gene_info(FILE* fp,
 							     0,
 							     &too_short,
 							     ignore_first, ignore_last);
-  gene_info->num_gaps = 
-    num_gaps_on_allele_in_specific_colour(array_nodes, 
-					  num_kmers,
-					  0,
-					  &too_short,
-					  ignore_first, ignore_last);
 
+  /*  if (gene_info->percent_nonzero==0)
+    {
+      gene_info->longest_gap = gene_info->len;
+    }
+  else
+    {
+      gene_info->longest_gap = 
+	longest_gap_on_allele_in_specific_colour(array_nodes, 
+						 num_kmers,
+						 0,
+						 &too_short,
+						 ignore_first, ignore_last);
+    }
+
+  //in the case when we have partial coverage of a gene, we will want to distinguish
+  //minor infections (covg across whole gene, but patchy, and low median given by frequency)
+  //from susceptible (very little covg on gene, localised, and low median given by error rate)
+  //in both cases, repeat sequence are unhelpful, so get rid of them
+  if ( (gene_info->percent_nonzero>0) && (gene_info->percent_nonzero<30) )
+    {
+      if (gene_info->median_covg_on_nonzero_nodes > 0.5*expected_covg)
+	{
+
+	  //dbNode objects not modified
+	  int len_covg_array=0;
+	  int removed_kmers = 
+	    scan_allele_and_remove_repeats_in_covgarray(array_nodes, num_kmers, 
+							working_ca, 0, 
+							ignore_first, ignore_last,
+							expected_covg, &len_covg_array);
+
+	  //this only looks at the covg array, because of the true in final argument.
+	  //after this func call the array is sorted.
+	  gene_info->median_covg = 
+	    median_covg_on_allele_in_specific_colour(array_nodes,
+						     num_kmers,
+						     working_ca,
+						     0,
+						     &too_short,
+						     ignore_first, ignore_last, true);
+
+	  
+	  //leave min covg alone
+
+	  //slightly tortuous:
+	  gene_info->percent_nonzero = 
+	    (int) (gene_info->percent_nonzero*num_kmers/100) - removed_kmers;
+	  if (gene_info->percent_nonzero <0)
+	    {
+	      gene_info->percent_nonzero =0;
+	    }
+	  gene_info->percent_nonzero =(int) (100*gene_info->percent_nonzero /num_kmers);
+
+	  if (gene_info->percent_nonzero==0)
+	    {
+	      gene_info->longest_gap = gene_info->len;
+	    }
+
+
+	  //can't use median on dBNodes as I dont want to modify them
+	  gene_info->median_covg_on_nonzero_nodes = 
+	    median_of_nonzero_values_of_sorted_covg_array(len_covg_array,
+							  working_ca,
+							  0,
+							  ignore_first, ignore_last);
+	  
+	}
+    }
+
+  */
+
+
+/*
+  if ( (gene_info->percent_nonzero<=20)
+       &&
+       (gene_info->median_covg_on_nonzero_nodes> 0.5*expected_covg) )
+    {
+      //this is just repeats. Ignore.
+      gene_info->percent_nonzero=0;
+      gene_info->median_covg_on_nonzero_nodes=0;
+      gene_info->median_covg=0;
+      gene_info->min_covg=0;
+      gene_info->longest_gap=0;
+    }
+*/
 
   strbuf_reset(gene_info->strbuf);
   strbuf_append_str(gene_info->strbuf,

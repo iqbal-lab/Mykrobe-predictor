@@ -112,7 +112,8 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 								     boolean * full_entry),
 						  AntibioticInfo* abi,
 						  ReadingUtils* rutils,
-						  GeneInfo* tmp_gi);
+						  GeneInfo* tmp_gi,
+						  int expected_covg);
 
 
 void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
@@ -407,9 +408,9 @@ Troolean is_pvl_positive(dBGraph* db_graph,
 					   int max_read_length, 
 					   boolean new_entry, 
 					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir);
+			 ReadingUtils* rutils,
+			 GeneInfo* tmp_gi,
+			 StrBuf* install_dir, int expected_covg);
 
 void print_pvl_presence(dBGraph* db_graph,
 			int (*file_reader)(FILE * fp, 
@@ -425,8 +426,9 @@ void print_pvl_presence(dBGraph* db_graph,
 							   int max_read_length, 
 							   boolean new_entry, 
 							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format);
+					 ReadingUtils* rutils,
+					 GeneInfo* tmp_gi,
+					 StrBuf* install_dir,
+					 int expected_depth),
+			StrBuf* install_dir, OutputFormat format, int expetced_covg);
 #endif

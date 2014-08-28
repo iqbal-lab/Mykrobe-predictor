@@ -280,7 +280,8 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 								     boolean * full_entry),
 						  AntibioticInfo* abi,
 						  ReadingUtils* rutils,
-						  GeneInfo* tmp_gi)
+						  GeneInfo* tmp_gi,
+						  int expected_covg)
 
 
 
@@ -300,7 +301,8 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 			       rutils->array_nodes,
 			       rutils->array_or,
 			       rutils->working_ca,
-			       MAX_LEN_GENE);
+			       MAX_LEN_GENE,
+			       expected_covg);
       /*      printf("Percent >0 %d\n Median on nonzero %d\nMin %d\n, median %d\n",
 	     tmp_gi->percent_nonzero,
 	     tmp_gi->median_covg_on_nonzero_nodes,
@@ -376,7 +378,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 						       file_reader,
 						       abi,
 						       rutils,
-						       tmp_gi);
+						       tmp_gi,
+						       expected_covg);
 	  fclose(fp);
 	}
       strbuf_free(tmp);
@@ -425,7 +428,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   Model best_model;
   InfectionType I=
     resistotype_gene(abi->genes[aacAaphD], err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
 
@@ -478,7 +481,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
   Model best_model;
   InfectionType I=
     resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,expected_covg,
+		     lambda_g, lambda_e, epsilon,expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
 
@@ -576,7 +579,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -664,7 +667,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       
@@ -739,7 +742,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[mecA], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -1026,7 +1029,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
 
@@ -1104,7 +1107,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -1210,7 +1213,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 		&best_model, MaxAPosteriori);
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
-      return Unsure;
+      return Resistant;
     }
 
 
@@ -1286,7 +1289,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_FUSBC);
       if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -1295,16 +1298,13 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 	}
     }
 
-  if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
-      )
-
+  if  (any_allele_non_null==false)
+      //      ||
+      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>0) //MIN_CONFIDENCE)
     {
       return Susceptible;
     }
@@ -1355,7 +1355,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[vga_A_LC], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
 
@@ -1404,7 +1404,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[vanA], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
 
@@ -1694,14 +1694,14 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 ///virulence
 Troolean is_pvl_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
+			 int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
 					      int max_read_length, 
 					      boolean new_entry, 
 					      boolean * full_entry),
 			ReadingUtils* rutils,
 			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
+			 StrBuf* install_dir, int expected_covg)
 			   
 
 {
@@ -1726,7 +1726,7 @@ Troolean is_pvl_positive(dBGraph* db_graph,
 			       rutils->array_nodes,
 			       rutils->array_or,
 			       rutils->working_ca,
-			       MAX_LEN_GENE);
+			       MAX_LEN_GENE, expected_covg);
 
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_STANDARD)
 	{
@@ -1749,18 +1749,19 @@ void print_pvl_presence(dBGraph* db_graph,
 			ReadingUtils* rutils,
 			GeneInfo* tmp_gi,
 			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
+					 int (*file_reader)(FILE * fp, 
+							    Sequence * seq, 
+							    int max_read_length, 
+							    boolean new_entry, 
+							    boolean * full_entry),
+					 ReadingUtils* rutils,
+					 GeneInfo* tmp_gi,
+					 StrBuf* install_dir, 
+					 int expected_covg),
+			StrBuf* install_dir, OutputFormat format, int expected_covg)
 {
 
-  Troolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  Troolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir, expected_covg);
   
   if (format==Stdout)
     {
