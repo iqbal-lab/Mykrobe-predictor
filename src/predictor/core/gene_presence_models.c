@@ -89,12 +89,6 @@ double get_log_posterior_minor_resistant(double llk,
 
   double freq;
 
-  if (err_rate<0.01)
-    {
-      //i don't believe the error rate is that low, so fix
-      err_rate=0.01;
-    }
-
   if (err_rate<0.02)
     {
       freq=0.05;
@@ -121,21 +115,24 @@ double get_log_posterior_minor_resistant(double llk,
     {
       if (p>exp_rec*10)
 	{
-	  return log((p-exp_rec*100)/p  )+llk;
+	  return log(1)+llk;
+	  // return log((p-exp_rec*100)/p  )+llk;
 	}
       else
 	{
-	  return log((exp_rec*100-p)/p) +llk;
+	  return -99999;
+	  //	  return log((exp_rec*100-p)/p) +llk;
 	}
     }
-  else if (p>=0.5*exp_rec*100)
+  /*  else if (p>=0.5*exp_rec*100)
     {
       return log(0.5)+llk;
-    }
+      }*/
   else
     {
       return -99999999;
     } 
+
 }
 
 
@@ -219,17 +216,20 @@ double get_log_lik_truly_susceptible(GeneInfo* gi,
 }
 
 
-//penalise for length of longest gap
+
 double get_log_lik_resistant(GeneInfo* gi,
 			     double lambda_g,
 			     double freq,//between 0 and 1
 			     int expected_covg,
 			     int kmer)
 {
+
+  return log(1 - exp(-lambda_g*freq*( (int) ((100-(gi->percent_nonzero))*(gi->len)/100)) )) ;
+				  /*
   double ret =get_gene_log_lik(gi->median_covg, 
-			       lambda_g*freq, kmer);// +  
-    //    log_prob_longest_gap(gi, expected_covg);
-  return ret;
+  lambda_g*freq*( (int) ((gi->percent_nonzero)*(gi->len)/100) ), kmer); */ // +  
+    //log_prob_longest_gap(gi, expected_covg);
+  //  return ret;
 
 }
 
@@ -290,7 +290,7 @@ double get_log_lik_covg_due_to_errors(Covg covg,
     {
       return 0;
     }
-  p=1;
+
     //Covg on the err allele is Poisson distributed with 
   // rate at error allele = e * (1-e)^(k-1) * (D/R) /3 =: lambda_e
   double r_e = lambda_e;
@@ -419,8 +419,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     }
 
 
-  double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
-  double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
+  double llk_R = 0;//get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
+  double llk_M = 0; //get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
   double llk_S = get_log_lik_truly_susceptible(gi, 
 					       lambda_e, 
 					       kmer);

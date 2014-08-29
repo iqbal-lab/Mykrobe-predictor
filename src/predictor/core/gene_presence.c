@@ -342,7 +342,7 @@ int get_next_gene_info(FILE* fp,
 							     &too_short,
 							     ignore_first, ignore_last);
 
-  /*  if (gene_info->percent_nonzero==0)
+  if (gene_info->percent_nonzero==0)
     {
       gene_info->longest_gap = gene_info->len;
     }
@@ -356,6 +356,7 @@ int get_next_gene_info(FILE* fp,
 						 ignore_first, ignore_last);
     }
 
+  /*
   //in the case when we have partial coverage of a gene, we will want to distinguish
   //minor infections (covg across whole gene, but patchy, and low median given by frequency)
   //from susceptible (very little covg on gene, localised, and low median given by error rate)
