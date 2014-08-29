@@ -97,7 +97,7 @@ void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf)
   if (sp==beijing)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"East Asia Beijing Sub-Lineage");
+      strbuf_append_str(sbuf,"Beijing/East Asia");
     }
   else if (sp==animal)
     {
@@ -112,17 +112,17 @@ void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf)
   else if (sp==lineage2)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"East Asia");
+      strbuf_append_str(sbuf,"East Africa / Indian ocean");
     }
   else if (sp==lineage3)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"Central Asia");
+      strbuf_append_str(sbuf,"Delhi/Central Asia");
     }
   else if (sp==lineage4)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"European");
+      strbuf_append_str(sbuf,"European/American");
     }
   else if (sp==lineage5)
     {
