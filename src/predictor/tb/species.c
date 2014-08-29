@@ -70,47 +70,47 @@ void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
   if (sp==beijing)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"beijing");
+      strbuf_append_str(sbuf,"East Asia - Beijing Sub-Lineage");
     }
   else if (sp==animal)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"animal");
+      strbuf_append_str(sbuf,"M. Bovis");
     }
   else if (sp==lineage1)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_1");
+      strbuf_append_str(sbuf,"Indian Ocean");
     }
   else if (sp==lineage2)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_2");
+      strbuf_append_str(sbuf,"East Asia");
     }
   else if (sp==lineage3)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_3");
+      strbuf_append_str(sbuf,"Central Asia");
     }
   else if (sp==lineage4)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_4");
+      strbuf_append_str(sbuf,"European");
     }
   else if (sp==lineage5)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_5");
+      strbuf_append_str(sbuf,"West Africa 1");
     }
   else if (sp==lineage6)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_6");
+      strbuf_append_str(sbuf,"West Africa 2");
     }
   else if (sp==lineage7)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"lineage_7");
+      strbuf_append_str(sbuf,"Ethiopian");
     }
 
 
