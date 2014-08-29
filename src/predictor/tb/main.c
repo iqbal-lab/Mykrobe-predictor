@@ -304,11 +304,15 @@ StrBuf* tmp_name = strbuf_new();
       strbuf_append_str(tmp_name, species_mod->name_of_pure_mtbc_species->buff);
       strbuf_append_str(tmp_name, " + ");
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
+
 
     }
   else if (st == NonMTB)
     {
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
+
     }
   else if (st == PureMTBC)
     {
@@ -348,11 +352,12 @@ StrBuf* tmp_name = strbuf_new();
   else//JSON
     {
       print_json_start();
+      print_json_phylogenetics_start();
       print_json_species_start();
   
   if (st == PureMTBC)
   {
-    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
+    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", false);
   }
   else if (st == MixedMTB) 
   {
@@ -362,9 +367,22 @@ StrBuf* tmp_name = strbuf_new();
   }
       else
   {
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", false);
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", false);
   }
-      print_json_species_end(); 
+      print_json_species_end();
+      print_json_lineage_start();
+        if (st == PureMTBC)
+          {
+            print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", false);
+          }
+        else
+          {
+            print_json_item(species_mod->name_of_non_mtb_lineage->buff, "Major", false);
+          }
+
+      print_json_lineage_end();
+      print_json_phylogenetics_end();
+
 
       if (st == NonMTB)
   {
