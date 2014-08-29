@@ -169,16 +169,15 @@ int main(int argc, char **argv)
     {
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
-      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
+      strbuf_append_str(sk, "data/skeleton_binary/staph/skeleton.k15.ctx");
       if (access(sk->buff,F_OK)!=0)
 	{
-	  printf("Build skeleton\n");
 	  timestamp();
 	  StrBuf* skeleton_flist = strbuf_new();
 	  strbuf_append_str(skeleton_flist, 
 			    cmd_line->install_dir->buff);
 	  strbuf_append_str(skeleton_flist, 
-			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+			    "data/skeleton_binary/staph/list_speciesbranches_genes_and_muts");
 	  uint64_t dummy=0;
 	  boolean is_rem=true;
 	  build_unclean_graph(db_graph, 
@@ -193,14 +192,14 @@ int main(int argc, char **argv)
 			      false, &dummy, 0, &is_rem);
 
 	  //dump binary so can reuse
-	  set_all_coverages_to_zero(db_graph, 0);
+
 	  db_graph_dump_binary(sk->buff, 
 			       &db_node_condition_always_true,
 			       db_graph,
 			       NULL,
 			       BINVERSION);
 	  strbuf_free(skeleton_flist);
-	  printf("Dumped\n");
+	  set_all_coverages_to_zero(db_graph, 0);
 	  timestamp();
 	}
       else
@@ -212,6 +211,7 @@ int main(int argc, char **argv)
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
 	  printf("Skeleton loaded\n");
+	  set_all_coverages_to_zero(db_graph, 0);
 	  timestamp();
 	}
       strbuf_free(sk);
