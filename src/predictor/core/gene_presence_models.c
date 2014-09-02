@@ -60,14 +60,14 @@ double get_log_posterior_major_resistant(double llk,
     }
 
 
-  if (p>= 0.75*recovery_given_sample_and_errors* min_expected)
+  if (p>=recovery_given_sample_and_errors* min_expected)
     {
       return log(1)+llk;
     }
-  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
+  /*  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
     {
       return log(0.5)+llk;
-    }
+      } */
   else
     {
       return -99999999;
@@ -115,7 +115,9 @@ double get_log_posterior_minor_resistant(double llk,
   //double step function. Coverage gap as might expect for this low frequency
   if ( (p>=exp_rec*100)//need to see enough of the gene
     &&
-       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
+       (p>=min_expected) )
+    //&&
+       //       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
     {
       return log(1)+llk;
     }
@@ -135,14 +137,14 @@ double get_log_posterior_truly_susceptible(double llk,
 
   int p = gi->percent_nonzero;
   
-  if (p>=recovery_given_sample_and_errors*min_expected)
+  /*  if (p>=recovery_given_sample_and_errors*min_expected)
     {
       return -99999999;
     }
   else
-    {
+  {*/
       return log(1)+llk;;
-    }
+      //   }
 }
 
 
@@ -213,7 +215,7 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer)
 {
-  double ret =get_gene_log_lik(gi->median_covg_on_nonzero_nodes, 
+  double ret =get_gene_log_lik(gi->median_covg,
 			       lambda_g*freq, kmer) +  
     log_prob_gaps(gi, expected_covg);
   return ret;
@@ -262,7 +264,7 @@ double get_log_lik_covg_due_to_errors(Covg covg,
   //rescale - number of SNP errors
   if (p>kmer)
     {
-      p = p-kmer;
+      p = p/kmer;
     }
   else
     {
@@ -373,7 +375,7 @@ void choose_map_gene_model(GeneInfo* gi,
 
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
-			       double lambda_g,  double epsilon, int expected_covg,
+			       double lambda_g,  double lambda_e, double epsilon, int expected_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene)
@@ -407,7 +409,7 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
   double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
   double llk_S = get_log_lik_truly_susceptible(gi, 
-					       lambda_g, 
+					       lambda_e, 
 					       kmer);
 
   //  printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
