@@ -4,20 +4,20 @@
  *
  * **********************************************************************
  *
- * This file is part of Mykrobe.
+ * This file is part of myKrobe.
  *
- * Mykrobe is free software: you can redistribute it and/or modify
+ * myKrobe is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Mykrobe is distributed in the hope that it will be useful,
+ * myKrobe is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Mykrobe.  If not, see <http://www.gnu.org/licenses/>.
+ * along with myKrobe.  If not, see <http://www.gnu.org/licenses/>.
  *
  * **********************************************************************
  */
@@ -89,6 +89,12 @@ double get_log_posterior_minor_resistant(double llk,
 
   double freq;
 
+  if (err_rate<0.01)
+    {
+      //i don't believe the error rate is that low, so fix
+      err_rate=0.01;
+    }
+
   if (err_rate<0.02)
     {
       freq=0.05;
@@ -113,14 +119,12 @@ double get_log_posterior_minor_resistant(double llk,
     //&&
        //       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
     {
-	  return log(1)+llk;
-	  // return log((p-exp_rec*100)/p  )+llk;
+      return log(1)+llk;
     }
   else
     {
       return -99999999;
     } 
-
 }
 
 
@@ -196,7 +200,7 @@ double get_log_lik_truly_susceptible(GeneInfo* gi,
 				     double lambda_e,
 				     int kmer)
 {
-
+  
   return get_log_lik_covg_due_to_errors(gi->median_covg_on_nonzero_nodes,
 					gi->percent_nonzero,
 					gi->len,
@@ -204,7 +208,7 @@ double get_log_lik_truly_susceptible(GeneInfo* gi,
 }
 
 
-
+//use number of gaps (to see if contiguous), plus median covg
 double get_log_lik_resistant(GeneInfo* gi,
 			     double lambda_g,
 			     double freq,//between 0 and 1
@@ -218,10 +222,10 @@ double get_log_lik_resistant(GeneInfo* gi,
 
 }
 
-double log_prob_longest_gap(GeneInfo* gi, int expected_covg)
+double log_prob_gaps(GeneInfo* gi, int expected_covg)
 {
-
-  return -expected_covg*gi->longest_gap;
+  //  printf("Num gaps is %d\n", gi->num_gaps);
+  return -expected_covg*gi->num_gaps;
 }
 
 
@@ -248,8 +252,6 @@ double get_gene_log_lik(Covg covg,//median covg on parts of gene that are presen
 
 }
 
-
-
 double get_log_lik_covg_due_to_errors(Covg covg,
 				      int percent_nonzero,
 				      int gene_len,
@@ -259,21 +261,14 @@ double get_log_lik_covg_due_to_errors(Covg covg,
   //num positive kmers
   int p = (int) (percent_nonzero*gene_len/100);
 
-  //we need to penalise for SNP errors, but ignore things that look like repeats
-
   //rescale - number of SNP errors
-  if (covg==0)
-    {
-      return 0;
-    }
-  
   if (p>kmer)
     {
       p = p/kmer;
     }
   else
     {
-      return 0;
+      p =1;
     }
 
     //Covg on the err allele is Poisson distributed with 
@@ -370,7 +365,6 @@ void choose_map_gene_model(GeneInfo* gi,
 					  loss,
 					  min_expected_kmer_recovery_for_this_gene);
 
-  //  printf("lp S, R M are %f, %f, %f\n", mS.lp, mR.lp, mM.lp);
   Model arr[3]={mR, mS, mM};
   qsort(arr, 3, sizeof(Model), model_cmp_logpost);
   best_model->conf = arr[2].lp-arr[1].lp;
@@ -386,6 +380,14 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene)
 {
+
+
+  //prevent having too small err rate
+  if (err_rate<0.001)
+    {
+      //i don't believe the error rate is that low, so fix
+      err_rate=0.005;
+    }
 
 
   //depending on err rate, set freq
@@ -404,8 +406,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     }
 
 
-  double llk_R = 0;//get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
-  double llk_M = 0; //get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
+  double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
+  double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
   double llk_S = get_log_lik_truly_susceptible(gi, 
 					       lambda_e, 
 					       kmer);
@@ -429,7 +431,6 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     }
   else
     {
-      printf("Unsure as conf is %f\n", best_model->conf);
       return Unsure;
     }
 }

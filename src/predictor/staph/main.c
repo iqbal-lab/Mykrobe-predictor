@@ -276,8 +276,8 @@ int main(int argc, char **argv)
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
   
-  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-	      expected_depth, cmd_line->max_expected_sup_len); 
+  //  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
+  //   expected_depth, cmd_line->max_expected_sup_len); 
   
   
   //calculate expected read-arrival rates on true and error alleles
@@ -458,7 +458,7 @@ int main(int argc, char **argv)
     }
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_pvl_positive, 
-		     cmd_line->install_dir, cmd_line->format, expected_depth); 
+		     cmd_line->install_dir, cmd_line->format); 
 
   if (cmd_line->format==Stdout)
     {

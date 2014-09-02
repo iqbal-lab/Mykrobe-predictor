@@ -66,7 +66,7 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer);
 
-double log_prob_longest_gap(GeneInfo* gi, int expected_covg);
+double log_prob_gaps(GeneInfo* gi, int expected_covg);
 
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len

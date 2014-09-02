@@ -280,8 +280,7 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 								     boolean * full_entry),
 						  AntibioticInfo* abi,
 						  ReadingUtils* rutils,
-						  GeneInfo* tmp_gi,
-						  int expected_covg)
+						  GeneInfo* tmp_gi)
 
 
 
@@ -301,8 +300,7 @@ void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 			       rutils->array_nodes,
 			       rutils->array_or,
 			       rutils->working_ca,
-			       MAX_LEN_GENE,
-			       expected_covg);
+			       MAX_LEN_GENE);
       /*      printf("Percent >0 %d\n Median on nonzero %d\nMin %d\n, median %d\n",
 	     tmp_gi->percent_nonzero,
 	     tmp_gi->median_covg_on_nonzero_nodes,
@@ -378,8 +376,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 						       file_reader,
 						       abi,
 						       rutils,
-						       tmp_gi,
-						       expected_covg);
+						       tmp_gi);
 	  fclose(fp);
 	}
       strbuf_free(tmp);
@@ -1298,13 +1295,16 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 	}
     }
 
-  if  (any_allele_non_null==false)
-      //      ||
-      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+  if (
+      (any_allele_non_null==false)
+      ||
+      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      )
+
     {
       return Unsure;
     }
-  else if (max_sus_conf>0) //MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE)
     {
       return Susceptible;
     }
@@ -1694,14 +1694,14 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 ///virulence
 Troolean is_pvl_positive(dBGraph* db_graph,
-			 int (*file_reader)(FILE * fp, 
+			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
 					      int max_read_length, 
 					      boolean new_entry, 
 					      boolean * full_entry),
 			ReadingUtils* rutils,
 			GeneInfo* tmp_gi,
-			 StrBuf* install_dir, int expected_covg)
+			StrBuf* install_dir)
 			   
 
 {
@@ -1726,7 +1726,7 @@ Troolean is_pvl_positive(dBGraph* db_graph,
 			       rutils->array_nodes,
 			       rutils->array_or,
 			       rutils->working_ca,
-			       MAX_LEN_GENE, expected_covg);
+			       MAX_LEN_GENE);
 
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_STANDARD)
 	{
@@ -1749,19 +1749,18 @@ void print_pvl_presence(dBGraph* db_graph,
 			ReadingUtils* rutils,
 			GeneInfo* tmp_gi,
 			Troolean (*func)(dBGraph* db_graph,
-					 int (*file_reader)(FILE * fp, 
-							    Sequence * seq, 
-							    int max_read_length, 
-							    boolean new_entry, 
-							    boolean * full_entry),
-					 ReadingUtils* rutils,
-					 GeneInfo* tmp_gi,
-					 StrBuf* install_dir, 
-					 int expected_covg),
-			StrBuf* install_dir, OutputFormat format, int expected_covg)
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
 {
 
-  Troolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir, expected_covg);
+  Troolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
   
   if (format==Stdout)
     {

@@ -390,18 +390,28 @@ InfectionType resistotype(Var* var, double err_rate, int kmer,
 
 
 
-  if ( (best_model->conf > MIN_CONFIDENCE)
-    && 
-       ( (best_model->type==Susceptible) || (best_model->type==Resistant) )
-       )
+  if (best_model->conf > MIN_CONFIDENCE)
+  /* if ( ( (best_model->type==Susceptible) || (best_model->type==Resistant) )
+       &&
+       (best_model->conf > MIN_CONFIDENCE) 
+       ) */
     {
       return best_model->type;
     }
-  else if ( (best_model->type ==MixedInfection)
-	    && (best_model->conf > 2*MIN_CONFIDENCE) )
+  /* else if (best_model->type ==MixedInfection)
     {
-      return best_model->type;
-    }
+      double m = MIN(llk_M-llk_S,
+		     llk_M-llk_R);
+      
+      if ( m > MIN_CONFIDENCE)
+	{
+	  return best_model->type;
+	}
+      else
+	{
+	  return Unsure;
+	}
+	}*/
   else
     {
       return Unsure;

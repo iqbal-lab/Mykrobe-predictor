@@ -206,43 +206,7 @@ Covg count_reads_on_allele_in_specific_func_of_colours(
   return num_of_reads;
 }
 
-//assumes that most of the array is zero, and we want to zero those nodes where covg is
-//higher than you expect given proportion of gene covered
-int scan_allele_and_remove_repeats_in_covgarray(dBNode** allele, int len, CovgArray* working_ca,
-						int colour, 
-						int ignore_first, int ignore_last, int expected_covg,
-						int* len_populated_in_covg_array)
-  
-{
-  int i;
-  if ((len==0)|| (len==1))
-    {
-      return 0;//ignore first and last nodes
-    }
-  
-  reset_covg_array(working_ca);//TODO - use reset_used_part_of.... as performance improvement. Will do when correctness of method established.
-  
-  for(i=ignore_first; i < len+1-ignore_last; i++)
-    {
-      working_ca->covgs[i-ignore_first]
-	=db_node_get_coverage_tolerate_null(allele[i], colour);
-    }
-  
-  int array_len =len+1-ignore_first-ignore_last;
-  *len_populated_in_covg_array=array_len;
-  
-  int num_removed=0;
-  for(i=0; i < array_len; i++)
-    {
-      if (working_ca->covgs[i] > 0.5*expected_covg)
-	{
-	  working_ca->covgs[i] =0;
-	  num_removed++;
-	}
-    }
-  
-  return num_removed;
-}
+
 
 
 //robust to start being > end (might traverse an allele backwards)
@@ -250,8 +214,7 @@ int scan_allele_and_remove_repeats_in_covgarray(dBNode** allele, int len, CovgAr
 //allows you to ignore the first N bases and the last M
 Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArray* working_ca,
 					      int colour, boolean* too_short, 
-					      int ignore_first, int ignore_last,
-					      boolean working_ca_pre_initialised)
+					      int ignore_first, int ignore_last)
 {
 
   if ((len==0)|| (len==1))
@@ -260,21 +223,19 @@ Covg median_covg_on_allele_in_specific_colour(dBNode** allele, int len, CovgArra
       return 0;//ignore first and last nodes
     }
  
-  if (working_ca_pre_initialised==false)
+  reset_covg_array(working_ca);//TODO - use reset_used_part_of.... as performance improvement. Will do when correctness of method established.
+  int i;
+
+  for(i=ignore_first; i < len+1-ignore_last; i++)
     {
-      reset_covg_array(working_ca);//TODO - use reset_used_part_of.... as performance improvement. Will do when correctness of method established.
-      int i;
-      
-      for(i=ignore_first; i < len+1-ignore_last; i++)
-	{
-	  working_ca->covgs[i-ignore_first]
-	    =db_node_get_coverage_tolerate_null(allele[i], colour);
-	}
+      working_ca->covgs[i-ignore_first]
+	=db_node_get_coverage_tolerate_null(allele[i], colour);
     }
+
   int array_len =len+1-ignore_first-ignore_last;
   qsort(working_ca->covgs, array_len, sizeof(Covg), Covg_cmp); 
   working_ca->len=array_len;
-  
+
   Covg median=0;
   int lhs = (array_len - 1) / 2 ;
   int rhs = array_len / 2 ;
@@ -346,60 +307,8 @@ Covg median_covg_ignoring_zeroes_on_allele_in_specific_colour(dBNode** allele, i
 }
 
 
-Covg median_of_nonzero_values_of_sorted_covg_array(int len_populated_in_array, CovgArray* working_ca,
-						   int colour, 
-						   int ignore_first, int ignore_last)
-{
 
-  int i;
-
-  int first_nz=0;
-  boolean found=false;
-  for(i=0; i < len_populated_in_array; i++)
-    {
-      if ( (i>0) && (working_ca->covgs[i]< working_ca->covgs[i-1]) )
-	{
-	  die("Qsort has failed to sort in the order I expecte");
-	}
-      if ( (found==false) && (working_ca->covgs[i]>0) )
-	{
-	  first_nz=i;
-	  found=true;
-	}
-    }
-  //shift left. I know not v efficient
-  for(i=first_nz; i < len_populated_in_array; i++)
-    {
-      working_ca->covgs[i-first_nz]=working_ca->covgs[i];
-    }
-
-  int array_len =len_populated_in_array-first_nz;
-  if (array_len==0)
-    {
-      return 0;
-    }
-
-  qsort(working_ca->covgs, array_len, sizeof(Covg), Covg_cmp); 
-  Covg median=0;
-  int lhs = (array_len - 1) / 2 ;
-  int rhs = array_len / 2 ;
-  
-  if (lhs == rhs)
-    {
-      median = working_ca->covgs[lhs] ;
-    }
-  else 
-    {
-      median = mean_of_covgs(working_ca->covgs[lhs], working_ca->covgs[rhs]);
-    }
-
-  return median;
-}
-
-
-
-
-int longest_gap_on_allele_in_specific_colour(dBNode** allele, 
+int num_gaps_on_allele_in_specific_colour(dBNode** allele, 
 					   int len, 
 					   int colour, 
 					   boolean* too_short, 
@@ -412,33 +321,21 @@ int longest_gap_on_allele_in_specific_colour(dBNode** allele,
       return 0;//ignore first and last nodes
     }
  
-  int longest_gap=0;
-  int curr_gap=0;
-  Covg prev=1;
+  int num_gaps=0;
+  Covg prev=0;
   int i;
   for(i=ignore_first; i < len+1-ignore_last; i++)
     {
       Covg c = db_node_get_coverage_tolerate_null(allele[i], colour);
-
-      if (c==0) 
+      //      printf("i is %d and covg is %" PRIu64 " and prev  is %d and num gaps is %d\n", i, c, prev, num_gaps);
+      if ( (c==0) && (prev>0) )
 	{
-	  curr_gap++;
-	}
-      else if (prev==0)//end of a gap
-	{
-	  if (curr_gap>longest_gap)
-	    {
-	      longest_gap=curr_gap;
-	    }
-	  curr_gap=0;
+	  num_gaps++;
 	}
       prev=c;
     }
-  if (curr_gap>longest_gap)
-    {
-      longest_gap=curr_gap;
-    }
-  return longest_gap;
+
+  return num_gaps;
 }
 
 
