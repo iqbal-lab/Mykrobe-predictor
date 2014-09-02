@@ -494,7 +494,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=0;
     }
-  
+  numk=1;//debug
   double llke =  -lambda_e* 
     + numk * arr_median[best]*log(lambda_e)
     -log_factorial(numk * arr_median[best]);
@@ -641,7 +641,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 	{
 	  numk=1;
 	}
-
+      //debug numk=1;
       //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
       double llk = -lambda_e 
 	+  numk*arr_median[best]*log(lambda_e) 

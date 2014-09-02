@@ -1029,7 +1029,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, lambda_e, epsilon, expected_covg,
+			 lambda_g, lambda_e,  epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
 

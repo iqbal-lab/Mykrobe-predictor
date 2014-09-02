@@ -60,14 +60,14 @@ double get_log_posterior_major_resistant(double llk,
     }
 
 
-  if (p>= 0.75*recovery_given_sample_and_errors* min_expected)
+  if (p>=recovery_given_sample_and_errors* min_expected)
     {
       return log(1)+llk;
     }
-  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
+  /*  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
     {
       return log(0.5)+llk;
-    }
+      } */
   else
     {
       return -99999999;
@@ -107,7 +107,11 @@ double get_log_posterior_minor_resistant(double llk,
 
 
   //double step function. Coverage gap as might expect for this low frequency
-  if (p>=0.75*exp_rec*100)//need to see enough of the gene
+  if ( (p>=exp_rec*100)//need to see enough of the gene
+    &&
+       (p>=min_expected) )
+    //&&
+       //       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
     {
 	  return log(1)+llk;
 	  // return log((p-exp_rec*100)/p  )+llk;
@@ -136,7 +140,7 @@ double get_log_posterior_truly_susceptible(double llk,
   else
   {*/
       return log(1)+llk;;
-      // }
+      //   }
 }
 
 
@@ -207,12 +211,10 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer)
 {
-
-  //  return log(1 - exp(-lambda_g*freq*( (int) ((100-(gi->percent_nonzero))*(gi->len)/100)) )) ;
-
-  double ret =get_gene_log_lik(gi->median_covg, lambda_g*freq, kmer);  // +  
-  //log_prob_longest_gap(gi, expected_covg);
-  //  return ret;
+  double ret =get_gene_log_lik(gi->median_covg,
+			       lambda_g*freq, kmer) +  
+    log_prob_gaps(gi, expected_covg);
+  return ret;
 
 }
 
