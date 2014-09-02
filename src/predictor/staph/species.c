@@ -482,10 +482,10 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   //  llk = - (double) arr_tkmers[Aureus] * ((double) (100-arr_perc_covg[Aureus]/100) * recovery_expected; //prob of a gap of that length
 
   //now we need to account for coverage on non-aureus
-  int numk = arr_tkmers[best];
+  double numk = arr_median[best];
 
   //now - in this model we expect errors from Aureus to give covg on cong.
-  int exp_extra_cov = (int) (arr_tkmers[Aureus] * err_rate) ;
+  double exp_extra_cov =  (arr_median[Aureus] * err_rate) ;
   if (numk> exp_extra_cov)
     {
       numk -= exp_extra_cov;
@@ -494,7 +494,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=0;
     }
-  numk=1;//debug
+  //  numk=1;//debug
   double llke =  -lambda_e* 
     + numk * arr_median[best]*log(lambda_e)
     -log_factorial(numk * arr_median[best]);
@@ -641,7 +641,8 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 	{
 	  numk=1;
 	}
-      //debug numk=1;
+      //debug 
+      numk=1;
       //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
       double llk = -lambda_e 
 	+  numk*arr_median[best]*log(lambda_e) 
