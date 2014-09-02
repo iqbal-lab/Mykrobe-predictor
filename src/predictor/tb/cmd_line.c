@@ -68,7 +68,7 @@ int default_opts(CmdLine * c)
   c->num_bases_around_mut_in_fasta=30;//our antibiotic fasta have 30 bases before/after the mutation
   c->kmer_size = 21;
   c->mem_width = 100;
-  c->mem_height= 22;
+  c->mem_height= 20;
   // c->mem_height= 19;
   c->max_expected_sup_len=50000;
   c->method=WGAssemblyThenGenotyping;//other options InSilicoOligos and WGAssemblyAndTranslation
