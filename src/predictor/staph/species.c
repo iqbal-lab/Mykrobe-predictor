@@ -582,7 +582,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	  aureus_lpr=-999999;
 	}
 
-      double llk_aureus = -lambda_aureus + arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
+      double llk_aureus = -lambda_aureus + arr_tkmers[Aureus]*arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_tkmers[Aureus]*arr_median[Aureus]);
 
 
       //now do the same for the other population
@@ -621,7 +621,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	  cong_lpr=-999999;
 	}
 
-      double llk_cong = -lambda_cong + arr_median[best]*log(lambda_cong)-log_factorial(arr_median[best]);
+      double llk_cong = -lambda_cong + arr_tkmers[best]*arr_median[best]*log(lambda_cong)-log_factorial(arr_tkmers[best]*arr_median[best]);
 
 
       sm->likelihood = llk_aureus+llk_cong;
@@ -669,7 +669,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 	  numk=1;
 	}
       //debug 
-      numk=1;
+      numk=arr_tkmers[best];
       //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
       double llk = -lambda_e 
 	+  numk*arr_median[best]*log(lambda_e) 
