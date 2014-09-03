@@ -540,14 +540,14 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
     }
   else
     {
-      double aureus_recovery_expected = frac_aureus*(1-exp(-expected_covg));
+      double aureus_recovery_expected = 1-exp(-frac_aureus*expected_covg);
       double lambda_aureus = lambda_g_err*frac_aureus;
       if (frac_aureus<0.5)
 	{
 	  //get a bit more covg from errors on the cong (major pop)
-	  aureus_recovery_expected 
+	  /*	  aureus_recovery_expected 
 	    += (1-frac_aureus)*err_rate/(3*(1-err_rate));
-	  lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate));
+	    lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate)); */
 	}
 
 
@@ -568,13 +568,13 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
       //now do the same for the other population
-      double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg));
+      double cong_recovery_expected = 1-exp(-(1-frac_aureus)*expected_covg);
       double lambda_cong = lambda_g_err*(1-frac_aureus);
       if (frac_aureus>0.5)
 	{
-	  cong_recovery_expected 
+	  /*	  cong_recovery_expected 
 	    += frac_aureus*err_rate/(3*(1-err_rate));
-	  lambda_cong += lambda_g_err*frac_aureus*err_rate/(3*(1-err_rate));
+	    lambda_cong += lambda_g_err*frac_aureus*err_rate/(3*(1-err_rate));*/
 	}
 
 

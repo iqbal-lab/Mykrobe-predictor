@@ -205,14 +205,10 @@ int main(int argc, char **argv)
       else
 	{
 	  int num=0;
-	  printf("Load skeleton binary\n");
-	  timestamp();
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
-	  printf("Skeleton loaded\n");
 	  set_all_coverages_to_zero(db_graph, 0);
-	  timestamp();
 	}
       strbuf_free(sk);
 
@@ -270,12 +266,12 @@ int main(int argc, char **argv)
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
-  
+
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
-  
+
   //  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   //   expected_depth, cmd_line->max_expected_sup_len); 
   
