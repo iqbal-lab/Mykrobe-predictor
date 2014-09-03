@@ -168,7 +168,7 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 	if (format==JSON){
 		print_json_called_genes_start();
 		// Iterate through all the variants and print the enum strings
-		for (i=0; i<=NUM_KNOWN_GENES; i++){
+		for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
 			if (called_genes[i].gene != unspecified_gpg){
 				print_json_called_gene_start( map_enum_to_gene_name(called_genes[i].gene) );
 				print_json_called_gene_item("cov", called_genes[i].max_res_allele_present,  true);
@@ -183,7 +183,7 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 
 		
 		// Iterate through all the variants and print the enum strings
-		for (i=0; i<=NUM_KNOWN_GENES; i++){
+		for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
 			if (called_genes[i].gene != unspecified_gpg){
 				printf("%s\t%i\n", map_enum_to_gene_name(called_genes[i].gene),
 					called_genes[i].max_res_allele_present);
@@ -206,9 +206,9 @@ void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInf
 
 CalledGene* alloc_and_init_called_genes_array()
 {
-  CalledGene* called_genes = malloc(NUM_KNOWN_GENES * sizeof(*called_genes));
+  CalledGene* called_genes = malloc(NUM_GENE_PRESENCE_GENES * sizeof(*called_genes));
   int i;
-  for (i=0; i<=NUM_KNOWN_GENES; i++){
+  for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
 	  called_genes[i].gene = unspecified_gpg;
 	}
   return called_genes;
