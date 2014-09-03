@@ -682,12 +682,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                           }
                         
   
-                        else if ( (strcmp(sbuf->buff, "G162D")==0) && (gene==pncA) )
-                          {
-                            return pncA_G162D;
-                          }
-                        
-  
                         else if ( (strcmp(sbuf->buff, "H57D")==0) && (gene==pncA) )
                           {
                             return pncA_H57D;
@@ -703,12 +697,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                         else if ( (strcmp(sbuf->buff, "H71Y")==0) && (gene==pncA) )
                           {
                             return pncA_H71Y;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "L172P")==0) && (gene==pncA) )
-                          {
-                            return pncA_L172P;
                           }
                         
   
@@ -754,48 +742,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                           }
                         
   
-                        else if ( (strcmp(sbuf->buff, "A138V")==0) && (gene==gidB) )
-                          {
-                            return gidB_A138V;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "A200E")==0) && (gene==gidB) )
-                          {
-                            return gidB_A200E;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "L91P")==0) && (gene==gidB) )
-                          {
-                            return gidB_L91P;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "P75L")==0) && (gene==gidB) )
-                          {
-                            return gidB_P75L;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "R137W")==0) && (gene==gidB) )
-                          {
-                            return gidB_R137W;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "V65G")==0) && (gene==gidB) )
-                          {
-                            return gidB_V65G;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "V88A")==0) && (gene==gidB) )
-                          {
-                            return gidB_V88A;
-                          }
-                        
-  
                         else if ( (strcmp(sbuf->buff, "K43R")==0) && (gene==rpsL) )
                           {
                             return rpsL_K43R;
@@ -805,6 +751,36 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                         else if ( (strcmp(sbuf->buff, "K88R")==0) && (gene==rpsL) )
                           {
                             return rpsL_K88R;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "C513X")==0) && (gene==rrs) )
+                          {
+                            return rrs_C513X;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "A514X")==0) && (gene==rrs) )
+                          {
+                            return rrs_A514X;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "G515X")==0) && (gene==rrs) )
+                          {
+                            return rrs_G515X;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "C516X")==0) && (gene==rrs) )
+                          {
+                            return rrs_C516X;
+                          }
+                        
+  
+                        else if ( (strcmp(sbuf->buff, "C517X")==0) && (gene==rrs) )
+                          {
+                            return rrs_C517X;
                           }
                         
   

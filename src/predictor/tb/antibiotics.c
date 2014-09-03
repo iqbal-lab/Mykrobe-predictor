@@ -1136,8 +1136,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-      int first_mut = gidB_A138V;
-      int last_mut = rpsL_K88R;
+      int first_mut = rpsL_K43R;
+      int last_mut = rrs_C517X;
 
       int i;
        //if you have any of these resistance alleles - call resistant
