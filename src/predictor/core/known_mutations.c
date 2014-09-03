@@ -380,6 +380,113 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     } 
 
 }
+const char* map_enum_to_mutation_name(KnownMutation km)
+{
+   switch (km) 
+   {
+     case dfrB_L21V  : return "dfrB_L21V ";
+     case dfrB_H31N  : return "dfrB_H31N ";
+     case dfrB_L41F  : return "dfrB_L41F ";
+     case dfrB_N60I  : return "dfrB_N60I ";
+     case dfrB_F99Y  : return "dfrB_F99Y ";
+     case dfrB_F99S  : return "dfrB_F99S ";
+     case dfrB_F99I  : return "dfrB_F99I ";
+     case dfrB_H150R : return "dfrB_H150R";
+        //start of fusA variants which only cause resistance when in combination
+     case fusA_F652S : return "fusA_F652S";
+     case fusA_Y654N : return "fusA_Y654N";
+     case fusA_L456F : return "fusA_L456F";
+     case fusA_L461F : return "fusA_L461F";
+     case fusA_T326I : return "fusA_T326I";
+     case fusA_A376V : return "fusA_A376V";
+     case fusA_A655P : return "fusA_A655P";
+     case fusA_D463G : return "fusA_D463G";
+     case fusA_E444V : return "fusA_E444V";
+     case fusA_E468V : return "fusA_E468V";
+        //end of fusA variants which only cause resistance when in combination
+        
+        //start of fusA variants, each enough on its own to cause resistance
+     case fusA_V90I  : return "fusA_V90I ";
+     case fusA_P114H : return "fusA_P114H";
+     case fusA_Q115L : return "fusA_Q115L";
+     case fusA_T385N : return "fusA_T385N";
+     case fusA_P404L : return "fusA_P404L";
+     case fusA_P404Q : return "fusA_P404Q";
+     case fusA_P406L : return "fusA_P406L";
+     case fusA_D434N : return "fusA_D434N";
+     case fusA_T436I : return "fusA_T436I";
+     case fusA_H438N : return "fusA_H438N";
+     case fusA_E444K : return "fusA_E444K";
+     case fusA_G451V : return "fusA_G451V";
+     case fusA_G452C : return "fusA_G452C";
+     case fusA_G452S : return "fusA_G452S";
+     case fusA_M453I : return "fusA_M453I";
+     case fusA_H457Q : return "fusA_H457Q";
+     case fusA_H457Y : return "fusA_H457Y";
+     case fusA_L461K : return "fusA_L461K";
+     case fusA_L461S : return "fusA_L461S";
+     case fusA_R464C : return "fusA_R464C";
+     case fusA_R464S : return "fusA_R464S";
+     case fusA_R464H : return "fusA_R464H";
+     case fusA_P478S : return "fusA_P478S";
+     case fusA_G556S : return "fusA_G556S";
+     case fusA_G617D : return "fusA_G617D";
+     case fusA_M651I : return "fusA_M651I";
+     case fusA_A655E : return "fusA_A655E";
+     case fusA_T656K : return "fusA_T656K";
+     case fusA_R659C : return "fusA_R659C";
+     case fusA_R659H : return "fusA_R659H";
+     case fusA_R659L : return "fusA_R659L";
+     case fusA_R659S : return "fusA_R659S";
+     case fusA_G664S : return "fusA_G664S";
+
+        //start of rpoB mutations which must occur together
+     case rpoB_M470T : return "rpoB_M470T";
+     case rpoB_D471G : return "rpoB_D471G";
+        //end of epistatic mutations
+
+        //start of rpoB mutations which individually cause resistance
+     case rpoB_S463P : return "rpoB_S463P";
+     case rpoB_S464P : return "rpoB_S464P";
+     case rpoB_Q468K : return "rpoB_Q468K";
+     case rpoB_Q468L : return "rpoB_Q468L";
+     case rpoB_Q468R : return "rpoB_Q468R";
+     case rpoB_D471Y : return "rpoB_D471Y";
+     case rpoB_N474K : return "rpoB_N474K";
+     case rpoB_ins475G : return "rpoB_ins475G";
+     case rpoB_ins475H : return "rpoB_ins475H";
+     case rpoB_A477D : return "rpoB_A477D";
+     case rpoB_A477V : return "rpoB_A477V";
+     case rpoB_H481D : return "rpoB_H481D";
+     case rpoB_H481N : return "rpoB_H481N";
+     case rpoB_H481Y : return "rpoB_H481Y";
+     case rpoB_R484H : return "rpoB_R484H";
+     case rpoB_S486L : return "rpoB_S486L";
+     case rpoB_I527F : return "rpoB_I527F";
+     case rpoB_D550G : return "rpoB_D550G";
+     case gyrA_S84A : return "gyrA_S84A";
+     case gyrA_S84L : return "gyrA_S84L";
+     case gyrA_S85P : return "gyrA_S85P";
+     case gyrA_E88K : return "gyrA_E88K";
+     case grlA_S80F : return "grlA_S80F";
+     case grlA_S80Y : return "grlA_S80Y";
+     case  NotSpecified : return "NotSpecified";      
+   }
+}
+const char* map_enum_to_gene_name(GeneMutationGene gene)
+{
+   switch (gene) 
+   {
+    case dfrB : return "dfrB";
+    case fusA : return "fusA";
+    case rpoB : return "rpoB";
+    case gyrA : return "gyrA";
+    case grlA : return "grlA";
+    case grlB : return "grlB";
+    case Unknown : return "Unknown";
+   }
+}
+
 #endif
 
 #ifdef TB
@@ -520,6 +627,23 @@ const char* map_enum_to_mutation_name(KnownMutation km)
       case gyrA_Y93X : return "gyrA_Y93X";
       case gyrA_D94X : return "gyrA_D94X";
       case NotSpecified : return "NotSpecified";
+   }
+}
+const char* map_enum_to_gene_name(GeneMutationGene gene)
+{
+   switch (gene) 
+   {
+      case Unknown : return "Unknown";
+      case rpoB : return "rpoB";
+      case katG : return "katG";
+      case fabG1 : return "fabG1";
+      case pncA : return "pncA";
+      case embB : return "embB";
+      case rrs : return "rrs";
+      case eis : return "eis";
+      case gidB : return "gidB";
+      case rpsL : return "rpsL";
+      case gyrA : return "gyrA";
    }
 }
 

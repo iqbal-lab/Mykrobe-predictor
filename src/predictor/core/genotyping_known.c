@@ -133,19 +133,39 @@ void free_called_variant_array(CalledVariant* cva)
   free(cva);
 }
 
-void print_called_variants(CalledVariant* called_variants)
+void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 {
 	// CalledVariant* current_called_variant;
+	printf("** Called Variants \n");
+	printf("var\tR_cov\tS_cov\n");
 	int i;
 	// Iterate through all the variants and print the enum strings
 	for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
 		if (called_variants[i].var_id != NotSpecified){
-			printf("%s(R:%iS%i)\n", map_enum_to_mutation_name(called_variants[i].var_id),
+			printf("%s\t%i\t%i\n", map_enum_to_mutation_name(called_variants[i].var_id),
 				called_variants[i].max_res_allele_present,called_variants[i].max_sus_allele_present);
 		}
 	}
 }
-
+void print_called_genes(CalledGene* called_genes,OutputFormat format){
+	// CalledVariant* current_called_variant;
+	printf("** Called Genes \n");
+	printf("var\tR_cov\t");
+	int i;
+	// Iterate through all the variants and print the enum strings
+	for (i=0; i<=NUM_KNOWN_GENES; i++){
+		if (called_genes[i].gene != Unknown){
+			printf("%s\t%i\n", map_enum_to_gene_name(called_genes[i].gene),
+				called_genes[i].max_res_allele_present);
+		}
+	}	
+}
+void update_called_variants(CalledVariant* called_variants,KnownMutation i, ResVarInfo* rvi)
+{
+    called_variants[i].var_id = i;
+    called_variants[i].max_res_allele_present = rvi->working_current_max_res_allele_present;
+    called_variants[i].max_sus_allele_present = rvi->working_current_max_sus_allele_present;	
+}
 CalledGene* alloc_and_init_called_genes_array()
 {
   CalledGene* called_genes = malloc(NUM_KNOWN_GENES * sizeof(*called_genes));

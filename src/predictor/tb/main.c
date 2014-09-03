@@ -446,7 +446,9 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_g
                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
                       called_variants,called_genes); 
 
-print_called_variants(called_variants);
+
+print_called_variants(called_variants,cmd_line->format);
+print_called_genes(called_genes,cmd_line->format);
 
 
   if (cmd_line->format==JSON)

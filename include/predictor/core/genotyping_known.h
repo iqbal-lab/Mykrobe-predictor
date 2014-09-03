@@ -40,7 +40,7 @@
 #include "file_reader.h"
 #include "db_variants.h"
 #include "known_mutations.h"
-
+#include "json.h"
 #define MIN_PERCENT_MUT_ALLELE_PRESENT 80
 
 typedef struct
@@ -91,7 +91,9 @@ typedef struct
 
 CalledVariant* alloc_and_init_called_variant_array();
 void free_called_variant_array(CalledVariant* cva);
-void print_called_variants(CalledVariant* called_variants);
+void print_called_variants(CalledVariant* called_variants,OutputFormat format);
+void update_called_variants(CalledVariant* called_variants,KnownMutation i, ResVarInfo* rvi);
+
 // Define a structure to store resistance genes which are called
 typedef struct
 {
@@ -101,7 +103,7 @@ typedef struct
 
 CalledGene* alloc_and_init_called_genes_array();
 void free_called_genes_array(CalledGene* cg);
-
+void print_called_genes(CalledGene* called_genes,OutputFormat format);
 
 ResVarInfo* alloc_and_init_res_var_info();
 void free_res_var_info(ResVarInfo* rvi);

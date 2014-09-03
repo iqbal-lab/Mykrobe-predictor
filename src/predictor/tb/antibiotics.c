@@ -435,6 +435,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   {  
     // Save the variant being called 
     // add_called_variant_info_to_array(i, called_variants, best_model, I)
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -528,6 +529,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -621,6 +623,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -714,6 +717,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -807,6 +811,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -900,6 +905,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -993,6 +999,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -1086,9 +1093,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    called_variants[i].var_id = i;
-    called_variants[i].max_res_allele_present = abi->mut[i]->working_current_max_res_allele_present;
-    called_variants[i].max_sus_allele_present = abi->mut[i]->working_current_max_sus_allele_present;
+
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
@@ -1183,6 +1189,7 @@ boolean any_allele_non_null=false;
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    update_called_variants(called_variants,i,abi->mut[i]);
     return I;
   }
     }
