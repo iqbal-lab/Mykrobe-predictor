@@ -462,11 +462,15 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     }
   else if (arr_perc_covg[Aureus] > 0.5*recovery_expected)
     {
-      lpr=log(0.05);
+      lpr=log(0.005);
+    }
+  else if (arr_perc_covg[Aureus] > 0.3*recovery_expected)
+    {
+      lpr=log(0.0001);
     }
   else if (arr_perc_covg[Aureus] > 0.1*recovery_expected)
     {
-      lpr=log(0.001);
+      lpr=-1000;
     }
   else
     {
@@ -494,7 +498,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=0;
     }
-  //  numk=1;//debug
+  numk=1;//debug
   double llke =  -lambda_e* 
     + numk * arr_median[best]*log(lambda_e)
     -log_factorial(numk * arr_median[best]);
@@ -561,9 +565,13 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
         {
           aureus_lpr=log(0.005);
         }
-      else if (arr_perc_covg[Aureus] > 0.1*aureus_recovery_expected)
+      else if (arr_perc_covg[Aureus] > 0.3*aureus_recovery_expected)
         {
           aureus_lpr=log(0.0001);
+        }
+      else if (arr_perc_covg[Aureus] > 0.1*aureus_recovery_expected)
+        {
+          aureus_lpr=-1000;
         }
       else
 	{
@@ -596,9 +604,13 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	{
 	  cong_lpr=log(0.005);
 	}
-      else if (arr_perc_covg[best] > 0.1*cong_recovery_expected)
+      else if (arr_perc_covg[best] > 0.3*cong_recovery_expected)
 	{
 	  cong_lpr=log(0.0001);
+	}
+      else if (arr_perc_covg[best] > 0.1*cong_recovery_expected)
+	{
+	  cong_lpr=-1000;
 	}
       else
 	{
@@ -666,7 +678,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 	}
       else if (arr_perc_covg[best]>0.05)
 	{
-	  lpr=-log(100);
+	  lpr=-1000;
 	}
       else
 	{
