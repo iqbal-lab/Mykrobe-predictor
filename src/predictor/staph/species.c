@@ -373,11 +373,11 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 			M_pure_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
-				pcov, mcov, 
+				pcov, mcov, tkmers, 
 				0.98, M_maj_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
-				pcov, mcov, 
+				pcov, mcov, tkmer,
 				0.02, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
@@ -479,7 +479,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
 
   double llk = -lambda_g_err 
-    + arr_median[Aureus]*log(lambda_g_err) 
+    + arr_tkmers[Aureus]*arr_median[Aureus]*log(lambda_g_err) 
     - log_factorial(arr_median[Aureus]);
 
 
@@ -498,7 +498,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=0;
     }
-  numk=1;//debug
+  numk=arr_tkmers[best];//debug
   double llke =  -lambda_e* 
     + numk * arr_median[best]*log(lambda_e)
     -log_factorial(numk * arr_median[best]);
@@ -517,7 +517,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
 //CONG=coag neg
 void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double lambda_g_err, 
-				   double* arr_perc_covg, double* arr_median, 
+				   double* arr_perc_covg, double* arr_median, int* arr_tkmers,
 				   double frac_aureus,
 				   SampleModel* sm)
 {
@@ -578,7 +578,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	  aureus_lpr=-999999;
 	}
 
-      double llk_aureus = -lambda_aureus + arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
+      double llk_aureus = -lambda_aureus + arr_tkmers[Aureus]*arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
 
 
       //now do the same for the other population
@@ -617,7 +617,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	  cong_lpr=-999999;
 	}
 
-      double llk_cong = -lambda_cong + arr_median[best]*log(lambda_cong)-log_factorial(arr_median[best]);
+      double llk_cong = -lambda_cong + arr_tkmers[best]*arr_median[best]*log(lambda_cong)-log_factorial(arr_median[best]);
 
 
       sm->likelihood = llk_aureus+llk_cong;
