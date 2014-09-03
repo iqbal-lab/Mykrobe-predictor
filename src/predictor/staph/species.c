@@ -550,12 +550,24 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
     {
       double aureus_recovery_expected = 1-exp(-frac_aureus*expected_covg);
       double lambda_aureus = lambda_g_err*frac_aureus;
+      double numk=arr_median[Aureus];
       if (frac_aureus<0.5)
 	{
 	  //get a bit more covg from errors on the cong (major pop)
-	  /*  aureus_recovery_expected 
+	    aureus_recovery_expected 
 	    += (1-frac_aureus)*err_rate/(3*(1-err_rate));
-	    lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate)); */
+	    lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate)); 
+
+	    double exp_extra_cov =  (arr_median[best] * err_rate) ;
+	    if (numk> exp_extra_cov)
+	      {
+		numk -= exp_extra_cov;
+	      }
+	    else
+	      {
+		numk=0;
+	      }
+
 	}
 
 
@@ -582,13 +594,13 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	  aureus_lpr=-999999;
 	}
 
-      double llk_aureus = -lambda_aureus + arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
+      double llk_aureus = -lambda_aureus + numk*log(lambda_aureus) - log_factorial(numk);
 
 
       //now do the same for the other population
       double cong_recovery_expected = 1-exp(-(1-frac_aureus)*expected_covg);
       double lambda_cong = lambda_g_err*(1-frac_aureus);
-      double numk=arr_median[best];
+      numk=arr_median[best];
       if (frac_aureus>0.5)
 	{
 	    cong_recovery_expected 
@@ -604,7 +616,6 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	      {
 		numk=0;
 	      }
-
 	}
 
 
