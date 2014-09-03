@@ -42,10 +42,27 @@ void print_json_end()
 
 void print_json_species_start()
 {
-  printf("\t\"species\": {\n");
+  printf("\t\t\"species\": {\n");
+}
+void print_json_phylogenetics_start()
+{
+  printf("\t\"phylogenetics\": {\n");
+}
+void print_json_lineage_start()
+{
+  printf("\t\t\"lineage\": {\n");
 }
 
+
 void print_json_species_end()
+{
+  printf("\t\t},\n");
+}
+void print_json_lineage_end()
+{
+  printf("\t\t},\n");
+}
+void print_json_phylogenetics_end()
 {
   printf("\t},\n");
 }

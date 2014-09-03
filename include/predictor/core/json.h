@@ -39,6 +39,11 @@ void print_json_start();
 void print_json_end();
 void print_json_species_start();
 void print_json_species_end();
+void print_json_lineage_start();
+void print_json_lineage_end();
+void print_json_phylogenetics_start();
+void print_json_phylogenetics_end();
+
 void print_json_susceptibility_start();
 void print_json_susceptibility_end();
 void print_json_called_variants_start();

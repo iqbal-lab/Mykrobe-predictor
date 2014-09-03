@@ -191,11 +191,11 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 		}	
 	}
 }
-void update_called_variants(CalledVariant* called_variants,KnownMutation i, ResVarInfo* rvi)
+void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var * var)
 {
     called_variants[i].var_id = i;
-    called_variants[i].max_res_allele_present = rvi->working_current_max_res_allele_present;
-    called_variants[i].max_sus_allele_present = rvi->working_current_max_sus_allele_present;	
+    called_variants[i].max_res_allele_present = var->vob_best_res->working_current_max_res_allele_present;
+    called_variants[i].max_sus_allele_present = var->vob_best_sus->susceptible_allele.percent_nonzero;	
 }
 
 void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info)
@@ -221,38 +221,40 @@ void free_called_genes_array(CalledGene* cg)
 
 
 
-ResVarInfo* alloc_and_init_res_var_info()
+
+VarOnBackground* alloc_and_init_var_on_background()
+
 {
-  ResVarInfo* rvi = calloc(1, sizeof(ResVarInfo));
-  if (rvi==NULL)
+  VarOnBackground* vob = calloc(1, sizeof(VarOnBackground));
+  if (vob==NULL)
     {
-      die("Disaster - cant evben alloc a tiny resvarinfo object");
+      return vob;
     }
-  rvi->num_resistant_alleles = 0;
-  rvi->var_id = NotSpecified;
-  rvi->gene = Unknown;
-  rvi->some_resistant_allele_present = false;
-  rvi->working_current_max_res_allele_present=0;
-  rvi->working_current_max_sus_allele_present=0;
-  return rvi;
+  vob->num_resistant_alleles = 0;
+  vob->var_id = NotSpecified;
+  vob->gene = Unknown;
+  vob->some_resistant_allele_present = false;
+  vob->working_current_max_res_allele_present=0;
+  //  vob->working_current_max_sus_allele_present=0;
+  return vob;
 }
 
-void free_res_var_info(ResVarInfo* rvi)
+void free_var_on_background(VarOnBackground* vob)
 {
-  free(rvi);
+  free(vob);
 }
 
-void copy_res_var_info(ResVarInfo* from_rvi, ResVarInfo* to_rvi)
+void copy_var_on_background(VarOnBackground* from_vob, VarOnBackground* to_vob)
 {
-  memcpy(to_rvi, from_rvi, sizeof(ResVarInfo));
+  memcpy(to_vob, from_vob, sizeof(VarOnBackground));
 }
 
-void reset_res_var_info(ResVarInfo* rvi)
+void reset_var_on_background(VarOnBackground* vob)
 {
-  memset(rvi,0, sizeof(ResVarInfo));
-  rvi->some_resistant_allele_present=false;
-  rvi->working_current_max_res_allele_present=0;
-  rvi->working_current_max_sus_allele_present=0;
+  memset(vob,0, sizeof(VarOnBackground));
+  vob->some_resistant_allele_present=false;
+  vob->working_current_max_res_allele_present=0;
+  //  vob->working_current_max_sus_allele_present=0;
 }
 
 
@@ -260,24 +262,24 @@ void reset_res_var_info(ResVarInfo* rvi)
 //util funcs
 
 //if both alleles have median zero
-boolean both_alleles_null(ResVarInfo* rvi)
+boolean both_alleles_null(Var* var)
 {
-  Covg c = get_max_perc_covg_on_any_resistant_allele(rvi);
+  Covg c = get_max_perc_covg_on_any_resistant_allele(var->vob_best_res);
 
-  if ( (rvi->susceptible_allele.percent_nonzero==0)
+  if ( (var->vob_best_sus->susceptible_allele.percent_nonzero==0)
        && (c==0) )
     {
       return true;
     }
   return false;
 }
-Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi)
+Covg get_max_covg_on_any_resistant_allele(VarOnBackground* vob)
 {
   int i;
   Covg max=0;
-  for (i=0; i<rvi->num_resistant_alleles; i++)
+  for (i=0; i<vob->num_resistant_alleles; i++)
     {
-      Covg c = rvi->resistant_alleles[i].median_covg;
+      Covg c = vob->resistant_alleles[i].median_covg;
       if (c>max)
 	{
 	  max=c;
@@ -287,13 +289,13 @@ Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi)
 }
 
 
-int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi)
+int get_max_perc_covg_on_any_resistant_allele(VarOnBackground* vob)
 {
   int i;
   int max=0;
-  for (i=0; i<rvi->num_resistant_alleles; i++)
+  for (i=0; i<vob->num_resistant_alleles; i++)
     {
-      int c = rvi->resistant_alleles[i].percent_nonzero;
+      int c = vob->resistant_alleles[i].percent_nonzero;
       if (c>max)
 	{
 	  max=c;
@@ -437,7 +439,10 @@ void find_mutation_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
 //the literature are AA substitutions or indels in genes
 //the "sub" says it is a substitution
 //then after the - it says how many resistant alleles there are
-void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinfo,
+//return false if no more var
+boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph, 
+				   VarOnBackground* vob, 
+				   Var** array_vars,//this is the array indexed by var enums in the antibio info
 				   Sequence* seq, KmerSlidingWindow* kmer_window,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
@@ -451,7 +456,7 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 				   StrBuf* temp_gene_name_buf,
 				   int ignore_first, int ignore_last, 
 				   int expected_covg, KnownMutation* prev_mut)
-				   
+  
 {
 
 
@@ -471,7 +476,7 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 						   dummy_colour_ignored);
   if (num_kmers==0)
     {
-      return;
+      return false;
     }
    // reset resinfo
 
@@ -497,53 +502,55 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
   GeneMutationGene g  = map_gene_name_str_to_genename(temp_gene_name_buf);
   find_mutation_name(temp_readid_buf, temp_mut_buf);
   KnownMutation km = map_mutation_name_to_enum(temp_mut_buf ,g);
-
-  if (rinfo->var_id!= *prev_mut)
+  Var* var_to_update=array_vars[km];
+  vob->var_id=km;
+  if (vob->var_id!= *prev_mut)
     {
-    	// This makes S CIP calls int TB and C00007102,C00009008 fusidic as S  (should be S) and R (should be R) 
-      // reset_res_var_info(rinfo);
-      // *prev_mut=km; //for use in the next call to this function
-      // This makes R CIP calls in TB and C00007102,C00009008 fusidic as r (should be S) and r (should be R)
-      *prev_mut=rinfo->var_id; //for use in the next call to this function
-      rinfo->working_current_max_sus_allele_present=0;
-      rinfo->working_current_max_res_allele_present=0;
+
+      //this is a new enum/mutation
+      reset_var_on_background(vob);
+      *prev_mut=km; //for use in the next call to this function
     }
-  rinfo->gene=g;
-  rinfo->var_id=km;
-  rinfo->num_resistant_alleles=r;
+  vob->gene=g;
+  
+  vob->num_resistant_alleles=r;
 
   //collect min, median covg on allele and also percentage of kmers with any covg
   boolean too_short=false;
 
-  Covg stmp_med =   median_covg_on_allele_in_specific_colour(array_nodes, 
-							    num_kmers, 
-							    working_ca, 
-							    0, 
-							    &too_short,
-							    ignore_first, ignore_last);
+  vob->susceptible_allele.median_covg =   median_covg_on_allele_in_specific_colour(array_nodes, 
+										   num_kmers, 
+										   working_ca, 
+										   0, 
+										   &too_short,
+										   ignore_first, 
+										   ignore_last);
+  
+  vob->susceptible_allele.min_covg =  min_covg_on_allele_in_specific_colour(array_nodes, 
+									    num_kmers, 
+									    0, 
+									    &too_short,
+									    ignore_first, 
+									    ignore_last);
 
-  Covg stmp_min =   min_covg_on_allele_in_specific_colour(array_nodes, 
-							  num_kmers, 
-							  0, 
-							  &too_short,
-							  ignore_first, ignore_last);
+  vob->susceptible_allele.percent_nonzero =   
+    percent_nonzero_on_allele_in_specific_colour(array_nodes, 
+						 num_kmers, 
+						 0, 
+						 &too_short,
+						 ignore_first, 
+						 ignore_last);
+  boolean store_in_best_sus=false;
+  boolean store_in_best_res=false;
 
-  int stmp_perc =   percent_nonzero_on_allele_in_specific_colour(array_nodes, 
-								 num_kmers, 
-								 0, 
-								 &too_short,
-								 ignore_first, ignore_last);
-
-  if (stmp_perc> rinfo->working_current_max_sus_allele_present)
+  if ( vob->susceptible_allele.percent_nonzero > 
+      var_to_update->vob_best_sus->susceptible_allele.percent_nonzero)
     {
-      rinfo->working_current_max_sus_allele_present=stmp_perc;
-      rinfo->susceptible_allele.median_covg = stmp_med;
-      rinfo->susceptible_allele.min_covg = stmp_min;
-      rinfo->susceptible_allele.percent_nonzero = stmp_perc;
+      store_in_best_sus=true;
     }
 
   int i;
-  for (i=0; i<rinfo->num_resistant_alleles; i++)
+  for (i=0; i<vob->num_resistant_alleles; i++)
     {
       num_kmers = align_next_read_to_graph_and_return_node_array(fp, 
 								 max_read_length, 
@@ -557,49 +564,97 @@ void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinf
 								 db_graph, 
 								 dummy_colour_ignored);
 
-      //we have not yet got all the kmers in a resistance allele
-      if (rinfo->some_resistant_allele_present==false)
+      if (num_kmers==0)
 	{
-	  too_short=false;
-	  
-	  int tmp_med = 
-	    median_covg_on_allele_in_specific_colour(array_nodes, 
-						     num_kmers, 
-						     working_ca,
+	  die("Error in panel - expect to be reading an R allele, but it isnt there in the fast");
+	}
+      too_short=false;
+      
+      vob->resistant_alleles[i].median_covg = 
+	median_covg_on_allele_in_specific_colour(array_nodes, 
+						 num_kmers, 
+						 working_ca,
+						 0,
+						 &too_short,
+						 ignore_first, ignore_last);
+      
+      vob->resistant_alleles[i].min_covg =
+	min_covg_on_allele_in_specific_colour(array_nodes,
+					      num_kmers,
+					      0,
+					      &too_short,
+					      ignore_first, ignore_last);
+      
+      
+      vob->resistant_alleles[i].percent_nonzero = 
+	percent_nonzero_on_allele_in_specific_colour(array_nodes,
+						     num_kmers,
 						     0,
 						     &too_short,
 						     ignore_first, ignore_last);
-	  
-	  int tmp_min = 
-	    min_covg_on_allele_in_specific_colour(array_nodes,
-						  num_kmers,
-						  0,
-						  &too_short,
-						  ignore_first, ignore_last);
-	  
-	  
-	  int tmp_perc = 
-	    percent_nonzero_on_allele_in_specific_colour(array_nodes,
-							 num_kmers,
-							 0,
-							 &too_short,
-							 ignore_first, ignore_last);
-	  //if more of the kmers of this version of this mutation
-	  //i.e this version of the mutation on this background
-	    //are recovered, then keep it - we want to keep the best match
-	  if (tmp_perc > rinfo->working_current_max_res_allele_present)
-	    {
-	      rinfo->resistant_alleles[i].median_covg = tmp_med;
-	      rinfo->resistant_alleles[i].min_covg = tmp_min;  
-	      rinfo->resistant_alleles[i].percent_nonzero = tmp_perc;
-	      //update current best
-	      rinfo->working_current_max_res_allele_present = tmp_perc;
-	      if (tmp_perc==100)
-		{
-		  // we have a complete resistance allele, no need to go further
-		  rinfo->some_resistant_allele_present=true;
-		}
-	    }
+      if (vob->resistant_alleles[i].percent_nonzero==100)
+	{
+	  // we have a complete resistance allele
+	  vob->some_resistant_allele_present=true;
 	}
+      if (vob->resistant_alleles[i].percent_nonzero 
+	  > 
+	  vob->working_current_max_res_allele_present)
+	{
+	  vob->working_current_max_res_allele_present 
+	    = vob->resistant_alleles[i].percent_nonzero;
+	}
+      
     }
+  if (vob->working_current_max_res_allele_present
+      > var_to_update->vob_best_res->working_current_max_res_allele_present)
+    {
+      store_in_best_res=true;
+    }
+
+  //now do copies
+  if (store_in_best_sus==true)
+    {
+      copy_var_on_background(vob, var_to_update->vob_best_sus);
+    }
+  if (store_in_best_res==true)
+    {
+      copy_var_on_background(vob, var_to_update->vob_best_res);
+    }
+  return true;
+  
 }
+
+
+
+Var* alloc_var()
+{
+  Var* ret = calloc(1, sizeof(Var));
+  if (ret==NULL)
+    {
+      return NULL;
+    }
+  ret->vob_best_sus=alloc_and_init_var_on_background();
+  if (ret->vob_best_sus==NULL)
+    {
+      free(ret);
+      return NULL;
+    }
+
+  ret->vob_best_res=alloc_and_init_var_on_background();
+  if (ret->vob_best_res==NULL)
+    {
+      free_var_on_background(ret->vob_best_sus);
+      free(ret);
+      return NULL;
+    }
+  return ret;
+}
+
+void free_var(Var* v)
+{
+  free_var_on_background(v->vob_best_sus);
+  free_var_on_background(v->vob_best_res);
+  free(v);
+}
+
