@@ -135,30 +135,61 @@ void free_called_variant_array(CalledVariant* cva)
 
 void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 {
-	// CalledVariant* current_called_variant;
-	printf("** Called Variants \n");
-	printf("var\tR_cov\tS_cov\n");
 	int i;
-	// Iterate through all the variants and print the enum strings
-	for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
-		if (called_variants[i].var_id != NotSpecified){
-			printf("%s\t%i\t%i\n", map_enum_to_mutation_name(called_variants[i].var_id),
-				called_variants[i].max_res_allele_present,called_variants[i].max_sus_allele_present);
+	if (format==JSON){
+		print_json_called_variants_start();
+				// Iterate through all the variants and print the enum strings
+		for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+			if (called_variants[i].var_id != NotSpecified){
+				print_json_called_variant_start(map_enum_to_mutation_name(called_variants[i].var_id));
+				print_json_called_variant_item("R_cov", called_variants[i].max_res_allele_present,  false);
+				print_json_called_variant_item("S_cov", called_variants[i].max_sus_allele_present, true);
+				print_json_called_variant_end();
+			}
+		}		
+		print_json_called_variants_end();
+	}
+	else
+	{
+		// CalledVariant* current_called_variant;
+		printf("** Called Variants \n");
+		printf("var\tR_cov\tS_cov\n");
+		// Iterate through all the variants and print the enum strings
+		for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+			if (called_variants[i].var_id != NotSpecified){
+				printf("%s\t%i\t%i\n", map_enum_to_mutation_name(called_variants[i].var_id),
+					called_variants[i].max_res_allele_present,called_variants[i].max_sus_allele_present);
+			}
 		}
 	}
 }
 void print_called_genes(CalledGene* called_genes,OutputFormat format){
-	// CalledVariant* current_called_variant;
-	printf("** Called Genes \n");
-	printf("var\tR_cov\t");
 	int i;
-	// Iterate through all the variants and print the enum strings
-	for (i=0; i<=NUM_KNOWN_GENES; i++){
-		if (called_genes[i].gene != Unknown){
-			printf("%s\t%i\n", map_enum_to_gene_name(called_genes[i].gene),
-				called_genes[i].max_res_allele_present);
-		}
-	}	
+	if (format==JSON){
+		print_json_called_genes_start();
+		// Iterate through all the variants and print the enum strings
+		for (i=0; i<=NUM_KNOWN_GENES; i++){
+			if (called_genes[i].gene != Unknown){
+				print_json_called_gene_start(map_enum_to_gene_name(called_genes[i].gene));
+				print_json_called_gene_item("cov", called_genes[i].max_res_allele_present,  true);
+				print_json_called_gene_end();
+			}
+		}	
+		print_json_called_genes_end();
+	}
+	else{
+		printf("** Called Genes \n");
+		printf("var\tcov\t");
+
+		
+		// Iterate through all the variants and print the enum strings
+		for (i=0; i<=NUM_KNOWN_GENES; i++){
+			if (called_genes[i].gene != Unknown){
+				printf("%s\t%i\n", map_enum_to_gene_name(called_genes[i].gene),
+					called_genes[i].max_res_allele_present);
+			}
+		}	
+	}
 }
 void update_called_variants(CalledVariant* called_variants,KnownMutation i, ResVarInfo* rvi)
 {

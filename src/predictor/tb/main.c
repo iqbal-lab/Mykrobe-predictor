@@ -447,15 +447,15 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_g
                       called_variants,called_genes); 
 
 
-print_called_variants(called_variants,cmd_line->format);
-print_called_genes(called_genes,cmd_line->format);
+
 
 
   if (cmd_line->format==JSON)
     {
       print_json_susceptibility_end();
     }
-
+  print_called_variants(called_variants,cmd_line->format);
+  print_called_genes(called_genes,cmd_line->format);
   if (cmd_line->format==Stdout)
     {
       timestamp();
