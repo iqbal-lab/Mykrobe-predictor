@@ -366,15 +366,15 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   SampleModel* M_min_sa=alloc_and_init_sample_model();
   SampleModel* M_non_staph=alloc_and_init_sample_model();
 
-  get_stats_pure_aureus(expected_covg, err_rate,
+  /*  get_stats_pure_aureus(expected_covg, err_rate,
 			lambda_g_err, lambda_e_err,
 			pcov, mcov, tkmers,
 			db_graph->kmer_size,
-			M_pure_sa); 
-  /*  get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
+			M_pure_sa);*/ 
+  get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
 				pcov, mcov, tkmers, 
-				0.99, M_pure_sa); */
+				0.999, M_pure_sa); 
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
 				pcov, mcov, tkmers, 
@@ -558,6 +558,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	    += (1-frac_aureus)*err_rate/(3*(1-err_rate));
 	    lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate)); 
 
+	    //aome of the covg on Aureus is due to errors on the other, dont penalise
 	    double exp_extra_cov =  (arr_median[best] * err_rate) ;
 	    if (numk> exp_extra_cov)
 	      {
