@@ -458,15 +458,15 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
   if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
     {
-      lpr=0;
+      lpr=log(1);
     }
   else if (arr_perc_covg[Aureus] > 0.5*recovery_expected)
     {
-      lpr=-1000;
+      lpr=log(0.05);
     }
   else if (arr_perc_covg[Aureus] > 0.1*recovery_expected)
     {
-      lpr=-10000;
+      lpr=log(0.001);
     }
   else
     {
