@@ -170,7 +170,7 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 		// Iterate through all the variants and print the enum strings
 		for (i=0; i<=NUM_KNOWN_GENES; i++){
 			if (called_genes[i].gene != Unknown){
-				print_json_called_gene_start(map_enum_to_gene_name(called_genes[i].gene));
+				print_json_called_gene_start( map_enum_to_gene_name(called_genes[i].gene) );
 				print_json_called_gene_item("cov", called_genes[i].max_res_allele_present,  true);
 				print_json_called_gene_end();
 			}

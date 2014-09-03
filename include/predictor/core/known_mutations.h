@@ -235,4 +235,6 @@ typedef enum
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene);
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name);
 const char* map_enum_to_mutation_name(KnownMutation km); 
+const char* map_enum_to_gene_name(GeneMutationGene gene); 
+
 #endif
