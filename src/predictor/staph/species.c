@@ -456,7 +456,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   
   double lpr=0;
 
-  /*  if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
+  if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
     {
       lpr=log(1);
     }
@@ -472,7 +472,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       lpr=-99999999;
     }
-  */
+
 
   double llk = -lambda_g_err 
     + arr_median[Aureus]*log(lambda_g_err) 
@@ -552,24 +552,24 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
       double aureus_lpr=0;
-      /*(
+
       if (arr_perc_covg[Aureus] > 0.75*aureus_recovery_expected)
 	{
 	  aureus_lpr=log(1);
 	}
       else if (arr_perc_covg[Aureus] > 0.5*aureus_recovery_expected)
         {
-          aureus_lpr=log(0.05);
+          aureus_lpr=log(0.005);
         }
       else if (arr_perc_covg[Aureus] > 0.1*aureus_recovery_expected)
         {
-          aureus_lpr=log(0.001);
+          aureus_lpr=log(0.0001);
         }
       else
 	{
 	  aureus_lpr=-999999;
 	}
-*/
+
       double llk_aureus = -lambda_aureus + arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
 
 
@@ -587,24 +587,24 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
       double cong_lpr=0;
       //want to avoid calling CONG just because of small number of repeat kmers
-      /*
+      
       if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
 	{
 	  cong_lpr=0;
 	}
       else if (arr_perc_covg[best] > 0.5*cong_recovery_expected)
 	{
-	  cong_lpr=log(0.05);
+	  cong_lpr=log(0.005);
 	}
       else if (arr_perc_covg[best] > 0.1*cong_recovery_expected)
 	{
-	  cong_lpr=log(0.01);
+	  cong_lpr=log(0.0001);
 	}
       else
 	{
 	  cong_lpr=-999999;
 	}
-      */
+
       double llk_cong = -lambda_cong + arr_median[best]*log(lambda_cong)-log_factorial(arr_median[best]);
 
 
