@@ -551,7 +551,8 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	}
 
 
-      double aureus_lpr;
+      double aureus_lpr=0;
+
       if (arr_perc_covg[Aureus] > 0.75*aureus_recovery_expected)
 	{
 	  aureus_lpr=log(1);
@@ -559,6 +560,10 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
       else if (arr_perc_covg[Aureus] > 0.5*aureus_recovery_expected)
         {
           aureus_lpr=log(0.05);
+        }
+      else if (arr_perc_covg[Aureus] > 0.1*aureus_recovery_expected)
+        {
+          aureus_lpr=log(0.001);
         }
       else
 	{
@@ -582,13 +587,17 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
       double cong_lpr;
       //want to avoid calling CONG just because of small number of repeat kmers
 
-      if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
+      if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
 	{
 	  cong_lpr=0;
 	}
-      else if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
+      else if (arr_perc_covg[best] > 0.5*cong_recovery_expected)
 	{
-	  cong_lpr=log(0.1);
+	  cong_lpr=log(0.05);
+	}
+      else if (arr_perc_covg[best] > 0.1*cong_recovery_expected)
+	{
+	  cong_lpr=log(0.01);
 	}
       else
 	{
