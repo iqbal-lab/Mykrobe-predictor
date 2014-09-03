@@ -81,6 +81,28 @@ typedef struct
   GeneMutationGene gene;
 }ResVarInfo;
 
+// Define a structure to store resistance variants which are called
+typedef struct
+{
+  int max_res_allele_present;
+  int max_sus_allele_present;
+  KnownMutation var_id;
+}CalledVariant;
+
+CalledVariant* alloc_and_init_called_variant_array();
+void free_called_variant_array(CalledVariant* cva);
+void print_called_variants(CalledVariant* called_variants);
+// Define a structure to store resistance genes which are called
+typedef struct
+{
+  int max_res_allele_present;
+  GeneMutationGene gene;
+}CalledGene;
+
+CalledGene* alloc_and_init_called_genes_array();
+void free_called_genes_array(CalledGene* cg);
+
+
 ResVarInfo* alloc_and_init_res_var_info();
 void free_res_var_info(ResVarInfo* rvi);
 void reset_res_var_info(ResVarInfo* rvi);

@@ -41,7 +41,7 @@
     grlB = 5,
     Unknown = 6,
   }GeneMutationGene;
-  
+  #define NUM_KNOWN_GENES 6
   typedef enum
   {
     dfrB_L21V  = 0,
@@ -151,6 +151,7 @@ typedef enum
     gyrA = 10
             
           }GeneMutationGene;
+    #define NUM_KNOWN_GENES 10
           
 typedef enum
     {
@@ -233,5 +234,5 @@ typedef enum
 
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene);
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name);
-
+const char* map_enum_to_mutation_name(KnownMutation km); 
 #endif

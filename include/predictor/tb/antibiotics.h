@@ -134,7 +134,8 @@ InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 
 InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
@@ -149,7 +150,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 InfectionType is_quinolones_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
@@ -163,7 +165,8 @@ InfectionType is_quinolones_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
@@ -177,7 +180,8 @@ InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
@@ -191,7 +195,8 @@ InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
@@ -205,7 +210,8 @@ InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
@@ -219,7 +225,8 @@ InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
                      int (*file_reader)(FILE * fp, 
@@ -233,7 +240,8 @@ InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 
 InfectionType is_amikacin_susceptible(dBGraph* db_graph,
@@ -248,7 +256,8 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
                      AntibioticInfo* abi,
                      StrBuf* install_dir,
                      int ignore_first, int ignore_last, int expected_covg,
-                     double lambda_g, double lambda_e, double err_rate
+                     double lambda_g, double lambda_e, double err_rate,
+                     CalledVariant* called_variants,CalledGene* called_genes
                      );
 
 void print_antibiotic_susceptibility(dBGraph* db_graph,
@@ -273,11 +282,13 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
                             AntibioticInfo* abi,
                             StrBuf* install_dir,
                             int ignore_first, int ignore_last, int expected_covg,
-                            double lambda_g, double lambda_e, double err_rate),
+                            double lambda_g, double lambda_e, double err_rate,
+                            CalledVariant* called_variants,CalledGene* called_genes),
                     StrBuf* tmpbuf,
                     StrBuf* install_dir,
                     int ignore_first, int ignore_last, int expected_covg,
-                    double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last
+                    double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last,
+                    CalledVariant* called_variants,CalledGene* called_genes
                     );
 
 #endif

@@ -374,7 +374,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -432,6 +433,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    // Save the variant being called 
+    // add_called_variant_info_to_array(i, called_variants, best_model, I)
     return I;
   }
     }
@@ -466,7 +469,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -558,7 +562,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -650,7 +655,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -742,7 +748,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -834,7 +841,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -926,7 +934,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -1018,7 +1027,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes)
     {
       reset_antibiotic_info(abi);
       
@@ -1076,6 +1086,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
+    called_variants[i].var_id = i;
+    called_variants[i].max_res_allele_present = abi->mut[i]->working_current_max_res_allele_present;
+    called_variants[i].max_sus_allele_present = abi->mut[i]->working_current_max_sus_allele_present;
     return I;
   }
     }
@@ -1111,7 +1124,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  AntibioticInfo* abi,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate)
+                 double lambda_g, double lambda_e, double err_rate,
+                 CalledVariant* called_variants,CalledGene* called_genes )
     {
       reset_antibiotic_info(abi);
       
@@ -1215,14 +1229,16 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
               AntibioticInfo* abi,
               StrBuf* install_dir,
               int ignore_first, int ignore_last, int expected_covg,
-              double lambda_g, double lambda_e, double err_rate),
+              double lambda_g, double lambda_e, double err_rate,
+              CalledVariant* called_variants,CalledGene* called_genes),
           StrBuf* tmpbuf,
           StrBuf* install_dir,
           int ignore_first, int ignore_last,
           int expected_covg,
           double lambda_g, double lambda_e, double err_rate,
           OutputFormat format,
-          boolean output_last//for JSON
+          boolean output_last,//for JSON
+          CalledVariant* called_variants,CalledGene* called_genes
           )
 {
   InfectionType suc;
@@ -1239,7 +1255,9 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
         expected_covg,
         lambda_g,
         lambda_e,
-        err_rate);
+        err_rate,
+        called_variants,
+        called_genes);
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);

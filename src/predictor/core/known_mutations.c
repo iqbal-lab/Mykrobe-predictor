@@ -450,7 +450,79 @@ GeneMutationGene map_gene_name_str_to_genename(StrBuf* name)
     }
 
 }
-            
+const char* map_enum_to_mutation_name(KnownMutation km)
+{
+   switch (km) 
+   {
+      case rpoB_F425X : return "rpoB_F425X";
+      case rpoB_G426X : return "rpoB_G426X";
+      case rpoB_T427X : return "rpoB_T427X";
+      case rpoB_S428X : return "rpoB_S428X";
+      case rpoB_Q429X : return "rpoB_Q429X";
+      case rpoB_L430X : return "rpoB_L430X";
+      case rpoB_S431X : return "rpoB_S431X";
+      case rpoB_Q432X : return "rpoB_Q432X";
+      case rpoB_F433X : return "rpoB_F433X";
+      case rpoB_M434X : return "rpoB_M434X";
+      case rpoB_D435X : return "rpoB_D435X";
+      case rpoB_Q436X : return "rpoB_Q436X";
+      case rpoB_N437X : return "rpoB_N437X";
+      case rpoB_N438X : return "rpoB_N438X";
+      case rpoB_P439X : return "rpoB_P439X";
+      case rpoB_L440X : return "rpoB_L440X";
+      case rpoB_S441X : return "rpoB_S441X";
+      case rpoB_G442X : return "rpoB_G442X";
+      case rpoB_L443X : return "rpoB_L443X";
+      case rpoB_T444X : return "rpoB_T444X";
+      case rpoB_H445X : return "rpoB_H445X";
+      case rpoB_K446X : return "rpoB_K446X";
+      case rpoB_R447X : return "rpoB_R447X";
+      case rpoB_R448X : return "rpoB_R448X";
+      case rpoB_L449X : return "rpoB_L449X";
+      case rpoB_S450X : return "rpoB_S450X";
+      case rpoB_A451X : return "rpoB_A451X";
+      case rpoB_L452X : return "rpoB_L452X";
+      case rrs_A1401X : return "rrs_A1401X";
+      case rrs_C1402X : return "rrs_C1402X";
+      case rrs_G1484X : return "rrs_G1484X";
+      case katG_S315X : return "katG_S315X";
+      case fabG1_Tu8X : return "fabG1_Tu8X";
+      case fabG1_Cu15X : return "fabG1_Cu15X";
+      case fabG1_Au16X : return "fabG1_Au16X";
+      case fabG1_Gu17X : return "fabG1_Gu17X";
+      case pncA_D49N : return "pncA_D49N";
+      case pncA_D8N : return "pncA_D8N";
+      case pncA_H57D : return "pncA_H57D";
+      case pncA_H57R : return "pncA_H57R";
+      case pncA_H71Y : return "pncA_H71Y";
+      case pncA_Q141X : return "pncA_Q141X";
+      case pncA_V125G : return "pncA_V125G";
+      case pncA_V21G : return "pncA_V21G";
+      case embB_M306X : return "embB_M306X";
+      case embB_G406D : return "embB_G406D";
+      case embB_G406S : return "embB_G406S";
+      case eis_Cu10T : return "eis_Cu10T";
+      case rpsL_K43R : return "rpsL_K43R";
+      case rpsL_K88R : return "rpsL_K88R";
+      case rrs_C513X : return "rrs_C513X";
+      case rrs_A514X : return "rrs_A514X";
+      case rrs_G515X : return "rrs_G515X";
+      case rrs_C516X : return "rrs_C516X";
+      case rrs_C517X : return "rrs_C517X";
+      case gyrA_H85X : return "gyrA_H85X";
+      case gyrA_P86X : return "gyrA_P86X";
+      case gyrA_H87X : return "gyrA_H87X";
+      case gyrA_G88X : return "gyrA_G88X";
+      case gyrA_D89X : return "gyrA_D89X";
+      case gyrA_A90X : return "gyrA_A90X";
+      case gyrA_S91X : return "gyrA_S91X";
+      case gyrA_I92X : return "gyrA_I92X";
+      case gyrA_Y93X : return "gyrA_Y93X";
+      case gyrA_D94X : return "gyrA_D94X";
+      case NotSpecified : return "NotSpecified";
+   }
+}
+
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
 {
 

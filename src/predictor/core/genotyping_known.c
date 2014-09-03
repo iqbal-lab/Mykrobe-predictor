@@ -119,6 +119,50 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 
 }
 
+CalledVariant* alloc_and_init_called_variant_array()
+{
+  int i;
+  CalledVariant* called_variants = malloc(NUM_KNOWN_MUTATIONS * sizeof(*called_variants));
+  for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){  	 
+	 called_variants[i].var_id = NotSpecified;
+	}
+  return called_variants;
+}
+void free_called_variant_array(CalledVariant* cva)
+{
+  free(cva);
+}
+
+void print_called_variants(CalledVariant* called_variants)
+{
+	// CalledVariant* current_called_variant;
+	int i;
+	// Iterate through all the variants and print the enum strings
+	for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+		if (called_variants[i].var_id != NotSpecified){
+			printf("%s(R:%iS%i)\n", map_enum_to_mutation_name(called_variants[i].var_id),
+				called_variants[i].max_res_allele_present,called_variants[i].max_sus_allele_present);
+		}
+	}
+}
+
+CalledGene* alloc_and_init_called_genes_array()
+{
+  CalledGene* called_genes = malloc(NUM_KNOWN_GENES * sizeof(*called_genes));
+  int i;
+  for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+	  called_genes[i].gene = Unknown;
+	}
+  return called_genes;
+}
+void free_called_genes_array(CalledGene* cg)
+{
+  free(cg);
+}
+
+
+
+
 ResVarInfo* alloc_and_init_res_var_info()
 {
   ResVarInfo* rvi = calloc(1, sizeof(ResVarInfo));
