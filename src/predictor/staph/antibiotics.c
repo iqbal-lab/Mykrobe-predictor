@@ -410,8 +410,12 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-
+if ( (I==Resistant) || (I==MixedInfection) ) {
+    update_called_genes(called_genes, aacAaphD, abi->genes[aacAaphD] );
+  }
   return I;
+
+  
 
 }
 
@@ -464,8 +468,12 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon,expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
-
+  if ( (I==Resistant) || (I==MixedInfection) ) {
+    update_called_genes(called_genes, blaZ, abi->genes[blaZ] );
+  }
   return I;
+
+
 }
 
 
@@ -566,6 +574,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
+    update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]] );
 	  return I;
 	}
     }
@@ -669,6 +678,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 	    {
 	      *any_erm_present=true;
 	    }
+    update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]] );
 	  return I;
 	}
     }
@@ -731,6 +741,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 		     MIN_PERC_COVG_STANDARD);
   if ( (I==Resistant) || (I==MixedInfection) ) 
     {
+      update_called_genes(called_genes, mecA, abi->genes[mecA] );
       return I;
     }
   else if (best_model.conf>MIN_CONFIDENCE)
@@ -1032,7 +1043,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-    update_called_variants(called_variants,i,abi->mut[i]);
+    update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]  ] );
 	  return I;
 	}
     }
@@ -1103,7 +1114,8 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-    update_called_variants(called_variants,i,abi->mut[i]);
+    update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]  ] );
+
 	  return I;
 	}
     }
@@ -1288,6 +1300,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_FUSBC);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
+    update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]  ] );
 	  return I;
 	}
     }
@@ -1356,8 +1369,12 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-
+  if ( (I==Resistant) || (I==MixedInfection) ) {
+    update_called_genes(called_genes,  vga_A_LC , abi->genes[vga_A_LC] );
+  }
   return I;
+  
+
 
 }
 
@@ -1406,8 +1423,11 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 		     lambda_g, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
-
+  if ( (I==Resistant) || (I==MixedInfection) ) {
+    update_called_genes(called_genes,  vanA , abi->genes[vanA] );
+  }
   return I;
+  
 
 }
 

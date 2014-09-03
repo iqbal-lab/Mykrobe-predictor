@@ -98,7 +98,7 @@ int get_next_gene_info(FILE* fp,
 		       dBNode** array_nodes, 
 		       Orientation*  array_or,
 		       CovgArray* working_ca, int max_read_length);
-
+const char* map_enum_to_gene_name(GenePresenceGene gene);
 
 
 #endif

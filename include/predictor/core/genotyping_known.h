@@ -41,6 +41,8 @@
 #include "db_variants.h"
 #include "known_mutations.h"
 #include "json.h"
+#include "gene_presence.h"
+
 #define MIN_PERCENT_MUT_ALLELE_PRESENT 80
 
 typedef struct
@@ -98,12 +100,13 @@ void update_called_variants(CalledVariant* called_variants,KnownMutation i, ResV
 typedef struct
 {
   int max_res_allele_present;
-  GeneMutationGene gene;
+  GenePresenceGene gene;
 }CalledGene;
 
 CalledGene* alloc_and_init_called_genes_array();
 void free_called_genes_array(CalledGene* cg);
 void print_called_genes(CalledGene* called_genes,OutputFormat format);
+void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info);
 
 ResVarInfo* alloc_and_init_res_var_info();
 void free_res_var_info(ResVarInfo* rvi);

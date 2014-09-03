@@ -473,19 +473,7 @@ const char* map_enum_to_mutation_name(KnownMutation km)
      case  NotSpecified : return "NotSpecified";      
    }
 }
-const char* map_enum_to_gene_name(GeneMutationGene gene)
-{
-   switch (gene) 
-   {
-    case dfrB : return "dfrB";
-    case fusA : return "fusA";
-    case rpoB : return "rpoB";
-    case gyrA : return "gyrA";
-    case grlA : return "grlA";
-    case grlB : return "grlB";
-    case Unknown : return "Unknown";
-   }
-}
+
 
 #endif
 
@@ -629,23 +617,7 @@ const char* map_enum_to_mutation_name(KnownMutation km)
       case NotSpecified : return "NotSpecified";
    }
 }
-const char* map_enum_to_gene_name(GeneMutationGene gene)
-{
-   switch (gene) 
-   {
-      case Unknown : return "Unknown";
-      case rpoB : return "rpoB";
-      case katG : return "katG";
-      case fabG1 : return "fabG1";
-      case pncA : return "pncA";
-      case embB : return "embB";
-      case rrs : return "rrs";
-      case eis : return "eis";
-      case gidB : return "gidB";
-      case rpsL : return "rpsL";
-      case gyrA : return "gyrA";
-   }
-}
+
 
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
 {
