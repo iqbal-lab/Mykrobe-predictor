@@ -456,7 +456,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   
   double lpr=0;
 
-  if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
+  /*  if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
     {
       lpr=log(1);
     }
@@ -472,7 +472,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       lpr=-99999999;
     }
-
+  */
 
   double llk = -lambda_g_err 
     + arr_median[Aureus]*log(lambda_g_err) 
@@ -552,7 +552,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
       double aureus_lpr=0;
-
+      /*(
       if (arr_perc_covg[Aureus] > 0.75*aureus_recovery_expected)
 	{
 	  aureus_lpr=log(1);
@@ -569,6 +569,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	{
 	  aureus_lpr=-999999;
 	}
+*/
       double llk_aureus = -lambda_aureus + arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
 
 
@@ -584,9 +585,9 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
 
-      double cong_lpr;
+      double cong_lpr=0;
       //want to avoid calling CONG just because of small number of repeat kmers
-
+      /*
       if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
 	{
 	  cong_lpr=0;
@@ -603,6 +604,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	{
 	  cong_lpr=-999999;
 	}
+      */
       double llk_cong = -lambda_cong + arr_median[best]*log(lambda_cong)-log_factorial(arr_median[best]);
 
 
@@ -656,7 +658,8 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
       double llk = -lambda_e 
 	+  numk*arr_median[best]*log(lambda_e) 
 	-log_factorial(numk*arr_median[best]);
-      double lpr;
+      double lpr=0;
+      
       if ( (arr_perc_covg[best]>0.1) && (arr_median[best]>0.1*expected_covg) )
 	{
 	  lpr=-9999999;
@@ -669,6 +672,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 	{
 	  lpr=log(1);
 	}
+
       sm->likelihood=llk;
       sm->lp = llk+lpr;
     }  
