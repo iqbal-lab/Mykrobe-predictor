@@ -201,7 +201,7 @@ CalledGene* alloc_and_init_called_genes_array()
 {
   CalledGene* called_genes = malloc(NUM_KNOWN_GENES * sizeof(*called_genes));
   int i;
-  for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+  for (i=0; i<=NUM_KNOWN_GENES; i++){
 	  called_genes[i].gene = Unknown;
 	}
   return called_genes;

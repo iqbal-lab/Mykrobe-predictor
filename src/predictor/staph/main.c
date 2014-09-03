@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 
 
-  int lim = cmd_line->max_expected_sup_len;
+  // int lim = cmd_line->max_expected_sup_len;
     /* CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
@@ -147,6 +147,7 @@ int main(int argc, char **argv)
   // Alloc an array to store called variants and gene presence
   CalledVariant* called_variants = alloc_and_init_called_variant_array();
   CalledGene* called_genes = alloc_and_init_called_genes_array();
+
   if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) )
     {
       return -1;
