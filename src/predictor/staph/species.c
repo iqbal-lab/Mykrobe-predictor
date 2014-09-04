@@ -503,7 +503,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
       numk=0;
     }
   //  numk=1; //arr_tkmers[best];//debug
-  double llke =  -lambda_e* 
+  double llke =  -lambda_e 
     + numk *log(lambda_e)
     -log_factorial(numk);
 
