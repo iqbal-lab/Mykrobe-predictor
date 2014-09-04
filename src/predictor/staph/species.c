@@ -374,15 +374,15 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
 				pcov, mcov, tkmers, 
-				0.999, M_pure_sa); 
+				0.99, M_pure_sa); 
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
 				pcov, mcov, tkmers, 
-				0.99, M_maj_sa);
+				0.98, M_maj_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
 				pcov, mcov, tkmers,
-				0.01, M_min_sa);
+				0.02, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
 		      pcov, mcov, tkmers, db_graph->kmer_size, M_non_staph);
