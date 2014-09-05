@@ -33,11 +33,9 @@
 // *** LOG LIKELIHOODS and POSTERIORS  FOR THE MODELS WITH CLONAL STRAIN + SEQUENCING ERRORS 
 
 
-//this is for SNPS and indels, not for gene presence, where the prior would depend
-//on divergence between the gene panel
+//this is for SNPS and indels, not for gene presence
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
-								      ResVarInfo* rvi,
 								      int max_perc_covg_on_res_allele,
 								      double epsilon)
 
@@ -59,29 +57,29 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 
 double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
-									   ResVarInfo* rvi,
 									   int max_perc_covg_on_res_allele,
 									   double epsilon)
 {
       return log(1)+llk;;
 }
 
+
 double get_log_posterior_of_mixed_infection(double llk,
-					    ResVarInfo* rvi,
+					    Var* var,
 					    int max_perc_covg_on_res_allele)
 {
   if ( (max_perc_covg_on_res_allele==100)
        && 
-       (rvi->susceptible_allele.percent_nonzero==100) )
+       (var->vob_best_sus->susceptible_allele.percent_nonzero==100) )
     {
       return llk;
     }
-  else if ((max_perc_covg_on_res_allele>80)
+  /*  else if ((max_perc_covg_on_res_allele>80)
 	   && 
-	   (rvi->susceptible_allele.percent_nonzero > 80) )
+	   (var->vob_best_sus->susceptible_allele.percent_nonzero > 80) )
     {
       return llk+log(0.5);
-    }
+      }*/
   else
     {
       return -9999999;
@@ -94,13 +92,13 @@ double get_log_posterior_of_mixed_infection(double llk,
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
-double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
+double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(Var* var,
 								double lambda_g, double lambda_e,
 								int kmer)
 {
-  Covg c = get_max_covg_on_any_resistant_allele(rvi);
-  //printf("Test res model, R covg=%d and S covg=%d\n", c, rvi->susceptible_allele.median_covg);
-  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
+  //printf("Test res model, R covg=%d and S covg=%d\n", c, var->susceptible_allele.median_covg);
+  return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
 			       0.75*lambda_g, lambda_e, kmer);
 
 }
@@ -111,24 +109,24 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
-double get_log_lik_major_pop_resistant(ResVarInfo* rvi,
+double get_log_lik_major_pop_resistant(Var* var,
 				       double lambda_g, double lambda_e,
 				       int kmer)
 {
-  Covg c = get_max_covg_on_any_resistant_allele(rvi);
-  //printf("Test res model, R covg=%d and S covg=%d\n", c, rvi->susceptible_allele.median_covg);
-  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
+  //printf("Test res model, R covg=%d and S covg=%d\n", c, var->susceptible_allele.median_covg);
+  return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
 			       0.9*lambda_g, 0.1*lambda_g, kmer);
 
 }
 
 
 
-double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
+double get_log_lik_minor_pop_resistant(Var* var,
 				       double lambda_g, double lambda_e,
 				       int kmer, double err_rate)
 {
-  Covg c = get_max_covg_on_any_resistant_allele(rvi);
+  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
 
   double frac;
   if (err_rate<0.02)
@@ -143,9 +141,9 @@ double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
     {
       return -999999999;
     }
-  //  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+  //  return get_biallelic_log_lik(c, var->susceptible_allele.median_covg,
   //			       frac*lambda_g, 0.75*lambda_g, kmer);
-  return get_biallelic_log_lik(c, rvi->susceptible_allele.median_covg,
+  return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
 			       frac*lambda_g, (1-frac)*lambda_g, kmer);
 
 }
@@ -154,13 +152,13 @@ double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
 // lambda = expected_covg/mean_read_len
-double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(ResVarInfo* rvi,
+double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(Var* var,
 								     double lambda_g,
 								     double lambda_e,
 								     int kmer)
 {
-  Covg c = get_max_covg_on_any_resistant_allele(rvi);
-  return get_biallelic_log_lik(rvi->susceptible_allele.median_covg, c, 
+  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
+  return get_biallelic_log_lik(var->vob_best_sus->susceptible_allele.median_covg, c, 
 			       lambda_g, lambda_e, kmer);
 }
 
@@ -204,14 +202,14 @@ double get_biallelic_log_lik(Covg covg_model_true,//covg on allele the model say
 // ***** MIXED INFECTIONS *********
 
 //minor population of resistant
-double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
+double get_log_lik_of_mixed_infection(Var* var,
 				      double lambda_g,
 				      double err_rate,
 				      int kmer)
 {
 
-  Covg r = get_max_covg_on_any_resistant_allele(rvi);
-  Covg s = rvi->susceptible_allele.median_covg;
+  Covg r = get_max_covg_on_any_resistant_allele(var->vob_best_res);
+  Covg s = var->vob_best_sus->susceptible_allele.median_covg;
 
   if ( (r==0) || (s==0) )
     {
@@ -237,9 +235,6 @@ double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
     {
       return -9999999;
     }
-
-
-  int i;
 
 
   // likelihood = likelihood( | freq of res allele =pr) 
@@ -328,7 +323,7 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 
 
 //max a posteriori
-void choose_map_model(ResVarInfo* rvi,
+void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
 		      Model* best_model, double epsilon)
 {
@@ -349,15 +344,15 @@ void choose_map_model(ResVarInfo* rvi,
   mM.lp=0;
   mM.conf=0;
 
-  int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(rvi);
+  int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(var->vob_best_res);
 
-  mR.lp = llk_R + get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(llk_R, rvi,
+  mR.lp = llk_R + get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(llk_R, 
 										 max_perc_covg_on_res,
 										 epsilon);
-  mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, rvi,
+  mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, 
 										      max_perc_covg_on_res,
 										      epsilon);
-  mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, rvi,
+  mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, var,
 						       max_perc_covg_on_res);
 
   Model arr[3]={mR, mS, mM};
@@ -369,19 +364,19 @@ void choose_map_model(ResVarInfo* rvi,
 }
 
 
-InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
+InfectionType resistotype(Var* var, double err_rate, int kmer,
 			  double lambda_g, double lambda_e, double epsilon,
 			  Model* best_model,
 			  ModelChoiceMethod choice)
 {
-  double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi, 
+  double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(var, 
 									  lambda_g, lambda_e,
 									  kmer);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi, 
+  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
 									       lambda_g, lambda_e,
 									       kmer);
-  //  double llk_M = get_log_lik_of_mixed_infection(rvi, lambda_g, err_rate, kmer);
-  double llk_M = get_log_lik_minor_pop_resistant(rvi,lambda_g, lambda_e, kmer, err_rate);
+  //  double llk_M = get_log_lik_of_mixed_infection(var, lambda_g, err_rate, kmer);
+  double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate);
 
   best_model->conf=0;
   if (choice==MaxLikelihood)
@@ -390,7 +385,7 @@ InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
     }
   else
     {
-      choose_map_model(rvi, llk_R, llk_S, llk_M, best_model, epsilon);
+      choose_map_model(var, llk_R, llk_S, llk_M, best_model, epsilon);
     }
 
 

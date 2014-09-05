@@ -44,13 +44,6 @@ double get_log_posterior_major_resistant(double llk,
 
   double freq;
 
-  //prevent having too small err rate
-  if (err_rate<0.001)
-    {
-      //i don't believe the error rate is that low, so fix
-      err_rate=0.005;
-    }
-
 
   //depending on err rate, set freq
   if (err_rate<0.02)
@@ -67,14 +60,14 @@ double get_log_posterior_major_resistant(double llk,
     }
 
 
-  if (p>= 0.75*recovery_given_sample_and_errors* min_expected)
+  if (p>=recovery_given_sample_and_errors* min_expected)
     {
       return log(1)+llk;
     }
-  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
+  /*  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
     {
       return log(0.5)+llk;
-    }
+      } */
   else
     {
       return -99999999;
@@ -96,10 +89,10 @@ double get_log_posterior_minor_resistant(double llk,
 
   double freq;
 
-  if (err_rate<0.001)
+  if (err_rate<0.01)
     {
       //i don't believe the error rate is that low, so fix
-      err_rate=0.005;
+      err_rate=0.01;
     }
 
   if (err_rate<0.02)
@@ -122,7 +115,9 @@ double get_log_posterior_minor_resistant(double llk,
   //double step function. Coverage gap as might expect for this low frequency
   if ( (p>=exp_rec*100)//need to see enough of the gene
     &&
-       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
+       (p>=min_expected) )
+    //&&
+       //       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
     {
       return log(1)+llk;
     }
@@ -142,14 +137,14 @@ double get_log_posterior_truly_susceptible(double llk,
 
   int p = gi->percent_nonzero;
   
-  if (p>=recovery_given_sample_and_errors*min_expected)
+  /*  if (p>=recovery_given_sample_and_errors*min_expected)
     {
       return -99999999;
     }
   else
-    {
+  {*/
       return log(1)+llk;;
-    }
+      //   }
 }
 
 
@@ -207,10 +202,31 @@ double get_log_lik_truly_susceptible(GeneInfo* gi,
 {
   
   return get_log_lik_covg_due_to_errors(gi->median_covg_on_nonzero_nodes,
+					gi->percent_nonzero,
+					gi->len,
 					lambda_e, kmer);
 }
 
 
+//use number of gaps (to see if contiguous), plus median covg
+double get_log_lik_resistant(GeneInfo* gi,
+			     double lambda_g,
+			     double freq,//between 0 and 1
+			     int expected_covg,
+			     int kmer)
+{
+  double ret =get_gene_log_lik(gi->median_covg,
+			       lambda_g*freq, kmer) +  
+    log_prob_gaps(gi, expected_covg);
+  return ret;
+
+}
+
+double log_prob_gaps(GeneInfo* gi, int expected_covg)
+{
+  //  printf("Num gaps is %d\n", gi->num_gaps);
+  return -expected_covg*gi->num_gaps;
+}
 
 
 
@@ -237,17 +253,32 @@ double get_gene_log_lik(Covg covg,//median covg on parts of gene that are presen
 }
 
 double get_log_lik_covg_due_to_errors(Covg covg,
+				      int percent_nonzero,
+				      int gene_len,
 				      double lambda_e,
 				      int kmer)
 {
+  //num positive kmers
+  int p = (int) (percent_nonzero*gene_len/100);
+
+  //rescale - number of SNP errors
+  if (p>kmer)
+    {
+      p = p/kmer;
+    }
+  else
+    {
+      p =1;
+    }
+
     //Covg on the err allele is Poisson distributed with 
   // rate at error allele = e * (1-e)^(k-1) * (D/R) /3 =: lambda_e
   double r_e = lambda_e;
   
   double log_lik_err_allele  
     = -r_e 
-    + covg*log(r_e) 
-    - log_factorial(covg);
+    + p*covg*log(r_e) 
+    - log_factorial(covg*p);
   
   return log_lik_err_allele;
 
@@ -344,17 +375,44 @@ void choose_map_gene_model(GeneInfo* gi,
 
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
-			       double lambda_g,  double epsilon, int expected_covg,
+			       double lambda_g,  double lambda_e, double epsilon, int expected_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene)
 {
-  double llk_R=0;
-  double llk_M=0;
+
+
+  //prevent having too small err rate
+  if (err_rate<0.001)
+    {
+      //i don't believe the error rate is that low, so fix
+      err_rate=0.005;
+    }
+
+
+  //depending on err rate, set freq
+  double freq;
+  if (err_rate<0.02)
+    {
+      freq=0.05;
+    }
+  else if (err_rate<0.1)
+    {
+      freq=0.25;
+    }
+  else
+    {
+      freq=0.5;
+    }
+
+
+  double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
+  double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
   double llk_S = get_log_lik_truly_susceptible(gi, 
-					       lambda_g, 
+					       lambda_e, 
 					       kmer);
 
+  //  printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
   best_model->conf=0;
   if (choice==MaxLikelihood)
     {

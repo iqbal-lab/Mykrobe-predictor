@@ -32,7 +32,7 @@
 #include "genotyping_known.h"
 
 
-#define MIN_CONFIDENCE 3
+#define MIN_CONFIDENCE 1
 
 typedef enum
   {
@@ -49,29 +49,27 @@ typedef enum
   } InfectionType;
 
 double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
-								      ResVarInfo* rvi,
 								      int max_perc_covg_on_res_allele,
 								      double epsilon);
 
 double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
-									   ResVarInfo* rvi,
 									   int max_perc_covg_on_res_allele,
 									   double epsilon);
 
 double get_log_posterior_of_mixed_infection(double llk,
-					    ResVarInfo* rvi,
+					    Var* var,
 					    int max_perc_covg_on_res_allele);
 
 
-double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(ResVarInfo* rvi,
+double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(Var* var,
 								double lambda_g, double lambda_e,
 								int kmer);
 
-double get_log_lik_minor_pop_resistant(ResVarInfo* rvi,
+double get_log_lik_minor_pop_resistant(Var* var,
 				       double lambda_g, double lambda_e,
 				       int kmer, double err_rate);
 
-double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(ResVarInfo* rvi,
+double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(Var* var,
 								     double lambda_g, double lambda_e,
 								     int kmer);
 
@@ -81,7 +79,7 @@ double get_biallelic_log_lik(Covg covg_model_true,
 			     double lambda_e,
 			     int kmer);
 
-double get_log_lik_of_mixed_infection(ResVarInfo* rvi,
+double get_log_lik_of_mixed_infection(Var* var,
 				      double lambda_g,
 				      double err_rate,
 				      int kmer);
@@ -100,11 +98,11 @@ int model_cmp_logpost(const void *a, const void *b);
 void choose_ml_model(double llk_R, double llk_S, double llk_M,
 		     Model* best_model);
 
-void choose_map_model(ResVarInfo* rvi,
+void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
 		      Model* best_model, double epsilon);
 
-InfectionType resistotype(ResVarInfo* rvi, double err_rate, int kmer,
+InfectionType resistotype(Var* var, double err_rate, int kmer,
 			  double lambda_g, double lambda_e, double epsilon,
 			  Model* best_model,
 			  ModelChoiceMethod choice);

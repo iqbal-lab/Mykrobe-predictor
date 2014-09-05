@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
 
 
-  int lim = cmd_line->max_expected_sup_len;
+  //  int lim = cmd_line->max_expected_sup_len;
     /* CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
@@ -141,10 +141,10 @@ int main(int argc, char **argv)
   timestamp();
 
 
-  ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
+  VarOnBackground* tmp_vob = alloc_and_init_var_on_background();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
-  if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) )
+  if ( (ru==NULL) || (tmp_vob==NULL) || (abi==NULL) || (tmp_gi==NULL) )
     {
       return -1;
     }
@@ -169,16 +169,15 @@ int main(int argc, char **argv)
     {
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
-      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
+      strbuf_append_str(sk, "data/skeleton_binary/staph/skeleton.k15.ctx");
       if (access(sk->buff,F_OK)!=0)
 	{
-	  printf("Build skeleton\n");
 	  timestamp();
 	  StrBuf* skeleton_flist = strbuf_new();
 	  strbuf_append_str(skeleton_flist, 
 			    cmd_line->install_dir->buff);
 	  strbuf_append_str(skeleton_flist, 
-			    "data/skeleton_binary/list_speciesbranches_genes_and_muts");
+			    "data/skeleton_binary/staph/list_speciesbranches_genes_and_muts");
 	  uint64_t dummy=0;
 	  boolean is_rem=true;
 	  build_unclean_graph(db_graph, 
@@ -193,26 +192,23 @@ int main(int argc, char **argv)
 			      false, &dummy, 0, &is_rem);
 
 	  //dump binary so can reuse
-	  set_all_coverages_to_zero(db_graph, 0);
+
 	  db_graph_dump_binary(sk->buff, 
 			       &db_node_condition_always_true,
 			       db_graph,
 			       NULL,
 			       BINVERSION);
 	  strbuf_free(skeleton_flist);
-	  printf("Dumped\n");
+	  set_all_coverages_to_zero(db_graph, 0);
 	  timestamp();
 	}
       else
 	{
 	  int num=0;
-	  printf("Load skeleton binary\n");
-	  timestamp();
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
-	  printf("Skeleton loaded\n");
-	  timestamp();
+	  set_all_coverages_to_zero(db_graph, 0);
 	}
       strbuf_free(sk);
 
@@ -263,21 +259,21 @@ int main(int argc, char **argv)
 							   cmd_line->readlen_distrib_size);
 
   double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
-  if (err_rate<0.005)
+  if (err_rate<0.01)
     {
-      err_rate=0.005;
+      err_rate=0.01;
     }
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
-  
+
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
-  
-  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-       expected_depth, cmd_line->max_expected_sup_len); 
+
+  //  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
+  //   expected_depth, cmd_line->max_expected_sup_len); 
   
   
   //calculate expected read-arrival rates on true and error alleles
@@ -328,7 +324,7 @@ int main(int argc, char **argv)
 	  //cleanup
 	  strbuf_free(tmp_name);
 	  free_antibiotic_info(abi);
-	  free_res_var_info(tmp_rvi);
+	  free_var_on_background(tmp_vob);
 	  free_gene_info(tmp_gi);
 	  free_reading_utils(ru);
 	  
@@ -380,7 +376,7 @@ int main(int argc, char **argv)
 	  //cleanup
 	  strbuf_free(tmp_name);
 	  free_antibiotic_info(abi);
-	  free_res_var_info(tmp_rvi);
+	  free_var_on_background(tmp_vob);
 	  free_gene_info(tmp_gi);
 	  free_reading_utils(ru);
 	  
@@ -404,48 +400,50 @@ int main(int argc, char **argv)
     }
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);  
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
   boolean any_erm_present=false;
-  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
 				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
 				    &any_erm_present);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
   output_last=true;
-  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
 				   any_erm_present,cmd_line->install_dir,
 				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last);
 
-  
+   
   if (cmd_line->format==JSON)
     {
       print_json_susceptibility_end();
@@ -485,7 +483,7 @@ int main(int argc, char **argv)
   //cleanup
   strbuf_free(tmp_name);
   free_antibiotic_info(abi);
-  free_res_var_info(tmp_rvi);
+  free_var_on_background(tmp_vob);
   free_gene_info(tmp_gi);
   free_reading_utils(ru);
   

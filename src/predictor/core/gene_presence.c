@@ -239,6 +239,8 @@ void copy_gene_info(GeneInfo* from_gi, GeneInfo* to_gi)
   to_gi->min_covg = from_gi->min_covg;
   to_gi->percent_nonzero = from_gi->percent_nonzero;
   to_gi->median_covg_on_nonzero_nodes = from_gi->median_covg_on_nonzero_nodes;
+  to_gi->num_gaps=from_gi->num_gaps;
+  to_gi->len=from_gi->len;
   strbuf_reset(to_gi->strbuf);
   strbuf_append_str(to_gi->strbuf, from_gi->strbuf->buff);
   to_gi->name = from_gi->name;
@@ -254,6 +256,8 @@ void reset_gene_info(GeneInfo* gi)
   gi->min_covg=0;
   gi->percent_nonzero=0;
   gi->median_covg_on_nonzero_nodes=0;
+  gi->len=0;
+  gi->num_gaps=0;
   if (gi->strbuf!=NULL)
     {
       strbuf_reset(gi->strbuf);
@@ -299,6 +303,10 @@ int get_next_gene_info(FILE* fp,
     {
       return 0;
     }
+  else
+    {
+      gene_info->len=num_kmers;
+    }
   //collect min, median covg on gene and also percentage of kmers with any covg
   boolean too_short=false;
   int ignore_first=0;
@@ -331,6 +339,12 @@ int get_next_gene_info(FILE* fp,
 							     0,
 							     &too_short,
 							     ignore_first, ignore_last);
+  gene_info->num_gaps = 
+    num_gaps_on_allele_in_specific_colour(array_nodes, 
+					  num_kmers,
+					  0,
+					  &too_short,
+					  ignore_first, ignore_last);
 
 
   strbuf_reset(gene_info->strbuf);

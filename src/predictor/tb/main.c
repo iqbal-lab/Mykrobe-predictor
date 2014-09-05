@@ -140,11 +140,10 @@ int main(int argc, char **argv)
 
   timestamp();
 
-
-  ResVarInfo* tmp_rvi = alloc_and_init_res_var_info();
+  VarOnBackground* tmp_vob = alloc_and_init_var_on_background();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
-  if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) )
+  if ( (ru==NULL) || (tmp_vob==NULL) || (abi==NULL) || (tmp_gi==NULL) )
     {
       return -1;
     }
@@ -169,53 +168,50 @@ int main(int argc, char **argv)
     {
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
-      strbuf_append_str(sk, "data/skeleton_binary/skeleton.k15.ctx");
+      strbuf_append_str(sk, "data/skeleton_binary/tb/skeleton.k15.ctx");
       if (access(sk->buff,F_OK)!=0)
-  {
-    printf("Build skeleton\n");
-    timestamp();
-    StrBuf* skeleton_flist = strbuf_new();
-    strbuf_append_str(skeleton_flist, 
-          cmd_line->install_dir->buff);
-    strbuf_append_str(skeleton_flist, 
-          "data/skeleton_binary/list_speciesbranches_genes_and_muts");
-    uint64_t dummy=0;
-    boolean is_rem=true;
-    build_unclean_graph(db_graph, 
-            skeleton_flist,
-            true,
-            cmd_line->kmer_size,
-            NULL, 0,
-            NULL, 0,
-            false,
-            into_colour,
-            &subsample_null,
-            false, &dummy, 0, &is_rem);
-
-    //dump binary so can reuse
-    set_all_coverages_to_zero(db_graph, 0);
-    db_graph_dump_binary(sk->buff, 
-             &db_node_condition_always_true,
-             db_graph,
-             NULL,
-             BINVERSION);
-    strbuf_free(skeleton_flist);
-    printf("Dumped\n");
-    timestamp();
-  }
+	{
+	  timestamp();
+	  StrBuf* skeleton_flist = strbuf_new();
+	  strbuf_append_str(skeleton_flist, 
+			    cmd_line->install_dir->buff);
+	  strbuf_append_str(skeleton_flist, 
+			    "data/skeleton_binary/tb/list_speciesbranches_genes_and_muts");
+	  uint64_t dummy=0;
+	  boolean is_rem=true;
+	  build_unclean_graph(db_graph, 
+			      skeleton_flist,
+			      true,
+			      cmd_line->kmer_size,
+			      NULL, 0,
+			      NULL, 0,
+			      false,
+			      into_colour,
+			      &subsample_null,
+			      false, &dummy, 0, &is_rem);
+	  
+	  //dump binary so can reuse
+	  db_graph_dump_binary(sk->buff, 
+			       &db_node_condition_always_true,
+			       db_graph,
+			       NULL,
+			       BINVERSION);
+	  strbuf_free(skeleton_flist);
+	  set_all_coverages_to_zero(db_graph, 0);
+	  timestamp();
+	}
       else
-  {
-    int num=0;
-    printf("Load skeleton binary\n");
-    timestamp();
-    GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
-    load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
-    graph_info_free(ginfo);
-    printf("Skeleton loaded\n");
-    timestamp();   
-  }
+	{
+	  int num=0;
+	  timestamp();
+	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
+	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
+	  graph_info_free(ginfo);
+	  set_all_coverages_to_zero(db_graph, 0);
+	  timestamp();   
+	}
       strbuf_free(sk);
-
+      
       only_load_pre_existing_kmers=true;
     }
   else
@@ -305,11 +301,15 @@ StrBuf* tmp_name = strbuf_new();
       strbuf_append_str(tmp_name, species_mod->name_of_pure_mtbc_species->buff);
       strbuf_append_str(tmp_name, " + ");
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
+
 
     }
   else if (st == NonMTB)
     {
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
+      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
+
     }
   else if (st == PureMTBC)
     {
@@ -328,7 +328,7 @@ StrBuf* tmp_name = strbuf_new();
     //cleanup
     strbuf_free(tmp_name);
     free_antibiotic_info(abi);
-    free_res_var_info(tmp_rvi);
+    free_var_on_background(tmp_vob);
     free_gene_info(tmp_gi);
     free_reading_utils(ru);
     
@@ -349,11 +349,12 @@ StrBuf* tmp_name = strbuf_new();
   else//JSON
     {
       print_json_start();
+      print_json_phylogenetics_start();
       print_json_species_start();
   
   if (st == PureMTBC)
   {
-    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
+    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", false);
   }
   else if (st == MixedMTB) 
   {
@@ -363,9 +364,22 @@ StrBuf* tmp_name = strbuf_new();
   }
       else
   {
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", false);
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", false);
   }
-      print_json_species_end(); 
+      print_json_species_end();
+      print_json_lineage_start();
+        if (st == PureMTBC)
+          {
+            print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", false);
+          }
+        else
+          {
+            print_json_item(species_mod->name_of_non_mtb_lineage->buff, "Major", false);
+          }
+
+      print_json_lineage_end();
+      print_json_phylogenetics_end();
+
 
       if (st == NonMTB)
   {
@@ -378,7 +392,7 @@ StrBuf* tmp_name = strbuf_new();
     //cleanup
     strbuf_free(tmp_name);
     free_antibiotic_info(abi);
-    free_res_var_info(tmp_rvi);
+    free_var_on_background(tmp_vob);
     free_gene_info(tmp_gi);
     free_reading_utils(ru);
     
@@ -402,36 +416,36 @@ StrBuf* tmp_name = strbuf_new();
     }
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
                       &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_gi, abi,
-                      &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last); 
 
   
   if (cmd_line->format==JSON)
@@ -466,7 +480,7 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_rvi, tmp_g
   //cleanup
   strbuf_free(tmp_name);
   free_antibiotic_info(abi);
-  free_res_var_info(tmp_rvi);
+  free_var_on_background(tmp_vob);
   free_gene_info(tmp_gi);
   free_reading_utils(ru);
 

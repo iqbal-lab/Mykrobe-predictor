@@ -72,39 +72,50 @@ int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 typedef struct
 {
   AlleleInfo susceptible_allele;
-  AlleleInfo resistant_alleles[10000];
+  AlleleInfo resistant_alleles[60];
   int num_resistant_alleles;
   boolean some_resistant_allele_present;
   int working_current_max_res_allele_present;
-  int working_current_max_sus_allele_present;
+  //  int working_current_max_sus_allele_present;
   KnownMutation var_id;
   GeneMutationGene gene;
-}ResVarInfo;
+}VarOnBackground;
 
-ResVarInfo* alloc_and_init_res_var_info();
-void free_res_var_info(ResVarInfo* rvi);
-void reset_res_var_info(ResVarInfo* rvi);
-void copy_res_var_info(ResVarInfo* from_rvi, ResVarInfo* to_rvi);
+VarOnBackground* alloc_and_init_var_on_background();
+void free_var_on_background(VarOnBackground* vob);
+void reset_var_on_background(VarOnBackground* vob);
+void copy_var_on_background(VarOnBackground* from_vob, VarOnBackground* to_vob);
 
-boolean both_alleles_null(ResVarInfo* rvi);
 
-void get_next_mutation_allele_info(FILE* fp, dBGraph* db_graph, ResVarInfo* rinfo,
-				   Sequence* seq, KmerSlidingWindow* kmer_window,
-				   int (*file_reader)(FILE * fp, 
-						      Sequence * seq, 
-						      int max_read_length, 
-						      boolean new_entry, 
-						      boolean * full_entry),
-				   dBNode** array_nodes, Orientation*  array_or,
+typedef struct
+{
+  VarOnBackground* vob_best_sus;
+  VarOnBackground* vob_best_res;
+} Var;//corresponds to an enum - so encapsulates info across backgrounds
+
+Var* alloc_var();
+void free_var(Var* v);
+boolean both_alleles_null(Var* var);
+
+boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph, 
+				VarOnBackground* vob,
+				Var** array_vars,
+				Sequence* seq, KmerSlidingWindow* kmer_window,
+				int (*file_reader)(FILE * fp, 
+						   Sequence * seq, 
+						   int max_read_length, 
+						   boolean new_entry, 
+						   boolean * full_entry),
+				dBNode** array_nodes, Orientation*  array_or,
 				   CovgArray* working_ca, int max_read_length,
-				   StrBuf* temp_readid_buf, 
-				   StrBuf* temp_mut_buf,
-				   StrBuf* temp_gene_name_buf,
-				   int ignore_first, int ignore_last, 
-				   int expected_covg, KnownMutation* prev_mut);
+				StrBuf* temp_readid_buf, 
+				StrBuf* temp_mut_buf,
+				StrBuf* temp_gene_name_buf,
+				int ignore_first, int ignore_last, 
+				int expected_covg, KnownMutation* prev_mut);
 
 
-boolean both_alleles_null(ResVarInfo* rvi);
-Covg get_max_covg_on_any_resistant_allele(ResVarInfo* rvi);
-int get_max_perc_covg_on_any_resistant_allele(ResVarInfo* rvi);
+
+Covg get_max_covg_on_any_resistant_allele(VarOnBackground* vob);
+int get_max_perc_covg_on_any_resistant_allele(VarOnBackground* vob);
 #endif
