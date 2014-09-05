@@ -139,7 +139,7 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 	if (format==JSON){
 		print_json_called_variants_start();
 				// Iterate through all the variants and print the enum strings
-		for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+		for (i=0; i<NUM_KNOWN_MUTATIONS; i++){
 			if (called_variants[i].var_id != NotSpecified){
 				print_json_called_variant_start(map_enum_to_mutation_name(called_variants[i].var_id));
 				print_json_called_variant_item("R_cov", called_variants[i].max_res_allele_present,  false);
@@ -155,7 +155,7 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 		printf("** Called Variants \n");
 		printf("var\tR_cov\tS_cov\n");
 		// Iterate through all the variants and print the enum strings
-		for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){
+		for (i=0; i<NUM_KNOWN_MUTATIONS; i++){
 			if (called_variants[i].var_id != NotSpecified){
 				printf("%s\t%i\t%i\n", map_enum_to_mutation_name(called_variants[i].var_id),
 					called_variants[i].max_res_allele_present,called_variants[i].max_sus_allele_present);
@@ -168,7 +168,7 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 	if (format==JSON){
 		print_json_called_genes_start();
 		// Iterate through all the variants and print the enum strings
-		for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
+		for (i=0; i<NUM_GENE_PRESENCE_GENES; i++){
 			if (called_genes[i].gene != unspecified_gpg){
 				print_json_called_gene_start( map_enum_to_gene_name(called_genes[i].gene) );
 				print_json_called_gene_item("cov", called_genes[i].max_res_allele_present,  true);
@@ -179,11 +179,11 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 	}
 	else{
 		printf("** Called Genes \n");
-		printf("var\tcov\t");
+		printf("var\tcov\t\n");
 
 		
 		// Iterate through all the variants and print the enum strings
-		for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
+		for (i=0; i<NUM_GENE_PRESENCE_GENES; i++){
 			if (called_genes[i].gene != unspecified_gpg){
 				printf("%s\t%i\n", map_enum_to_gene_name(called_genes[i].gene),
 					called_genes[i].max_res_allele_present);
