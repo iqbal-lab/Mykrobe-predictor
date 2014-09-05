@@ -142,7 +142,8 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  double lambda_g, double lambda_e, double err_rate
+				  double lambda_g, double lambda_e, double err_rate,
+				   CalledVariant* called_variants,CalledGene* called_genes
 				  );
 
 
@@ -158,7 +159,8 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  double lambda_g, double lambda_e, double err_rate
+				  double lambda_g, double lambda_e, double err_rate,
+				   CalledVariant* called_variants,CalledGene* called_genes
 				  );
 InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
@@ -172,7 +174,8 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate
+				    double lambda_g, double lambda_e, double err_rate,
+				     CalledVariant* called_variants,CalledGene* called_genes
 				  );
 
 InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
@@ -188,7 +191,8 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
-				    boolean* any_erm_present
+				    boolean* any_erm_present,
+				     CalledVariant* called_variants,CalledGene* called_genes
 				    );
 
 InfectionType is_methicillin_susceptible(dBGraph* db_graph,
@@ -203,7 +207,8 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
 				   int ignore_first, int ignore_last, int expected_covg,
-				   double lambda_g, double lambda_e, double err_rate
+				   double lambda_g, double lambda_e, double err_rate,
+				    CalledVariant* called_variants,CalledGene* called_genes
 				  );
 
 InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
@@ -218,7 +223,8 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     AntibioticInfo* abi,
 				     StrBuf* install_dir,
 				     int ignore_first, int ignore_last, int expected_covg,
-				     double lambda_g, double lambda_e, double err_rate
+				     double lambda_g, double lambda_e, double err_rate,
+				      CalledVariant* called_variants,CalledGene* called_genes
 				     );
 
 InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
@@ -233,7 +239,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  double lambda_g, double lambda_e, double err_rate
+				  double lambda_g, double lambda_e, double err_rate,
+				   CalledVariant* called_variants,CalledGene* called_genes
 				  );
 
 InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
@@ -248,7 +255,8 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate);
+				    double lambda_g, double lambda_e, double err_rate,
+				     CalledVariant* called_variants,CalledGene* called_genes);
 
 InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				 int (*file_reader)(FILE * fp, 
@@ -262,7 +270,8 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				 AntibioticInfo* abi,
 				 StrBuf* install_dir,
 				 int ignore_first, int ignore_last, int expected_covg,
-				 double lambda_g, double lambda_e, double err_rate);
+				 double lambda_g, double lambda_e, double err_rate,
+				  CalledVariant* called_variants,CalledGene* called_genes);
 
 
 InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
@@ -277,7 +286,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    AntibioticInfo* abi,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate);
+				    double lambda_g, double lambda_e, double err_rate,
+				     CalledVariant* called_variants,CalledGene* called_genes);
 
 //this really only asks if it is CONSTITUTIVELY susceptobe;/resistant.
 //inducible resistance covered elsewhere
@@ -293,7 +303,8 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				   AntibioticInfo* abi,
 				   StrBuf* install_dir,
 				   int ignore_first, int ignore_last, int expected_covg,
-				   double lambda_g, double lambda_e, double err_rate);
+				   double lambda_g, double lambda_e, double err_rate,
+				    CalledVariant* called_variants,CalledGene* called_genes);
 
 InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
@@ -307,7 +318,8 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
-				  double lambda_g, double lambda_e, double err_rate);
+				  double lambda_g, double lambda_e, double err_rate,
+				   CalledVariant* called_variants,CalledGene* called_genes);
 
 void print_antibiotic_susceptibility(dBGraph* db_graph,
 					int (*file_reader)(FILE * fp, 
@@ -331,11 +343,13 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 							AntibioticInfo* abi,
 							StrBuf* install_dir,
 							int ignore_first, int ignore_last, int expected_covg,
-							double lambda_g, double lambda_e, double err_rate),
+							double lambda_g, double lambda_e, double err_rate,
+							CalledVariant* called_variants,CalledGene* called_genes),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last, int expected_covg,
-					double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last
+					double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last,
+					CalledVariant* called_variants,CalledGene* called_genes
 					);
 
 void print_erythromycin_susceptibility(dBGraph* db_graph,
@@ -361,13 +375,15 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 							  StrBuf* install_dir,
 							  int ignore_first, int ignore_last, int expected_covg,
 							  double lambda_g, double lambda_e, double err_rate, 
-							  boolean* any_erm_present),
+							  boolean* any_erm_present,
+							  CalledVariant* called_variants,CalledGene* called_genes),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
 					  double lambda_g, double lambda_e, double err_rate, OutputFormat format,
 					  boolean output_last,
-					  boolean* any_erm_present
+					  boolean* any_erm_present,
+					  CalledVariant* called_variants,CalledGene* called_genes
 					  );
 
 void print_clindamycin_susceptibility(dBGraph* db_graph,
@@ -392,13 +408,15 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 							 AntibioticInfo* abi,
 							 StrBuf* install_dir,
 							 int ignore_first, int ignore_last, int expected_covg,
-							 double lambda_g, double lambda_e, double err_rate),
+							 double lambda_g, double lambda_e, double err_rate,
+							 CalledVariant* called_variants,CalledGene* called_genes),
 					 StrBuf* tmpbuf,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
 					 double lambda_g, double lambda_e, double err_rate, OutputFormat format,
-					 boolean output_last
+					 boolean output_last,
+					 CalledVariant* called_variants,CalledGene* called_genes
 					 );
 
 Troolean is_pvl_positive(dBGraph* db_graph,

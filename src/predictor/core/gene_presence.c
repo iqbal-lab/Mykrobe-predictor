@@ -217,6 +217,34 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
   return true;
 }
 
+const char* map_enum_to_gene_name(GenePresenceGene gene)
+{
+   switch (gene) 
+   {
+    case aacAaphD : return "aacAaphD";
+    case blaZ : return "blaZ";
+    case dfrA : return "dfrA";
+    case dfrG : return "dfrG";
+    case ermA : return "ermA";
+    case ermB : return "ermB";
+    case ermC : return "ermC";
+    case ermT : return "ermT";
+    case fusB : return "fusB";
+    case fusC : return "fusC";
+    case vga_A_LC : return "vga_A_LC";
+    case msrA : return "msrA";
+    case mecA : return "mecA";
+    case tetK : return "tetK";
+    case tetL : return "tetL";
+    case tetM : return "tetM";
+    case vanA : return "vanA";
+    case mupA : return "mupA";
+    case mupB : return "mupB";
+    case luk : return "luk";
+    case unspecified_gpg  : return "unknown";
+   }
+}
+
 GeneInfo* alloc_and_init_gene_info()
 {
   GeneInfo* gi = (GeneInfo*) calloc(1, sizeof(GeneInfo));

@@ -77,6 +77,67 @@ void print_json_susceptibility_end()
   printf("\t},\n");
 }
 
+// Json printing of variants
+void print_json_called_variants_start()
+{
+  printf("\t\"called_variants\" :{\n");
+}
+void print_json_called_variants_end()
+{
+  printf("\t},\n");
+}
+
+
+void print_json_called_variant_start(const char* str1)
+{
+  printf("\t\t\"%s\" :{\n",str1);
+}
+void print_json_called_variant_item(char* str1, int val, boolean last)
+{
+  printf("\t\t\t\"%s\": \"%i\"", str1, val);
+  if (last==false)
+    {
+      printf(",");
+    }
+  printf("\n");
+}
+
+void print_json_called_variant_end()
+{
+  printf("\t\t},\n");
+}
+//
+// Json printing of genes
+void print_json_called_genes_start()
+{
+  printf("\t\"called_genes\" :{\n");
+}
+void print_json_called_genes_end()
+{
+  printf("\t},\n");
+}
+
+
+void print_json_called_gene_start(const char* str1)
+{
+  printf("\t\t\"%s\" :{\n",str1);
+}
+void print_json_called_gene_item(char* str1, int val, boolean last)
+{
+  printf("\t\t\t\"%s\": \"%i\"", str1, val);
+  if (last==false)
+    {
+      printf(",");
+    }
+  printf("\n");
+}
+
+void print_json_called_gene_end()
+{
+  printf("\t\t},\n");
+}
+//
+
 void print_json_virulence_start()
 {
   printf("\t\"virulence_toxins\" :{\n");

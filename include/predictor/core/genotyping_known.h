@@ -40,6 +40,8 @@
 #include "file_reader.h"
 #include "db_variants.h"
 #include "known_mutations.h"
+#include "json.h"
+#include "gene_presence.h"
 
 #define MIN_PERCENT_MUT_ALLELE_PRESENT 80
 
@@ -81,17 +83,46 @@ typedef struct
   GeneMutationGene gene;
 }VarOnBackground;
 
+typedef struct
+{
+  VarOnBackground* vob_best_sus;
+  VarOnBackground* vob_best_res;
+} Var;//corresponds to an enum - so encapsulates info across backgrounds
+
+
+// Define a structure to store resistance variants which are called
+typedef struct
+{
+  int max_res_allele_present;
+  int max_sus_allele_present;
+  KnownMutation var_id;
+}CalledVariant;
+
+CalledVariant* alloc_and_init_called_variant_array();
+void free_called_variant_array(CalledVariant* cva);
+void print_called_variants(CalledVariant* called_variants,OutputFormat format);
+void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var* var);
+
+// Define a structure to store resistance genes which are called
+typedef struct
+{
+  int max_res_allele_present;
+  GenePresenceGene gene;
+}CalledGene;
+
+CalledGene* alloc_and_init_called_genes_array();
+void free_called_genes_array(CalledGene* cg);
+void print_called_genes(CalledGene* called_genes,OutputFormat format);
+void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info);
+
+
+
 VarOnBackground* alloc_and_init_var_on_background();
 void free_var_on_background(VarOnBackground* vob);
 void reset_var_on_background(VarOnBackground* vob);
 void copy_var_on_background(VarOnBackground* from_vob, VarOnBackground* to_vob);
 
 
-typedef struct
-{
-  VarOnBackground* vob_best_sus;
-  VarOnBackground* vob_best_res;
-} Var;//corresponds to an enum - so encapsulates info across backgrounds
 
 Var* alloc_var();
 void free_var(Var* v);

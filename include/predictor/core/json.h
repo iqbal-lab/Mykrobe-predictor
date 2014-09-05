@@ -46,6 +46,18 @@ void print_json_phylogenetics_end();
 
 void print_json_susceptibility_start();
 void print_json_susceptibility_end();
+void print_json_called_variants_start();
+void print_json_called_variants_end();
+void print_json_called_variant_start(const char* str1);
+void print_json_called_variant_item(char* str1, int val, boolean last);
+void print_json_called_variant_end();
+
+void print_json_called_genes_start();
+void print_json_called_genes_end();
+void print_json_called_gene_start(const char* str1);
+void print_json_called_gene_item(char* str1, int val, boolean last);
+void print_json_called_gene_end();
+
 void print_json_virulence_start();
 void print_json_virulence_end();
 void print_json_item(char* str1, char* str2, boolean output_last);
