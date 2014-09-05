@@ -263,9 +263,9 @@ int main(int argc, char **argv)
                  cmd_line->readlen_distrib_size);
 
   double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
-  if (err_rate<0.005)
+  if (err_rate<0.01)
     {
-      err_rate=0.005;
+      err_rate=0.01;
     }
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
@@ -276,8 +276,8 @@ int main(int argc, char **argv)
         * (mean_read_length-cmd_line->kmer_size+1)
         * lambda_g_err_free );
   
-  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-          expected_depth, cmd_line->max_expected_sup_len);
+  // clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
+  //         expected_depth, cmd_line->max_expected_sup_len);
   
   
   //calculate expected read-arrival rates on true and error alleles
@@ -471,7 +471,7 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_g
       print_json_susceptibility_end();
     }
   print_called_variants(called_variants,cmd_line->format);
-  print_called_genes(called_genes,cmd_line->format);
+  // print_called_genes(called_genes,cmd_line->format);
   if (cmd_line->format==Stdout)
     {
       timestamp();
