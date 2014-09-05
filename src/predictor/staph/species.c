@@ -482,7 +482,6 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   //  llk = - (double) arr_tkmers[Aureus] * ((double) (100-arr_perc_covg[Aureus]/100) * recovery_expected; //prob of a gap of that length
 
   //now we need to account for coverage on non-aureus
-  double lpe=0;
   int numk = arr_tkmers[best];
 
   //now - in this model we expect errors from Aureus to give covg on cong.
