@@ -146,7 +146,7 @@ int main(int argc, char **argv)
   // Alloc an array to store called variants and gene presence
   CalledVariant* called_variants = alloc_and_init_called_variant_array();
   CalledGene* called_genes = alloc_and_init_called_genes_array();
-  if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) || (called_variants==NULL) || (called_genes==NULL) )
+  if ( (ru==NULL) || (tmp_vob==NULL) || (abi==NULL) || (tmp_gi==NULL) || (called_variants==NULL) || (called_genes==NULL) )
     {
       return -1;
     }
@@ -311,7 +311,7 @@ StrBuf* tmp_name = strbuf_new();
   else if (st == NonMTB)
     {
       strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
+      // strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
 
     }
   else if (st == PureMTBC)
