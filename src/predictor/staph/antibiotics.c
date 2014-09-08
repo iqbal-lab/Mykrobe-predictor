@@ -426,7 +426,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   Model best_model;
   InfectionType I=
     resistotype_gene(abi->genes[aacAaphD], err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
 if ( (I==Resistant) || (I==MixedInfection) ) {
@@ -484,7 +484,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
   Model best_model;
   InfectionType I=
     resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon,expected_covg,
+		     lambda_g, lambda_e, epsilon,expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_BLAZ);
   if ( (I==Resistant) || (I==MixedInfection) ) {
@@ -588,7 +588,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -678,7 +678,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       
@@ -755,7 +755,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[mecA], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -1048,7 +1048,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e,  epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
 
@@ -1128,7 +1128,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -1238,7 +1238,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 		&best_model, MaxAPosteriori);
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
-      return Unsure;
+      return Resistant;
     }
 
 
@@ -1314,7 +1314,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
       InfectionType I =
 	resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
 			 MIN_PERC_COVG_FUSBC);
       if ( (I==Resistant) || (I==MixedInfection) ) 
@@ -1385,7 +1385,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[vga_A_LC], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if ( (I==Resistant) || (I==MixedInfection) ) {
@@ -1439,7 +1439,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
   InfectionType I =
     resistotype_gene(abi->genes[vanA], 
 		     err_rate, db_graph->kmer_size, 
-		     lambda_g, epsilon, expected_covg,
+		     lambda_g, lambda_e, epsilon, expected_covg,
 		     &best_model, MaxAPosteriori,
 		     MIN_PERC_COVG_STANDARD);
   if ( (I==Resistant) || (I==MixedInfection) ) {

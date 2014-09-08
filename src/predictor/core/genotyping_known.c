@@ -506,7 +506,6 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
   vob->var_id=km;
   if (vob->var_id!= *prev_mut)
     {
-
       //this is a new enum/mutation
       reset_var_on_background(vob);
       *prev_mut=km; //for use in the next call to this function

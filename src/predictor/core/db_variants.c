@@ -308,6 +308,36 @@ Covg median_covg_ignoring_zeroes_on_allele_in_specific_colour(dBNode** allele, i
 
 
 
+int num_gaps_on_allele_in_specific_colour(dBNode** allele, 
+					   int len, 
+					   int colour, 
+					   boolean* too_short, 
+					   int ignore_first, int ignore_last)
+{
+  
+  if ((len==0)|| (len==1))
+    {
+      *too_short=true;
+      return 0;//ignore first and last nodes
+    }
+ 
+  int num_gaps=0;
+  Covg prev=0;
+  int i;
+  for(i=ignore_first; i < len+1-ignore_last; i++)
+    {
+      Covg c = db_node_get_coverage_tolerate_null(allele[i], colour);
+      //      printf("i is %d and covg is %" PRIu64 " and prev  is %d and num gaps is %d\n", i, c, prev, num_gaps);
+      if ( (c==0) && (prev>0) )
+	{
+	  num_gaps++;
+	}
+      prev=c;
+    }
+
+  return num_gaps;
+}
+
 
 
 

@@ -74,8 +74,9 @@ typedef struct
   Covg median_covg;
   Covg min_covg;
   Covg median_covg_on_nonzero_nodes;
+  int num_gaps;
+  int len;
   int  percent_nonzero;
-  int num_instances;//will read several exemplars of this gene and store info on the best match
   StrBuf* strbuf;
   GenePresenceGene name;
 } GeneInfo;

@@ -335,7 +335,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	{
 	  pcov[i] = tot_pos_kmers/tot_kmers;
 	  mcov[i] = med;
-	  tkmers[i] = tot_pos_kmers;
+	  tkmers[i] = tot_kmers;
 	}
       else
 	{
@@ -370,15 +370,19 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 			lambda_g_err, lambda_e_err,
 			pcov, mcov, tkmers,
 			db_graph->kmer_size,
-			M_pure_sa);
+			M_pure_sa); 
+  /*  get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
+				lambda_g_err,
+				pcov, mcov, tkmers, 
+				0.99, M_pure_sa);  */
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
-				pcov, mcov, 
-				0.9, M_maj_sa);
+				pcov, mcov, tkmers, 
+				0.95, M_maj_sa);
   get_stats_mix_aureus_and_CONG(expected_covg, err_rate,
 				lambda_g_err,
-				pcov, mcov, 
-				0.1, M_min_sa);
+				pcov, mcov, tkmers,
+				0.05, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
 		      pcov, mcov, tkmers, db_graph->kmer_size, M_non_staph);
@@ -458,15 +462,19 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
   if (arr_perc_covg[Aureus] > 0.75*recovery_expected)
     {
-      lpr=0;
+      lpr=log(1);
     }
   else if (arr_perc_covg[Aureus] > 0.5*recovery_expected)
     {
-      lpr=-1000;
+      lpr=log(0.005);
+    }
+  else if (arr_perc_covg[Aureus] > 0.3*recovery_expected)
+    {
+      lpr=log(0.0001);
     }
   else if (arr_perc_covg[Aureus] > 0.1*recovery_expected)
     {
-      lpr=-10000;
+      lpr=-1000;
     }
   else
     {
@@ -482,10 +490,10 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   //  llk = - (double) arr_tkmers[Aureus] * ((double) (100-arr_perc_covg[Aureus]/100) * recovery_expected; //prob of a gap of that length
 
   //now we need to account for coverage on non-aureus
-  int numk = arr_tkmers[best];
+  double numk = arr_median[best];
 
   //now - in this model we expect errors from Aureus to give covg on cong.
-  int exp_extra_cov = (int) (arr_tkmers[Aureus] * err_rate) ;
+  double exp_extra_cov =  (arr_median[Aureus] * err_rate) ;
   if (numk> exp_extra_cov)
     {
       numk -= exp_extra_cov;
@@ -494,10 +502,10 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
     {
       numk=0;
     }
-  
-  double llke =  -lambda_e* 
-    + numk * arr_median[best]*log(lambda_e)
-    -log_factorial(numk * arr_median[best]);
+  //  numk=1; //arr_tkmers[best];//debug
+  double llke =  -lambda_e 
+    + numk *log(lambda_e)
+    -log_factorial(numk);
 
   double lpre=0;
 
@@ -513,7 +521,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
 //CONG=coag neg
 void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double lambda_g_err, 
-				   double* arr_perc_covg, double* arr_median, 
+				   double* arr_perc_covg, double* arr_median, int* arr_tkmers,
 				   double frac_aureus,
 				   SampleModel* sm)
 {
@@ -540,61 +548,104 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
     }
   else
     {
-      double aureus_recovery_expected = frac_aureus*(1-exp(-expected_covg));
+      double aureus_recovery_expected = 1-exp(-frac_aureus*expected_covg);
       double lambda_aureus = lambda_g_err*frac_aureus;
+      double numk=arr_median[Aureus];
       if (frac_aureus<0.5)
 	{
 	  //get a bit more covg from errors on the cong (major pop)
-	  aureus_recovery_expected 
+	    aureus_recovery_expected 
 	    += (1-frac_aureus)*err_rate/(3*(1-err_rate));
-	  lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate));
+	    lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate)); 
+
+	    //aome of the covg on Aureus is due to errors on the other, dont penalise
+	    double exp_extra_cov =  (arr_median[best] * err_rate) ;
+	    if (numk> exp_extra_cov)
+	      {
+		numk -= exp_extra_cov;
+	      }
+	    else
+	      {
+		numk=0;
+	      }
+
 	}
 
 
-      double aureus_lpr;
+      double aureus_lpr=0;
+
       if (arr_perc_covg[Aureus] > 0.75*aureus_recovery_expected)
 	{
 	  aureus_lpr=log(1);
 	}
       else if (arr_perc_covg[Aureus] > 0.5*aureus_recovery_expected)
         {
-          aureus_lpr=log(0.05);
+          aureus_lpr=log(0.005);
+        }
+      else if (arr_perc_covg[Aureus] > 0.3*aureus_recovery_expected)
+        {
+          aureus_lpr=log(0.0001);
+        }
+      else if (arr_perc_covg[Aureus] > 0.1*aureus_recovery_expected)
+        {
+          aureus_lpr=-1000;
         }
       else
 	{
 	  aureus_lpr=-999999;
 	}
-      double llk_aureus = -lambda_aureus + arr_median[Aureus]*log(lambda_aureus) - log_factorial(arr_median[Aureus]);
+
+      double llk_aureus = -lambda_aureus + numk*log(lambda_aureus) - log_factorial(numk);
 
 
       //now do the same for the other population
-      double cong_recovery_expected = (1-frac_aureus)*(1-exp(-expected_covg));
+      double cong_recovery_expected = 1-exp(-(1-frac_aureus)*expected_covg);
       double lambda_cong = lambda_g_err*(1-frac_aureus);
+      numk=arr_median[best];
       if (frac_aureus>0.5)
 	{
-	  cong_recovery_expected 
+	    cong_recovery_expected 
 	    += frac_aureus*err_rate/(3*(1-err_rate));
-	  lambda_cong += lambda_g_err*frac_aureus*err_rate/(3*(1-err_rate));
+	    lambda_cong += lambda_g_err*frac_aureus*err_rate/(3*(1-err_rate));
+
+	    double exp_extra_cov =  (arr_median[Aureus] * err_rate) ;
+	    if (numk> exp_extra_cov)
+	      {
+		numk -= exp_extra_cov;
+	      }
+	    else
+	      {
+		numk=0;
+	      }
 	}
 
 
 
-      double cong_lpr;
+      double cong_lpr=0;
       //want to avoid calling CONG just because of small number of repeat kmers
-
-      if (arr_perc_covg[best] > 0.9*cong_recovery_expected)
+      
+      if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
 	{
 	  cong_lpr=0;
 	}
-      else if (arr_perc_covg[best] > 0.75*cong_recovery_expected)
+      else if (arr_perc_covg[best] > 0.5*cong_recovery_expected)
 	{
-	  cong_lpr=log(0.1);
+	  cong_lpr=log(0.005);
+	}
+      else if (arr_perc_covg[best] > 0.3*cong_recovery_expected)
+	{
+	  cong_lpr=log(0.0001);
+	}
+      else if (arr_perc_covg[best] > 0.1*cong_recovery_expected)
+	{
+	  cong_lpr=-1000;
 	}
       else
 	{
 	  cong_lpr=-999999;
 	}
-      double llk_cong = -lambda_cong + arr_median[best]*log(lambda_cong)-log_factorial(arr_median[best]);
+
+      double llk_cong = -lambda_cong + numk*log(lambda_cong)-log_factorial(numk);
 
 
       sm->likelihood = llk_aureus+llk_cong;
@@ -641,24 +692,27 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 	{
 	  numk=1;
 	}
-
+      //debug 
+      numk=arr_tkmers[best];
       //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
       double llk = -lambda_e 
 	+  numk*arr_median[best]*log(lambda_e) 
 	-log_factorial(numk*arr_median[best]);
-      double lpr;
+      double lpr=0;
+      
       if ( (arr_perc_covg[best]>0.1) && (arr_median[best]>0.1*expected_covg) )
 	{
 	  lpr=-9999999;
 	}
       else if (arr_perc_covg[best]>0.05)
 	{
-	  lpr=-log(100);
+	  lpr=-1000;
 	}
       else
 	{
 	  lpr=log(1);
 	}
+
       sm->likelihood=llk;
       sm->lp = llk+lpr;
     }  
