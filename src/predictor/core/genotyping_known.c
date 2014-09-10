@@ -254,6 +254,7 @@ void reset_var_on_background(VarOnBackground* vob)
   memset(vob,0, sizeof(VarOnBackground));
   vob->some_resistant_allele_present=false;
   vob->working_current_max_res_allele_present=0;
+  vob->var_id = NotSpecified;
   //  vob->working_current_max_sus_allele_present=0;
 }
 
@@ -503,13 +504,13 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
   find_mutation_name(temp_readid_buf, temp_mut_buf);
   KnownMutation km = map_mutation_name_to_enum(temp_mut_buf ,g);
   Var* var_to_update=array_vars[km];
-  vob->var_id=km;
-  if (vob->var_id!= *prev_mut)
+  if (km != *prev_mut)
     {
       //this is a new enum/mutation
       reset_var_on_background(vob);
       *prev_mut=km; //for use in the next call to this function
     }
+  vob->var_id=km;
   vob->gene=g;
   
   vob->num_resistant_alleles=r;
