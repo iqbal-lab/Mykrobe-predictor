@@ -150,7 +150,7 @@ int main(int argc, char **argv)
   CalledVariant* called_variants = alloc_and_init_called_variant_array();
   CalledGene* called_genes = alloc_and_init_called_genes_array();
 
-  if ( (ru==NULL) || (tmp_rvi==NULL) || (abi==NULL) || (tmp_gi==NULL) || (called_variants==NULL) || (called_genes==NULL) )
+  if ( (ru==NULL) || (tmp_vob==NULL) || (abi==NULL) || (tmp_gi==NULL) || (called_variants==NULL) || (called_genes==NULL) )
 
     {
       return -1;
