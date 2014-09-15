@@ -127,7 +127,6 @@ int main(int argc, char **argv)
   ReadingUtils* ru = alloc_reading_utils(MAX_LEN_GENE, db_graph->kmer_size);
   
   //init the dbNodes, mostly to keep valgrind happy
-  timestamp();
   int i;
   BinaryKmer b;
   binary_kmer_initialise_to_zero(&b);
@@ -137,8 +136,6 @@ int main(int argc, char **argv)
     {
       ru->array_nodes[i]=&dummy_node;
     }
-
-  timestamp();
 
   VarOnBackground* tmp_vob = alloc_and_init_var_on_background();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
@@ -174,7 +171,6 @@ int main(int argc, char **argv)
       strbuf_append_str(sk, "data/skeleton_binary/tb/skeleton.k15.ctx");
       if (access(sk->buff,F_OK)!=0)
 	{
-	  timestamp();
 	  StrBuf* skeleton_flist = strbuf_new();
 	  strbuf_append_str(skeleton_flist, 
 			    cmd_line->install_dir->buff);
@@ -201,17 +197,14 @@ int main(int argc, char **argv)
 			       BINVERSION);
 	  strbuf_free(skeleton_flist);
 	  set_all_coverages_to_zero(db_graph, 0);
-	  timestamp();
 	}
       else
 	{
 	  int num=0;
-	  timestamp();
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
 	  set_all_coverages_to_zero(db_graph, 0);
-	  timestamp();   
 	}
       strbuf_free(sk);
       
