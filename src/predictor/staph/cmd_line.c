@@ -68,10 +68,9 @@ int default_opts(CmdLine * c)
   c->num_bases_around_mut_in_fasta=30;//our antibiotic fasta have 30 bases before/after the mutation
   c->kmer_size = 15;
   c->mem_width = 100;
-  //c->mem_height= 22;
-  c->mem_height= 20;
+  c->mem_height= 14;
   c->max_expected_sup_len=50000;
-  c->method=WGAssemblyThenGenotyping;//other options InSilicoOligos and WGAssemblyAndTranslation
+  c->method=InSilicoOligos;//other options WGAssemblyThenGenotyping and WGAssemblyAndTranslation
   c->input_file=false;
   c->input_list=false;
   c->output_supernodes = false;
@@ -236,12 +235,12 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	if (strcmp(optarg, "WGAssemblyThenGenotyping")==0)
 	  {
 	    cmdline_ptr->method=WGAssemblyThenGenotyping;
+	    cmdline_ptr->mem_height=20;
+	    cmdline_ptr->mem_width=100; 
 	  }
 	else if (strcmp(optarg, "InSilicoOligos")==0)
 	  {
 	    cmdline_ptr->method=InSilicoOligos;
-	    cmdline_ptr->mem_height=20;
-	    cmdline_ptr->mem_width=100; 
 	  }
 	else if (strcmp(optarg, "WGAssemblyAndTranslation")==0)
 	  {
