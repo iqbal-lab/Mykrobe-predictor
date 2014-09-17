@@ -78,6 +78,7 @@ typedef struct
   int num_resistant_alleles;
   boolean some_resistant_allele_present;
   int working_current_max_res_allele_present;
+  int working_current_median_covg;
   //  int working_current_max_sus_allele_present;
   KnownMutation var_id;
   GeneMutationGene gene;

@@ -543,10 +543,12 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
   boolean store_in_best_sus=false;
   boolean store_in_best_res=false;
 
-  if ( vob->susceptible_allele.percent_nonzero > 
+  if ( vob->susceptible_allele.percent_nonzero >= 
       var_to_update->vob_best_sus->susceptible_allele.percent_nonzero)
     {
-      store_in_best_sus=true;
+    	if (vob->susceptible_allele.median_covg > var_to_update->vob_best_sus->susceptible_allele.median_covg){
+    		store_in_best_sus=true;
+    	}
     }
 
   int i;
@@ -603,13 +605,20 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 	{
 	  vob->working_current_max_res_allele_present 
 	    = vob->resistant_alleles[i].percent_nonzero;
+	  vob->working_current_median_covg 
+	    = vob->resistant_alleles[i].median_covg;
+
 	}
       
     }
   if (vob->working_current_max_res_allele_present
-      > var_to_update->vob_best_res->working_current_max_res_allele_present)
+      >= var_to_update->vob_best_res->working_current_max_res_allele_present)
     {
-      store_in_best_res=true;
+      if (vob->working_current_median_covg >var_to_update->vob_best_res->working_current_median_covg )
+      {
+      	store_in_best_res=true;
+      }
+      
     }
 
   //now do copies
