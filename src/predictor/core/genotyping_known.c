@@ -235,6 +235,7 @@ VarOnBackground* alloc_and_init_var_on_background()
   vob->gene = Unknown;
   vob->some_resistant_allele_present = false;
   vob->working_current_max_res_allele_present=0;
+  vob->working_current_median_covg=0;
   //  vob->working_current_max_sus_allele_present=0;
   return vob;
 }
@@ -254,6 +255,7 @@ void reset_var_on_background(VarOnBackground* vob)
   memset(vob,0, sizeof(VarOnBackground));
   vob->some_resistant_allele_present=false;
   vob->working_current_max_res_allele_present=0;
+  vob->working_current_median_covg=0;
   vob->var_id = NotSpecified;
   //  vob->working_current_max_sus_allele_present=0;
 }
