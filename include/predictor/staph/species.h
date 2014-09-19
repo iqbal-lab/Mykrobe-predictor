@@ -88,10 +88,11 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate,
 				   double frac_aureus,
 				   SampleModel* sm);
 
-
 void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
-			 double* arr_perc_covg, double* arr_median, int* arr_tkmers, int kmer_size,
+			 double perc_covg_cat, double median_cat, int tkmers_cat,
+			 int kmer_size,
 			 SampleModel* sm);
+
 
 
 

@@ -224,13 +224,20 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   species_file_paths[16] = strbuf_create(install_dir->buff);
   strbuf_append_str(species_file_paths[16], "data/staph/species/S_warneri_unique_branches.fasta");
 
+  StrBuf* non_staph_fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(non_staph_fa, "data/staph/species/cat.fasta");
+
   int i;
   double pcov[17]; // for storing the percentage coverage of each reference
+  double pcov_cat=0;//for checking if covg on catalase
   double mcov[17]; //median covg
+  double mcov_cat=0;
   int tkmers[17];//total kmers in the unique branches
-  double tot_pos_kmers;;
+  int tkmers_cat=0;
+  double tot_pos_kmers;
   double tot_kmers;
   double med;
+
   int number_of_reads;
 
 
@@ -284,7 +291,6 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   
   for (i = 0; i < 17; i++)
     {
-      
       
       fp = fopen(species_file_paths[i]->buff, "r");
       if (fp==NULL)
@@ -342,9 +348,59 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 	  pcov[i]=0;
 	  mcov[i]=0;
 	  tkmers[i]=0;
-	}
+	}      
+      fclose(fp);
     }
 
+
+  //now get the data on catalase, which will be used for the non-staph model
+
+  fp = fopen(non_staph_fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open this file - %s", non_staph_fa->buff);
+    }
+      
+  // while the entry is valid iterate through the fasta file
+  number_of_reads = 0;
+  int num_kmers=0;
+  
+  do {
+    
+    num_kmers= get_next_single_allele_info(fp, db_graph, ai,
+					   true,
+					   seq, kmer_window,
+					   &file_reader_fasta,
+					   array_nodes, array_or, 
+					   working_ca, max_branch_len,
+					   ignore_first, ignore_last);
+    
+    number_of_reads = number_of_reads + 1;
+    //    int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
+    //calculate a running pseudo median, before you update the tots
+    if  (tot_kmers+num_kmers>0)
+      {
+	
+	/*
+	if ( (pos_kmers< 0.6 * num_kmers) //ignore repeat kmers, which might give high covg to a small fraction of the contig
+	     && ( ai->median_covg_on_nonzero_nodes > 0.5* expected_covg) )
+	  {
+	    ai->median_covg=0;
+	    ai->percent_nonzero=0;
+	    pos_kmers=0;
+	    }*/
+	
+	if (ai->percent_nonzero>pcov_cat)
+	  {
+	    pcov_cat=ai->percent_nonzero;;
+	    mcov_cat=ai->median_covg_on_nonzero_nodes;
+	  }
+      }
+    
+  } while ( num_kmers>0);
+  fclose(fp);
+
+  
   
   free_allele_info(ai);
   free(array_nodes);
@@ -385,7 +441,8 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 				0.05, M_min_sa);
 
   get_stats_non_staph(expected_covg, err_rate,lambda_e_err,
-		      pcov, mcov, tkmers, db_graph->kmer_size, M_non_staph);
+		      pcov_cat, mcov_cat, tkmers_cat, 
+		      db_graph->kmer_size, M_non_staph);
 
   SampleModel* marray[4] = {M_pure_sa, M_maj_sa, M_min_sa, M_non_staph};
   qsort(marray, 4, sizeof(SampleModel*), sample_model_cmp_logpost);
@@ -664,58 +721,34 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
 void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
-			 double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+			 double perc_covg_cat, double median_cat, int tkmers_cat,
 			 int kmer_size,
 			 SampleModel* sm)
 {
+  printf("Got %f percent of cat, median covg %f\n", perc_covg_cat, median_cat);
   strbuf_append_str(sm->name_of_non_aureus_species, "Non-staphylococcal");
-  boolean found=true;
-  boolean exclude_aureus=false;
-  //do ANY staphylococci get a decent hit?
-  int best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_aureus);
-
-  if (found==false)
+  
+  //any coverage on catalase gene must be error
+  double llk = -lambda_e 
+    +  median_cat*log(lambda_e) 
+    -log_factorial(median_cat);
+  double lpr=0;
+      
+  if (perc_covg_cat>50)
     {
-      //found no evidence of any Staphylococcus at all
-      sm->likelihood=0;
-      sm->lp=0;
+      lpr=-9999999;
+    }
+  else if (perc_covg_cat>20)
+    {
+      lpr=-1000;
     }
   else
     {
-      //all coverage must be errors
-      int numk;
-      if (arr_tkmers[best]>kmer_size)
-	{
-	  numk=arr_tkmers[best]-kmer_size;
-	}
-      else
-	{
-	  numk=1;
-	}
-      //debug 
-      numk=arr_tkmers[best];
-      //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
-      double llk = -lambda_e 
-	+  numk*arr_median[best]*log(lambda_e) 
-	-log_factorial(numk*arr_median[best]);
-      double lpr=0;
-      
-      if ( (arr_perc_covg[best]>0.1) && (arr_median[best]>0.1*expected_covg) )
-	{
-	  lpr=-9999999;
-	}
-      else if (arr_perc_covg[best]>0.05)
-	{
-	  lpr=-1000;
-	}
-      else
-	{
-	  lpr=log(1);
-	}
-
-      sm->likelihood=llk;
-      sm->lp = llk+lpr;
-    }  
+      lpr=log(1);
+    }
+  
+  sm->likelihood=llk;
+  sm->lp = llk+lpr;
   sm->type = NonStaphylococcal;
 }
 

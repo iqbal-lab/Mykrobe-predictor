@@ -183,6 +183,7 @@ int main(int argc, char **argv)
 			    "data/skeleton_binary/staph/list_speciesbranches_genes_and_muts");
 	  uint64_t dummy=0;
 	  boolean is_rem=true;
+	  timestamp();
 	  build_unclean_graph(db_graph, 
 			      skeleton_flist,
 			      true,
@@ -206,11 +207,15 @@ int main(int argc, char **argv)
 	}
       else
 	{
+	  printf("Start to load bin at\n");
+	  timestamp();
 	  int num=0;
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
 	  set_all_coverages_to_zero(db_graph, 0);
+	  printf("Finished to load bin\n");
+	  timestamp();
 	}
       strbuf_free(sk);
 
@@ -233,6 +238,9 @@ int main(int argc, char **argv)
     }
   //  printf("Total reads is %" PRIu64 "\n", total_reads);
   boolean progressbar_remainder=true;
+  printf("Start to load data\n");
+  timestamp();
+
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
 				  cmd_line->input_list,
@@ -256,6 +264,8 @@ int main(int argc, char **argv)
       return 1;
 
     }
+  printf("Finished load data\n");
+  timestamp();
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
 							   cmd_line->readlen_distrib_size);

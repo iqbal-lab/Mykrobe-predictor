@@ -243,6 +243,7 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     case luk : return "luk";
     case unspecified_gpg  : return "unknown";
    }
+   return "unknown";
 }
 
 GeneInfo* alloc_and_init_gene_info()

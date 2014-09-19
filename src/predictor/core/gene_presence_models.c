@@ -42,7 +42,7 @@ double get_log_posterior_major_resistant(double llk,
   int p = gi->percent_nonzero;
 
 
-  double freq;
+  /*  double freq;
 
 
   //depending on err rate, set freq
@@ -58,7 +58,7 @@ double get_log_posterior_major_resistant(double llk,
     {
       freq=0.5;
     }
-
+  */
 
   if (p>=recovery_given_sample_and_errors* min_expected)
     {
@@ -135,7 +135,7 @@ double get_log_posterior_truly_susceptible(double llk,
 					   int min_expected)
 {
 
-  int p = gi->percent_nonzero;
+  //  int p = gi->percent_nonzero;
   
   /*  if (p>=recovery_given_sample_and_errors*min_expected)
     {
