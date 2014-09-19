@@ -472,6 +472,7 @@ const char* map_enum_to_mutation_name(KnownMutation km)
      case grlA_S80Y : return "grlA_S80Y";
      case  NotSpecified : return "NotSpecified";      
    }
+   return  "NotSpecified";
 }
 
 

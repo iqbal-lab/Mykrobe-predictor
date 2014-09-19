@@ -609,8 +609,8 @@ int db_graph_db_node_clip_tip_with_orientation_for_specific_person_or_pop(
     {
       die("Unable to malloc array of nodes for tip clipping\n");
     }
-  Orientation next_orientation;
-  dBNode * next_node;
+  Orientation next_orientation=forward;
+  dBNode * next_node=NULL;
   char seq[db_graph->kmer_size+1];
   
   //starting in a blunt end also prevents full loops 
@@ -718,8 +718,8 @@ int db_graph_db_node_clip_tip_with_orientation_in_subgraph_defined_by_func_of_co
   int i;
   //  dBNode** nodes=(dBNode**) malloc(sizeof(dBNode*)*limit);
 
-  Orientation next_orientation;
-  dBNode * next_node;
+  Orientation next_orientation=forward;
+  dBNode * next_node=NULL;
   char seq[db_graph->kmer_size+1];
   
   //starting in a blunt end also prevents full loops 
