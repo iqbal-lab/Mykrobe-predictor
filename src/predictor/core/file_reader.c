@@ -1397,7 +1397,7 @@ void load_se_filelist_into_graph_colour(
 
   
 {
-  qual_thresh += ascii_fq_offset;
+  // qual_thresh += ascii_fq_offset;
 
   /* COMMENT_OUT_DURING_TESTS 
   printf(is_colour_list ? "Load single-ended sequence colour list\n"

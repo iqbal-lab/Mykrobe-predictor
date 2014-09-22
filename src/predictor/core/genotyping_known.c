@@ -123,7 +123,7 @@ CalledVariant* alloc_and_init_called_variant_array()
 {
   int i;
   CalledVariant* called_variants = malloc(NUM_KNOWN_MUTATIONS * sizeof(*called_variants));
-  for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){  	 
+  for (i=0; i<NUM_KNOWN_MUTATIONS; i++){  	 
 	 called_variants[i].var_id = NotSpecified;
 	}
   return called_variants;
@@ -208,7 +208,7 @@ CalledGene* alloc_and_init_called_genes_array()
 {
   CalledGene* called_genes = malloc(NUM_GENE_PRESENCE_GENES * sizeof(*called_genes));
   int i;
-  for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
+  for (i=0; i<NUM_GENE_PRESENCE_GENES; i++){
 	  called_genes[i].gene = unspecified_gpg;
 	}
   return called_genes;

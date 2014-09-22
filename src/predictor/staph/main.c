@@ -236,7 +236,6 @@ int main(int argc, char **argv)
       total_reads=count_all_reads(cmd_line->seq_path, cmd_line->input_list);
       //timestamp();
     }
-  //  printf("Total reads is %" PRIu64 "\n", total_reads);
   boolean progressbar_remainder=true;
   printf("Start to load data\n");
   timestamp();
