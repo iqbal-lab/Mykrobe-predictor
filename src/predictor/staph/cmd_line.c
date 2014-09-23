@@ -330,11 +330,7 @@ void parse_cmdline(CmdLine* cmd_line,
 		   int unit_size) 
 {	
   int i;
-  printf("Command: ");
-  for(i=0;i<argc;i++){
-    printf("%s ",argv[i]);
-  }
-  printf("\n");
+
 
   default_opts(cmd_line);
 
@@ -347,6 +343,16 @@ void parse_cmdline(CmdLine* cmd_line,
     }
 
   check_cmdline(cmd_line, error_string);
+
+  if (cmd_line->format==Stdout){
+
+  printf("Command: ");
+    for(i=0;i<argc;i++){
+      printf("%s ",argv[i]);
+    }
+    printf("\n");
+  }
+  
 }
 
 int check_cmdline(CmdLine* cmd_line, char* error_string)

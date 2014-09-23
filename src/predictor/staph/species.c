@@ -725,7 +725,7 @@ void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
 			 int kmer_size,
 			 SampleModel* sm)
 {
-  printf("Got %f percent of cat, median covg %f\n", perc_covg_cat, median_cat);
+  // printf("Got %f percent of cat, median covg %f\n", perc_covg_cat, median_cat);
   strbuf_append_str(sm->name_of_non_aureus_species, "Non-staphylococcal");
   
   //any coverage on catalase gene must be error

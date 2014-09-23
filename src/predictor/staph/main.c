@@ -53,17 +53,23 @@ int main(int argc, char **argv)
 {
   setvbuf(stdout, NULL, _IOLBF, 0);
 
-  // VERSION_STR is passed from the makefile -- usually last commit hash
-  printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
-         VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
+
+
 
   CmdLine* cmd_line = cmd_line_alloc();
   if (cmd_line==NULL)
     {
       return -1;
     }
-  
+    // VERSION_STR is passed from the makefile -- usually last commit hash
+
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
+
+  if (cmd_line->format==Stdout){
+    printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
+           VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);  
+  }
+
   dBGraph * db_graph = NULL;
 
 
@@ -207,15 +213,19 @@ int main(int argc, char **argv)
 	}
       else
 	{
-	  printf("Start to load bin at\n");
-	  timestamp();
+    if (cmd_line->format==Stdout){
+	   printf("Start to load bin at\n");
+     timestamp();
+    }
 	  int num=0;
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
 	  set_all_coverages_to_zero(db_graph, 0);
-	  printf("Finished to load bin\n");
-	  timestamp();
+    if (cmd_line->format==Stdout){
+      printf("Finished to load bin\n");
+	    timestamp();
+    }
 	}
       strbuf_free(sk);
 
@@ -237,8 +247,10 @@ int main(int argc, char **argv)
       //timestamp();
     }
   boolean progressbar_remainder=true;
-  printf("Start to load data\n");
-  timestamp();
+  if (cmd_line->format==Stdout){
+    printf("Start to load data\n");
+    timestamp();
+  }
 
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
@@ -263,8 +275,10 @@ int main(int argc, char **argv)
       return 1;
 
     }
-  printf("Finished load data\n");
-  timestamp();
+  if (cmd_line->format==Stdout){
+    printf("Finished load data\n");
+    timestamp();
+  }
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
 							   cmd_line->readlen_distrib_size);
