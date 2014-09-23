@@ -34,7 +34,8 @@
 
 
 //this is for SNPS and indels, not for gene presence
-//epsilon =  pow(1-err_rate, cmd_line->kmer_size)
+//epsilon =  pow(1--  if (best_model->conf > MIN_CONFIDENCE)
+err_rate, cmd_line->kmer_size)
 double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
 								      int max_perc_covg_on_res_allele,
 								      double epsilon)
@@ -325,7 +326,7 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 //max a posteriori
 void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
-		      Model* best_model, double epsilon)
+		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon)
 {
 
   Model mR;
@@ -361,6 +362,18 @@ void choose_map_model(Var* var,
   best_model->type = arr[2].type;
   best_model->likelihood = arr[2].likelihood;
   best_model->lp = arr[2].lp;
+
+  mid_model->conf = arr[1].lp-arr[0].lp;
+  mid_model->type = arr[1].type;
+  mid_model->likelihood = arr[1].likelihood;
+  mid_model->lp = arr[1].lp;
+
+  worst_model->conf = 0;
+  worst_model->type = arr[0].type;
+  worst_model->likelihood = arr[0].likelihood;
+  worst_model->lp = arr[0].lp;
+
+
 }
 
 
@@ -379,18 +392,33 @@ InfectionType resistotype(Var* var, double err_rate, int kmer,
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate);
 
   best_model->conf=0;
+  Model worst_model;
+  worst_model.type=Unsure;
+  worst_model.likelihood=0;
+  worst_model.lp=0;
+  worst_model.conf=-1111111111;
+  Model mid_model;
+  mid_model.type=Unsure;
+  mid_model.likelihood=0;
+  mid_model.lp=0;
+  mid_model.conf=-1111111111;
   if (choice==MaxLikelihood)
     {
       choose_ml_model(llk_R, llk_S, llk_M, best_model);
     }
   else
     {
-      choose_map_model(var, llk_R, llk_S, llk_M, best_model, epsilon);
+      choose_map_model(var, llk_R, llk_S, llk_M, 
+		       best_model, &mid_model,&worst_model, 
+		       epsilon);
     }
 
 
-
-  if (best_model->conf > MIN_CONFIDENCE)
+  if (best_model->type==Susceptible)
+    {
+      return best_model->type;
+    }
+  else if (best_model->conf > MIN_CONFIDENCE)
   /* if ( ( (best_model->type==Susceptible) || (best_model->type==Resistant) )
        &&
        (best_model->conf > MIN_CONFIDENCE) 
@@ -398,20 +426,11 @@ InfectionType resistotype(Var* var, double err_rate, int kmer,
     {
       return best_model->type;
     }
-  /* else if (best_model->type ==MixedInfection)
+  //so now the winning model is M or R. If S is the bottom of the 3 by MIN_CONFIDENCE, call r.
+  else if ( (worst_model.type ==Susceptible) && (mid_model.conf>MIN_CONFIDENCE) )
     {
-      double m = MIN(llk_M-llk_S,
-		     llk_M-llk_R);
-      
-      if ( m > MIN_CONFIDENCE)
-	{
-	  return best_model->type;
-	}
-      else
-	{
-	  return Unsure;
-	}
-	}*/
+      return mid_model.type;
+    }
   else
     {
       return Unsure;

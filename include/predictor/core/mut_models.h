@@ -89,7 +89,7 @@ typedef struct
   InfectionType type;
   double likelihood;//log likelihood
   double lp; //log posterior
-  double conf;
+  double conf;//in sorted array of probs - best - 2nd
 } Model;
 
 int model_cmp_loglik(const void *a, const void *b);
@@ -100,7 +100,7 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 
 void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
-		      Model* best_model, double epsilon);
+		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon);
 
 InfectionType resistotype(Var* var, double err_rate, int kmer,
 			  double lambda_g, double lambda_e, double epsilon,

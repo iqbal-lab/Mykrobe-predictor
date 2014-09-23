@@ -571,7 +571,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-    update_called_variants(called_variants,i,abi->vars[i]);
+	  update_called_variants(called_variants,i,abi->vars[i]);
 	  return I;
 	}
 
@@ -593,15 +593,15 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_STANDARD);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-    update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]] );
+	  update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]] );
 	  return I;
 	}
     }
 
   if ( 
       (any_allele_non_null==false) //all alleles have zero covg
-      || 
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //      || 
+      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
        )
     {
       return Unsure;
@@ -851,8 +851,8 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 
   if (
       (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //      ||
+      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
       )
 
     {
@@ -943,7 +943,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{	 
-    update_called_variants(called_variants,i,abi->vars[i]);
+	  update_called_variants(called_variants,i,abi->vars[i]);
 	  return I;
 	}
     }
@@ -983,8 +983,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 
   if (
       (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //      ||
+      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
       )
 
     {
@@ -1326,8 +1326,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   if (
       (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //||
+      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
       )
 
     {
