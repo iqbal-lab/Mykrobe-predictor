@@ -1636,10 +1636,14 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 	{
 	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if ( (suc==MixedInfection)||(suc==Resistant) )
+      else if ( suc==Resistant)
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
+      else if ( suc==MixedInfection ) 
+  {
+    print_json_item(tmpbuf->buff, "r", output_last);
+  }
       else
 	{
 	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);
