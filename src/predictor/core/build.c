@@ -2947,7 +2947,6 @@ int db_graph_dump_binary(char * filename, boolean (*condition)(dBNode * node), d
   hash_table_traverse(&print_node_multicolour_binary,db_graph); 
   fclose(fout);
 
-  printf("%qd kmers dumped to file %s\n",count, filename);
   return count;
 }
 
