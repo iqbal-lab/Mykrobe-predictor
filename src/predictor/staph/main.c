@@ -213,22 +213,20 @@ int main(int argc, char **argv)
 	}
       else
 	{
-    if (cmd_line->format==Stdout){
-	   printf("Start to load bin at\n");
-     timestamp();
-    }
+	  if (cmd_line->format==Stdout)
+	    {
+	      timestamp();
+	    }
 	  int num=0;
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
 	  set_all_coverages_to_zero(db_graph, 0);
     if (cmd_line->format==Stdout){
-      printf("Finished to load bin\n");
-	    timestamp();
     }
 	}
       strbuf_free(sk);
-
+      
       only_load_pre_existing_kmers=true;
     }
   else
@@ -248,7 +246,6 @@ int main(int argc, char **argv)
     }
   boolean progressbar_remainder=true;
   if (cmd_line->format==Stdout){
-    printf("Start to load data\n");
     timestamp();
   }
 
@@ -276,7 +273,6 @@ int main(int argc, char **argv)
 
     }
   if (cmd_line->format==Stdout){
-    printf("Finished load data\n");
     timestamp();
   }
   
@@ -296,7 +292,7 @@ int main(int argc, char **argv)
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
 	      * (mean_read_length-cmd_line->kmer_size+1)
 	      * lambda_g_err_free );
-  printf("Expected depth %d\n", expected_depth);
+  //printf("Expected depth %d\n", expected_depth);
   //  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   //   expected_depth, cmd_line->max_expected_sup_len); 
   
