@@ -96,9 +96,12 @@ typedef struct
 {
   int max_res_allele_present;
   int max_sus_allele_present;
+  int res_median_covg;
+  int sus_median_covg;
   KnownMutation var_id;
 }CalledVariant;
 
+int get_last_called_variant_index(CalledVariant* called_variants);
 CalledVariant* alloc_and_init_called_variant_array();
 void free_called_variant_array(CalledVariant* cva);
 void print_called_variants(CalledVariant* called_variants,OutputFormat format);
@@ -108,9 +111,11 @@ void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var*
 typedef struct
 {
   int max_res_allele_present;
+  int res_median_covg;
   GenePresenceGene gene;
 }CalledGene;
 
+int get_last_called_gene_index(CalledGene* called_genes);
 CalledGene* alloc_and_init_called_genes_array();
 void free_called_genes_array(CalledGene* cg);
 void print_called_genes(CalledGene* called_genes,OutputFormat format);

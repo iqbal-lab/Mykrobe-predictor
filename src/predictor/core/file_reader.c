@@ -1024,7 +1024,7 @@ void load_se_seq_data_into_graph_colour(
 {
   short kmer_size = db_graph->kmer_size;
 
-
+  quality_cutoff += ascii_fq_offset;
   // DEV:
   // First check if this is a cortex binary
   // -> Load binary
@@ -1038,8 +1038,6 @@ void load_se_seq_data_into_graph_colour(
   }
 
   //seq_set_fastq_ascii_offset(sf, ascii_fq_offset);
-  quality_cutoff += ascii_fq_offset;  
-  printf("ADD offset\n");
 
   // Are we using quality scores
   char read_qual = seq_has_quality_scores(sf);
@@ -1399,6 +1397,7 @@ void load_se_filelist_into_graph_colour(
 
   
 {
+
   //  qual_thresh += ascii_fq_offset;
 
   /* COMMENT_OUT_DURING_TESTS 

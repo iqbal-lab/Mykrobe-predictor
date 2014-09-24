@@ -978,6 +978,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 
   if (I_m470t==Resistant && I_d471g==Resistant)
     {
+      update_called_variants(called_variants,i,abi->vars[rpoB_D471G]);
+      update_called_variants(called_variants,i,abi->vars[rpoB_M470T]);
       return Resistant; //ignoring mixed infections for epistatic case
     }
 
@@ -1238,6 +1240,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 		&best_model, MaxAPosteriori);
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
+      update_called_variants(called_variants,i,abi->vars[fusA_F652S]);
+      update_called_variants(called_variants,i,abi->vars[fusA_Y654N]);
       return Resistant;
     }
 
@@ -1257,6 +1261,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 
   if (I_t326i==Resistant && I_e468v==Resistant)
     {
+      update_called_variants(called_variants,i,abi->vars[fusA_T326I]);
+      update_called_variants(called_variants,i,abi->vars[fusA_E468V]);
       return Resistant;
     }
   
@@ -1292,6 +1298,10 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
        (I_d463g==Resistant)
        )
     {
+      update_called_variants(called_variants,i,abi->vars[fusA_L461F]);
+      update_called_variants(called_variants,i,abi->vars[fusA_A376V]);
+      update_called_variants(called_variants,i,abi->vars[fusA_A655P]);
+      update_called_variants(called_variants,i,abi->vars[fusA_D463G]);            
       return Resistant;
     }
 
@@ -1303,6 +1313,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
        &&
       (I_e444v==Resistant) )
     {
+      update_called_variants(called_variants,i,abi->vars[fusA_L461F]);
+      update_called_variants(called_variants,i,abi->vars[fusA_E444V]);      
       return Resistant;
     }
 
@@ -1624,10 +1636,14 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 	{
 	  print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if ( (suc==MixedInfection)||(suc==Resistant) )
+      else if ( suc==Resistant)
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
+      else if ( suc==MixedInfection ) 
+  {
+    print_json_item(tmpbuf->buff, "r", output_last);
+  }
       else
 	{
 	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);

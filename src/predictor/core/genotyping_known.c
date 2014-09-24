@@ -123,8 +123,12 @@ CalledVariant* alloc_and_init_called_variant_array()
 {
   int i;
   CalledVariant* called_variants = malloc(NUM_KNOWN_MUTATIONS * sizeof(*called_variants));
-  for (i=0; i<=NUM_KNOWN_MUTATIONS; i++){  	 
+  for (i=0; i<NUM_KNOWN_MUTATIONS; i++){  	 
 	 called_variants[i].var_id = NotSpecified;
+	 called_variants[i].max_res_allele_present = 0;
+	 called_variants[i].max_sus_allele_present = 0;
+	 called_variants[i].res_median_covg = 0;
+	 called_variants[i].sus_median_covg = 0;
 	}
   return called_variants;
 }
@@ -133,18 +137,37 @@ void free_called_variant_array(CalledVariant* cva)
   free(cva);
 }
 
+int get_last_called_variant_index(CalledVariant* called_variants){
+	int last_variant = 0;
+	int i;
+	for (i=0; i<NUM_KNOWN_MUTATIONS; i++){
+		if (called_variants[i].var_id != NotSpecified){
+			last_variant = i;
+		}
+	}
+	return last_variant;
+}
+
 void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 {
 	int i;
 	if (format==JSON){
 		print_json_called_variants_start();
+		int last_variant = get_last_called_variant_index(called_variants);
 				// Iterate through all the variants and print the enum strings
 		for (i=0; i<NUM_KNOWN_MUTATIONS; i++){
 			if (called_variants[i].var_id != NotSpecified){
 				print_json_called_variant_start(map_enum_to_mutation_name(called_variants[i].var_id));
-				print_json_called_variant_item("R_cov", called_variants[i].max_res_allele_present,  false);
-				print_json_called_variant_item("S_cov", called_variants[i].max_sus_allele_present, true);
-				print_json_called_variant_end();
+				print_json_called_variant_item("R_per_cov", called_variants[i].max_res_allele_present,  false);
+				print_json_called_variant_item("S_per_cov", called_variants[i].max_sus_allele_present, false);
+				print_json_called_variant_item("R_median_cov", called_variants[i].res_median_covg,  false);
+				print_json_called_variant_item("S_median_cov", called_variants[i].sus_median_covg, true);
+				if (i == last_variant){
+					print_json_called_variant_end(true);
+				}
+				else{
+					print_json_called_variant_end(false);
+				}
 			}
 		}		
 		print_json_called_variants_end();
@@ -163,16 +186,35 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 		}
 	}
 }
+
+int get_last_called_gene_index(CalledGene* called_genes){
+	int last_gene = 0;
+	int i;
+	for (i=0; i<NUM_GENE_PRESENCE_GENES; i++){
+		if (called_genes[i].gene != unspecified_gpg){
+			last_gene = i;
+		}
+	}
+	return last_gene;
+}
+
 void print_called_genes(CalledGene* called_genes,OutputFormat format){
 	int i;
 	if (format==JSON){
 		print_json_called_genes_start();
+		int  last_gene = get_last_called_gene_index(called_genes);
 		// Iterate through all the variants and print the enum strings
 		for (i=0; i<NUM_GENE_PRESENCE_GENES; i++){
 			if (called_genes[i].gene != unspecified_gpg){
 				print_json_called_gene_start( map_enum_to_gene_name(called_genes[i].gene) );
-				print_json_called_gene_item("cov", called_genes[i].max_res_allele_present,  true);
-				print_json_called_gene_end();
+				print_json_called_gene_item("per_cov", called_genes[i].max_res_allele_present,  false);
+				print_json_called_gene_item("median_cov", called_genes[i].res_median_covg,  true);
+				if (i == last_gene){
+					print_json_called_gene_end(true);
+				}
+				else{
+					print_json_called_gene_end(false);
+				}
 			}
 		}	
 		print_json_called_genes_end();
@@ -196,20 +238,26 @@ void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var 
     called_variants[i].var_id = i;
     called_variants[i].max_res_allele_present = var->vob_best_res->working_current_max_res_allele_present;
     called_variants[i].max_sus_allele_present = var->vob_best_sus->susceptible_allele.percent_nonzero;	
+    called_variants[i].res_median_covg = var->vob_best_res->working_current_median_covg;
+    called_variants[i].sus_median_covg = var->vob_best_sus->susceptible_allele.median_covg;	
+
 }
 
 void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info)
 {
     called_genes[gene].gene = gene;
     called_genes[gene].max_res_allele_present = gene_info->percent_nonzero;
+    called_genes[gene].res_median_covg = gene_info->median_covg;
 }
 
 CalledGene* alloc_and_init_called_genes_array()
 {
   CalledGene* called_genes = malloc(NUM_GENE_PRESENCE_GENES * sizeof(*called_genes));
   int i;
-  for (i=0; i<=NUM_GENE_PRESENCE_GENES; i++){
+  for (i=0; i<NUM_GENE_PRESENCE_GENES; i++){
 	  called_genes[i].gene = unspecified_gpg;
+	  called_genes[i].max_res_allele_present = 0;
+	  called_genes[i].res_median_covg = 0;
 	}
   return called_genes;
 }
@@ -235,6 +283,7 @@ VarOnBackground* alloc_and_init_var_on_background()
   vob->gene = Unknown;
   vob->some_resistant_allele_present = false;
   vob->working_current_max_res_allele_present=0;
+  vob->working_current_median_covg=0;
   //  vob->working_current_max_sus_allele_present=0;
   return vob;
 }
@@ -254,6 +303,7 @@ void reset_var_on_background(VarOnBackground* vob)
   memset(vob,0, sizeof(VarOnBackground));
   vob->some_resistant_allele_present=false;
   vob->working_current_max_res_allele_present=0;
+  vob->working_current_median_covg=0;
   vob->var_id = NotSpecified;
   //  vob->working_current_max_sus_allele_present=0;
 }

@@ -102,9 +102,20 @@ void print_json_called_variant_item(char* str1, int val, boolean last)
   printf("\n");
 }
 
-void print_json_called_variant_end()
+void print_json_called_end(boolean last)
 {
-  printf("\t\t},\n");
+  if (last==false){
+    printf("\t\t},\n");
+  }
+  else{
+    printf("\t\t}\n");
+  }
+  
+}
+
+void print_json_called_variant_end(boolean last)
+{
+  print_json_called_end(last);
 }
 //
 // Json printing of genes
@@ -132,9 +143,9 @@ void print_json_called_gene_item(char* str1, int val, boolean last)
   printf("\n");
 }
 
-void print_json_called_gene_end()
+void print_json_called_gene_end(boolean last)
 {
-  printf("\t\t},\n");
+  print_json_called_end(last);
 }
 //
 
