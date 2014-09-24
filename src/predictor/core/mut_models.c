@@ -34,8 +34,7 @@
 
 
 //this is for SNPS and indels, not for gene presence
-//epsilon =  pow(1--  if (best_model->conf > MIN_CONFIDENCE)
-err_rate, cmd_line->kmer_size)
+//epsilon =  pow(1--err_rate, cmd_line->kmer_size)
 double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
 								      int max_perc_covg_on_res_allele,
 								      double epsilon)
