@@ -492,7 +492,7 @@ int main(int argc, char **argv)
 
   if (cmd_line->format==Stdout)
     {
-      //   timestamp();
+      timestamp();
     }
   else
     {
