@@ -53,7 +53,7 @@ const char* usage=
 "   [--list FILENAME] \t\t\t\t\t=\t List of fastq or bam. Cannot use --list and --file\n" \
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
-"   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" \
+"   [--method STRING] \t\t\t\t\t=\t Default is InSilicoOligos. Or can have  WGAssemblyThenGenotyping\n" \
 "   [--format STRING] \t\t\t\t\t=\t Options are TEXT and JSON\n" \
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
 "   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
@@ -330,11 +330,7 @@ void parse_cmdline(CmdLine* cmd_line,
 		   int unit_size) 
 {	
   int i;
-  printf("Command: ");
-  for(i=0;i<argc;i++){
-    printf("%s ",argv[i]);
-  }
-  printf("\n");
+
 
   default_opts(cmd_line);
 
@@ -347,6 +343,15 @@ void parse_cmdline(CmdLine* cmd_line,
     }
 
   check_cmdline(cmd_line, error_string);
+  if (cmd_line->format==Stdout){
+
+      printf("Command: ");
+    for(i=0;i<argc;i++){
+      printf("%s ",argv[i]);
+    }
+    printf("\n");
+  }
+
 }
 
 int check_cmdline(CmdLine* cmd_line, char* error_string)
