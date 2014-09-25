@@ -384,7 +384,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       if ( (number_of_reads>0) && (tot_kmers>0) )
 	{
 	  
-	  pcov[i] = (int) tot_pos_kmers/tot_kmers;
+	  pcov[i] = (int) 100*tot_pos_kmers/tot_kmers;
 	  mcov[i] = med;
 	  tkmers[i] = tot_pos_kmers;
 	  tkmers_snps[i]=tot_snps;
@@ -722,8 +722,8 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
   if (found==false)
     {
       //found no evidence of any MTB at all
-      sm->likelihood=-999999;
-      sm->lp=-999999;
+      sm->likelihood=-lambda_e;
+      sm->lp=sm->likelihood;
     }
   else
     {
