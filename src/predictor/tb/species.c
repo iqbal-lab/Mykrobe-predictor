@@ -87,7 +87,7 @@ void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
 
   else
     {
-      die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value - we get %d\n", sp);
     }
   
 }
@@ -187,7 +187,7 @@ Myc_species map_lineage_enum_to_species_enum(Myc_lineage sp)
     }
   else
     {
-      die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value - get val %d for lineage\n", sp);
     }
     return species_enum;
   }
@@ -214,10 +214,10 @@ int sample_model_cmp_logpost(const void *a, const void *b)
 }
 
 SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
-           double lambda_g_err, double lambda_e_err, double err_rate,
-           int expected_covg,
-           int ignore_first, int ignore_last,
-           SampleModel* best_model)
+			     double lambda_g_err, double lambda_e_err, double err_rate,
+			     int expected_covg,
+			     int ignore_first, int ignore_last,
+			     SampleModel* best_model)
 
 {
   // Define the paths to the possible species
@@ -248,16 +248,16 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   strbuf_append_str(species_file_paths[8], "data/tb/species/lineage_7.fa");
 
   int i;
-  double pcov[NUM_SPECIES]; // for storing the percentage coverage of each reference
-  double mcov[NUM_SPECIES]; //median covg
+  int pcov[NUM_SPECIES]; // for storing the percentage coverage of each reference
+  Covg mcov[NUM_SPECIES]; //median covg
   int tkmers[NUM_SPECIES];//total kmers in the unique branches
   int tkmers_snps[NUM_SPECIES];//total kmers in the unique branches which are SNPs
   int tkmers_mobile[NUM_SPECIES];
   double p_snps[NUM_SPECIES];//what propn of the reads which are SNP length, have >0 covg
   double p_mobile[NUM_SPECIES];
-  double tot_pos_kmers;;
-  double tot_kmers;
-  double med;
+  int tot_pos_kmers;;
+  int tot_kmers;
+  Covg med;
   int number_of_reads;
 
 
@@ -360,50 +360,50 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
       tot_pos_kmers += pos_kmers;
 
-    if (num_kmers<=db_graph->kmer_size)
-      {
-        if (pos_kmers>0)
-    {
-      tot_snps_pos++;
+      if (num_kmers<=db_graph->kmer_size)
+	{
+	  if (pos_kmers>0)
+	    {
+	      tot_snps_pos++;
+	    }
+	  tot_snps++;
+	}
+      else
+	{
+	  if (pos_kmers>0)
+	    {
+	      tot_mobile_pos++;
+	    }
+	  tot_mobile++;
+	}
+      
+      
     }
-        tot_snps++;
-      }
-    else
-      {
-        if (pos_kmers>0)
-    {
-      tot_mobile_pos++;
-    }
-        tot_mobile++;
-      }
-
-
-    }
-
+  
       } while ( num_kmers>0);
       if ( (number_of_reads>0) && (tot_kmers>0) )
-  {
-    
-    pcov[i] = tot_pos_kmers/tot_kmers;
-    mcov[i] = med;
-    tkmers[i] = tot_pos_kmers;
-    tkmers_snps[i]=tot_snps;
-    p_snps[i]=(double)tot_snps_pos/ (double)tot_snps;
-    p_mobile[i]=(double)tot_mobile_pos/ (double)tot_mobile;
-    tkmers_mobile[i]=tot_mobile_pos;
-  }
+	{
+	  
+	  pcov[i] = (int) tot_pos_kmers/tot_kmers;
+	  mcov[i] = med;
+	  tkmers[i] = tot_pos_kmers;
+	  tkmers_snps[i]=tot_snps;
+	  p_snps[i]=(double)tot_snps_pos/ (double)tot_snps;
+	  p_mobile[i]=(double)tot_mobile_pos/ (double)tot_mobile;
+	  tkmers_mobile[i]=tot_mobile_pos;
+	}
       else
-  {
-    pcov[i]=0;
-    mcov[i]=0;
-    tkmers[i]=0;
-    tkmers_snps[i]=0;
-    p_snps[i]=0;
-    p_mobile[i]=0;
-    tkmers_mobile[i]=0;
-  }
+	{
+	  pcov[i]=0;
+	  mcov[i]=0;
+	  tkmers[i]=0;
+	  tkmers_snps[i]=0;
+	  p_snps[i]=0;
+	  p_mobile[i]=0;
+	  tkmers_mobile[i]=0;
+	}
     }
-
+  
   
   free_allele_info(ai);
   free(array_nodes);
@@ -418,9 +418,10 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       strbuf_free(species_file_paths[i]);
     }
 
-  boolean found=true;
+  boolean found_ANY_myc=true;
   boolean exclude_sp=false;
-  Myc_lineage best = get_best_hit(pcov, mcov, &found, exclude_sp, 9999);
+  Myc_lineage best = get_best_hit(pcov, mcov, &found_ANY_myc, exclude_sp, 9999);
+
   SampleModel* M_pure_MTBC=alloc_and_init_sample_model();
   // SampleModel* M_pure_Mtuberculosis=alloc_and_init_sample_model();
   // SampleModel* M_pure_Mafricanum=alloc_and_init_sample_model();
@@ -434,10 +435,10 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   SampleModel* M_non_MTB=alloc_and_init_sample_model();
 
   get_stats_pure_MTBC(expected_covg, err_rate,
-      lambda_g_err, lambda_e_err,
-      pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
-      p_snps, p_mobile, db_graph->kmer_size,
-      M_pure_MTBC, best );
+		      lambda_g_err, lambda_e_err,
+		      pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
+		      p_snps, p_mobile, db_graph->kmer_size,
+		      M_pure_MTBC, best, found_ANY_myc );
   // get_stats_pure_MTBC(expected_covg, err_rate,
   //     lambda_g_err, lambda_e_err,
   //     pcov, mcov, tkmers, tkmers_snps, tkmers_mobile,
@@ -457,9 +458,9 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   //       lambda_g_err,
   //       pcov, mcov, 
   //       0.1, M_min_mixture);
-
+  
   get_stats_non_MTB(expected_covg, err_rate,lambda_e_err,
-          pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
+		    pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
 
   SampleModel* marray[2] = {M_pure_MTBC, M_non_MTB};
   qsort(marray, 2, sizeof(SampleModel*), sample_model_cmp_logpost);
@@ -495,28 +496,28 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 }
 
 
-Myc_lineage get_best_hit(double* arr_perc_cov, 
-         double* arr_median, 
-         boolean* found, 
-         boolean exclude_sp, 
-         Myc_lineage sp)
+Myc_lineage get_best_hit(int* arr_perc_cov, 
+			 Covg* arr_median, 
+			 boolean* found, 
+			 boolean exclude_sp, 
+			 Myc_lineage sp)
 {
   int i;
-  double prod=0;
+  int prod=0;
   int curr=-1;
   for (i=0; i<NUM_SPECIES; i++)
     {
       if ( (exclude_sp==true) && ((Myc_lineage)i==sp))
-  {
-    continue;
-  }
+	{
+	  continue;
+	}
       //      if (arr_perc_cov[i] * arr_median[i]>prod)
       if (arr_perc_cov[i] > prod)
-  {
-    //prod = arr_perc_cov[i]* arr_median[i];
-    prod =arr_perc_cov[i];
-    curr=i;
-  }
+	{
+	  //prod = arr_perc_cov[i]* arr_median[i];
+	  prod =arr_perc_cov[i];
+	  curr=i;
+	}
     }
   if (curr==-1)
     {
@@ -531,25 +532,39 @@ Myc_lineage get_best_hit(double* arr_perc_cov,
 }
 
 void get_stats_pure_MTBC(int expected_covg, double err_rate, 
-         double lambda_g_err,double lambda_e,
-         double* arr_perc_covg, double* arr_median, int* arr_tkmers, 
-         int* arr_tkmers_snps, int* arr_tkmers_mobile, 
-         double* arr_prop_snps, double* arr_prop_mobile,
-         int kmer_size,
-         SampleModel* sm,
-         Myc_lineage sp)
+			 double lambda_g_err,double lambda_e,
+			 int* arr_perc_covg, Covg* arr_median, int* arr_tkmers, 
+			 int* arr_tkmers_snps, int* arr_tkmers_mobile, 
+			 double* arr_prop_snps, double* arr_prop_mobile,
+			 int kmer_size,
+			 SampleModel* sm,
+			 Myc_lineage sp,//sp is the best of ALL lineages. We can assume it is one of our 9
+			 boolean found_ANY_myc_evidence)
 
 {
 
+  if (found_ANY_myc_evidence==false)
+    {
+      sm->likelihood = -999999;
+      sm->lp= -999999;
+      sm->type=PureMTBC;
+      sm->conf=9999999;
+      return;
+    }
   //which non-MTB
   boolean found=true;
   boolean exclude_sp=true;
-  Myc_lineage best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_sp, sp);
+  Myc_lineage best = get_best_hit(arr_perc_covg, arr_median, &found, exclude_sp, sp);//best is the best of the rest
+  boolean no_evidence_for_ANY_alternate=false;
+  if (found==false)
+    {
+      no_evidence_for_ANY_alternate=true;
+    }
   // printf("Best Alternate is : %i\n",best );
 
 
   //now deal with sp
-  double recovery_expected = 1-exp(-expected_covg);
+  int recovery_expected = 100*(1-exp(-expected_covg));
   double lpr=0;
 
   if (arr_perc_covg[sp] > 0.75*recovery_expected)
@@ -582,26 +597,27 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
   // a) SNP error (single base errors)s
   // b) plasmids/mobile elements. What % of our unique-to-species panel will be mobile? Say max 40%
 
-  int numk;
-  if (arr_tkmers_snps[best]>kmer_size)
+  double llke=0;
+  if (no_evidence_for_ANY_alternate==false)
     {
-      numk=(int) (arr_tkmers_snps[best]/kmer_size);
+      int numk;
+      if (arr_tkmers_snps[best]>kmer_size)
+	{
+	  numk=(int) (arr_tkmers_snps[best]/kmer_size);
+	}
+      else
+	{
+	  numk=1;
+	}
+      numk += arr_tkmers_mobile[best];
+      
+      
+      llke +=  -lambda_e 
+	+ numk*arr_median[best]*log(lambda_e)
+	-log_factorial(numk*arr_median[best]);
     }
-  else
-    {
-      numk=1;
-    }
-  numk += arr_tkmers_mobile[best];
-
-
-  double llke =  -lambda_e 
-    + numk*arr_median[best]*log(lambda_e)
-    -log_factorial(numk*arr_median[best]);
-
   double lpre=0;
 
-  lpre=0;
-  
   sm->likelihood = llk+llke;
   sm->lp= sm->likelihood +lpr+lpre;
   map_lineage_enum_to_str(sp, sm->name_of_pure_mtbc_lineage);
@@ -611,7 +627,7 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
 }
 
 
-
+/*
 void get_stats_mix_mtbc(int expected_covg, double err_rate, double lambda_g_err,
            double* arr_perc_covg, double* arr_median, 
            double frac_MTB,
@@ -661,10 +677,10 @@ void get_stats_mix_mtbc(int expected_covg, double err_rate, double lambda_g_err,
       double cong_lpr;
       //want to avoid calling CONG just because of small number of repeat kmers
       printf("Got %f perc covg of the minor and we expect %f\n", arr_perc_covg[second_best], cong_recovery_expected );
-      /*      if (arr_perc_covg[second_best] < 0.3)
-  {
-    cong_lpr=-999999;
-    }*/
+      //      if (arr_perc_covg[second_best] < 0.3)
+      //{
+    //cong_lpr=-999999;
+    //}
       if (arr_perc_covg[second_best] > 0.9*cong_recovery_expected)
   {
     cong_lpr=0;
@@ -690,12 +706,12 @@ void get_stats_mix_mtbc(int expected_covg, double err_rate, double lambda_g_err,
     sm->type=MixedMTB;
 
 }
-
+*/
 
 void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
-       double* arr_perc_covg, double* arr_median, int* arr_tkmers,
-       int kmer_size,
-       SampleModel* sm)
+		       int* arr_perc_covg, Covg* arr_median, int* arr_tkmers,
+		       int kmer_size,
+		       SampleModel* sm)
 {
   strbuf_append_str(sm->name_of_non_mtb_species, "Non-MTBC");
   boolean found=true;
@@ -706,39 +722,39 @@ void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
   if (found==false)
     {
       //found no evidence of any MTB at all
-      sm->likelihood=0;
-      sm->lp=0;
+      sm->likelihood=-999999;
+      sm->lp=-999999;
     }
   else
     {
       //all coverage must be errors
       int numk;
       if (arr_tkmers[best]>kmer_size)
-  {
-    numk=arr_tkmers[best]-kmer_size;
-  }
+	{
+	  numk=arr_tkmers[best]-kmer_size;
+	}
       else
-  {
-    numk=1;
-  }
-
+	{
+	  numk=1;
+	}
+      
       //      double t = numk*arr_median[best]*arr_perc_covg[best]/100;
       double llk = -lambda_e 
-  +  numk*arr_median[best]*log(lambda_e) 
-  -log_factorial(numk*arr_median[best]);
+	+  numk*arr_median[best]*log(lambda_e) 
+	-log_factorial(numk*arr_median[best]);
       double lpr;
       if ( (arr_perc_covg[best]>0.1) && (arr_median[best]>0.1*expected_covg) )
-  {
-    lpr=-9999999;
-  }
+	{
+	  lpr=-9999999;
+	}
       else if (arr_perc_covg[best]>0.05)
-  {
-    lpr=-log(100);
-  }
+	{
+	  lpr=-log(100);
+	}
       else
-  {
-    lpr=log(1);
-  }
+	{
+	  lpr=log(1);
+	}
       sm->likelihood=llk;
       sm->lp = llk+lpr;
     }  

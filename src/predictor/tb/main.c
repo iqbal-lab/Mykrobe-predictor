@@ -54,7 +54,7 @@ int main(int argc, char **argv)
   setvbuf(stdout, NULL, _IOLBF, 0);
   
   // VERSION_STR is passed from the makefile -- usually last commit hash
-  printf("myKrobe.predictor for Mycoplasma tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
+  printf("myKrobe.predictor for M. tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
          VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
 
   CmdLine* cmd_line = cmd_line_alloc();
@@ -286,9 +286,9 @@ int main(int argc, char **argv)
 StrBuf* tmp_name = strbuf_new();
   SampleModel* species_mod = alloc_and_init_sample_model();
   SampleType st = get_species_model(db_graph, 11000, cmd_line->install_dir,
-            lambda_g_err, lambda_e_err, err_rate, expected_depth,
-            1,1,
-            species_mod);
+				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
+				    1,1,
+				    species_mod);
   // printf("Sample Type: %i\n",st);
   // printf("Speces Type: %s\n",species_mod->name_of_pure_mtbc_species->buff);
   if (st == MixedMTB)
