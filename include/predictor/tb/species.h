@@ -85,13 +85,14 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 
 
 void get_stats_pure_MTBC(int expected_covg, double err_rate, 
-         double lambda_g_err,double lambda_e,
-         double* arr_perc_covg, double* arr_median,int* arr_tkmers, 
-         int* arr_tkmers_snps, int* arr_tkmers_mobile,
-         double* arr_prop_snps, double* arr_prop_mobile,
-         int kmer_size,
-         SampleModel* sm,
-         Myc_lineage sp);
+			 double lambda_g_err,double lambda_e,
+			 int* arr_perc_covg, Covg* arr_median,int* arr_tkmers, 
+			 int* arr_tkmers_snps, int* arr_tkmers_mobile,
+			 double* arr_prop_snps, double* arr_prop_mobile,
+			 int kmer_size,
+			 SampleModel* sm,
+			 Myc_lineage sp,
+			 boolean found_ANY_myc_evidence);
 
 void get_stats_mix_mtbc(int expected_covg, double err_rate, 
            double lambda_g_err,
@@ -101,12 +102,12 @@ void get_stats_mix_mtbc(int expected_covg, double err_rate,
 
 
 void get_stats_non_MTB(int expected_covg, double err_rate, double lambda_e,
-       double* arr_perc_covg, double* arr_median, int* arr_tkmers, int kmer_size,
+		       int* arr_perc_covg, Covg* arr_median, int* arr_tkmers, int kmer_size,
        SampleModel* sm);
 
-Myc_lineage get_best_hit(double* arr_perc_cov, 
-         double* arr_median, 
-         boolean* found, 
-         boolean exclude_sp, 
-         Myc_lineage sp);
+Myc_lineage get_best_hit(int* arr_perc_cov, 
+			 Covg* arr_median, 
+			 boolean* found, 
+			 boolean exclude_sp, 
+			 Myc_lineage sp);
 

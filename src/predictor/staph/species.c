@@ -228,15 +228,15 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
   strbuf_append_str(non_staph_fa, "data/staph/species/cat.fasta");
 
   int i;
-  double pcov[17]; // for storing the percentage coverage of each reference
-  double pcov_cat=0;//for checking if covg on catalase
-  double mcov[17]; //median covg
-  double mcov_cat=0;
+  int pcov[17]; // for storing the percentage coverage of each reference
+  int pcov_cat=0;//for checking if covg on catalase
+  Covg mcov[17]; //median covg
+  Covg mcov_cat=0;
   int tkmers[17];//total kmers in the unique branches
   int tkmers_cat=0;
-  double tot_pos_kmers;
-  double tot_kmers;
-  double med;
+  Covg tot_pos_kmers;
+  Covg tot_kmers;
+  Covg med;
 
   int number_of_reads;
 
@@ -330,7 +330,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 		pos_kmers=0;
 	      }
 
-	    med = (med*tot_kmers + (double)ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
+	    med = (med*tot_kmers + ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
 	    tot_kmers += num_kmers;
 
 	    tot_pos_kmers += pos_kmers;
@@ -339,7 +339,7 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
       } while ( num_kmers>0);
       if ( (number_of_reads>0) && (tot_kmers>0) )
 	{
-	  pcov[i] = tot_pos_kmers/tot_kmers;
+	  pcov[i] = (int) (100*tot_pos_kmers)/tot_kmers;
 	  mcov[i] = med;
 	  tkmers[i] = tot_kmers;
 	}
@@ -464,13 +464,13 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 }
 
 
-Staph_species get_best_hit(double* arr_perc_cov, 
-			   double* arr_median, 
+Staph_species get_best_hit(int* arr_perc_cov, 
+			   Covg* arr_median, 
 			   boolean* found, 
 			   boolean exclude_aureus)
 {
   int i;
-  double prod=0;
+  int prod=0;
   int curr=-1;
   for (i=0; i<NUM_SPECIES; i++)
     {
@@ -500,7 +500,7 @@ Staph_species get_best_hit(double* arr_perc_cov,
 
 void get_stats_pure_aureus(int expected_covg, double err_rate, 
 			   double lambda_g_err,double lambda_e,
-			   double* arr_perc_covg, double* arr_median, int* arr_tkmers, 
+			   int* arr_perc_covg, Covg* arr_median, int* arr_tkmers, 
 			   int kmer_size,
 			   SampleModel* sm)
 
@@ -513,7 +513,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
 
   //now deal with aureus
-  double recovery_expected = 1-exp(-expected_covg);
+  int recovery_expected = 100*(1-exp(-expected_covg)); //as a percentage
   
   double lpr=0;
 
@@ -547,10 +547,10 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
   //  llk = - (double) arr_tkmers[Aureus] * ((double) (100-arr_perc_covg[Aureus]/100) * recovery_expected; //prob of a gap of that length
 
   //now we need to account for coverage on non-aureus
-  double numk = arr_median[best];
+  Covg numk = arr_median[best];
 
   //now - in this model we expect errors from Aureus to give covg on cong.
-  double exp_extra_cov =  (arr_median[Aureus] * err_rate) ;
+  Covg exp_extra_cov =  (arr_median[Aureus] * err_rate) ;
   if (numk> exp_extra_cov)
     {
       numk -= exp_extra_cov;
@@ -578,7 +578,7 @@ void get_stats_pure_aureus(int expected_covg, double err_rate,
 
 //CONG=coag neg
 void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double lambda_g_err, 
-				   double* arr_perc_covg, double* arr_median, int* arr_tkmers,
+				   int* arr_perc_covg, Covg* arr_median, int* arr_tkmers,
 				   double frac_aureus,
 				   SampleModel* sm)
 {
@@ -605,9 +605,9 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
     }
   else
     {
-      double aureus_recovery_expected = 1-exp(-frac_aureus*expected_covg);
+      int aureus_recovery_expected = 100*(1-exp(-frac_aureus*expected_covg));
       double lambda_aureus = lambda_g_err*frac_aureus;
-      double numk=arr_median[Aureus];
+      Covg numk=arr_median[Aureus];
       if (frac_aureus<0.5)
 	{
 	  //get a bit more covg from errors on the cong (major pop)
@@ -616,7 +616,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 	    lambda_aureus += lambda_g_err*(1-frac_aureus)*err_rate/(3*(1-err_rate)); 
 
 	    //aome of the covg on Aureus is due to errors on the other, dont penalise
-	    double exp_extra_cov =  (arr_median[best] * err_rate) ;
+	    Covg exp_extra_cov =  (arr_median[best] * err_rate) ;
 	    if (numk> exp_extra_cov)
 	      {
 		numk -= exp_extra_cov;
@@ -656,7 +656,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
       //now do the same for the other population
-      double cong_recovery_expected = 1-exp(-(1-frac_aureus)*expected_covg);
+      int cong_recovery_expected = 100*(1-exp(-(1-frac_aureus)*expected_covg));
       double lambda_cong = lambda_g_err*(1-frac_aureus);
       numk=arr_median[best];
       if (frac_aureus>0.5)
@@ -721,7 +721,7 @@ void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, double la
 
 
 void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
-			 double perc_covg_cat, double median_cat, int tkmers_cat,
+			 int perc_covg_cat, Covg median_cat, int tkmers_cat,
 			 int kmer_size,
 			 SampleModel* sm)
 {

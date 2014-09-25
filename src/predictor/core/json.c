@@ -60,7 +60,7 @@ void print_json_species_end()
 }
 void print_json_lineage_end()
 {
-  printf("\t\t},\n");
+  printf("\t\t}\n");
 }
 void print_json_phylogenetics_end()
 {
@@ -84,7 +84,7 @@ void print_json_called_variants_start()
 }
 void print_json_called_variants_end()
 {
-  printf("\t},\n");
+  printf("\t}\n");
 }
 
 

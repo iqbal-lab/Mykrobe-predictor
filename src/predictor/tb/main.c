@@ -53,10 +53,6 @@ int main(int argc, char **argv)
 {
   setvbuf(stdout, NULL, _IOLBF, 0);
   
-  // VERSION_STR is passed from the makefile -- usually last commit hash
-  printf("myKrobe.predictor for Mycoplasma tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
-         VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
-
   CmdLine* cmd_line = cmd_line_alloc();
   if (cmd_line==NULL)
     {
@@ -65,8 +61,11 @@ int main(int argc, char **argv)
   
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
   dBGraph * db_graph = NULL;
-
-
+  if (cmd_line->format==Stdout){
+  // VERSION_STR is passed from the makefile -- usually last commit hash
+    printf("myKrobe.predictor for M.tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
+           VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
+    }
 
   boolean (*subsample_function)();
   
@@ -267,6 +266,7 @@ int main(int argc, char **argv)
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
         * (mean_read_length-cmd_line->kmer_size+1)
         * lambda_g_err_free );
+
   
   // clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
   //         expected_depth, cmd_line->max_expected_sup_len);
@@ -286,9 +286,9 @@ int main(int argc, char **argv)
 StrBuf* tmp_name = strbuf_new();
   SampleModel* species_mod = alloc_and_init_sample_model();
   SampleType st = get_species_model(db_graph, 11000, cmd_line->install_dir,
-            lambda_g_err, lambda_e_err, err_rate, expected_depth,
-            1,1,
-            species_mod);
+				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
+				    1,1,
+				    species_mod);
   // printf("Sample Type: %i\n",st);
   // printf("Speces Type: %s\n",species_mod->name_of_pure_mtbc_species->buff);
   if (st == MixedMTB)
@@ -345,32 +345,33 @@ StrBuf* tmp_name = strbuf_new();
   else//JSON
     {
       print_json_start();
+      print_json_called_variant_item("expected_depth",expected_depth,false);
       print_json_phylogenetics_start();
       print_json_species_start();
   
   if (st == PureMTBC)
   {
-    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", false);
+    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", true);
   }
   else if (st == MixedMTB) 
   {
     print_json_item("M.TB", "Mixed",true);
-    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", true);
+    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
     print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
   }
       else
   {
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", false);
+    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
   }
       print_json_species_end();
       print_json_lineage_start();
         if (st == PureMTBC)
           {
-            print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", false);
+            print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", true);
           }
         else
           {
-            print_json_item(species_mod->name_of_non_mtb_lineage->buff, "Major", false);
+            print_json_item(species_mod->name_of_non_mtb_lineage->buff, "Major", true);
           }
 
       print_json_lineage_end();
@@ -448,9 +449,10 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_g
                       &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
                       ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
                       called_variants,called_genes); 
+
 print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
                       &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, output_last,
+                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line->format, true,
                       called_variants,called_genes); 
 
 
