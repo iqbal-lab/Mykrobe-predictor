@@ -82,9 +82,17 @@ void print_json_called_variants_start()
 {
   printf("\t\"called_variants\" :{\n");
 }
-void print_json_called_variants_end()
+
+void print_json_called_variants_end(boolean last)
 {
-  printf("\t}\n");
+  if (last==false)
+  {
+    printf("\t}\n");
+  }
+  else{
+    printf("\t},\n");
+  }
+  
 }
 
 

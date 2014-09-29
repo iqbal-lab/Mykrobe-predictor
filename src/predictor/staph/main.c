@@ -367,6 +367,7 @@ int main(int argc, char **argv)
     {
       print_json_start();
       print_json_called_variant_item("expected_depth",expected_depth,false);
+      print_json_called_variant_item("mean_read_length",mean_read_length,false);
       print_json_species_start();
       if (st == PureStaphAureus)
 	{
