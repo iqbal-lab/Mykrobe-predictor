@@ -380,6 +380,101 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
     } 
 
 }
+char* map_var_id_to_drug_resistance(KnownMutation km)
+{
+   switch (km) 
+   {
+     case dfrB_L21V  : return "Trimethoprim";
+     case dfrB_H31N  : return "Trimethoprim";
+     case dfrB_L41F  : return "Trimethoprim";
+     case dfrB_N60I  : return "Trimethoprim";
+     case dfrB_F99Y  : return "Trimethoprim";
+     case dfrB_F99S  : return "Trimethoprim";
+     case dfrB_F99I  : return "Trimethoprim";
+     case dfrB_H150R : return "Trimethoprim";
+        //start of fusA variants which only cause resistance when in combination
+     case fusA_F652S : return "FusidicAcid";
+     case fusA_Y654N : return "FusidicAcid";
+     case fusA_L456F : return "FusidicAcid";
+     case fusA_L461F : return "FusidicAcid";
+     case fusA_T326I : return "FusidicAcid";
+     case fusA_A376V : return "FusidicAcid";
+     case fusA_A655P : return "FusidicAcid";
+     case fusA_D463G : return "FusidicAcid";
+     case fusA_E444V : return "FusidicAcid";
+     case fusA_E468V : return "FusidicAcid";
+        //end of fusA variants which only cause resistance when in combination
+        
+        //start of fusA variants, each enough on its own to cause resistance
+     case fusA_V90I  : return "FusidicAcid";
+     case fusA_P114H : return "FusidicAcid";
+     case fusA_Q115L : return "FusidicAcid";
+     case fusA_T385N : return "FusidicAcid";
+     case fusA_P404L : return "FusidicAcid";
+     case fusA_P404Q : return "FusidicAcid";
+     case fusA_P406L : return "FusidicAcid";
+     case fusA_D434N : return "FusidicAcid";
+     case fusA_T436I : return "FusidicAcid";
+     case fusA_H438N : return "FusidicAcid";
+     case fusA_E444K : return "FusidicAcid";
+     case fusA_G451V : return "FusidicAcid";
+     case fusA_G452C : return "FusidicAcid";
+     case fusA_G452S : return "FusidicAcid";
+     case fusA_M453I : return "FusidicAcid";
+     case fusA_H457Q : return "FusidicAcid";
+     case fusA_H457Y : return "FusidicAcid";
+     case fusA_L461K : return "FusidicAcid";
+     case fusA_L461S : return "FusidicAcid";
+     case fusA_R464C : return "FusidicAcid";
+     case fusA_R464S : return "FusidicAcid";
+     case fusA_R464H : return "FusidicAcid";
+     case fusA_P478S : return "FusidicAcid";
+     case fusA_G556S : return "FusidicAcid";
+     case fusA_G617D : return "FusidicAcid";
+     case fusA_M651I : return "FusidicAcid";
+     case fusA_A655E : return "FusidicAcid";
+     case fusA_T656K : return "FusidicAcid";
+     case fusA_R659C : return "FusidicAcid";
+     case fusA_R659H : return "FusidicAcid";
+     case fusA_R659L : return "FusidicAcid";
+     case fusA_R659S : return "FusidicAcid";
+     case fusA_G664S : return "FusidicAcid";
+
+        //start of rpoB mutations which must occur together
+     case rpoB_M470T : return "Rifampicin";
+     case rpoB_D471G : return "Rifampicin";
+        //end of epistatic mutations
+
+        //start of rpoB mutations which individually cause resistance
+     case rpoB_S463P : return "Rifampicin";
+     case rpoB_S464P : return "Rifampicin";
+     case rpoB_Q468K : return "Rifampicin";
+     case rpoB_Q468L : return "Rifampicin";
+     case rpoB_Q468R : return "Rifampicin";
+     case rpoB_D471Y : return "Rifampicin";
+     case rpoB_N474K : return "Rifampicin";
+     case rpoB_ins475G : return "Rifampicin";
+     case rpoB_ins475H : return "Rifampicin";
+     case rpoB_A477D : return "Rifampicin";
+     case rpoB_A477V : return "Rifampicin";
+     case rpoB_H481D : return "Rifampicin";
+     case rpoB_H481N : return "Rifampicin";
+     case rpoB_H481Y : return "Rifampicin";
+     case rpoB_R484H : return "Rifampicin";
+     case rpoB_S486L : return "Rifampicin";
+     case rpoB_I527F : return "Rifampicin";
+     case rpoB_D550G : return "Rifampicin";
+     case gyrA_S84A : return "Ciprofloxacin";
+     case gyrA_S84L : return "Ciprofloxacin";
+     case gyrA_S85P : return "Ciprofloxacin";
+     case gyrA_E88K : return "Ciprofloxacin";
+     case grlA_S80F : return "Ciprofloxacin";
+     case grlA_S80Y : return "Ciprofloxacin";
+     case  NotSpecified : return "NotSpecified";      
+   }
+   return  "NotSpecified";
+}
+
 const char* map_enum_to_mutation_name(KnownMutation km)
 {
    switch (km) 
@@ -617,6 +712,83 @@ const char* map_enum_to_mutation_name(KnownMutation km)
       case gyrA_D94X : return "gyrA_D94X";
       case NotSpecified : return "NotSpecified";
    }
+      return  "NotSpecified";
+
+}
+
+char* map_var_id_to_drug_resistance(KnownMutation km)
+{
+   switch (km) 
+   {
+      case rpoB_F425X : return "Rifampicin";
+      case rpoB_G426X : return "Rifampicin";
+      case rpoB_T427X : return "Rifampicin";
+      case rpoB_S428X : return "Rifampicin";
+      case rpoB_Q429X : return "Rifampicin";
+      case rpoB_L430X : return "Rifampicin";
+      case rpoB_S431X : return "Rifampicin";
+      case rpoB_Q432X : return "Rifampicin";
+      case rpoB_F433X : return "Rifampicin";
+      case rpoB_M434X : return "Rifampicin";
+      case rpoB_D435X : return "Rifampicin";
+      case rpoB_Q436X : return "Rifampicin";
+      case rpoB_N437X : return "Rifampicin";
+      case rpoB_N438X : return "Rifampicin";
+      case rpoB_P439X : return "Rifampicin";
+      case rpoB_L440X : return "Rifampicin";
+      case rpoB_S441X : return "Rifampicin";
+      case rpoB_G442X : return "Rifampicin";
+      case rpoB_L443X : return "Rifampicin";
+      case rpoB_T444X : return "Rifampicin";
+      case rpoB_H445X : return "Rifampicin";
+      case rpoB_K446X : return "Rifampicin";
+      case rpoB_R447X : return "Rifampicin";
+      case rpoB_R448X : return "Rifampicin";
+      case rpoB_L449X : return "Rifampicin";
+      case rpoB_S450X : return "Rifampicin";
+      case rpoB_A451X : return "Rifampicin";
+      case rpoB_L452X : return "Rifampicin";
+      case rrs_A1401X : return "Kanamycin,Capreomycin,Amikacin";
+      case rrs_C1402X : return "Kanamycin,Capreomycin,Amikacin";
+      case rrs_G1484X : return "Kanamycin,Capreomycin,Amikacin";
+      case katG_S315X : return "Isoniazid";
+      case fabG1_Tu8X : return "Isoniazid";
+      case fabG1_Cu15X : return "Isoniazid";
+      case fabG1_Au16X : return "Isoniazid";
+      case fabG1_Gu17X : return "Isoniazid";
+      case pncA_D49N : return "Pyrazinamide";
+      case pncA_D8N : return "Pyrazinamide";
+      case pncA_H57D : return "Pyrazinamide";
+      case pncA_H57R : return "Pyrazinamide";
+      case pncA_H71Y : return "Pyrazinamide";
+      case pncA_Q141X : return "Pyrazinamide";
+      case pncA_V125G : return "Pyrazinamide";
+      case pncA_V21G : return "Pyrazinamide";
+      case embB_M306X : return "Ethambutol";
+      case embB_G406D : return "Ethambutol";
+      case embB_G406S : return "Ethambutol";
+      case eis_Cu10T : return "Kanamycin";
+      case rpsL_K43R : return "Streptomycin";
+      case rpsL_K88R : return "Streptomycin";
+      case rrs_C513X : return "Streptomycin";
+      case rrs_A514X : return "Streptomycin";
+      case rrs_G515X : return "Streptomycin";
+      case rrs_C516X : return "Streptomycin";
+      case rrs_C517X : return "Streptomycin";
+      case gyrA_H85X : return "Quinolones";
+      case gyrA_P86X : return "Quinolones";
+      case gyrA_H87X : return "Quinolones";
+      case gyrA_G88X : return "Quinolones";
+      case gyrA_D89X : return "Quinolones";
+      case gyrA_A90X : return "Quinolones";
+      case gyrA_S91X : return "Quinolones";
+      case gyrA_I92X : return "Quinolones";
+      case gyrA_Y93X : return "Quinolones";
+      case gyrA_D94X : return "Quinolones";
+      case NotSpecified : return "NotSpecified";
+   }
+  return  "NotSpecified";
+
 }
 
 

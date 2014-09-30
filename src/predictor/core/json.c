@@ -85,7 +85,7 @@ void print_json_called_variants_start()
 
 void print_json_called_variants_end(boolean last)
 {
-  if (last==false)
+  if (last==true)
   {
     printf("\t}\n");
   }

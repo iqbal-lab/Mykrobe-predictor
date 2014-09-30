@@ -161,7 +161,8 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 				print_json_called_variant_item("R_per_cov", called_variants[i].max_res_allele_present,  false);
 				print_json_called_variant_item("S_per_cov", called_variants[i].max_sus_allele_present, false);
 				print_json_called_variant_item("R_median_cov", called_variants[i].res_median_covg,  false);
-				print_json_called_variant_item("S_median_cov", called_variants[i].sus_median_covg, true);
+				print_json_called_variant_item("S_median_cov", called_variants[i].sus_median_covg, false);
+				print_json_item("induced_resistance",map_var_id_to_drug_resistance(called_variants[i].var_id),  true);
 				if (i == last_variant){
 					print_json_called_variant_end(true);
 				}
@@ -170,7 +171,7 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 				}
 			}
 		}		
-		print_json_called_variants_end(true);
+		print_json_called_variants_end(false);
 	}
 	else
 	{
@@ -208,7 +209,8 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 			if (called_genes[i].gene != unspecified_gpg){
 				print_json_called_gene_start( map_enum_to_gene_name(called_genes[i].gene) );
 				print_json_called_gene_item("per_cov", called_genes[i].max_res_allele_present,  false);
-				print_json_called_gene_item("median_cov", called_genes[i].res_median_covg,  true);
+				print_json_called_gene_item("median_cov", called_genes[i].res_median_covg,  false);
+				print_json_item("induced_resistance",map_gene_to_drug_resistance(called_genes[i].gene),  true);
 				if (i == last_gene){
 					print_json_called_gene_end(true);
 				}

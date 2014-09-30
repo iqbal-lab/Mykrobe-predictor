@@ -472,6 +472,11 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_g
     }
   else
     {
+      time_t ltime;
+      ltime = time(NULL);
+      char * time_end =asctime(localtime(&ltime));
+      time_end[strlen(time_end)-1] = '\0';
+      print_json_item("end_time",time_end,true);
       print_json_end();
       printf("\n");
     }

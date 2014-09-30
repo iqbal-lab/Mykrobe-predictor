@@ -66,6 +66,7 @@ typedef enum
    Vancomycin=12,
   } Antibiotic;
 
+char* map_gene_to_drug_resistance(GenePresenceGene gene);
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name);
 
 

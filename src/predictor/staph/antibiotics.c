@@ -34,6 +34,33 @@
 #include "gene_presence_models.h"
 #include "json.h"
 
+char* map_gene_to_drug_resistance(GenePresenceGene gene)
+{
+   switch (gene) 
+   {
+    case aacAaphD : return "Gentamicin";
+    case blaZ : return "Penicillin";
+    case dfrA : return "Trimethoprim";
+    case dfrG : return "Trimethoprim";
+    case ermA : return "Erythromycin";
+    case ermB : return "Erythromycin";
+    case ermC : return "Erythromycin";
+    case ermT : return "Erythromycin";
+    case fusB : return "FusidicAcid";
+    case fusC : return "FusidicAcid";
+    case msrA : return "Erythromycin";
+    case mecA : return "Methicillin";
+    case tetK : return "Tetracycline";
+    case tetL : return "Tetracycline";
+    case tetM : return "Tetracycline";
+    case vanA : return "Vancomycin";
+    case mupA : return "Mupirocin";
+    case mupB : return "Mupirocin";
+    case unspecified_gpg  : return "unknown";
+   }
+   return "unknown";
+}
+
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
 {
   if (ab==NoDrug)

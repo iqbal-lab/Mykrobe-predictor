@@ -60,7 +60,7 @@ quinolones=9
   } Antibiotic;
 
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name);
-
+char* map_gene_to_drug_resistance(GenePresenceGene gene);
 
 
 typedef struct

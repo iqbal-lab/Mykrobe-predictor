@@ -34,6 +34,10 @@
 #include "gene_presence_models.h"
 #include "json.h"
 
+char* map_gene_to_drug_resistance(GenePresenceGene gene)
+{
+   return "unknown";
+}
 
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
 {

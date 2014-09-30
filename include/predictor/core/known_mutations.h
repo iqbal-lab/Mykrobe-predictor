@@ -231,7 +231,7 @@ typedef enum
 
 
 
-
+char* map_var_id_to_drug_resistance(KnownMutation km);
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene);
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name);
 const char* map_enum_to_mutation_name(KnownMutation km); 
