@@ -30,6 +30,9 @@
 #include "string_buffer.h"
 #include "known_mutations.h"
 
+//forward declaration
+char* map_gene_to_drug_resistance(GenePresenceGene gene);
+
 AlleleInfo* alloc_allele_info()
 {
   AlleleInfo* ai = (AlleleInfo*) calloc(1, sizeof(AlleleInfo));

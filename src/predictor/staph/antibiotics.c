@@ -56,6 +56,8 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     case vanA : return "Vancomycin";
     case mupA : return "Mupirocin";
     case mupB : return "Mupirocin";
+    case vga_A_LC: return "Clindamycin";
+   case luk : return "PVL";//slight misnomer
     case unspecified_gpg  : return "unknown";
    }
    return "unknown";
