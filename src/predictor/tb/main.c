@@ -363,19 +363,17 @@ StrBuf* tmp_name = strbuf_new();
   {
     print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
   }
-      print_json_species_end();
-      print_json_lineage_start();
-        if (st == PureMTBC)
-          {
-            print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", true);
-          }
-        else
-          {
-            print_json_item(species_mod->name_of_non_mtb_lineage->buff, "Major", true);
-          }
+    print_json_species_end();
+    print_json_lineage_start();
+    if (st == PureMTBC)
+      {
+        print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", true);
+      }
 
-      print_json_lineage_end();
-      print_json_phylogenetics_end();
+    print_json_lineage_end();
+
+    
+    print_json_phylogenetics_end();
 
 
       if (st == NonMTB)
