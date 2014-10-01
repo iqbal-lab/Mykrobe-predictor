@@ -79,6 +79,7 @@ int default_opts(CmdLine * c)
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
   c->progress=false;
+  c->min_frac_to_detect_minor_pops = (float) 0.0;
   return 1;
 }
 
@@ -147,6 +148,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"subsample", required_argument, NULL, 'd'},
     {"format", required_argument, NULL, 'e'},
     {"progress", no_argument, NULL, 'g'},
+    {"minor_pop_frac", required_argument, NULL, 'p'},
     {0,0,0,0}	
   };
   
@@ -305,6 +307,19 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     case 'g'://progress
       {
   cmdline_ptr->progress=true;
+  break;
+      }
+  case 'p'://minor_pop_frac
+      {
+  if (optarg==NULL)
+    errx(1,"[--minor_pop_frac] option requires a decimal number between 0 and 1 as argunemt\n");
+  
+  cmdline_ptr->min_frac_to_detect_minor_pops = atof(optarg);
+
+  if ( (cmdline_ptr->min_frac_to_detect_minor_pops<=0) || (cmdline_ptr->min_frac_to_detect_minor_pops>1) )
+    {
+      errx(1,"[--minor_pop_frac] option requires a decimal number between 0 and 1 as argunemt\n");
+    }
   break;
       }
 

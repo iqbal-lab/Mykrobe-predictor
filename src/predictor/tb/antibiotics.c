@@ -399,7 +399,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -443,8 +444,14 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       any_allele_non_null=true;
       InfectionType I=
   resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+              err_rate, 
+              db_graph->kmer_size, 
+              lambda_g, 
+              lambda_e, 
+              epsilon,
+              &best_model, 
+              MaxAPosteriori,
+              cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -495,7 +502,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -540,7 +548,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -589,7 +598,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -633,8 +643,14 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       any_allele_non_null=true;
       InfectionType I=
   resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+              err_rate, 
+              db_graph->kmer_size, 
+              lambda_g, 
+              lambda_e, 
+              epsilon,
+              &best_model,
+              MaxAPosteriori,
+              cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -683,7 +699,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -728,7 +745,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -777,7 +795,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -822,7 +841,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -871,7 +891,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -916,7 +937,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -965,7 +987,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -1010,7 +1033,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -1059,7 +1083,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes)
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line)
     {
       reset_antibiotic_info(abi);
       
@@ -1104,7 +1129,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -1155,7 +1181,8 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
                  StrBuf* install_dir,
                  int ignore_first, int ignore_last, int expected_covg,
                  double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes )
+                 CalledVariant* called_variants,CalledGene* called_genes,
+                 CmdLine* cmd_line )
     {
       reset_antibiotic_info(abi);
       
@@ -1200,7 +1227,8 @@ boolean any_allele_non_null=false;
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        &best_model, MaxAPosteriori);
+        &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -1254,22 +1282,29 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
                      int max_read_length, 
                      boolean new_entry, 
                      boolean * full_entry),
-              ReadingUtils* rutils,
-              VarOnBackground* tmp_vob,
-              GeneInfo* tmp_gi,
-              AntibioticInfo* abi,
-              StrBuf* install_dir,
-              int ignore_first, int ignore_last, int expected_covg,
-              double lambda_g, double lambda_e, double err_rate,
-              CalledVariant* called_variants,CalledGene* called_genes),
+                      ReadingUtils* rutils,
+                      VarOnBackground* tmp_vob,
+                      GeneInfo* tmp_gi,
+                      AntibioticInfo* abi,
+                      StrBuf* install_dir,
+                      int ignore_first, 
+                      int ignore_last, 
+                      int expected_covg,
+                      double lambda_g, 
+                      double lambda_e, 
+                      double err_rate,
+                      CalledVariant* called_variants,
+                      CalledGene* called_genes,
+                      CmdLine* cmd_line),
           StrBuf* tmpbuf,
           StrBuf* install_dir,
           int ignore_first, int ignore_last,
           int expected_covg,
           double lambda_g, double lambda_e, double err_rate,
-          OutputFormat format,
+          CmdLine* cmd_line,
           boolean output_last,//for JSON
-          CalledVariant* called_variants,CalledGene* called_genes
+          CalledVariant* called_variants,
+          CalledGene* called_genes
           )
 {
   InfectionType suc;
@@ -1288,11 +1323,12 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
         lambda_e,
         err_rate,
         called_variants,
-        called_genes);
+        called_genes,
+        cmd_line);
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  if (format==Stdout)
+  if (cmd_line->format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
       if (suc==Susceptible)
@@ -1318,9 +1354,13 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
   {
       print_json_item(tmpbuf->buff, "S", output_last);
   }
-      else if ( (suc==MixedInfection) || (suc==Resistant) )
+      else if (  suc==Resistant )
   {
     print_json_item(tmpbuf->buff, "R", output_last);
+  }
+    else if ( suc==MixedInfection )
+  {
+    print_json_item(tmpbuf->buff, "r", output_last);
   }
       else
   {

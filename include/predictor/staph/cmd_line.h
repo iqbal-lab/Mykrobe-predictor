@@ -78,6 +78,7 @@ typedef struct
   float subsample_propn;
   Sequencer machine;
   OutputFormat format;
+  float min_frac_to_detect_minor_pops;
 } CmdLine;
 
 

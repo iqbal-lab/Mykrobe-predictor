@@ -124,25 +124,16 @@ double get_log_lik_major_pop_resistant(Var* var,
 
 double get_log_lik_minor_pop_resistant(Var* var,
 				       double lambda_g, double lambda_e,
-				       int kmer, double err_rate)
+				       int kmer, double err_rate,
+               float min_frac_to_detect_minor_pops)
 {
   Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
 
-  double frac;
-  if (err_rate<0.02)
-    {
-      frac=0.1;
-    }
-  else if (err_rate<=0.1)
-    {
-      frac=0.25;
-    }
-  else
+  double frac = min_frac_to_detect_minor_pops;
+  if (err_rate > 0.1)
     {
       return -999999999;
     }
-  //  return get_biallelic_log_lik(c, var->susceptible_allele.median_covg,
-  //			       frac*lambda_g, 0.75*lambda_g, kmer);
   return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
 			       frac*lambda_g, (1-frac)*lambda_g, kmer);
 
@@ -376,10 +367,14 @@ void choose_map_model(Var* var,
 }
 
 
-InfectionType resistotype(Var* var, double err_rate, int kmer,
-			  double lambda_g, double lambda_e, double epsilon,
-			  Model* best_model,
-			  ModelChoiceMethod choice)
+InfectionType resistotype(Var* var, 
+                          double err_rate, int kmer,
+                			  double lambda_g, 
+                        double lambda_e, 
+                        double epsilon,
+                			  Model* best_model,
+                			  ModelChoiceMethod choice,
+                        float min_frac_to_detect_minor_pops)
 {
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(var, 
 									  lambda_g, lambda_e,
@@ -388,7 +383,7 @@ InfectionType resistotype(Var* var, double err_rate, int kmer,
 									       lambda_g, lambda_e,
 									       kmer);
   //  double llk_M = get_log_lik_of_mixed_infection(var, lambda_g, err_rate, kmer);
-  double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate);
+  double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
 
   best_model->conf=0;
   Model worst_model;

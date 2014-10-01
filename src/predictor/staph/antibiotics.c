@@ -431,7 +431,8 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
-          CalledVariant* called_variants,CalledGene* called_genes
+          CalledVariant* called_variants,CalledGene* called_genes,
+          CmdLine* cmd_line
 				  )
 {
   reset_antibiotic_info(abi);
@@ -481,7 +482,8 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
-          CalledVariant* called_variants,CalledGene* called_genes
+          CalledVariant* called_variants,CalledGene* called_genes,
+          CmdLine* cmd_line
 				  )
 
 {
@@ -538,7 +540,8 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
-             CalledVariant* called_variants,CalledGene* called_genes
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
 				    )
 
 {
@@ -587,7 +590,8 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
 		    lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxAPosteriori,
+  cmd_line->min_frac_to_detect_minor_pops);
 
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
@@ -667,7 +671,8 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
 				    boolean* any_erm_present,
-             CalledVariant* called_variants,CalledGene* called_genes)
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   *any_erm_present=false;
@@ -759,7 +764,8 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				   StrBuf* install_dir,
 				   int ignore_first, int ignore_last, int expected_covg,
 				   double lambda_g, double lambda_e, double err_rate,
-            CalledVariant* called_variants,CalledGene* called_genes)
+            CalledVariant* called_variants,CalledGene* called_genes,
+            CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   
@@ -817,7 +823,8 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				     StrBuf* install_dir,
 				     int ignore_first, int ignore_last, int expected_covg,
 				     double lambda_g, double lambda_e, double err_rate,
-              CalledVariant* called_variants,CalledGene* called_genes)
+              CalledVariant* called_variants,CalledGene* called_genes,
+              CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   
@@ -861,7 +868,8 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->vars[i],
 		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
       if (max_sus_conf<best_model.conf)
 	{
 	  max_sus_conf=best_model.conf;
@@ -912,7 +920,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
-           CalledVariant* called_variants,CalledGene* called_genes)
+           CalledVariant* called_variants,CalledGene* called_genes,
+           CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   
@@ -959,7 +968,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->vars[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
 	{
@@ -980,7 +990,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
   InfectionType I_m470t=
     resistotype(abi->vars[rpoB_M470T],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   if ( (I_m470t==Susceptible) && (best_model.conf>max_sus_conf) )
     {
@@ -994,7 +1005,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
   InfectionType I_d471g=
     resistotype(abi->vars[rpoB_D471G],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   if ( (I_d471g ==Susceptible) && (best_model.conf>max_sus_conf) )
     {
@@ -1045,7 +1057,8 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
-             CalledVariant* called_variants,CalledGene* called_genes)
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   
@@ -1127,7 +1140,8 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				 StrBuf* install_dir,
 				 int ignore_first, int ignore_last, int expected_covg,
 				 double lambda_g, double lambda_e, double err_rate,
-          CalledVariant* called_variants,CalledGene* called_genes)
+          CalledVariant* called_variants,CalledGene* called_genes,
+          CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   
@@ -1187,7 +1201,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
-             CalledVariant* called_variants,CalledGene* called_genes)
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line)
 {
   reset_antibiotic_info(abi);
   
@@ -1239,7 +1254,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->vars[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori);
+		    &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
 	{
@@ -1261,12 +1277,14 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
   InfectionType I_f652s=
     resistotype(abi->vars[fusA_F652S],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_y654n=
     resistotype(abi->vars[fusA_Y654N],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
   if (I_f652s==Resistant && I_y654n==Resistant)
     {
       update_called_variants(called_variants,i,abi->vars[fusA_F652S]);
@@ -1280,12 +1298,14 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
   InfectionType I_t326i=
     resistotype(abi->vars[fusA_T326I],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_e468v=
     resistotype(abi->vars[fusA_E468V],
 	       err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
 
   if (I_t326i==Resistant && I_e468v==Resistant)
@@ -1301,22 +1321,26 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
   InfectionType I_l461f=
     resistotype(abi->vars[fusA_L461F],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_a376v=
     resistotype(abi->vars[fusA_A376V],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_a655p=
     resistotype(abi->vars[fusA_A655P],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_d463g=
     resistotype(abi->vars[fusA_D463G],
 		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		&best_model, MaxAPosteriori);
+		&best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
   
   if ( (I_l461f==Resistant)
        &&
@@ -1337,7 +1361,8 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
   InfectionType I_e444v=Susceptible;
   resistotype(abi->vars[fusA_E444V],
 	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-	      &best_model, MaxAPosteriori);
+	      &best_model, MaxAPosteriori,
+        cmd_line->min_frac_to_detect_minor_pops);
   if ((I_l461f==Resistant)
        &&
       (I_e444v==Resistant) )
@@ -1398,7 +1423,8 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				   StrBuf* install_dir,
 				   int ignore_first, int ignore_last, int expected_covg,
 				   double lambda_g, double lambda_e, double err_rate,
-            CalledVariant* called_variants,CalledGene* called_genes)
+            CalledVariant* called_variants,CalledGene* called_genes,
+            CmdLine* cmd_line)
 
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1452,7 +1478,8 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
-           CalledVariant* called_variants,CalledGene* called_genes)
+           CalledVariant* called_variants,CalledGene* called_genes,
+           CmdLine* cmd_line)
   
 {
   //constitutuve only. inducible you get by checking erythromycin also,
@@ -1509,20 +1536,26 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 									   int max_read_length, 
 									   boolean new_entry, 
 									   boolean * full_entry),
-							ReadingUtils* rutils,
-							VarOnBackground* tmp_vob,
-							GeneInfo* tmp_gi,
-							AntibioticInfo* abi,
-							StrBuf* install_dir,
-							int ignore_first, int ignore_last, int expected_covg,
-							double lambda_g, double lambda_e, double err_rate,
-              CalledVariant* called_variants,CalledGene* called_genes),
+      							ReadingUtils* rutils,
+      							VarOnBackground* tmp_vob,
+      							GeneInfo* tmp_gi,
+      							AntibioticInfo* abi,
+      							StrBuf* install_dir,
+      							int ignore_first,
+                    int ignore_last,
+                    int expected_covg,
+      							double lambda_g,
+                    double lambda_e,
+                    double err_rate,
+                    CalledVariant* called_variants,
+                    CalledGene* called_genes,
+                    CmdLine* cmd_line),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last,
 					int expected_covg,
 					double lambda_g, double lambda_e, double err_rate,
-					OutputFormat format,
+          CmdLine* cmd_line,
 					boolean output_last,//for JSON,
           CalledVariant* called_variants,
           CalledGene* called_genes
@@ -1544,11 +1577,12 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 	      lambda_e,
 	      err_rate,
         called_variants,
-        called_genes);
+        called_genes,
+        cmd_line);
 
   
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-  if (format==Stdout)
+  if (cmd_line->format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
       if (suc==Susceptible)
@@ -1574,10 +1608,14 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 	{
 	    print_json_item(tmpbuf->buff, "S", output_last);
 	}
-      else if ( (suc==MixedInfection) || (suc==Resistant) )
+      else if ( suc==Resistant )
 	{
 	  print_json_item(tmpbuf->buff, "R", output_last);
 	}
+      else if ( suc==MixedInfection )
+  {
+    print_json_item(tmpbuf->buff, "r", output_last);
+  }  
       else
 	{
 	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);
@@ -1611,11 +1649,12 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 							  int ignore_first, int ignore_last, int expected_covg,
 							  double lambda_g, double lambda_e, double err_rate, 
 							  boolean* any_erm_present,
-                CalledVariant* called_variants,CalledGene* called_genes),
+                CalledVariant* called_variants,CalledGene* called_genes,
+                CmdLine* cmd_line),
 					  StrBuf* tmpbuf,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
-					  double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last,//for JSON 
+					  double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,//for JSON 
 					  boolean* any_erm_present,
             CalledVariant* called_variants,CalledGene* called_genes
 					 )
@@ -1635,11 +1674,12 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 	      err_rate,
 	      any_erm_present,
         called_variants,
-         called_genes);
+         called_genes,
+         cmd_line);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
 
-  if (format==Stdout)
+  if (cmd_line->format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
       if (suc==Susceptible)
@@ -1705,12 +1745,13 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 							 StrBuf* install_dir,
 							 int ignore_first, int ignore_last, int expected_covg,
 							 double lambda_g, double lambda_e, double err_rate,
-               CalledVariant* called_variants,CalledGene* called_genes),
+               CalledVariant* called_variants,CalledGene* called_genes,
+               CmdLine* cmd_line),
 					 StrBuf* tmpbuf,
 					 boolean any_erm_present,
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate, OutputFormat format, boolean output_last,
+					 double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,
            CalledVariant* called_variants,CalledGene* called_genes//for JSON 
 					 )
 {
@@ -1728,12 +1769,13 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 	      lambda_e,
 	      err_rate,
         called_variants,
-        called_genes);
+        called_genes,
+        cmd_line);
 
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
 
-  if (format==Stdout)
+  if (cmd_line->format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
       //the ordering of these if's matters

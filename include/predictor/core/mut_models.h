@@ -67,7 +67,8 @@ double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(Var* var,
 
 double get_log_lik_minor_pop_resistant(Var* var,
 				       double lambda_g, double lambda_e,
-				       int kmer, double err_rate);
+				       int kmer, double err_rate,
+				       float min_frac_to_detect_minor_pops);
 
 double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(Var* var,
 								     double lambda_g, double lambda_e,
@@ -102,10 +103,15 @@ void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
 		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon);
 
-InfectionType resistotype(Var* var, double err_rate, int kmer,
-			  double lambda_g, double lambda_e, double epsilon,
-			  Model* best_model,
-			  ModelChoiceMethod choice);
+InfectionType resistotype(Var* var, 
+						  double err_rate, 
+						  int kmer,
+						  double lambda_g, 
+						  double lambda_e, 
+						  double epsilon,
+						  Model* best_model,
+						  ModelChoiceMethod choice,
+						  float min_frac_to_detect_minor_pops);
 
 
 
