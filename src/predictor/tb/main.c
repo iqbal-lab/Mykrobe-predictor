@@ -263,11 +263,11 @@ int main(int argc, char **argv)
   if (cmd_line->min_frac_to_detect_minor_pops == 0.0){
     if (err_rate<0.02)
     {
-      cmd_line->min_frac_to_detect_minor_pops = 0.1;
+      cmd_line->min_frac_to_detect_minor_pops = 0.2;
     }
   else
     {
-      cmd_line->min_frac_to_detect_minor_pops = 0.25;
+      cmd_line->min_frac_to_detect_minor_pops = 0.35;
     }
   }
 
