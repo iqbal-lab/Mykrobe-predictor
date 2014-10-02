@@ -463,6 +463,8 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 		    pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
 
   SampleModel* marray[2] = {M_pure_MTBC, M_non_MTB};
+  printf("M_pure_MTBC %f\n", M_pure_MTBC->likelihood);
+  printf("M_non_MTB %f\n", M_non_MTB->likelihood);
   qsort(marray, 2, sizeof(SampleModel*), sample_model_cmp_logpost);
   best_model->conf = marray[1]->lp - marray[0]->lp;
   best_model->type = marray[1]->type;
@@ -503,7 +505,9 @@ Myc_lineage get_best_hit(int* arr_perc_cov,
 			 Myc_lineage sp)
 {
   int i;
-  int prod=0;
+  int best_perc_cov_so_far=0;
+  int best_median_cov_so_far=0;
+
   int curr=-1;
   for (i=0; i<NUM_SPECIES; i++)
     {
@@ -511,13 +515,16 @@ Myc_lineage get_best_hit(int* arr_perc_cov,
 	{
 	  continue;
 	}
-      //      if (arr_perc_cov[i] * arr_median[i]>prod)
-      if (arr_perc_cov[i] > prod)
+      if (arr_perc_cov[i] >= best_perc_cov_so_far)
 	{
-	  //prod = arr_perc_cov[i]* arr_median[i];
-	  prod =arr_perc_cov[i];
-	  curr=i;
+    best_perc_cov_so_far = arr_perc_cov[i];
+    // Only update if the median coverage has also improved
+    if (arr_median[i] > best_median_cov_so_far){
+      best_median_cov_so_far = arr_median[i];
+      curr=i;
+    } 
 	}
+    printf("Lineage : %i Per_cov :  %i median_covg : %i \n",i,arr_perc_cov[i],arr_median[i]);
     }
   if (curr==-1)
     {
@@ -526,6 +533,7 @@ Myc_lineage get_best_hit(int* arr_perc_cov,
     }
   else
     {
+      printf("Best Lineage : %i \n",curr);
       *found=true;
       return (Myc_lineage) curr;
     }
@@ -560,7 +568,6 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
     {
       no_evidence_for_ANY_alternate=true;
     }
-  // printf("Best Alternate is : %i\n",best );
 
 
   //now deal with sp
@@ -583,6 +590,7 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
     {
       lpr=-99999999;
     }
+    printf("lpr: %f \n", lpr);
 
 
   double llk = -lambda_g_err 
