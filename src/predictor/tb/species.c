@@ -463,8 +463,6 @@ SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* insta
 		    pcov, mcov, tkmers, db_graph->kmer_size, M_non_MTB);
 
   SampleModel* marray[2] = {M_pure_MTBC, M_non_MTB};
-  printf("M_pure_MTBC %f\n", M_pure_MTBC->likelihood);
-  printf("M_non_MTB %f\n", M_non_MTB->likelihood);
   qsort(marray, 2, sizeof(SampleModel*), sample_model_cmp_logpost);
   best_model->conf = marray[1]->lp - marray[0]->lp;
   best_model->type = marray[1]->type;
@@ -524,7 +522,7 @@ Myc_lineage get_best_hit(int* arr_perc_cov,
       curr=i;
     } 
 	}
-    printf("Lineage : %i Per_cov :  %i median_covg : %i \n",i,arr_perc_cov[i],arr_median[i]);
+    // printf("Lineage : %i Per_cov :  %i median_covg : %i \n",i,arr_perc_cov[i],arr_median[i]);
     }
   if (curr==-1)
     {
@@ -533,7 +531,7 @@ Myc_lineage get_best_hit(int* arr_perc_cov,
     }
   else
     {
-      printf("Best Lineage : %i \n",curr);
+      // printf("Best Lineage : %i \n",curr);
       *found=true;
       return (Myc_lineage) curr;
     }
