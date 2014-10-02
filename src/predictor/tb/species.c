@@ -588,7 +588,6 @@ void get_stats_pure_MTBC(int expected_covg, double err_rate,
     {
       lpr=-99999999;
     }
-    printf("lpr: %f \n", lpr);
 
 
   double llk = -lambda_g_err 
