@@ -107,12 +107,12 @@ void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf)
   else if (sp==lineage1)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"Indian Ocean");
+      strbuf_append_str(sbuf,"East Africa / Indian ocean");
     }
   else if (sp==lineage2)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"East Africa / Indian ocean");
+      strbuf_append_str(sbuf,"Beijing/East Asia");
     }
   else if (sp==lineage3)
     {
