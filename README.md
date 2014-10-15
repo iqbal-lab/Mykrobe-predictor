@@ -32,3 +32,10 @@ Two typical uses
 or, to build the full genome and then draw inferences from that
 
 2. Mykrobe.predictor.tb --file some_file.fastq --method WgAssemblyAndGenotyping --install_dir /path/to/myKrobe-predictor
+
+Add 
+--format JSON
+if you want output in JSON format with a bit more detail.
+
+Add --progress
+if you want to see progress.
