@@ -29,6 +29,6 @@ Two typical uses
 
 1. Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/myKrobe-predictor
 
-or, to run in fixed memory using a skeleton binary
+or, to build the full genome and then draw inferences from that
 
-2. Mykrobe.predictor.tb --file some_file.fastq --method InSilicoOligos --install_dir /path/to/myKrobe-predictor
+2. Mykrobe.predictor.tb --file some_file.fastq --method WgAssemblyAndGenotyping --install_dir /path/to/myKrobe-predictor
