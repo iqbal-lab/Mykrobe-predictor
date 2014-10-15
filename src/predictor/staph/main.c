@@ -264,8 +264,8 @@ int main(int argc, char **argv)
   if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
     {
       printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
-      fflush(stdout);
     }
+  fflush(stdout);
   if (bp_loaded==0)
     {
       printf("No data\n");
