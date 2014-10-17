@@ -174,7 +174,7 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 				}
 			}
 		}		
-		print_json_called_variants_end(true);
+		print_json_called_variants_end(false);
 	}
 	else
 	{
