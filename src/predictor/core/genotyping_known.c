@@ -151,7 +151,7 @@ int get_last_called_variant_index(CalledVariant* called_variants){
 	return last_variant;
 }
 
-void print_called_variants(CalledVariant* called_variants,OutputFormat format)
+void print_called_variants(CalledVariant* called_variants,OutputFormat format,boolean last)
 {
 	int i;
 	if (format==JSON){
@@ -174,7 +174,7 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format)
 				}
 			}
 		}		
-		print_json_called_variants_end(false);
+		print_json_called_variants_end(last);
 	}
 	else
 	{

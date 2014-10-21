@@ -495,7 +495,7 @@ int main(int argc, char **argv)
     {
       print_json_susceptibility_end();
     }
-  print_called_variants(called_variants,cmd_line->format);
+  print_called_variants(called_variants,cmd_line->format,false);// false here means that this is NOT the last element of the JSON output
   print_called_genes(called_genes,cmd_line->format);
   if (cmd_line->format==Stdout)
     {

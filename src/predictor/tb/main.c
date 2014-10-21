@@ -474,7 +474,7 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_g
     {
       print_json_susceptibility_end();
     }
-  print_called_variants(called_variants,cmd_line->format);
+  print_called_variants(called_variants,cmd_line->format,true); // true here means that this is the last element of the JSON output
   // print_called_genes(called_genes,cmd_line->format);
   if (cmd_line->format==Stdout)
     {

@@ -104,7 +104,7 @@ typedef struct
 int get_last_called_variant_index(CalledVariant* called_variants);
 CalledVariant* alloc_and_init_called_variant_array();
 void free_called_variant_array(CalledVariant* cva);
-void print_called_variants(CalledVariant* called_variants,OutputFormat format);
+void print_called_variants(CalledVariant* called_variants,OutputFormat format,boolean last);
 void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var* var);
 
 // Define a structure to store resistance genes which are called
