@@ -72,17 +72,17 @@ void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
   if (sp==Mtuberculosis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M. Tuberculosis");
+      strbuf_append_str(sbuf,"M. tuberculosis");
     }
   else if (sp==Mafricanum)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M. Africanum");
+      strbuf_append_str(sbuf,"M. africanum");
     }
     else if (sp==Mbovis)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M. Bovis");      
+      strbuf_append_str(sbuf,"M. bovis");      
     }
 
   else
