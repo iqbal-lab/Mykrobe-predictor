@@ -49,61 +49,61 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
         else if (ab==rifampicin)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "rifampicin");
+                  strbuf_append_str(name, "Rifampicin");
                 }
         
   else if (ab==isoniazid)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "isoniazid");
+                  strbuf_append_str(name, "Isoniazid");
                 }
         
   else if (ab==pyrazinamide)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "pyrazinamide");
+                  strbuf_append_str(name, "Pyrazinamide");
                 }
         
   else if (ab==ethambutol)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "ethambutol");
+                  strbuf_append_str(name, "Ethambutol");
                 }
         
   else if (ab==kanamycin)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "kanamycin");
+                  strbuf_append_str(name, "Kanamycin");
                 }
         
   else if (ab==capreomycin)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "capreomycin");
+                  strbuf_append_str(name, "Capreomycin");
                 }
         
   else if (ab==amikacin)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "amikacin");
+                  strbuf_append_str(name, "Amikacin");
                 }
         
   else if (ab==kanamycin)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "kanamycin");
+                  strbuf_append_str(name, "Kanamycin");
                 }
         
   else if (ab==streptomycin)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "streptomycin");
+                  strbuf_append_str(name, "Streptomycin");
                 }
         
   else if (ab==quinolones)
                 {
                   strbuf_reset(name);
-                  strbuf_append_str(name, "quinolones");
+                  strbuf_append_str(name, "Quinolones");
                 }
          
   else
