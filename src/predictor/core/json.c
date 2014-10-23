@@ -32,12 +32,14 @@
 
 void print_json_start()
 {
+  fflush(stdout);
   printf("{\n");
 }
 
 void print_json_end()
 {
   printf("}\n");
+  fflush(stdout);
 }
 
 void print_json_species_start()

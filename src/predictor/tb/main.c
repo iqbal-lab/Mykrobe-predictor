@@ -296,12 +296,13 @@ int main(int argc, char **argv)
     * err_rate/3
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
-StrBuf* tmp_name = strbuf_new();
+  StrBuf* tmp_name = strbuf_new();
   SampleModel* species_mod = alloc_and_init_sample_model();
   SampleType st = get_species_model(db_graph, 11000, cmd_line->install_dir,
 				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
 				    1,1,
 				    species_mod);
+  fflush(stdout);
   // printf("Sample Type: %i\n",st);
   // printf("Speces Type: %s\n",species_mod->name_of_pure_mtbc_species->buff);
   if (st == MixedMTB)
@@ -329,31 +330,31 @@ StrBuf* tmp_name = strbuf_new();
     {
       printf("** Species\n");
       if (st == NonMTB )
-  {
-    printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
-    timestamp();
-    free_sample_model(species_mod);
-
-    //cleanup
-    strbuf_free(tmp_name);
-    free_antibiotic_info(abi);
-    free_var_on_background(tmp_vob);
-    free_gene_info(tmp_gi);
-    free_reading_utils(ru);
-    
-    cmd_line_free(cmd_line);
-    hash_table_free(&db_graph);
-    
-    return 0;
-  }
+	{
+	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
+	  timestamp();
+	  free_sample_model(species_mod);
+	  
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_var_on_background(tmp_vob);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
+	  return 0;
+	}
       else
-  {
-    printf("%s\n", tmp_name->buff);
-    timestamp();
-    free_sample_model(species_mod);
-
-    printf("** Antimicrobial susceptibility predictions\n");
-  }
+	{
+	  printf("%s\n", tmp_name->buff);
+	  timestamp();
+	  free_sample_model(species_mod);
+	  
+	  printf("** Antimicrobial susceptibility predictions\n");
+	}
     }
   else//JSON
     {
@@ -361,54 +362,54 @@ StrBuf* tmp_name = strbuf_new();
       print_json_called_variant_item("expected_depth",expected_depth,false);
       print_json_phylogenetics_start();
       print_json_species_start();
-  
-  if (st == PureMTBC)
-  {
-    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", true);
-  }
-  else if (st == MixedMTB) 
-  {
-    print_json_item("M.TB", "Mixed",true);
-    print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
-  }
+      
+      if (st == PureMTBC)
+	{
+	  print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", true);
+	}
+      else if (st == MixedMTB) 
+	{
+	  print_json_item("M.TB", "Mixed",true);
+	  print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
+	  print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
+	}
       else
-  {
-    print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
-  }
-    print_json_species_end();
-    print_json_lineage_start();
-    if (st == PureMTBC)
-      {
-        print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", true);
-      }
-
-    print_json_lineage_end();
-
-    
-    print_json_phylogenetics_end();
-
-
+	{
+	  print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
+	}
+      print_json_species_end();
+      print_json_lineage_start();
+      if (st == PureMTBC)
+	{
+	  print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", true);
+	}
+      
+      print_json_lineage_end();
+      
+      
+      print_json_phylogenetics_end();
+      
+      
       if (st == NonMTB)
-  {
-    print_json_susceptibility_start(); 
-    print_json_susceptibility_end();
-    print_json_virulence_start();
-    print_json_virulence_end();
-    print_json_end();
+	{
+	  print_json_susceptibility_start(); 
+	  print_json_susceptibility_end();
+	  print_json_virulence_start();
+	  print_json_virulence_end();
+	  print_json_end();
 
-    //cleanup
-    strbuf_free(tmp_name);
-    free_antibiotic_info(abi);
-    free_var_on_background(tmp_vob);
-    free_gene_info(tmp_gi);
-    free_reading_utils(ru);
-    
-    cmd_line_free(cmd_line);
-    hash_table_free(&db_graph);
-    
-    return 0;
-  }
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_var_on_background(tmp_vob);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
+	  return 0;
+	}
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
@@ -425,45 +426,41 @@ StrBuf* tmp_name = strbuf_new();
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, 
-                      cmd_line, output_last,called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-                      &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
-                      ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, true,
-                      called_variants,called_genes); 
+				  &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes);   
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, 
+				  cmd_line, output_last,called_variants,called_genes); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes);   
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, true,
+				  called_variants,called_genes); 
+    print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes); 
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+				  &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  called_variants,called_genes); 
 
 
 
@@ -488,7 +485,7 @@ print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_g
       time_end[strlen(time_end)-1] = '\0';
       print_json_item("end_time",time_end,true); */
       print_json_end();
-      printf("\n");
+
     }
 
 
