@@ -15,17 +15,18 @@ IDIR_SEQ = libs/seq_file
 IDIR_BAM = libs/htslib/htslib
 
 # Main program includes
-IDIR_BASIC = include/basic
+IDIR_BASIC = libs/cortex/include/basic
 IDIR_BASE_ENCODING = ${IDIR_BASIC}/event_encoding/base_encoding
-IDIR_HASH = include/hash_table
+IDIR_HASH = libs/cortex/include/hash_table
+IDIR_CORE = libs/cortex/include/core
 IDIR_PREDICTOR_STAPH = include/predictor/staph
 IDIR_PREDICTOR_TB = include/predictor/tb
 IDIR_PREDICTOR_CORE = include/predictor/core
 
 
 # Test code includes
-IDIR_BASIC_TESTS = include/test/basic
-IDIR_HASH_TABLE_TESTS = include/test/hash_table
+IDIR_BASIC_TESTS = libs/cortex/include/test/basic
+IDIR_HASH_TABLE_TESTS = libs/cortex/include/test/hash_table
 IDIR_PREDICTOR_TESTS = include/test/myKrobe/predictor
 
 
@@ -101,7 +102,7 @@ LIBINCS = -L/usr/local/lib  -I$(IDIR_BAM) \
 TEST_LIBINCS = -I$(IDIR_CUNIT) -L$(LDIR_CUNIT) $(LIBINCS)
 
 CFLAGS_BASIC      = -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
-CFLAGS_PREDICTOR_CORE = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH)  -I$(IDIR_BASE_ENCODING) $(LIBINCS)
+CFLAGS_PREDICTOR_CORE = -I$(IDIR_CORE) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH)  -I$(IDIR_BASE_ENCODING) $(LIBINCS)
 ifeq ($(STAPH),1)
 	CFLAGS_PREDICTOR = -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_BASIC) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR_STAPH) -I$(IDIR_BASE_ENCODING) $(LIBINCS)
 else
@@ -147,6 +148,10 @@ remove_objects:
 
 src/obj/predictor/%.o : src/predictor/core/%.c include/predictor/core/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
+src/obj/predictor/%.o : libs/cortex/src/core/%.c libs/cortex/include/core/%.h
+	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
+
+
 ifeq ($(STAPH),1)
 src/obj/predictor/%.o : src/predictor/staph/%.c include/predictor/staph/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
@@ -154,45 +159,47 @@ else
 src/obj/predictor/%.o : src/predictor/tb/%.c include/predictor/tb/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 endif
-src/obj/basic/%.o : src/basic/%.c include/basic/%.h
+
+
+src/obj/basic/%.o : libs/cortex/src/basic/%.c libs/cortex/include/basic/%.h
 	mkdir -p src/obj/basic/; $(CC) $(CFLAGS_BASIC) $(OPT) -c $< -o $@
 
-src/obj/basic/%.o : src/basic/event_encoding/base_encoding/%.c  include/basic/event_encoding/base_encoding/%.h
+src/obj/basic/%.o : libs/cortex/src/basic/event_encoding/base_encoding/%.c  libs/cortex/include/basic/event_encoding/base_encoding/%.h
 	mkdir -p src/obj/basic/; $(CC) $(CFLAGS_BASIC) $(OPT) -c $< -o $@
 
-src/obj/test/basic/%.o : src/test/basic/%.c include/test/basic/%.h
+src/obj/test/basic/%.o : libs/cortex/src/test/basic/%.c libs/cortex/include/test/basic/%.h
 	mkdir -p src/obj/test/basic; $(CC) $(CFLAGS_BASIC_TESTS) $(OPT) -c $< -o $@
 
-src/obj/test/hash_table/open_hash/%.o : src/hash_table/open_hash/%.c include/hash_table/open_hash/%.h
+src/obj/test/hash_table/open_hash/%.o : libs/cortex/src/hash_table/open_hash/%.c libs/cortex/include/hash_table/open_hash/%.h
 	mkdir -p src/obj/test/hash_table/open_hash; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
 
-src/obj/test/hash_table/hash_key/bob_jenkins/%.o : src/hash_table/hash_key/bob_jenkins/%.c include/hash_table/hash_key/bob_jenkins/%.h
+src/obj/test/hash_table/hash_key/bob_jenkins/%.o : libs/cortex/src/hash_table/hash_key/bob_jenkins/%.c libs/cortex/include/hash_table/hash_key/bob_jenkins/%.h
 	mkdir -p src/obj/test/hash_table/hash_key/bob_jenkins; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
 
-src/obj/test/hash_table/%.o : src/test/hash_table/%.c include/test/hash_table/%.h
+src/obj/test/hash_table/%.o : libs/cortex/src/test/hash_table/%.c libs/cortex/include/test/hash_table/%.h
 	mkdir -p src/obj/test/hash_table; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
 
 src/obj/test/predictor/%.o : src/test/myKrobe/predictor/%.c include/test/myKrobe/predictor/%.h
 	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -c $< -o $@
 
 
-src/obj/predictor/%.o : src/basic/event_encoding/base_encoding/%.c include/basic/event_encoding/base_encoding/%.h
+src/obj/predictor/%.o : libs/cortex/src/basic/event_encoding/base_encoding/%.c libs/cortex/include/basic/event_encoding/base_encoding/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
-src/obj/predictor/hash_table/open_hash/%.o : src/hash_table/open_hash/%.c include/hash_table/open_hash/%.h
+src/obj/predictor/hash_table/open_hash/%.o : libs/cortex/src/hash_table/open_hash/%.c libs/cortex/include/hash_table/open_hash/%.h
 	mkdir -p src/obj/predictor/hash_table/open_hash; $(CC) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
-src/obj/predictor/hash_table/hash_key/bob_jenkins/%.o : src/hash_table/hash_key/bob_jenkins/%.c include/hash_table/hash_key/bob_jenkins/%.h
+src/obj/predictor/hash_table/hash_key/bob_jenkins/%.o : libs/cortex/src/hash_table/hash_key/bob_jenkins/%.c libs/cortex/include/hash_table/hash_key/bob_jenkins/%.h
 	mkdir -p src/obj/predictor/hash_table/hash_key/bob_jenkins; $(CC) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
 
-src/obj/predictor/%.o : src/basic/%.c include/basic/%.h
+src/obj/predictor/%.o : libs/cortex/src/basic/%.c libs/cortex/include/basic/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
-src/obj/predictor/%.o : src/hash_table/hash_key/bob_jenkins/%.c include/hash_table/%.h
+src/obj/predictor/%.o : libs/cortex/src/hash_table/hash_key/bob_jenkins/%.c libs/cortex/include/hash_table/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
-src/obj/predictor/%.o : src/hash_table/open_hash/%.c include/hash_table/open_hash/%.h
+src/obj/predictor/%.o : libs/cortex/src/hash_table/open_hash/%.c libs/cortex/include/hash_table/open_hash/%.h
 	mkdir -p src/obj/predictor; $(CC) $(CFLAGS_PREDICTOR_CORE) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
 
 src/obj/test/predictor/%.o : src/test/predictor/%.c include/test/predictor/%.h
