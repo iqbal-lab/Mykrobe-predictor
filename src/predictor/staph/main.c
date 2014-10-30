@@ -401,7 +401,7 @@ int main(int argc, char **argv)
 	}
       print_json_species_end(); 
 
-      if (st != PureStaphAureus)
+      if (st == NonStaphylococcal)
 	{
 	  print_json_susceptibility_start(); 
 	  print_json_susceptibility_end();
