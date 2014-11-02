@@ -322,24 +322,22 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  SampleModel* species_mod = alloc_and_init_sample_model();
-  SampleType st = get_species_model(db_graph, 10000, cmd_line->install_dir,
-				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
-				    1,1,
-				    species_mod);
+  // SampleModel* species_mod = alloc_and_init_sample_model();
+  SampleType st = get_species_type(db_graph, 10000, cmd_line->install_dir,
+                                  expected_depth,1,1);
 
-  if (st == MajorStaphAureusAndMinorNonCoag)
+  if (st == MixedStaph)
     {
-      strbuf_append_str(tmp_name, "S.aureus + (minor pop.) ");
-      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+      strbuf_append_str(tmp_name, "Staphylococcus Mixed ");
+      // strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
     }
-  else if (st == MinorStaphAureusAndMajorNonCoag)
-    {
-      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
-    }
+  // else if (st == MinorStaphAureusAndMajorNonCoag)
+  //   {
+  //     strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+  //   }
   else if (st == NonStaphylococcal)
     {
-      strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
+      strbuf_append_str(tmp_name, "Non-staphylococcal");
     }
   else
     {
@@ -353,7 +351,7 @@ int main(int argc, char **argv)
 	{
 	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
-	  free_sample_model(species_mod);
+	  // free_sample_model(species_mod);
 
 	  //cleanup
 	  strbuf_free(tmp_name);
@@ -371,7 +369,7 @@ int main(int argc, char **argv)
 	{
 	  printf("%s\n", tmp_name->buff);
 	  timestamp();
-	  free_sample_model(species_mod);
+	  // free_sample_model(species_mod);
 
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
@@ -386,18 +384,14 @@ int main(int argc, char **argv)
 	{
 	  print_json_item("S.aureus", "Major", true);
 	}
-      else if (st == MajorStaphAureusAndMinorNonCoag) 
+      else if (st == MixedStaph) 
 	{
-	  print_json_item("S.aureus", "Major",false);
-	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
-	}
-      else if (st==MinorStaphAureusAndMajorNonCoag) 
-	{
-	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", true);
+	  print_json_item("Staphylococcus", "Mixed",false);
+	  // print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
 	}
       else
 	{
-	  print_json_item(species_mod->name_of_non_aureus_species->buff, "Major", true);
+	  print_json_item("Non-staphylococcal", "Major", true);
 	}
       print_json_species_end(); 
 

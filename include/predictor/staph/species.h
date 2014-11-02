@@ -25,73 +25,33 @@
   species.h
 */
 #include "dB_graph.h"
-typedef enum 
- {
-  Scapitis = 0,
-  Scaprae = 1,
-  Sepidermidis = 2,
-  Sequorum =3,
-  Shaemolyticus = 4,
-  Shominis = 5,
-  Slugdunensis = 6,
-  Smassiliensis = 7,
-  Spettenkofer = 8,
-  Spseudintermedius = 9,
-  Ssaprophyticus = 10,
-  Ssimiae = 11,
-  Ssimulans = 12,
-  Ssphgb0015 = 13,
-  Sspoj82 = 14,
-  Aureus = 15,
-  Swarneri = 16,
-  } Staph_species ;
-
-#define NUM_SPECIES 17
 
 typedef enum
   {
     PureStaphAureus =0,
-    MajorStaphAureusAndMinorNonCoag = 1,
-    MinorStaphAureusAndMajorNonCoag = 2,
-    NonStaphylococcal = 3,
+    MixedStaph=1,
+    NonStaphylococcal = 2,
   } SampleType;
-
-typedef struct
-{
-  SampleType type;
-  double likelihood;//log likelihood
-  double lp; //log posterior
-  double conf;
-  StrBuf* name_of_non_aureus_species;//how we interpret this depends on the model type.
-} SampleModel;
-
-SampleModel* alloc_and_init_sample_model();
-void free_sample_model(SampleModel* sm);
-
-void map_species_enum_to_str(Staph_species sp, StrBuf* sbuf);
-		
-SampleType get_species_model(dBGraph *db_graph,int max_branch_len, StrBuf* install_dir,
-			     double lambda_g_err, double lambda_e_err, 
-			     double err_rate, int expected_covg,
-			     int ignore_first, int ignore_last,
-			     SampleModel* best_model);
+void load_individual_species_panel_file_path(int species_index, char file_path, StrBuf* install_dir, StrBuf* species_file_paths);
+void load_all_species_panel_file_paths(StrBuf* install_dir,StrBuf* species_file_paths);
 
 
-void get_stats_pure_aureus(int expected_covg, double err_rate, 
-			   double lambda_g_err,double lambda_e,
-			   int* arr_perc_covg, Covg* arr_median,int* arr_tkmers, 
-			   int kmer_size, SampleModel* sm);
+void get_coverage_on_best_catalayse_gene(dBGraph *db_graph,int max_branch_len,
+                                        StrBuf* install_dir,int ignore_first, 
+                                        int ignore_last,
+                                        int* percentage_cov_cat,
+                                        Covg* median_cov_cat);
+boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
+                                StrBuf* install_dir,int ignore_first, 
+                                int ignore_last);
+boolean sample_is_staph(dBGraph *db_graph,int max_branch_len,
+                    StrBuf* install_dir,int ignore_first, 
+                    int ignore_last);		
+SampleType get_species_type(dBGraph *db_graph,int max_branch_len, 
+                            StrBuf* install_dir,int expected_covg,
+                            int ignore_first,int ignore_last);
 
-void get_stats_mix_aureus_and_CONG(int expected_covg, double err_rate, 
-				   double lambda_g_err,
-				   int* arr_perc_covg, Covg* arr_median, int* arr_tkmers,
-				   double frac_aureus,
-				   SampleModel* sm);
 
-void get_stats_non_staph(int expected_covg, double err_rate, double lambda_e,
-			 int perc_covg_cat, Covg median_cat, int tkmers_cat,
-			 int kmer_size,
-			 SampleModel* sm);
 
 
 
