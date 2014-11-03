@@ -32,9 +32,24 @@ typedef enum
     MixedStaph=1,
     NonStaphylococcal = 2,
   } SampleType;
-void load_individual_species_panel_file_path(int species_index, char file_path, StrBuf* install_dir, StrBuf* species_file_paths);
-void load_all_species_panel_file_paths(StrBuf* install_dir,StrBuf* species_file_paths);
 
+
+typedef enum 
+{
+Saureus=0,
+Sepidermidis = 1,
+Shaemolyticus = 2,
+Sother=3
+} Staph_species ;
+
+#define NUM_SPECIES 4
+
+// void add_file_path(int index, StrBuf* install_dir, StrBuf* file_paths,  char file_path );
+
+void load_all_species_panel_file_paths(StrBuf* panel_file_paths , StrBuf* install_dir );
+void get_coverage_on_panels(int* percentage_coverage,Covg* median_coverage,
+                            int*  total_kmers, StrBuf* panel_file_paths,
+                            int max_branch_len, dBGraph *db_graph);
 
 void get_coverage_on_best_catalayse_gene(dBGraph *db_graph,int max_branch_len,
                                         StrBuf* install_dir,int ignore_first, 
