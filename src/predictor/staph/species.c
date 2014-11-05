@@ -298,25 +298,47 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
 
 
 
-// boolean coverage_exists_on_multiple_panels()
-// {
-//   // get the coverage on all our panels
-//   // do we have > 10% coverage on more than one panel
+boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
+{
+  if (per_cov >= threshold)
+  {
+      return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+boolean coverage_exists_on_aureus_and_at_least_one_other_panel(int* percentage_coverage)
+{
+  // get the coverage on all our panels
+  // do we have > 10% coverage on more than one panel
+  boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
+  boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],10);
+  boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],10);
+  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],10);
   
+  boolean is_coag_neg_present = false;
+  if (is_epi_present || is_haem_present || is_sother_present)
+  {
+    is_coag_neg_present = true;
+  }
+  if (is_aureus_present && is_coag_neg_present)
+  {
+      return true;
+  }
+  else
+  {
+    return false;
+  }
+}
 
-// }
-
-// boolean sample_is_mixed()
-// {
-//   if (coverage_exists_on_multiple_panels())
-//   {
-//     return true;
-//   }
-//   else
-//   {
-//     return false;
-//   }
-// }
+boolean sample_is_mixed(int* percentage_coverage)
+{
+  boolean is_mixed = coverage_exists_on_aureus_and_at_least_one_other_panel(percentage_coverage);
+  return (is_mixed);
+}
 
 
 SampleType get_species_type(dBGraph *db_graph,int max_branch_len, 
@@ -337,14 +359,15 @@ SampleType get_species_type(dBGraph *db_graph,int max_branch_len,
                       install_dir,ignore_first, 
                       ignore_last))
   {
-      // if (sample_is_mixed())
-      // {
-      //     sample_type=MixedStaph;
-      // }
-      // else
-      // {
-          sample_type=PureStaphAureus;
-      // }
+      if (sample_is_mixed(percentage_coverage))
+      {
+          sample_type=MixedStaph;
+      }
+      else
+      {
+          sample_type=PureStaph;
+      }
+      
   }
   else
   {

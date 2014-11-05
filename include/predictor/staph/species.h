@@ -28,7 +28,7 @@
 
 typedef enum
   {
-    PureStaphAureus =0,
+    PureStaph =0,
     MixedStaph=1,
     NonStaphylococcal = 2,
   } SampleType;
@@ -67,9 +67,11 @@ boolean sample_is_staph(dBGraph *db_graph,int max_branch_len,
 SampleType get_species_type(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
-// boolean sample_is_mixed();
+boolean coverage_exists_on_aureus_and_at_least_one_other_panel(int* percentage_coverage);
+boolean sample_is_mixed(int* percentage_coverage);
 
-
+boolean is_percentage_coverage_above_threshold(int per_cov,int threshold);
+;
 
 
 
