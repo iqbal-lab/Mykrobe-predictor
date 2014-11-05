@@ -198,10 +198,11 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
   FILE* fp;
   AlleleInfo* ai = alloc_allele_info();
   int number_of_reads = 0;
+  int number_of_covered_reads =0; 
   int num_kmers=0;
-  Covg tot_pos_kmers = 0;
-  Covg tot_kmers=0;
-  Covg med=0;  
+  Covg tot_pos_kmers;
+  Covg tot_kmers;
+  Covg med;  
   //----------------------------------
   // allocate the memory used to read the sequences
   //----------------------------------
@@ -244,6 +245,11 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
   }
   for (i = 0; i < NUM_SPECIES; i++)
   {
+    // Reset counters
+    tot_pos_kmers = 0; 
+    tot_kmers = 0; 
+    med = 0;
+    number_of_covered_reads = 0;
       fp = fopen(panel_file_paths[i]->buff, "r");
       if (fp==NULL)
       {
@@ -262,22 +268,22 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
 
         number_of_reads = number_of_reads + 1;
         int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
+        if (ai->percent_nonzero > 0 ){
+          number_of_covered_reads = number_of_covered_reads +1; 
+        }
         //calculate a running pseudo median, before you update the tots
         if  (tot_kmers+num_kmers>0)
           {
-              med = (med*tot_kmers + ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
+              med += ai->median_covg ; 
               tot_kmers += num_kmers;
               tot_pos_kmers += pos_kmers;
-              printf("AI %i %i %lu  \n", number_of_reads, ai->percent_nonzero, (unsigned long) ai->median_covg );
-
-              printf("%i %lu %i %lu %lu \n", number_of_reads, (unsigned long) med ,ai->percent_nonzero, (unsigned long) tot_pos_kmers, (unsigned long) tot_kmers );
           }
       }while ( num_kmers > 0);
 
     if ( (number_of_reads > 0) && (tot_kmers>0) )
     {
       percentage_coverage[i] = (int) (100 * tot_pos_kmers) / tot_kmers;
-      median_coverage[i] = med;
+      median_coverage[i] = (double) (med) / number_of_covered_reads ;
       total_kmers[i] = tot_kmers;
     }
         else
@@ -286,8 +292,6 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
       median_coverage[i]=0;
       total_kmers[i]=0;
     } 
-
-  printf("%i : %i : %i \n", i,percentage_coverage[i],median_coverage[i]  );     
   fclose(fp);
   }
 }
