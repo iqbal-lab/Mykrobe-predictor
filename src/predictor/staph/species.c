@@ -176,7 +176,7 @@ boolean sample_is_staph(dBGraph *db_graph,int max_branch_len,
 }
 
 
-void load_all_species_panel_file_paths(StrBuf* panel_file_paths , StrBuf* install_dir )
+void load_all_species_panel_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
 {
   panel_file_paths[Saureus] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[Saureus], "data/staph/species/Saureus.fasta" );
@@ -188,115 +188,113 @@ void load_all_species_panel_file_paths(StrBuf* panel_file_paths , StrBuf* instal
   strbuf_append_str(panel_file_paths[Sother], "data/staph/species/Sother.fasta" );
 }
 
-void get_coverage_on_panels(int* percentage_coverage,Covg* median_coverage,
-                            int*  total_kmers, StrBuf* panel_file_paths,
-                            int max_branch_len, dBGraph *db_graph )
+void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
+                            int*  total_kmers, StrBuf** panel_file_paths,
+                            int max_branch_len, dBGraph *db_graph,
+                            int ignore_first, int ignore_last )
 
 {
   int i;
   FILE* fp;
   AlleleInfo* ai = alloc_allele_info();
+  int number_of_reads = 0;
+  int num_kmers=0;
+  Covg tot_pos_kmers = 0;
+  Covg tot_kmers=0;
+  Covg med=0;  
   //----------------------------------
   // allocate the memory used to read the sequences
   //----------------------------------
   Sequence * seq = malloc(sizeof(Sequence));
-  if (seq == NULL){
+  if (seq == NULL)
+  {
     die("Out of memory trying to allocate Sequence");
   }
   alloc_sequence(seq,max_branch_len,LINE_MAX);
-
   //We are going to load all the bases into a single sliding window 
   KmerSlidingWindow* kmer_window = malloc(sizeof(KmerSlidingWindow));
   if (kmer_window==NULL)
-    {
-      die("Failed to malloc kmer sliding window");
-    }
-
-
+  {
+    die("Failed to malloc kmer sliding window");
+  }
   CovgArray* working_ca = alloc_and_init_covg_array(max_branch_len);
   dBNode** array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_branch_len);
   Orientation* array_or =(Orientation*)  malloc(sizeof(Orientation)*max_branch_len);
   kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_branch_len-db_graph->kmer_size+1));
   if (kmer_window->kmer==NULL)
-    {
-      die("Failed to malloc kmer_window->kmer");
-    }
+  {
+    die("Failed to malloc kmer_window->kmer");
+  }
   kmer_window->nkmers=0;
   //create file readers
-  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
+  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry)
+  {
     long long ret;
     int offset = 0;
-    if (new_entry == false){
+    if (new_entry == false)
+    {
       offset = db_graph->kmer_size;
     }
     ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
-    
     return ret;
   }
-  
-  
-  
   if ( (array_nodes==NULL) || (array_or==NULL))
-    {
-      die("Cannot alloc array of nodes or of orientations");
-    }
-
-
+  {
+    die("Cannot alloc array of nodes or of orientations");
+  }
   for (i = 0; i < NUM_SPECIES; i++)
   {
       fp = fopen(panel_file_paths[i]->buff, "r");
       if (fp==NULL)
-  {
-    die("Cannot open this file - %s", panel_file_paths[i]->buff);
-  }
-      
-      
+      {
+        die("Cannot open this file - %s", panel_file_paths[i]->buff);
+      } 
       // while the entry is valid iterate through the fasta file
-      number_of_reads = 0;
-      int num_kmers=0;
+      do 
+      {
+        num_kmers= get_next_single_allele_info(fp, db_graph, ai,
+                                               true,
+                                               seq, kmer_window,
+                                               &file_reader_fasta,
+                                               array_nodes, array_or, 
+                                               working_ca, max_branch_len,
+                                               ignore_first, ignore_last);
 
-      tot_pos_kmers = 0;
-      tot_kmers=0;
-      med=0;
-      do {
-  
-  num_kmers= get_next_single_allele_info(fp, db_graph, ai,
-                 true,
-                 seq, kmer_window,
-                 &file_reader_fasta,
-                 array_nodes, array_or, 
-                 working_ca, max_branch_len,
-                 ignore_first, ignore_last);
+        number_of_reads = number_of_reads + 1;
+        int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
+        //calculate a running pseudo median, before you update the tots
+        if  (tot_kmers+num_kmers>0)
+          {
+              med = (med*tot_kmers + ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
+              tot_kmers += num_kmers;
+              tot_pos_kmers += pos_kmers;
+              printf("AI %i %i %lu  \n", number_of_reads, ai->percent_nonzero, (unsigned long) ai->median_covg );
 
-  number_of_reads = number_of_reads + 1;
-  int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
-  //calculate a running pseudo median, before you update the tots
-  if  (tot_kmers+num_kmers>0)
+              printf("%i %lu %i %lu %lu \n", number_of_reads, (unsigned long) med ,ai->percent_nonzero, (unsigned long) tot_pos_kmers, (unsigned long) tot_kmers );
+          }
+      }while ( num_kmers > 0);
+
+    if ( (number_of_reads > 0) && (tot_kmers>0) )
     {
-      med = (med*tot_kmers + ai->median_covg * num_kmers)/(tot_kmers+num_kmers);
-      tot_kmers += num_kmers;
-      tot_pos_kmers += pos_kmers;
+      percentage_coverage[i] = (int) (100 * tot_pos_kmers) / tot_kmers;
+      median_coverage[i] = med;
+      total_kmers[i] = tot_kmers;
     }
-  while ( num_kmers>0);
-  if ( (number_of_reads>0) && (tot_kmers>0) )
-  {
-    percentage_coverage[i] = (int) (100*tot_pos_kmers)/tot_kmers;
-    median_coverage[i] = med;
-    total_kmers[i] = tot_kmers;
-  }
-      else
-  {
-    percentage_coverage[i]=0;
-    median_coverage[i]=0;
-    total_kmers[i]=0;
-  }      
-      fclose(fp);
-    }
-          
-  }
+        else
+    {
+      percentage_coverage[i]=0;
+      median_coverage[i]=0;
+      total_kmers[i]=0;
+    } 
 
+  printf("%i : %i : %i \n", i,percentage_coverage[i],median_coverage[i]  );     
+  fclose(fp);
+  }
 }
-// bool coverage_exists_on_multiple_panels()
+
+
+
+// boolean coverage_exists_on_multiple_panels()
 // {
 //   // get the coverage on all our panels
 //   // do we have > 10% coverage on more than one panel
@@ -304,7 +302,7 @@ void get_coverage_on_panels(int* percentage_coverage,Covg* median_coverage,
 
 // }
 
-// bool sample_is_mixed()
+// boolean sample_is_mixed()
 // {
 //   if (coverage_exists_on_multiple_panels())
 //   {
@@ -316,42 +314,39 @@ void get_coverage_on_panels(int* percentage_coverage,Covg* median_coverage,
 //   }
 // }
 
-// void get_coverage_on_panels()
-// {
-  
-// }
 
 SampleType get_species_type(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last)
 
 {
-StrBuf* panel_file_paths[NUM_SPECIES];
-load_all_species_panel_file_paths(panel_file_paths,install_dir);
-int* percentage_coverage[NUM_SPECIES]; // for storing the percentage coverage of each reference
-Covg* median_coverage[NUM_SPECIES]; //median covg
-int* total_kmers[NUM_SPECIES];//total kmers in the unique branches
-// get_coverage_on_panels(percentage_coverage,median_coverage,total_kmers,
-//                         panel_file_paths,max_branch_len,db_graph);
-
+  StrBuf* panel_file_paths[NUM_SPECIES];
+  load_all_species_panel_file_paths(panel_file_paths,install_dir);
+  int percentage_coverage[NUM_SPECIES]; // for storing the percentage coverage of each reference
+  int median_coverage[NUM_SPECIES]; //median covg
+  int total_kmers[NUM_SPECIES];//total kmers in the unique branches
+  get_coverage_on_panels(percentage_coverage,median_coverage,total_kmers,
+                          panel_file_paths,max_branch_len,db_graph,
+                          ignore_first,ignore_last);
   SampleType sample_type;
   if (sample_is_staph(db_graph,max_branch_len,
                       install_dir,ignore_first, 
                       ignore_last))
   {
-    // if (sample_is_mixed())
-    // {
-    //   sample_type=MixedStaph;
-    // }
-    // else
-    // {
-      sample_type=PureStaphAureus;
-    // }
+      // if (sample_is_mixed())
+      // {
+      //     sample_type=MixedStaph;
+      // }
+      // else
+      // {
+          sample_type=PureStaphAureus;
+      // }
   }
   else
   {
-    sample_type = NonStaphylococcal;
+      sample_type = NonStaphylococcal;
   }
+  
   return sample_type;
 }
 
