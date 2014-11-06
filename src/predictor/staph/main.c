@@ -323,19 +323,19 @@ int main(int argc, char **argv)
   
   StrBuf* tmp_name = strbuf_new();
   // SampleModel* species_mod = alloc_and_init_sample_model();
-  SampleType st = get_species_type(db_graph, 10000, cmd_line->install_dir,
+  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
                                   expected_depth,1,1);
 
-  if (st == MixedStaph)
+  if (species_info->sample_type == MixedStaph)
     {
       strbuf_append_str(tmp_name, "Staphylococcus Mixed ");
       // strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
     }
-  // else if (st == MinorStaphAureusAndMajorNonCoag)
+  // else if (species_info->sample_type == MinorStaphAureusAndMajorNonCoag)
   //   {
   //     strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
   //   }
-  else if (st == NonStaphylococcal)
+  else if (species_info->sample_type == NonStaphylococcal)
     {
       strbuf_append_str(tmp_name, "Non-staphylococcal");
     }
@@ -347,7 +347,7 @@ int main(int argc, char **argv)
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n");
-      if (st != PureStaph)
+      if (species_info->sample_type != PureStaph)
 	{
 	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
@@ -380,11 +380,11 @@ int main(int argc, char **argv)
       print_json_called_variant_item("expected_depth",expected_depth,false);
       print_json_called_variant_item("mean_read_length",mean_read_length,false);
       print_json_species_start();
-      if (st == PureStaph)
+      if (species_info->sample_type == PureStaph)
 	{
-	  print_json_item("S.aureus", "Major", true);
+	  print_json_item(get_pure_species_name(species_info), "Major", true);
 	}
-      else if (st == MixedStaph) 
+      else if (species_info->sample_type == MixedStaph) 
 	{
 	  print_json_item("Staphylococcus", "Mixed",false);
 	  // print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
@@ -395,7 +395,7 @@ int main(int argc, char **argv)
 	}
       print_json_species_end(); 
 
-      if (st == NonStaphylococcal)
+      if (species_info->sample_type == NonStaphylococcal)
 	{
 	  print_json_susceptibility_start(); 
 	  print_json_susceptibility_end();

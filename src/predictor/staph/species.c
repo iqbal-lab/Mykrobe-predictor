@@ -158,14 +158,10 @@ boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
 
 }
 
-boolean sample_is_staph(dBGraph *db_graph,int max_branch_len,
-                    StrBuf* install_dir,int ignore_first, 
-                    int ignore_last)
+boolean sample_is_staph(boolean has_catalayse)
 {
   // Check if catalayse exists
-  if (catalayse_exists_in_sample(db_graph,max_branch_len,
-                                install_dir,ignore_first, 
-                                ignore_last))
+  if (has_catalayse)
   {
     return true;
   }
@@ -189,7 +185,7 @@ void load_all_species_panel_file_paths(StrBuf** panel_file_paths , StrBuf* insta
 }
 
 void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
-                            int*  total_kmers, StrBuf** panel_file_paths,
+                            StrBuf** panel_file_paths,
                             int max_branch_len, dBGraph *db_graph,
                             int ignore_first, int ignore_last )
 
@@ -284,13 +280,11 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
     {
       percentage_coverage[i] = (int) (100 * tot_pos_kmers) / tot_kmers;
       median_coverage[i] = (double) (med) / number_of_covered_reads ;
-      total_kmers[i] = tot_kmers;
     }
         else
     {
       percentage_coverage[i]=0;
       median_coverage[i]=0;
-      total_kmers[i]=0;
     } 
   fclose(fp);
   }
@@ -310,21 +304,40 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
   }
 }
 
-boolean coverage_exists_on_aureus_and_at_least_one_other_panel(int* percentage_coverage)
+
+void find_which_panels_are_present(int* percentage_coverage,boolean* present, 
+                                  int* num_panels)
 {
-  // get the coverage on all our panels
-  // do we have > 10% coverage on more than one panel
+  num_panels = 0;
   boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
   boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],10);
   boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],10);
-  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],10);
-  
+  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],10);  
+  present[Saureus] = is_aureus_present;
+  present[Sepidermidis] = is_epi_present;
+  present[Shaemolyticus] = is_haem_present;
+  present[Sother] = is_sother_present;
+  int i;
+  for (i=0; i<NUM_SPECIES; i++)
+  {
+    if (present[i])
+    {
+      num_panels = num_panels +1;
+    }
+  }
+}
+
+boolean coverage_exists_on_aureus_and_at_least_one_other_panel(boolean* present)
+{
+  // get the coverage on all our panels
+  // do we have > 10% coverage on more than one panel
+
   boolean is_coag_neg_present = false;
-  if (is_epi_present || is_haem_present || is_sother_present)
+  if (present[Sepidermidis] || present[Shaemolyticus] || present[Sother])
   {
     is_coag_neg_present = true;
   }
-  if (is_aureus_present && is_coag_neg_present)
+  if (present[Saureus] && is_coag_neg_present)
   {
       return true;
   }
@@ -334,32 +347,19 @@ boolean coverage_exists_on_aureus_and_at_least_one_other_panel(int* percentage_c
   }
 }
 
-boolean sample_is_mixed(int* percentage_coverage)
+boolean sample_is_mixed(boolean* present)
 {
-  boolean is_mixed = coverage_exists_on_aureus_and_at_least_one_other_panel(percentage_coverage);
+  boolean is_mixed = coverage_exists_on_aureus_and_at_least_one_other_panel(present);
   return (is_mixed);
 }
 
 
-SampleType get_species_type(dBGraph *db_graph,int max_branch_len, 
-                            StrBuf* install_dir,int expected_covg,
-                            int ignore_first,int ignore_last)
-
+SampleType get_sample_type(boolean has_catalayse, boolean* present)
 {
-  StrBuf* panel_file_paths[NUM_SPECIES];
-  load_all_species_panel_file_paths(panel_file_paths,install_dir);
-  int percentage_coverage[NUM_SPECIES]; // for storing the percentage coverage of each reference
-  int median_coverage[NUM_SPECIES]; //median covg
-  int total_kmers[NUM_SPECIES];//total kmers in the unique branches
-  get_coverage_on_panels(percentage_coverage,median_coverage,total_kmers,
-                          panel_file_paths,max_branch_len,db_graph,
-                          ignore_first,ignore_last);
   SampleType sample_type;
-  if (sample_is_staph(db_graph,max_branch_len,
-                      install_dir,ignore_first, 
-                      ignore_last))
+  if (sample_is_staph(has_catalayse) ) 
   {
-      if (sample_is_mixed(percentage_coverage))
+      if (sample_is_mixed(present))
       {
           sample_type=MixedStaph;
       }
@@ -374,9 +374,86 @@ SampleType get_species_type(dBGraph *db_graph,int max_branch_len,
       sample_type = NonStaphylococcal;
   }
   
-  return sample_type;
+  return sample_type;  
 }
 
+
+
+SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
+                            StrBuf* install_dir,int expected_covg,
+                            int ignore_first,int ignore_last)
+
+{
+  SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
+
+  StrBuf* panel_file_paths[NUM_SPECIES];
+  load_all_species_panel_file_paths(panel_file_paths,install_dir);
+  int percentage_coverage[NUM_SPECIES]; // for storing the percentage coverage of each reference
+  int median_coverage[NUM_SPECIES]; //median covg
+  boolean present[NUM_SPECIES];
+  get_coverage_on_panels(percentage_coverage,median_coverage,
+                          panel_file_paths,max_branch_len,db_graph,
+                          ignore_first,ignore_last);
+  boolean has_catalayse =  catalayse_exists_in_sample(db_graph,max_branch_len,
+                                install_dir,ignore_first, 
+                                ignore_last);
+  int num_panels =0 ;
+  find_which_panels_are_present(percentage_coverage,present,&num_panels);
+  SampleType sample_type = get_sample_type(has_catalayse,present);
+
+  species_info->sample_type = sample_type;
+  species_info->num_species = num_panels;
+  memcpy (species_info->present, present, sizeof(present));
+  memcpy (species_info->percentage_coverage, percentage_coverage, sizeof(percentage_coverage));
+  memcpy (species_info->median_coverage, median_coverage, sizeof(median_coverage));
+  return species_info;
+}
+
+void map_species_enum_to_str(Staph_species staph_species, StrBuf* sbuf)
+{
+  if (staph_species==Saureus)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S. aureus");
+    }
+  else if (staph_species==Sepidermidis)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S. epidermidis");
+    }
+  else if (staph_species==Shaemolyticus)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"S. haemolyticus");
+    }
+  else if (staph_species==Sother)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"Unidentified Staphylococcus");
+    }        
+  else
+    {
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value - we get %d\n", staph_species);
+    }
+  
+}
+
+
+char* get_pure_species_name(SpeciesInfo* species_info)
+{
+  int i;
+  Staph_species species;
+  StrBuf* pure_species_name = strbuf_new();
+  for (i=0; i<NUM_SPECIES; i++)
+  {
+    if (species_info->present[i])
+    {
+      species = i;
+    }
+  }
+  map_species_enum_to_str(species, pure_species_name);
+  return pure_species_name->buff;
+}
 
 
 // Staph_species get_best_hit(int* arr_perc_cov, 
