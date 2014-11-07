@@ -1,0 +1,124 @@
+$total-columns: 10;
+$column-width: 100;
+$gutter-width: 10;
+$margin-left-width: 10;
+$margin-right-width: 10;
+$use-percentages: false;
+
+@mixin with-grid-settings(
+  $total-columns_: $total-columns,
+  $column-width_: $column-width,
+  $gutter-width_: $gutter-width,
+  $margin-left-width_: $margin-left-width,
+  $margin-right-width_: $margin-right-width,
+  $use-percentages_: $use-percentages
+) {
+  // keep the defaults around
+  $_total-columns: $total-columns;
+  $_column-width: $column-width;
+  $_gutter-width: $gutter-width;
+  $_margin-left-width: $margin-left-width;
+  $_margin-right-width: $margin-right-width;
+  $_use-percentages: $use-percentages;
+
+  // use the new settings
+  $total-columns: $total-columns_;
+  $column-width: $column-width_;
+  $gutter-width: $gutter-width_;
+  $margin-left-width: $margin-left-width_;
+  $margin-right-width: $margin-right-width_;
+  $use-percentages: $use-percentages_;
+
+  // apply to contents
+  @content;
+
+  // re-instate the defaults
+  $total-columns: $_total-columns;
+  $column-width: $_column-width;
+  $gutter-width: $_gutter-width;
+  $margin-left-width: $_margin-left-width;
+  $margin-right-width: $_margin-right-width;
+  $use-percentages: $_use-percentages;
+}
+
+@mixin with-interim-columns-margins($total-columns_: $total-columns, $margin-left-width_: $margin-left-width, $margin-right-width_: $margin-right-width) {
+  $_total-columns: $total-columns;
+  $_margin-left-width: $margin-left-width;
+  $_margin-right-width: $margin-right-width;
+
+  $total-columns: $total-columns_;
+  $margin-left-width: $margin-left-width_;
+  $margin-right-width: $margin-right-width_;
+  @content;
+
+  $total-columns: $_total-columns;
+  $margin-left-width: $_margin-left-width;
+  $margin-right-width: $_margin-right-width;
+}
+
+@mixin with-use-percentages($use-percentages_:true) {
+  $_use-percentages: $use-percentages;
+  $use-percentages: $use-percentages_;
+  @content;
+  $use-percentages: $_use-percentages;
+}
+
+//
+// combined width required for supplied settings
+//
+
+@function width-with-grid-settings( $columns, $width, $gutter, $margin ) {
+  $_container-width:($columns * ($width + $gutter)) - $gutter;
+  @return $_container-width + (2 * $margin);
+}
+
+//
+// total width for current settings
+//
+
+@function width-total() {
+  $_container-width:($total-columns * ($column-width + $gutter-width)) - $gutter-width;
+  // @return $_container-width + $margin-left-width + $margin-right-width;
+  @return $_container-width;
+}
+ 
+@function width-for-columns-gutters-margins($columns:1, $gutters:0, $include-margin-left: true, $include-margin-right: true) {
+  $_width-total:width-total();
+  $_container-width:($columns * $column-width) + ($gutters * $gutter-width);
+  @if $include-margin-left {
+    $_container-width: $_container-width + $margin-left-width;
+  }
+  @if $include-margin-right {
+    $_container-width: $_container-width + $margin-right-width;
+  }
+  @if $use-percentages {
+    @return 100% * $_container-width / $_width-total;
+  }
+  @return $_container-width;
+}
+
+@function margin-left() {
+  @return width-for-columns-gutters-margins(0,0,true,false);
+}
+
+@function margin-right() {
+  @return width-for-columns-gutters-margins(0,0,false,true);
+}
+
+@function gutter() {
+  @return width-for-columns-gutters-margins(0,1,false,false);
+}
+
+@function width-for-columns-gutters($columns:1, $gutters:1) {
+  @return width-for-columns-gutters-margins($columns,$gutters,false,false);
+}
+
+@mixin base-column {
+  float:left;
+  min-height: 1px;
+  margin-right: gutter();
+}
+
+@mixin base-column-container {
+  overflow: hidden;
+}

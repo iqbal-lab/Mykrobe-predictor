@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- build:css(.tmp) css/main.css -->
+        <!-- bower:css -->
+        <!-- endbower -->       
+        <!-- endbuild -->
+        <link rel="stylesheet" href="css/jquery.mCustomScrollbar.css">
+        <link rel="stylesheet" href="css/main.css">  
+        <!-- build:js js/vendor.js -->
+        <!-- bower:js -->
+        <script src="bower_components/jquery/dist/jquery.js"></script>
+        <script src="bower_components/get-style-property/get-style-property.js"></script>
+        <script src="bower_components/get-size/get-size.js"></script>
+        <script src="bower_components/eventie/eventie.js"></script>
+        <script src="bower_components/doc-ready/doc-ready.js"></script>
+        <script src="bower_components/eventEmitter/EventEmitter.js"></script>
+        <script src="bower_components/jquery-bridget/jquery.bridget.js"></script>
+        <script src="bower_components/matches-selector/matches-selector.js"></script>
+        <script src="bower_components/outlayer/item.js"></script>
+        <script src="bower_components/outlayer/outlayer.js"></script>
+        <script src="bower_components/jquery-masonry/masonry.js"></script>
+        <script src="bower_components/jquery-mousewheel/jquery.mousewheel.js"></script>
+        <script src="bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.js"></script>
+        <script src="bower_components/jquery.easing/js/jquery.easing.min.js"></script>
+        <script src="bower_components/raphael/raphael.js"></script>
+        <script src="bower_components/tweenlite/TweenLite.min.js"></script>
+        <!-- endbower -->
+        <script src="bower_components/jquery-modal/jquery.modal.js"></script>
+        <script src="js/vendor/bootstrap/bootstrap-tooltip.js"></script>
+        <!-- endbuild -->
+        <script src="js/vendor/swiffy/runtime.js"></script>
+        <!-- build:js js/plugins.js -->
+        <script src="js/plugins.js"></script>
+        <!-- endbuild -->
+        <!-- build:js js/main.js -->
+        <script src="js/mykrobe/MykrobeTarget.js"></script>
+        <script src="js/mykrobe/Model.js"></script>
+        <script src="js/mykrobe/FileDragAndDrop.js"></script>
+        <script src="js/mykrobe/BaseScreen.js"></script>
+        <script src="js/mykrobe/BackgroundScreen.js"></script>
+        <script src="js/mykrobe/BaseMessageScreen.js"></script>
+        <script src="js/mykrobe/DropFileScreen.js"></script>
+        <script src="js/mykrobe/ProcessingScreen.js"></script>
+        <script src="js/mykrobe/ResultScreen.js"></script>
+        <script src="js/mykrobe/ResultScreenCell.js"></script>
+        <script src="js/mykrobe/ResultScreenModuleCell.js"></script>
+        <script src="js/mykrobe/ResultScreenDrugsCell.js"></script> 
+        <script src="js/mykrobe/ResultScreenSpeciesCell.js"></script>  
+        <script src="js/mykrobe/ResultScreenEvidenceCell.js"></script>
+        <script src="js/mykrobe/MykrobeApp.js"></script>
+        <script src="js/mykrobe/MykrobeAbout.js"></script>
+        <script src="js/main.js"></script>
+        <!-- endbuild -->
+    </head>
+    <body class="app">
+        <div id="background-screen" class="screen">
+            <div class="screen-background"></div>
+        </div>
+        <div id="drop-file-screen" class="screen">
+            <div class="message">
+                <h2>Drop file here to analyse</h2>
+                <div class="drop-file-screen-screen-message-functions screen-message-functions">
+                    <nav class="buttons">
+                        <ul>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div id="processing-screen" class="screen">
+            <div class="message">
+                <div class="progress-indicator"></div>
+                <div class="message-dots">
+                    <div class="message-dot one"></div>
+                    <div class="message-dot two"></div>
+                    <div class="message-dot three"></div>
+                </div>
+                <h2 class="message-title">Analysing</h2>
+                <div class="processing-screen-message-functions screen-message-functions">
+                    <nav class="buttons">
+                        <ul>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div id="result-screen" class="screen">
+            <header class="result-screen-header">
+                <nav class="buttons result-screen-header-sections">
+                    <ul>
+                    </ul>
+                </nav>
+                <nav class="buttons result-screen-header-functions">
+                    <ul>
+                    </ul>
+                </nav>
+            </header>
+            <article class="result-screen-article">
+                
+            </article>
+
+            <footer class="result-screen-footer">
+                <ul>
+                    <li class="susceptible"><i class="susceptible"></i> Susceptible</li>
+                    <li class="resistant"><i class="resistant"></i> Resistant</li>
+                    <li class="inducible"><i class="resistant inducible"></i> Inducible</li>
+                    <li class="inconclusive"><i class="inconclusive"></i> <span class="inconclusive">Inconclusive</span></li>
+                    <li class="positive"><i class="positive"></i> <span class="positive">Positive</span></li>
+                    <li class="negative"><i class="negative"></i> <span class="negative">Negative</span></li>
+                    <li class="none">&nbsp;</li>
+                </ul>
+            </footer>
+        </div>
+        <div id="version-footer">
+            <nav class="version-footer-functions">
+                <ul>
+                    <li class="disabled version-number"></li>
+                    <li class="version-footer-about-link">About</li>
+                </ul>
+            </nav>
+        </div>
+        <header>
+            <h1 class="logo">Mykrobe</h1>
+        </header>
+        <div id="error-modal">
+            Error
+            <a class="close-modal" href="#close" rel="modal:close">Close window</a>
+        </div> 
+        <div id="file-drag-and-drop">
+        </div>
+    </body>
+</html>

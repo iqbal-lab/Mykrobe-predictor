@@ -1,0 +1,38 @@
+$sheet-image-url:"";
+$sheet-width:0;
+$sheet-height:0;
+$sheet-icon-width:0;
+$sheet-icon-height:0;
+
+@mixin with-sprite-sheet-base($sheet-image-url_,$sheet-width_,$sheet-height_,$sheet-icon-width_,$sheet-icon-height_) {
+  $_sheet-image-url: $sheet-image-url;
+  $_sheet-width: $sheet-width;
+  $_sheet-height: $sheet-height;
+  $_sheet-icon-width: $sheet-icon-width;
+  $_sheet-icon-height: $sheet-icon-height;
+
+  $sheet-image-url: $sheet-image-url_;
+  $sheet-width: $sheet-width_;
+  $sheet-height: $sheet-height_;
+  $sheet-icon-width: $sheet-icon-width_;
+  $sheet-icon-height: $sheet-icon-height_;
+
+  @content;
+
+  $sheet-image-url: $_sheet-image-url;
+  $sheet-width: $_sheet-width;
+  $sheet-height: $_sheet-height;
+  $sheet-icon-width: $_sheet-icon-width;
+  $sheet-icon-height: $_sheet-icon-height;
+}
+
+@mixin sprite-sheet-icon($icon-x:0, $icon-y:0, $adjust-x:0, $adjust-y:0, $width:$sheet-icon-width, $height:$sheet-icon-height) {
+  background-image: url('#{$sheet-image-url}');
+  background-size: $sheet-width $sheet-height;
+  background-repeat: no-repeat;
+  width:$width;
+  height:$height;
+  $_base-x:-1 * $icon-x * $sheet-icon-width + $adjust-x;
+  $_base-y:-1 * $icon-y * $sheet-icon-height + $adjust-y;
+  background-position: $_base-x $_base-y;
+}

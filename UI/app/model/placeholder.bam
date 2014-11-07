@@ -1,0 +1,20 @@
+{
+  "susceptibility": {
+    "Gentamicin": "S",
+    "Penicillin": "R",
+    "Trimethoprim": "S",
+    "Erythromycin": "S",
+    "Methicillin": "S",
+    "FusidicAcid": "S",
+    "Ciprofloxacin": "S",
+    "Rifampicin": "S",
+    "Tetracycline": "S",
+    "Vancomycin": "S",
+    "Mupirocin": "S",
+    "Clindamycin": "N"
+  },
+  "virulence": {
+    "PVL": "negative",
+    "Toxic shock protein": "positive"
+  }
+}

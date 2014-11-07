@@ -1,0 +1,14 @@
+[
+  {
+    "value": "predictor-s-aureus",
+    "name": "Mykrobe Predictor S.Aureus",
+    "version": "0.1.1",
+	"displayVersion": "0.1.1 (beta)"
+  },
+  {
+    "value": "predictor-tb",
+    "name": "Mykrobe Predictor TB",
+    "version": "0.1.2",
+	"displayVersion": "0.1.2 (beta)"
+  }
+]

@@ -1,0 +1,47 @@
+{
+			"expected_depth": "170",
+	"phylogenetics": {
+		"species": {
+		"M. Tuberculosis": "Major"
+		},
+		"lineage": {
+		"European/American": "Major"
+		}
+	},
+	"susceptibility" :{
+		"rifampicin": "R",
+		"isoniazid": "R",
+		"pyrazinamide": "S",
+		"ethambutol": "S",
+		"kanamycin": "S",
+		"capreomycin": "S",
+		"amikacin": "S",
+		"kanamycin": "S",
+		"streptomycin": "R",
+		"quinolones": "S"
+	},
+	"called_variants" :{
+		"rpoB_S450X" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "213",
+			"S_median_cov": "0",
+		"induced_resistance": "Rifampicin"
+		},
+		"katG_S315X" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "1",
+			"S_median_cov": "0",
+		"induced_resistance": "Isoniazid"
+		},
+		"rrs_C513X" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "299",
+			"S_median_cov": "0",
+		"induced_resistance": "Streptomycin"
+		}
+	},
+		"end_time": "Thu Oct  2 18:45:07 2014"
+}
