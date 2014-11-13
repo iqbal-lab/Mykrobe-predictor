@@ -1,0 +1,26 @@
+{
+			"expected_depth": "61",
+	"phylogenetics": {
+		"species": {
+		"M. Africanum": "Major"
+		},
+		"lineage": {
+		"West Africa 1": "Major"
+		}
+	},
+	"susceptibility" :{
+		"rifampicin": "S",
+		"isoniazid": "S",
+		"pyrazinamide": "S",
+		"ethambutol": "S",
+		"kanamycin": "S",
+		"capreomycin": "S",
+		"amikacin": "S",
+		"kanamycin": "S",
+		"streptomycin": "S",
+		"quinolones": "S"
+	},
+	"called_variants" :{
+	},
+		"end_time": "Thu Oct  2 18:42:26 2014"
+}

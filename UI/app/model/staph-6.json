@@ -1,0 +1,62 @@
+{
+  "expected_depth": "160",
+  "mean_read_length": "89",
+  "species": {
+    "S.aureus": "Major"
+  },
+  "susceptibility": {
+    "Gentamicin": "S",
+    "Penicillin": "R",
+    "Methicillin": "R",
+    "Trimethoprim": "S",
+    "Erythromycin": "R",
+    "FusidicAcid": "S",
+    "Ciprofloxacin": "R",
+    "Rifampicin": "S",
+    "Tetracycline": "S",
+    "Vancomycin": "S",
+    "Mupirocin": "S",
+    "Clindamycin": "R(inducible)"
+  },
+  "called_variants": {
+    "gyrA_S84L": {
+      "R_per_cov": "100",
+      "S_per_cov": "0",
+      "R_median_cov": "241",
+      "S_median_cov": "0",
+      "induced_resistance": "Ciprofloxacin"
+    },
+    "upnamE_MADE": {
+      "R_per_cov": "99",
+      "S_per_cov": "0",
+      "R_median_cov": "666",
+      "S_median_cov": "0",
+      "induced_resistance": "Ciprofloxacin"
+    }
+  },
+  "called_genes": {
+    "blaZ": {
+      "per_cov": "67",
+      "median_cov": "136",
+      "induced_resistance": "Penicillin"
+    },
+    "ermC": {
+      "per_cov": "99",
+      "median_cov": "1150",
+      "induced_resistance": "Erythromycin"
+    },
+    "mecA": {
+      "per_cov": "99",
+      "median_cov": "181",
+      "induced_resistance": "Methicillin"
+    },
+    "fakE": {
+      "per_cov": "11",
+      "median_cov": "666",
+      "induced_resistance": "Ciprofloxacin"
+    }
+  },
+  "virulence_toxins": {
+    "PVL": "negative"
+  }
+}

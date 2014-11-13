@@ -1,0 +1,38 @@
+{
+   "expected_depth": "79",
+   "phylogenetics": {
+       "species": {
+           "M. tuberculosis": "Major"
+       },
+       "lineage": {
+           "European/American": "Major"
+       }
+   },
+   "susceptibility": {
+       "Isoniazid": "R",
+       "Rifampicin": "R",
+       "Ethambutol": "R",
+       "Pyrazinamide": "S",
+       "Quinolones": "R",
+       "Streptomycin": "S",
+       "Amikacin": "R",
+       "Capreomycin": "S",
+       "Kanamycin": "S"
+   },
+   "called_variants": {
+       "embB_M306X": {
+           "R_per_cov": "100",
+           "S_per_cov": "0",
+           "R_median_cov": "99",
+           "S_median_cov": "0",
+           "induced_resistance": "Ethambutol"
+       },
+       "gyrA_D94X": {
+           "R_per_cov": "100",
+           "S_per_cov": "0",
+           "R_median_cov": "98",
+           "S_median_cov": "0",
+           "induced_resistance": "Quinolones"
+       }
+   }
+}

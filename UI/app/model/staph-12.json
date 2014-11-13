@@ -1,0 +1,47 @@
+{
+  "expected_depth": "102",
+  "mean_read_length": "90",
+  "species": {
+    "S.aureus": "Major"
+  },
+  "susceptibility": {
+    "Gentamicin": "S",
+    "Penicillin": "R",
+    "Methicillin": "S",
+    "Trimethoprim": "S",
+    "Erythromycin": "S",
+    "FusidicAcid": "S",
+    "Ciprofloxacin": "R",
+    "Rifampicin": "S",
+    "Tetracycline": "S",
+    "Vancomycin": "S",
+    "Mupirocin": "S",
+    "Clindamycin": "S"
+  },
+  "called_variants": {
+    "grlA_S80F": {
+      "R_per_cov": "100",
+      "S_per_cov": "100",
+      "R_median_cov": "95",
+      "S_median_cov": "1",
+      "induced_resistance": "Ciprofloxacin"
+    },
+    "gyrA_S84L": {
+      "R_per_cov": "100",
+      "S_per_cov": "0",
+      "R_median_cov": "163",
+      "S_median_cov": "0",
+      "induced_resistance": "Ciprofloxacin"
+    }
+  },
+  "called_genes": {
+    "blaZ": {
+      "per_cov": "100",
+      "median_cov": "118",
+      "induced_resistance": "Penicillin"
+    }
+  },
+  "virulence_toxins": {
+    "PVL": "negative"
+  }
+}

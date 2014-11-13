@@ -1,0 +1,10 @@
+{
+  "species": {
+    "S.lugdunensis": "1"
+  },
+  "susceptibility": {
+    "Penicillin": "R",
+    "Methicillin": "R"
+  },
+  "virulence": {}
+}

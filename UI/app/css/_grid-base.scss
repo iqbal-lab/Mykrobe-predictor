@@ -1,0 +1,65 @@
+@import "grid";
+
+@mixin grid-base {
+  .container {
+    padding-left: margin-left();
+    padding-right: margin-right();    
+  }
+  .row {
+    @if $use-percentages {
+      width: 100%;
+      @include with-use-percentages(false) {
+        max-width:width-for-columns-gutters($total-columns,$total-columns - 1);
+      }
+    } 
+    @else {
+      width:width-for-columns-gutters($total-columns,$total-columns - 1);
+    }
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .onecol, .twocol, .threecol, .fourcol, .fivecol, .sixcol, .sevencol, .eightcol, .ninecol, .tencol, .elevencol, .twelvecol {
+    @include base-column();
+  }
+  .row {
+    .onecol {
+      width:width-for-columns-gutters(1,0);
+    }
+    .twocol {
+      width:width-for-columns-gutters(2,1);
+    }
+    .threecol {
+      width:width-for-columns-gutters(3,2);
+    }
+    .fourcol {
+      width:width-for-columns-gutters(4,3);
+    }
+    .fivecol {
+      width:width-for-columns-gutters(5,4);
+    }
+    .sixcol {
+      width:width-for-columns-gutters(6,5);
+    }
+    .sevencol {
+      width:width-for-columns-gutters(7,6);
+    }
+    .eightcol {
+      width:width-for-columns-gutters(8,7);
+    }
+    .ninecol {
+      width:width-for-columns-gutters(9,8);
+    }
+    .tencol {
+      width:width-for-columns-gutters(10,9);
+    }
+    .elevencol {
+      width:width-for-columns-gutters(11,10);
+    }
+    .twelvecol {
+      width:width-for-columns-gutters(12,11);
+    }
+  }
+  .last {
+    margin-right: 0;
+  }
+}

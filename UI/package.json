@@ -1,0 +1,34 @@
+{
+  "name": "mykrobe",
+  "version": "0.0.0",
+  "description": "",
+  "keywords": [],
+  "devDependencies": {
+    "bower": "^1.3.11",
+    "grunt": "^0.4.5",
+    "grunt-bower-install": "^1.6",
+    "grunt-bower-requirejs": "^1.1",
+    "grunt-contrib-clean": "~0.6",
+    "grunt-contrib-compress": "~0.12",
+    "grunt-contrib-concat": "~0.5",
+    "grunt-contrib-copy": "~0.6",
+    "grunt-contrib-cssmin": "^0.10",
+    "grunt-contrib-htmlmin": "^0.3.0",
+    "grunt-contrib-jasmine": "^0.8.0",
+    "grunt-contrib-jshint": "~0.10",
+    "grunt-contrib-rename": "0.0.3",
+    "grunt-contrib-sass": "^0.8",
+    "grunt-contrib-uglify": "^0.6",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-exec": "^0.4.6",
+    "grunt-node-webkit-builder": "^0.2.3",
+    "grunt-prompt": "^1.1.0",
+    "grunt-svgmin": "^1.0",
+    "grunt-usemin": "^2.4.0",
+    "load-grunt-tasks": "^0.6.0",
+    "matchdep": "~0.3.0"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}

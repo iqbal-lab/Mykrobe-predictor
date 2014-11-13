@@ -1,0 +1,3547 @@
+{
+			"expected_depth": "159",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "380",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "140",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "R",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "R(inducible)"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"ermC" :{
+			"per_cov": "99",
+			"median_cov": "1627",
+		"induced_resistance": "Erythromycin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "151",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "178",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "167",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "R",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "69",
+			"median_cov": "163",
+		"induced_resistance": "Penicillin"
+		},
+		"tetK" :{
+			"per_cov": "100",
+			"median_cov": "2218",
+		"induced_resistance": "Tetracycline"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "160",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "R",
+		"Trimethoprim": "S",
+		"Erythromycin": "R",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "R",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "R(inducible)"
+	},
+	"called_variants" :{
+		"gyrA_S84L" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "241",
+			"S_median_cov": "0",
+		"induced_resistance": "Ciprofloxacin"
+		}
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "67",
+			"median_cov": "136",
+		"induced_resistance": "Penicillin"
+		},
+		"ermC" :{
+			"per_cov": "99",
+			"median_cov": "1150",
+		"induced_resistance": "Erythromycin"
+		},
+		"mecA" :{
+			"per_cov": "99",
+			"median_cov": "181",
+		"induced_resistance": "Methicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "130",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "R",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "268",
+		"induced_resistance": "Penicillin"
+		},
+		"tetK" :{
+			"per_cov": "100",
+			"median_cov": "2373",
+		"induced_resistance": "Tetracycline"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "137",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "R",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "228",
+		"induced_resistance": "Penicillin"
+		},
+		"tetK" :{
+			"per_cov": "92",
+			"median_cov": "3",
+		"induced_resistance": "Tetracycline"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "178",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "128",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "118",
+			"mean_read_length": "87",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "130",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "145",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "286",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "164",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "159",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "169",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "169",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "179",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "195",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "72",
+			"median_cov": "210",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "182",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "357",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "148",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "362",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "149",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "350",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "135",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "143",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "132",
+			"mean_read_length": "88",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "266",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "57",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "69",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "65",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "133",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "R",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"fusA_P404Q" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "168",
+			"S_median_cov": "0",
+		"induced_resistance": "FusidicAcid"
+		}
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "293",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "76",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "80",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "77",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "77",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "70",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "147",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "58",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "64",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "72",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "90",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "70",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "71",
+			"median_cov": "68",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "positive"
+	}
+}
+
+{
+			"expected_depth": "81",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "154",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "R",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "85",
+			"median_cov": "151",
+		"induced_resistance": "Penicillin"
+		},
+		"fusB" :{
+			"per_cov": "99",
+			"median_cov": "170",
+		"induced_resistance": "FusidicAcid"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "103",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "170",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "158",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "96",
+			"median_cov": "175",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "158",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "78",
+			"median_cov": "159",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "147",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "R",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"fusA_H457Y" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "187",
+			"S_median_cov": "0",
+		"induced_resistance": "FusidicAcid"
+		}
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "275",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "209",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "99",
+			"median_cov": "220",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "116",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "98",
+			"median_cov": "235",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "105",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "162",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "135",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "287",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "133",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "224",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "136",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "95",
+			"median_cov": "140",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "102",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "R",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"grlA_S80F" :{
+			"R_per_cov": "100",
+			"S_per_cov": "100",
+			"R_median_cov": "95",
+			"S_median_cov": "1",
+		"induced_resistance": "Ciprofloxacin"
+		}
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "118",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "95",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "100",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "200",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "R",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "R",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "430",
+		"induced_resistance": "Penicillin"
+		},
+		"dfrG" :{
+			"per_cov": "99",
+			"median_cov": "214",
+		"induced_resistance": "Trimethoprim"
+		},
+		"tetK" :{
+			"per_cov": "100",
+			"median_cov": "1830",
+		"induced_resistance": "Tetracycline"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "positive"
+	}
+}
+
+{
+			"expected_depth": "127",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "68",
+			"median_cov": "136",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "163",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "161",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "312",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "166",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "105",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "R",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"fusA_V90I " :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "124",
+			"S_median_cov": "0",
+		"induced_resistance": "FusidicAcid"
+		}
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "95",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "95",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "147",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "68",
+			"median_cov": "155",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "130",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "298",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "104",
+			"mean_read_length": "89",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "69",
+			"median_cov": "105",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "109",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "95",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "115",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "115",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "140",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "158",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "404",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "130",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "R",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"grlA_S80F" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "146",
+			"S_median_cov": "0",
+		"induced_resistance": "Ciprofloxacin"
+		}
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "153",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "118",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "R",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "R",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"gyrA_S84L" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "163",
+			"S_median_cov": "0",
+		"induced_resistance": "Ciprofloxacin"
+		}
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "70",
+			"median_cov": "110",
+		"induced_resistance": "Penicillin"
+		},
+		"mecA" :{
+			"per_cov": "99",
+			"median_cov": "146",
+		"induced_resistance": "Methicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "82",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "214",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "161",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "401",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "138",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "94",
+			"median_cov": "149",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "131",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "108",
+			"mean_read_length": "90",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "103",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "92",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "98",
+			"median_cov": "176",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "40",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "67",
+			"median_cov": "32",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "245",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "36",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "R",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "59",
+		"induced_resistance": "Penicillin"
+		},
+		"fusC" :{
+			"per_cov": "99",
+			"median_cov": "28",
+		"induced_resistance": "FusidicAcid"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "79",
+			"mean_read_length": "93",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "43",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "R",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "R(inducible)"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "67",
+			"median_cov": "28",
+		"induced_resistance": "Penicillin"
+		},
+		"ermA" :{
+			"per_cov": "100",
+			"median_cov": "90",
+		"induced_resistance": "Erythromycin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "41",
+			"mean_read_length": "93",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "116",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "53",
+			"mean_read_length": "93",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "66",
+			"median_cov": "48",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "positive"
+	}
+}
+
+{
+			"expected_depth": "49",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "R",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "71",
+			"median_cov": "39",
+		"induced_resistance": "Penicillin"
+		},
+		"tetK" :{
+			"per_cov": "95",
+			"median_cov": "49",
+		"induced_resistance": "Tetracycline"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "73",
+			"mean_read_length": "93",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "71",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "124",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "R",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "R(inducible)"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "112",
+		"induced_resistance": "Penicillin"
+		},
+		"ermA" :{
+			"per_cov": "100",
+			"median_cov": "252",
+		"induced_resistance": "Erythromycin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "178",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "71",
+			"median_cov": "151",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "94",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "94",
+			"median_cov": "91",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "136",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "R",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "R(inducible)"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "141",
+		"induced_resistance": "Penicillin"
+		},
+		"ermA" :{
+			"per_cov": "100",
+			"median_cov": "150",
+		"induced_resistance": "Erythromycin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "197",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "94",
+			"median_cov": "196",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "108",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "142",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "117",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "135",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "151",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "219",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "positive"
+	}
+}
+
+{
+			"expected_depth": "231",
+			"mean_read_length": "92",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "R",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+		"fusA_L461S" :{
+			"R_per_cov": "100",
+			"S_per_cov": "0",
+			"R_median_cov": "322",
+			"S_median_cov": "0",
+		"induced_resistance": "FusidicAcid"
+		}
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "194",
+			"mean_read_length": "91",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "717",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "104",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "196",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "133",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "216",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "140",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "190",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "70",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "120",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "242",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "376",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "144",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "107",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "98",
+			"median_cov": "244",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "137",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "S",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "137",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "380",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "239",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "R",
+		"Trimethoprim": "S",
+		"Erythromycin": "R",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "R(inducible)"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "91",
+			"median_cov": "105",
+		"induced_resistance": "Penicillin"
+		},
+		"ermC" :{
+			"per_cov": "99",
+			"median_cov": "53",
+		"induced_resistance": "Erythromycin"
+		},
+		"mecA" :{
+			"per_cov": "99",
+			"median_cov": "8",
+		"induced_resistance": "Methicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "199",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "71",
+			"median_cov": "221",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "172",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "176",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "99",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "110",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "115",
+			"mean_read_length": "94",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "91",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
+{
+			"expected_depth": "130",
+			"mean_read_length": "95",
+		"species": {
+		"S.aureus": "Major"
+		},
+	"susceptibility" :{
+		"Gentamicin": "S",
+		"Penicillin": "R",
+		"Methicillin": "S",
+		"Trimethoprim": "S",
+		"Erythromycin": "S",
+		"FusidicAcid": "S",
+		"Ciprofloxacin": "S",
+		"Rifampicin": "S",
+		"Tetracycline": "S",
+		"Vancomycin": "S",
+		"Mupirocin": "S",
+		"Clindamycin": "S"
+	},
+	"called_variants" :{
+	},
+	"called_genes" :{
+		"blaZ" :{
+			"per_cov": "100",
+			"median_cov": "115",
+		"induced_resistance": "Penicillin"
+		}
+	},
+	"virulence_toxins" :{
+		"PVL": "negative"
+	}
+}
+
