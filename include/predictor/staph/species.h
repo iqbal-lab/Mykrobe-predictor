@@ -88,5 +88,6 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold);
 
 
 void map_species_enum_to_str(Staph_species staph_species, StrBuf* sbuf);
+char* get_ith_species_name(SpeciesInfo* species_info, int i);
 char* get_pure_species_name(SpeciesInfo* species_info);
 

@@ -308,7 +308,6 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
 void find_which_panels_are_present(int* percentage_coverage,boolean* present, 
                                   int* num_panels)
 {
-  num_panels = 0;
   boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
   boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],10);
   boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],10);
@@ -322,7 +321,7 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
   {
     if (present[i])
     {
-      num_panels = num_panels +1;
+      *num_panels = *num_panels +1;
     }
   }
 }
@@ -403,6 +402,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
 
   species_info->sample_type = sample_type;
   species_info->num_species = num_panels;
+
   memcpy (species_info->present, present, sizeof(present));
   memcpy (species_info->percentage_coverage, percentage_coverage, sizeof(percentage_coverage));
   memcpy (species_info->median_coverage, median_coverage, sizeof(median_coverage));
@@ -439,21 +439,40 @@ void map_species_enum_to_str(Staph_species staph_species, StrBuf* sbuf)
 }
 
 
-char* get_pure_species_name(SpeciesInfo* species_info)
+char* get_ith_species_name(SpeciesInfo* species_info, int i)
 {
-  int i;
-  Staph_species species;
-  StrBuf* pure_species_name = strbuf_new();
-  for (i=0; i<NUM_SPECIES; i++)
+  Staph_species species=Saureus;
+  StrBuf* pure_species_name = strbuf_new(); 
+  int j; 
+  int species_index = 0;
+  if (i > species_info->num_species -1 ){
+    die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
+  }
+  else
   {
-    if (species_info->present[i])
+    for (j=0; j<NUM_SPECIES; j++)
     {
-      species = i;
-    }
+      if (species_info->present[j])
+      {
+        if (species_index == i)
+        {
+            // We at the required species
+            species = j;
+        }
+        species_index = species_index + 1;
+      }
+    }    
   }
   map_species_enum_to_str(species, pure_species_name);
   return pure_species_name->buff;
 }
+
+
+char* get_pure_species_name(SpeciesInfo* species_info)
+{
+  return get_ith_species_name(species_info, 0 );
+}
+
 
 
 // Staph_species get_best_hit(int* arr_perc_cov, 

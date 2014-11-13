@@ -381,18 +381,26 @@ int main(int argc, char **argv)
       print_json_called_variant_item("mean_read_length",mean_read_length,false);
       print_json_species_start();
       if (species_info->sample_type == PureStaph)
-	{
-	  print_json_item(get_pure_species_name(species_info), "Major", true);
-	}
+	    {
+	     print_json_item(get_pure_species_name(species_info), "Major", true);
+	   }
       else if (species_info->sample_type == MixedStaph) 
-	{
-	  print_json_item("Staphylococcus", "Mixed",false);
-	  // print_json_item(species_mod->name_of_non_aureus_species->buff, "Minor", true);
-	}
-      else
-	{
-	  print_json_item("Non-staphylococcal", "Major", true);
-	}
+  	{
+  	  print_json_item("Staphylococcus", "Mixed",false);
+      int i;
+      boolean last = false;
+      for (i=0; i < species_info->num_species; i++)
+      {
+        if (i == species_info->num_species-1){
+          last = true;
+        }
+        print_json_item(get_ith_species_name(species_info,i), "Minor", last);
+      }
+  	}
+    else
+  	{
+  	  print_json_item("Non-staphylococcal", "Major", true);
+  	}
       print_json_species_end(); 
 
       if (species_info->sample_type == NonStaphylococcal)
