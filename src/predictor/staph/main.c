@@ -382,11 +382,10 @@ int main(int argc, char **argv)
       print_json_species_start();
       if (species_info->sample_type == PureStaph)
 	    {
-	     print_json_item(get_pure_species_name(species_info), "Major", true);
+	     print_json_called_variant_item(get_pure_species_name(species_info), "Major", true);
 	   }
       else if (species_info->sample_type == MixedStaph) 
   	{
-  	  print_json_item("Staphylococcus", "Mixed",false);
       int i;
       boolean last = false;
       for (i=0; i < species_info->num_species; i++)
@@ -394,7 +393,7 @@ int main(int argc, char **argv)
         if (i == species_info->num_species-1){
           last = true;
         }
-        print_json_item(get_ith_species_name(species_info,i), "Minor", last);
+        print_json_called_variant_item(get_ith_species_name(species_info,i), get_ith_species_coverage(species_info,i), last);
       }
   	}
     else

@@ -309,13 +309,13 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
                                   int* num_panels)
 {
   boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
-  boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],10);
-  boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],10);
+  boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
+  boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],30);
   boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],10);  
   present[Saureus] = is_aureus_present;
   present[Sepidermidis] = is_epi_present;
   present[Shaemolyticus] = is_haem_present;
-  present[Sother] = is_sother_present;
+  present[Sother] = is_sother_present && !(is_epi_present || is_haem_present) ;
   int i;
   for (i=0; i<NUM_SPECIES; i++)
   {
@@ -468,9 +468,41 @@ char* get_ith_species_name(SpeciesInfo* species_info, int i)
 }
 
 
+int get_ith_species_coverage(SpeciesInfo* species_info,int i)
+{
+  int covg=0;
+  int j;
+  int species_index=0;
+  if (i > species_info->num_species -1 ){
+    die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
+  }
+  else
+  {
+    for (j=0; j<NUM_SPECIES; j++)
+    {
+      if (species_info->present[j])
+      {
+        if (species_index == i)
+        {
+            // We at the required species
+            covg = species_info->median_coverage[j];
+        }
+        species_index = species_index + 1;
+      }
+    }    
+  }
+  return covg;
+
+}
+
 char* get_pure_species_name(SpeciesInfo* species_info)
 {
   return get_ith_species_name(species_info, 0 );
+}
+
+int get_pure_species_coverage(SpeciesInfo* species_info)
+{
+  return get_ith_species_coverage(species_info, 0 );
 }
 
 
