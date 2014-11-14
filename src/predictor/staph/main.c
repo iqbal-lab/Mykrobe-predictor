@@ -382,7 +382,7 @@ int main(int argc, char **argv)
       print_json_species_start();
       if (species_info->sample_type == PureStaph)
 	    {
-	     print_json_called_variant_item(get_pure_species_name(species_info), "Major", true);
+	     print_json_called_variant_item(get_pure_species_name(species_info), get_pure_species_coverage(species_info), true);
 	   }
       else if (species_info->sample_type == MixedStaph) 
   	{

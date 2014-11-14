@@ -147,7 +147,7 @@ boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
                                         ignore_last,
                                         &percentage_cov_cat,
                                         &median_cov_cat);
-    if (percentage_cov_cat > 50)
+    if (percentage_cov_cat > 20)
     {
       return true;
     }   
