@@ -316,6 +316,12 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
   present[Sepidermidis] = is_epi_present;
   present[Shaemolyticus] = is_haem_present;
   present[Sother] = is_sother_present && !(is_epi_present || is_haem_present) ;
+   // In that case where no panels are present, we must call it as Staph since 
+  // we've already seen that cat is in the sample. 
+  if ( ! (is_aureus_present || is_epi_present || is_haem_present  || is_sother_present ) )
+  {
+    present[Sother] = true;
+  }
   int i;
   for (i=0; i<NUM_SPECIES; i++)
   {
@@ -324,6 +330,7 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
       *num_panels = *num_panels +1;
     }
   }
+
 }
 
 boolean coverage_exists_on_aureus_and_at_least_one_other_panel(boolean* present)
