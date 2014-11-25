@@ -70,7 +70,10 @@ double get_log_posterior_of_mixed_infection(double llk,
 {
   if ( (max_perc_covg_on_res_allele==100)
        && 
-       (var->vob_best_sus->susceptible_allele.percent_nonzero==100) )
+       (var->vob_best_sus->susceptible_allele.percent_nonzero==100)
+       && 
+       (var->vob_best_sus->susceptible_allele.median_covg >= 3)
+      )
     {
       return llk;
     }
