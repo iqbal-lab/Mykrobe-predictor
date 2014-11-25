@@ -443,32 +443,32 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   }
       any_allele_non_null=true;
       InfectionType I=
-  resistotype(abi->vars[i],
-              err_rate, 
-              db_graph->kmer_size, 
-              lambda_g, 
-              lambda_e, 
-              epsilon,
-              &best_model, 
-              MaxAPosteriori,
-              cmd_line->min_frac_to_detect_minor_pops);
-
+	resistotype(abi->vars[i],
+		    err_rate, 
+		    db_graph->kmer_size, 
+		    lambda_g, 
+		    lambda_e, 
+		    epsilon,
+		    &best_model, 
+		    MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops);
+      
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
+	{
+	  max_sus_conf = best_model.conf;
+	}
       if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
+	{
+	  min_conf = best_model.conf;
+	}
+      
       if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    // Save the variant being called 
-    // add_called_variant_info_to_array(i, called_variants, best_model, I)
-    update_called_variants(called_variants,i,abi->vars[i]);
-    return I;
-  }
+	{  
+	  // Save the variant being called 
+	  // add_called_variant_info_to_array(i, called_variants, best_model, I)
+	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+	  return I;
+	}
     }
   if (
       (any_allele_non_null==false)
@@ -562,7 +562,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }
@@ -663,7 +663,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }
@@ -759,7 +759,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }
@@ -855,7 +855,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }
@@ -951,7 +951,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }
@@ -1047,7 +1047,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }
@@ -1144,7 +1144,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{  
 	  
-	  update_called_variants(called_variants,i,abi->vars[i]);
+	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	  return I;
 	}
     }
@@ -1241,7 +1241,7 @@ boolean any_allele_non_null=false;
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i]);
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     }

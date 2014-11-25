@@ -98,6 +98,7 @@ typedef struct
   int max_sus_allele_present;
   int res_median_covg;
   int sus_median_covg;
+  double confidence;
   KnownMutation var_id;
 }CalledVariant;
 
@@ -105,7 +106,7 @@ int get_last_called_variant_index(CalledVariant* called_variants);
 CalledVariant* alloc_and_init_called_variant_array();
 void free_called_variant_array(CalledVariant* cva);
 void print_called_variants(CalledVariant* called_variants,OutputFormat format,boolean last);
-void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var* var);
+void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var* var, double conf);
 
 // Define a structure to store resistance genes which are called
 typedef struct
@@ -113,13 +114,14 @@ typedef struct
   int max_res_allele_present;
   int res_median_covg;
   GenePresenceGene gene;
+  double confidence;
 }CalledGene;
 
 int get_last_called_gene_index(CalledGene* called_genes);
 CalledGene* alloc_and_init_called_genes_array();
 void free_called_genes_array(CalledGene* cg);
 void print_called_genes(CalledGene* called_genes,OutputFormat format);
-void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info);
+void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info, double conf);
 
 
 

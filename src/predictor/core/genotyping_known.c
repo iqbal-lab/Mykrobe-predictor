@@ -165,6 +165,7 @@ void print_called_variants(CalledVariant* called_variants,OutputFormat format,bo
 				print_json_called_variant_item("S_per_cov", called_variants[i].max_sus_allele_present, false);
 				print_json_called_variant_item("R_median_cov", called_variants[i].res_median_covg,  false);
 				print_json_called_variant_item("S_median_cov", called_variants[i].sus_median_covg, false);
+				print_json_called_variant_item("conf", called_variants[i].confidence, false);
 				print_json_item("induced_resistance",map_var_id_to_drug_resistance(called_variants[i].var_id),  true);
 				if (i == last_variant){
 					print_json_called_variant_end(true);
@@ -213,6 +214,7 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 				print_json_called_gene_start( map_enum_to_gene_name(called_genes[i].gene) );
 				print_json_called_gene_item("per_cov", called_genes[i].max_res_allele_present,  false);
 				print_json_called_gene_item("median_cov", called_genes[i].res_median_covg,  false);
+				print_json_called_gene_item("conf", called_genes[i].confidence, false);
 				print_json_item("induced_resistance",map_gene_to_drug_resistance(called_genes[i].gene),  true);
 				if (i == last_gene){
 					print_json_called_gene_end(true);
@@ -238,21 +240,22 @@ void print_called_genes(CalledGene* called_genes,OutputFormat format){
 		}	
 	}
 }
-void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var * var)
+void update_called_variants(CalledVariant* called_variants,KnownMutation i, Var * var, double conf)
 {
     called_variants[i].var_id = i;
     called_variants[i].max_res_allele_present = var->vob_best_res->working_current_max_res_allele_present;
     called_variants[i].max_sus_allele_present = var->vob_best_sus->susceptible_allele.percent_nonzero;	
     called_variants[i].res_median_covg = var->vob_best_res->working_current_median_covg;
     called_variants[i].sus_median_covg = var->vob_best_sus->susceptible_allele.median_covg;	
-
+    called_variants[i].confidence=conf;
 }
 
-void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info)
+void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInfo* gene_info, double conf)
 {
     called_genes[gene].gene = gene;
     called_genes[gene].max_res_allele_present = gene_info->percent_nonzero;
     called_genes[gene].res_median_covg = gene_info->median_covg;
+    called_genes[gene].confidence=conf;
 }
 
 CalledGene* alloc_and_init_called_genes_array()
