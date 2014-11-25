@@ -591,7 +591,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 	resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
 		    lambda_g, lambda_e, epsilon,
 		    &best_model, MaxAPosteriori,
-  cmd_line->min_frac_to_detect_minor_pops);
+		    cmd_line->min_frac_to_detect_minor_pops);
 
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
@@ -1255,7 +1255,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 	resistotype(abi->vars[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
 		    &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+		    cmd_line->min_frac_to_detect_minor_pops);
       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
 	{
@@ -1267,7 +1267,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 	}
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-    update_called_variants(called_variants,i,abi->vars[i]);
+	  update_called_variants(called_variants,i,abi->vars[i]);
 	  return I;
 	}
     }
@@ -1385,7 +1385,7 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
 			 MIN_PERC_COVG_FUSBC);
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{
-    update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]  ] );
+	  update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]  ] );
 	  return I;
 	}
     }

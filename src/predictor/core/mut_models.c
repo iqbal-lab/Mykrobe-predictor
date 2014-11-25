@@ -125,10 +125,10 @@ double get_log_lik_major_pop_resistant(Var* var,
 double get_log_lik_minor_pop_resistant(Var* var,
 				       double lambda_g, double lambda_e,
 				       int kmer, double err_rate,
-               float min_frac_to_detect_minor_pops)
+				       float min_frac_to_detect_minor_pops)
 {
   Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
-
+  
   double frac = min_frac_to_detect_minor_pops;
   if (err_rate > 0.1)
     {
@@ -136,7 +136,7 @@ double get_log_lik_minor_pop_resistant(Var* var,
     }
   return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
 			       frac*lambda_g, (1-frac)*lambda_g, kmer);
-
+  
 }
 
 
@@ -192,53 +192,6 @@ double get_biallelic_log_lik(Covg covg_model_true,//covg on allele the model say
 
 // ***** MIXED INFECTIONS *********
 
-//minor population of resistant
-double get_log_lik_of_mixed_infection(Var* var,
-				      double lambda_g,
-				      double err_rate,
-				      int kmer)
-{
-
-  Covg r = get_max_covg_on_any_resistant_allele(var->vob_best_res);
-  Covg s = var->vob_best_sus->susceptible_allele.median_covg;
-
-  if ( (r==0) || (s==0) )
-    {
-      return -9999999;
-    } 
-
-  //We look for sub pop with frequency >= 2*err_rate
-  //take a flat prior for minor resistant allele freq
-  double pr;
-  if (err_rate <= 0.01)
-    {
-      pr=0.1;
-    }
-  else if (err_rate <= 0.05)
-    {
-      pr=0.2;
-    }
-  else if (err_rate <=0.1)
-    {
-      pr=0.3;
-    }
-  else
-    {
-      return -9999999;
-    }
-
-
-  // likelihood = likelihood( | freq of res allele =pr) 
-  double r_r = lambda_g * pr;
-  
-  double log_lik_res_allele  
-    = -r_r 
-    + r*log(r_r) 
-    - log_factorial(r);
-  
-  return log_lik_res_allele;
-  
-}
 
 int model_cmp_loglik(const void *a, const void *b)
 {
@@ -345,7 +298,6 @@ void choose_map_model(Var* var,
 										      epsilon);
   mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, var,
 						       max_perc_covg_on_res);
-
   Model arr[3]={mR, mS, mM};
   qsort(arr, 3, sizeof(Model), model_cmp_logpost);
   best_model->conf = arr[2].lp-arr[1].lp;
@@ -369,12 +321,12 @@ void choose_map_model(Var* var,
 
 InfectionType resistotype(Var* var, 
                           double err_rate, int kmer,
-                			  double lambda_g, 
-                        double lambda_e, 
-                        double epsilon,
-                			  Model* best_model,
-                			  ModelChoiceMethod choice,
-                        float min_frac_to_detect_minor_pops)
+			  double lambda_g, 
+			  double lambda_e, 
+			  double epsilon,
+			  Model* best_model,
+			  ModelChoiceMethod choice,
+			  float min_frac_to_detect_minor_pops)
 {
   double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(var, 
 									  lambda_g, lambda_e,
@@ -382,7 +334,7 @@ InfectionType resistotype(Var* var,
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
 									       lambda_g, lambda_e,
 									       kmer);
-  //  double llk_M = get_log_lik_of_mixed_infection(var, lambda_g, err_rate, kmer);
+
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
 
   best_model->conf=0;
