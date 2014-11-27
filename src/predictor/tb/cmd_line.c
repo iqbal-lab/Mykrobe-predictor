@@ -34,7 +34,7 @@ const char* usage=
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
 "   [--method STRING] \t\t\t\t\t=\t Default is InSilicoOligos. Or can have  WGAssemblyThenGenotyping\n" \
-"   [--format STRING] \t\t\t\t\t=\t Options are TEXT and JSON\n" \
+"   [--format STRING] \t\t\t\t\t=\t Options are Stdout and JSON\n" \
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
 "   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
 
@@ -280,7 +280,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	else
 	  {
-	    errx(1,"[--format] needs argument Stdout (default) or JSON (it is case sensitive)\n");
+	    errx(1,"[--format] needs argument Stdout (case sensitive) or JSON (default)\n");
 	  }
   break;
       }
