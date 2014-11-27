@@ -658,14 +658,16 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 	  vob->some_resistant_allele_present=true;
 	}
       if (vob->resistant_alleles[i].percent_nonzero 
-	  > 
+	  >= 
 	  vob->working_current_max_res_allele_present)
 	{
-	  vob->working_current_max_res_allele_present 
-	    = vob->resistant_alleles[i].percent_nonzero;
-	  vob->working_current_median_covg 
-	    = vob->resistant_alleles[i].median_covg;
-
+	  if (vob->resistant_alleles[i].median_covg > vob->working_current_median_covg)
+	    {
+	      vob->working_current_max_res_allele_present 
+		= vob->resistant_alleles[i].percent_nonzero;
+	      vob->working_current_median_covg 
+		= vob->resistant_alleles[i].median_covg;
+	    }
 	}
       
     }
