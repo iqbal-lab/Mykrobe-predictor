@@ -31,8 +31,13 @@
 
 #include "genotyping_known.h"
 
+#ifdef STAPH
+  #define MIN_CONFIDENCE 1
+#endif
+#ifdef TB
+	#define MIN_CONFIDENCE 30
+#endif  
 
-#define MIN_CONFIDENCE 1
 
 typedef enum
   {
