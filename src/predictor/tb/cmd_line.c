@@ -55,7 +55,7 @@ int default_opts(CmdLine * c)
   c->input_list=false;
   c->output_supernodes = false;
   c->machine=Illumina;
-  c->format=Stdout;
+  c->format=JSON;
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
   c->progress=false;

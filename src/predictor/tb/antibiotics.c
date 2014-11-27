@@ -448,6 +448,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	  return I;
 	}
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }
     }
   if (
       (any_allele_non_null==false)
@@ -543,6 +547,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   {  
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
+  }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -645,6 +653,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }
     }
   if (
       (any_allele_non_null==false)
@@ -740,6 +752,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   {  
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
+  }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -837,6 +853,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }
     }
   if (
       (any_allele_non_null==false)
@@ -932,6 +952,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   {  
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
+  }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -1029,6 +1053,10 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }
     }
   if (
       (any_allele_non_null==false)
@@ -1122,11 +1150,15 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{  
-	  
 	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	  return I;
 	}
-    }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }
+
+  }
   if (
       (any_allele_non_null==false)
       ||
@@ -1134,6 +1166,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       )
 
     {
+
       return Unsure;
     }
   else if (max_sus_conf>MIN_CONFIDENCE)
@@ -1222,6 +1255,10 @@ boolean any_allele_non_null=false;
   {  
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
+  }
+    if (I == Unsure)
+  {
+     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
