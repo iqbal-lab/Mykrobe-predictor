@@ -1,27 +1,7 @@
 /*
  * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
  *
- * **********************************************************************
- *
- * This file is part of myKrobe
- *
- * myKrobe is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * CORTEX is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with myKrobe.  If not, see <http://www.gnu.org/licenses/>.
- *
- * **********************************************************************
- */
-/*
-  cmd_line.c
+ *  cmd_line.c
 */
 
 #include <limits.h>
@@ -54,7 +34,7 @@ const char* usage=
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
 "   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" \
-"   [--format STRING] \t\t\t\t\t=\t Options are TEXT and JSON\n" \
+"   [--format STRING] \t\t\t\t\t=\t Options are Stdout and JSON\n" \
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
 "   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
 
@@ -300,7 +280,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	else
 	  {
-	    errx(1,"[--format] needs argument Stdout (default) or JSON (it is case sensitive)\n");
+	    errx(1,"[--format] needs argument Stdout (case sensitive) or JSON (default)\n");
 	  }
 	break;
       }
