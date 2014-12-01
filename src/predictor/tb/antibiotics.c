@@ -434,6 +434,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -469,21 +470,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	  return I;
 	}
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -541,6 +541,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -569,21 +570,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -641,6 +641,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -674,21 +675,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -746,6 +746,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -774,21 +775,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -846,6 +846,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -874,21 +875,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -946,6 +946,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -974,21 +975,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -1046,6 +1046,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -1074,21 +1075,20 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -1146,6 +1146,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
   double max_sus_conf=0;
   double min_conf=9999999999;
   boolean any_allele_non_null=false;
+  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -1174,23 +1175,22 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	  return I;
 	}
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
 
   }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
 
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -1249,6 +1249,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 double max_sus_conf=0;
 double min_conf=9999999999;
 boolean any_allele_non_null=false;
+boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
 
@@ -1277,21 +1278,20 @@ boolean any_allele_non_null=false;
     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
-    if (I == Unsure)
+    if (I == Unsure && best_model.type == MixedInfection)
   {
+    any_unsure_mixed_call = true;
      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
-      (any_allele_non_null==false)
-      ||
-      (min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      (any_allele_non_null==false) || (any_unsure_mixed_call)
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }

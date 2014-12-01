@@ -634,12 +634,12 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
   if ( 
       (any_allele_non_null==false) //all alleles have zero covg
       //      || 
-      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //(min_conf<MIN_CONFIDENCE_S) //at one site, you're not sure
        )
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -735,11 +735,11 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 	  return I;
 	}
     }
-  if (min_conf<MIN_CONFIDENCE)
+  if (min_conf<MIN_CONFIDENCE_S)
     {
       return Unsure;
     }
-  if (max_sus_conf>MIN_CONFIDENCE)
+  if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -798,7 +798,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
       update_called_genes(called_genes, mecA, abi->genes[mecA], best_model.conf );
       return I;
     }
-  else if (best_model.conf>MIN_CONFIDENCE)
+  else if (best_model.conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -889,13 +889,13 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
   if (
       (any_allele_non_null==false)
       //      ||
-      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //(min_conf<MIN_CONFIDENCE_S) //at one site, you're not sure
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -1027,13 +1027,13 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
   if (
       (any_allele_non_null==false)
       //      ||
-      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //(min_conf<MIN_CONFIDENCE_S) //at one site, you're not sure
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -1111,11 +1111,11 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 	}
     }
 
-  if (min_conf<MIN_CONFIDENCE)
+  if (min_conf<MIN_CONFIDENCE_S)
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }
@@ -1393,13 +1393,13 @@ InfectionType is_fusidic_acid_susceptible(dBGraph* db_graph,
   if (
       (any_allele_non_null==false)
       //||
-      //(min_conf<MIN_CONFIDENCE) //at one site, you're not sure
+      //(min_conf<MIN_CONFIDENCE_S) //at one site, you're not sure
       )
 
     {
       return Unsure;
     }
-  else if (max_sus_conf>MIN_CONFIDENCE)
+  else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
       return Susceptible;
     }

@@ -425,7 +425,7 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			    min_expected_kmer_recovery_for_this_gene);
     }
 
-  if (best_model->conf > MIN_CONFIDENCE)
+  if (best_model->conf > MIN_CONFIDENCE_GENE)
     {
       return best_model->type;
     }

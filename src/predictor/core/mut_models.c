@@ -365,16 +365,12 @@ InfectionType resistotype(Var* var,
     {
       return best_model->type;
     }
-  else if (best_model->conf > MIN_CONFIDENCE)
-  /* if ( ( (best_model->type==Susceptible) || (best_model->type==Resistant) )
-       &&
-       (best_model->conf > MIN_CONFIDENCE) 
-       ) */
+  else if (best_model->conf > MIN_CONFIDENCE_r)
     {
       return best_model->type;
     }
   //so now the winning model is M or R. If S is the bottom of the 3 by MIN_CONFIDENCE, call r.
-  else if ( (worst_model.type ==Susceptible) && (mid_model.conf>MIN_CONFIDENCE) )
+  else if ( (worst_model.type ==Susceptible) && (mid_model.conf>MIN_CONFIDENCE_r) )
     {
       return mid_model.type;
     }

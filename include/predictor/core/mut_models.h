@@ -32,10 +32,14 @@
 #include "genotyping_known.h"
 
 #ifdef STAPH
-  #define MIN_CONFIDENCE 1
+  #define MIN_CONFIDENCE_S 1
+  #define MIN_CONFIDENCE_r 1
+  #define MIN_CONFIDENCE_GENE 1
 #endif
 #ifdef TB
-	#define MIN_CONFIDENCE 30
+	#define MIN_CONFIDENCE_S 1
+  	#define MIN_CONFIDENCE_r 30
+  	#define MIN_CONFIDENCE_GENE 1
 #endif  
 
 
