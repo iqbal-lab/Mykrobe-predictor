@@ -54,13 +54,15 @@ void get_coverage_on_best_catalayse_gene(dBGraph *db_graph,int max_branch_len,
 boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
                                 StrBuf* install_dir,int ignore_first, 
                                 int ignore_last);
-boolean sample_is_staph(boolean has_catalayse);	
+boolean sample_is_staph(boolean has_catalayse, boolean* present);	
+boolean has_coverage_on_any_panel(boolean* present);
+
 SampleType get_sample_type(boolean has_catalayse, boolean* present);                    	
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
 void find_which_panels_are_present(int* percentage_coverage,boolean* present,
-                                    int* num_panels);
+                                    int* num_panels, boolean has_catalayse);
 boolean coverage_exists_on_aureus_and_at_least_one_other_panel(boolean* present);
 boolean sample_is_mixed(boolean* present);
 

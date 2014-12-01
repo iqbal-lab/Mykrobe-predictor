@@ -138,10 +138,26 @@ boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
 
 }
 
-boolean sample_is_staph(boolean has_catalayse)
+boolean has_coverage_on_any_panel(boolean* present)
+{
+  boolean has_coverage = false;
+  int i;
+  for (i=0; i<NUM_SPECIES; i++)
+  {
+    if (present[i])
+    {
+      has_coverage = true;
+    }
+  }
+  return (has_coverage);
+}
+
+ 
+
+boolean sample_is_staph(boolean has_catalayse, boolean* present)
 {
   // Check if catalayse exists
-  if (has_catalayse)
+  if (has_catalayse || has_coverage_on_any_panel(present))
   {
     return true;
   }
@@ -286,7 +302,7 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
 
 
 void find_which_panels_are_present(int* percentage_coverage,boolean* present, 
-                                  int* num_panels)
+                                  int* num_panels,boolean has_catalayse)
 {
   boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
   boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
@@ -296,12 +312,13 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
   present[Sepidermidis] = is_epi_present;
   present[Shaemolyticus] = is_haem_present;
   present[Sother] = is_sother_present && !(is_epi_present || is_haem_present) ;
-   // In that case where no panels are present, we must call it as Staph since 
+  // In that case where no panels are present, we must call it as Staph since 
   // we've already seen that cat is in the sample. 
-  if ( ! (is_aureus_present || is_epi_present || is_haem_present  || is_sother_present ) )
+  if ( has_catalayse && (! (is_aureus_present || is_epi_present || is_haem_present  || is_sother_present )) )
   {
     present[Sother] = true;
   }
+
   int i;
   for (i=0; i<NUM_SPECIES; i++)
   {
@@ -343,7 +360,7 @@ boolean sample_is_mixed(boolean* present)
 SampleType get_sample_type(boolean has_catalayse, boolean* present)
 {
   SampleType sample_type;
-  if (sample_is_staph(has_catalayse) ) 
+  if (sample_is_staph(has_catalayse, present) ) 
   {
       if (sample_is_mixed(present))
       {
@@ -384,7 +401,9 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                                 install_dir,ignore_first, 
                                 ignore_last);
   int num_panels =0 ;
-  find_which_panels_are_present(percentage_coverage,present,&num_panels);
+  find_which_panels_are_present(percentage_coverage,present,&num_panels,has_catalayse);
+
+
   SampleType sample_type = get_sample_type(has_catalayse,present);
 
   species_info->sample_type = sample_type;
