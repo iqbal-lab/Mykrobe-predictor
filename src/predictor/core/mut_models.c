@@ -308,14 +308,16 @@ InfectionType resistotype(Var* var,
 			  ModelChoiceMethod choice,
 			  float min_frac_to_detect_minor_pops)
 {
-  double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(var, 
-									  lambda_g, lambda_e,
-									  kmer);
+  // double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(var, 
+		// 							  lambda_g, lambda_e,
+		// 							  kmer);
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
 									       lambda_g, lambda_e,
 									       kmer);
 
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
+  double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
+
 
   best_model->conf=0;
   Model worst_model;
