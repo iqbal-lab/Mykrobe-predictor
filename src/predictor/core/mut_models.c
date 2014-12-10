@@ -23,7 +23,7 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
   int p = max_perc_covg_on_res_allele;
 
 
-  if (p>=80*epsilon)
+  if (max_perc_covg_on_res_allele==100)
     {
       return log(1)+llk;
     }
@@ -64,23 +64,6 @@ double get_log_posterior_of_mixed_infection(double llk,
     {
       return -9999999;
     }
-}
-
-
-
-
-// epsilon = (1-e)^k
-// delta = e(1-e)^(k-1)
-// lambda = expected_covg/mean_read_len
-double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(Var* var,
-								double lambda_g, double lambda_e,
-								int kmer)
-{
-  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
-  //printf("Test res model, R covg=%d and S covg=%d\n", c, var->susceptible_allele.median_covg);
-  return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
-			       0.75*lambda_g, lambda_e, kmer);
-
 }
 
 
@@ -308,13 +291,9 @@ InfectionType resistotype(Var* var,
 			  ModelChoiceMethod choice,
 			  float min_frac_to_detect_minor_pops)
 {
-  // double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(var, 
-		// 							  lambda_g, lambda_e,
-		// 							  kmer);
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
 									       lambda_g, lambda_e,
 									       kmer);
-
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
   double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
 
