@@ -297,7 +297,6 @@ InfectionType resistotype(Var* var,
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
   double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
 
-
   best_model->conf=0;
   Model worst_model;
   worst_model.type=Unsure;
@@ -332,7 +331,7 @@ InfectionType resistotype(Var* var,
   //so now the winning model is M or R. If S is the bottom of the 3 by MIN_CONFIDENCE, call r.
   else if ( (worst_model.type ==Susceptible) && (mid_model.conf>MIN_CONFIDENCE_r) )
     {
-      return mid_model.type;
+      return best_model->type;
     }
   else
     {
