@@ -277,43 +277,39 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  SampleModel* species_mod = alloc_and_init_sample_model();
-  SampleType st = get_species_model(db_graph, 11000, cmd_line->install_dir,
-				    lambda_g_err, lambda_e_err, err_rate, expected_depth,
-				    1,1,
-				    species_mod);
+  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
+                                  expected_depth,1,1);
   fflush(stdout);
   // printf("Sample Type: %i\n",st);
-  // printf("Speces Type: %s\n",species_mod->name_of_pure_mtbc_species->buff);
-  if (st == MixedMTB)
+  if (species_info->sample_type == MixedTB)
     {
       strbuf_append_str(tmp_name, "Mixed");
-      strbuf_append_str(tmp_name, species_mod->name_of_pure_mtbc_species->buff);
       strbuf_append_str(tmp_name, " + ");
-      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
 
 
     }
-  else if (st == NonMTB)
+  else if (species_info->sample_type == NonTB)
     {
-      strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_species->buff);
-      // strbuf_append_str(tmp_name, species_mod->name_of_non_mtb_lineage->buff);
+      strbuf_append_str(tmp_name, "Staphylococcus Mixed ");
 
     }
-  else if (st == PureMTBC)
+  else if (species_info->sample_type == PureNTM)
     {
-      strbuf_append_str(tmp_name, species_mod->name_of_pure_mtbc_species->buff);
+      strbuf_append_str(tmp_name, "Non tuberculous mycobacteria");
+
+    }    
+  else if (species_info->sample_type == PureMTBC)
+    {
+      strbuf_append_str(tmp_name, "Mycobacterium tuberculosis complex");
     }
   
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n");
-      if (st == NonMTB )
+      if (species_info->sample_type == NonTB )
 	{
 	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
 	  timestamp();
-	  free_sample_model(species_mod);
 	  
 	  //cleanup
 	  strbuf_free(tmp_name);
@@ -331,7 +327,6 @@ int main(int argc, char **argv)
 	{
 	  printf("%s\n", tmp_name->buff);
 	  timestamp();
-	  free_sample_model(species_mod);
 	  
 	  printf("** Antimicrobial susceptibility predictions\n");
 	}
@@ -343,25 +338,28 @@ int main(int argc, char **argv)
       print_json_phylogenetics_start();
       print_json_species_start();
       
-      if (st == PureMTBC)
-	{
-	  print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Major", true);
-	}
-      else if (st == MixedMTB) 
-	{
-	  print_json_item("M.TB", "Mixed",true);
-	  print_json_item(species_mod->name_of_pure_mtbc_species->buff, "Mixed", false);
-	  print_json_item(species_mod->name_of_non_mtb_species->buff, "Mixed", true);
-	}
+      if (species_info->sample_type == PureMTBC)
+	    {
+        print_json_item("Mycobacterium tuberculosis complex","Major",true);
+
+	    }
+      else if (species_info->sample_type == MixedTB) 
+    	{
+    	  print_json_item("Mycobacterium tuberculosis complex + Non tuberculous mycobacteria", "Mixed",true);
+    	}
+      else if (species_info->sample_type == PureNTM) 
+      {
+        print_json_item("Non tuberculous mycobacteria","Major",true);
+      }      
       else
 	{
-	  print_json_item(species_mod->name_of_non_mtb_species->buff, "Major", true);
+        print_json_item("Unidentified Species - Non Mycobacterium","Major",true);
+
 	}
       print_json_species_end();
       print_json_lineage_start();
-      if (st == PureMTBC)
+      if (species_info->sample_type == PureMTBC)
 	{
-	  print_json_item(species_mod->name_of_pure_mtbc_lineage->buff, "Major", true);
 	}
       
       print_json_lineage_end();
@@ -370,7 +368,7 @@ int main(int argc, char **argv)
       print_json_phylogenetics_end();
       
       
-      if (st == NonMTB)
+      if (species_info->sample_type == NonTB)
 	{
 	  print_json_susceptibility_start(); 
 	  print_json_susceptibility_end();
