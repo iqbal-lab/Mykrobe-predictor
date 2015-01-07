@@ -23,7 +23,7 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
   int p = max_perc_covg_on_res_allele;
 
 
-  if (max_perc_covg_on_res_allele>=10)
+  if (max_perc_covg_on_res_allele>=80)
     {
       return log(1)+llk;
     }
