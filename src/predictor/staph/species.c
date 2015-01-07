@@ -307,7 +307,7 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
   boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
   boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
   boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],30);
-  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],10);  
+  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],30);  
   present[Saureus] = is_aureus_present;
   present[Sepidermidis] = is_epi_present;
   present[Shaemolyticus] = is_haem_present;
