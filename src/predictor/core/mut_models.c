@@ -295,7 +295,7 @@ InfectionType resistotype(Var* var,
 									       lambda_g, lambda_e,
 									       kmer);
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
-  double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
+  double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.95);
 
   best_model->conf=0;
   Model worst_model;
