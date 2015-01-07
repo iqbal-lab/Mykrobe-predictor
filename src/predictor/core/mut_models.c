@@ -93,7 +93,7 @@ double get_log_lik_minor_pop_resistant(Var* var,
   Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
   
   double frac = min_frac_to_detect_minor_pops;
-  if (err_rate > 0.1)
+  if (err_rate > 0.2)
     {
       return -999999999;
     }
