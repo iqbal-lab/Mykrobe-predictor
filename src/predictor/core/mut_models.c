@@ -259,8 +259,8 @@ void choose_map_model(Var* var,
   mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, 
 										      max_perc_covg_on_res,
 										      epsilon);
-  mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, var,
-						       max_perc_covg_on_res);
+  mM.lp = -99999999999; //llk_M + get_log_posterior_of_mixed_infection(llk_M, var,
+			//			       max_perc_covg_on_res);
   Model arr[3]={mR, mS, mM};
   qsort(arr, 3, sizeof(Model), model_cmp_logpost);
   best_model->conf = arr[2].lp-arr[1].lp;
