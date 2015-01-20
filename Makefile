@@ -9,6 +9,7 @@ ifeq ($(UNAME),Darwin)
 	MAC = 1
 endif
 
+
 # Library paths
 IDIR_STRS = libs/string_buffer
 IDIR_SEQ = libs/seq_file
