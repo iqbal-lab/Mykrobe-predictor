@@ -300,12 +300,40 @@ void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf)
     }
 }
 
+
+
+int get_ith_coverage_panel(CovgInfo* covg_info, int i)
+{
+  int covg=0;
+  int j=0;
+  int panel_index=0;
+  if (i > covg_info->num_panels_present -1 ){
+    die("We only have %i species, we can't find %ith coverage \n",  covg_info->num_panels_present,i+1);
+  }
+  else
+  {
+    for (j=0; j<covg_info->NUM_PANELS; j++)
+    {
+      if (covg_info->present[j])
+      {
+        if (panel_index == i)
+        {
+            // We at the required species
+            covg = covg_info->median_coverage[j];
+        }
+        panel_index = panel_index + 1;
+      }
+    }    
+  }
+  return covg;
+
+}
 int get_ith_present_panel(CovgInfo* covg_info, int i){
   int  panel=10000000;
-  int j; 
+  int j=0; 
   int panel_index = 0;  
   if (i > covg_info->num_panels_present -1 ){
-    die("We only have %i panel, we can't find %i \n",  covg_info->num_panels_present,i+1);
+    die("We only have %i panel, we can't find %ith present \n",  covg_info->num_panels_present,i+1);
   }
   else
   {
@@ -349,36 +377,6 @@ char* get_ith_lineage_name(CovgInfo* covg_info, int i)
   map_lineage_enum_to_str(lineage, lineage_name);
   return lineage_name->buff;
 }
-
-
-
-// int get_ith_lineage_coverage(SpeciesInfo* species_info,int i)
-// {
-//   int covg=0;
-//   int j;
-//   int species_index=0;
-//   if (i > species_info->num_species -1 ){
-//     die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
-//   }
-//   else
-//   {
-//     for (j=0; j<NUM_LINEAGES; j++)
-//     {
-//       if (species_info->present[j])
-//       {
-//         if (species_index == i)
-//         {
-//             // We at the required species
-//             covg = species_info->median_coverage[j];
-//         }
-//         species_index = species_index + 1;
-//       }
-//     }    
-//   }
-//   return covg;
-
-// }
-
 
 void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
                             StrBuf** panel_file_paths,
@@ -640,7 +638,8 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
                           int max_branch_len,
                           int NUM_PANELS,
                           int ignore_first,
-                          int ignore_last){
+                          int ignore_last,
+                          int threshold){
 
   CovgInfo* covg_info = alloc_and_init_covg_info();
   covg_info->NUM_PANELS = NUM_PANELS;    
@@ -650,7 +649,7 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
                           max_branch_len,db_graph,
                           ignore_first,ignore_last,
                           NUM_PANELS);
-  find_which_panels_are_present(covg_info,30);  
+  find_which_panels_are_present(covg_info,threshold);  
 
   return (covg_info);
 }
@@ -671,15 +670,18 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
   CovgInfo* complex_covg_info = get_coverage_info(db_graph,
                                                   mtbc_and_ntm_file_paths,
                                                   max_branch_len,NUM_COMPLEX,
-                                                  ignore_first,ignore_last);
+                                                  ignore_first,ignore_last,
+                                                  30);
   CovgInfo* species_covg_info = get_coverage_info(db_graph,
                                                   species_file_paths,
                                                   max_branch_len,NUM_SPECIES,
-                                                  ignore_first,ignore_last);
+                                                  ignore_first,ignore_last,
+                                                  30);
   CovgInfo* lineage_covg_info = get_coverage_info(db_graph,
                                                   lineage_file_paths,
                                                   max_branch_len,NUM_LINEAGES,
-                                                  ignore_first,ignore_last);
+                                                  ignore_first,ignore_last,
+                                                  90);
 
 
   SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
@@ -761,7 +763,8 @@ SampleType get_sample_type(SpeciesInfo* species_info)
   return sample_type;  
 }
 
-void print_json_indiv_phylo(CovgInfo* covg_info, char* (*get_ith_name)(CovgInfo*, int) ){
+void print_json_indiv_phylo(CovgInfo* covg_info,
+                           char* (*get_ith_name)(CovgInfo*, int)){
     int i;
     boolean last = false;
     for (i=0; i < covg_info->num_panels_present; i++)
@@ -769,30 +772,67 @@ void print_json_indiv_phylo(CovgInfo* covg_info, char* (*get_ith_name)(CovgInfo*
       if (i == covg_info->num_panels_present-1){
         last = true;
       }
-      print_json_called_variant_item( (*get_ith_name)(covg_info,i), 0, last);
+      print_json_called_variant_item( (*get_ith_name)(covg_info,i), get_ith_coverage_panel(covg_info,i), last);
     }     
 }
 
 void print_json_complex(SpeciesInfo* species_info){
+    CovgInfo* covg_info =species_info->complex_covg_info;
+    int num_panels_present = covg_info->num_panels_present;
     print_json_complex_start();
-     print_json_indiv_phylo(species_info->complex_covg_info, get_ith_complex_name );
+    if (num_panels_present > 0){
+      print_json_indiv_phylo(covg_info,get_ith_complex_name);
+    }
+    else
+    {
+      print_json_called_variant_item( "Non TB", 0, true);
+    }
     print_json_complex_end();  
 }
 void print_json_species(SpeciesInfo* species_info){
+    CovgInfo* covg_info =species_info->species_covg_info;
+    int num_panels_present = covg_info->num_panels_present;
     print_json_species_start();
-    print_json_indiv_phylo(species_info->species_covg_info, get_ith_species_name );
+    if (num_panels_present > 0){
+      print_json_indiv_phylo(covg_info,get_ith_species_name);
+    }
+    else
+    {
+      print_json_called_variant_item( "Unknown Species", 0, true);
+    }    
     print_json_species_end();  
 }
 void print_json_lineage(SpeciesInfo* species_info){
+    CovgInfo* covg_info =species_info->lineage_covg_info ; 
+    int num_panels_present = covg_info->num_panels_present;    
     print_json_lineage_start();
-    print_json_indiv_phylo(species_info->lineage_covg_info, get_ith_lineage_name );
+    if (num_panels_present > 0){
+      print_json_indiv_phylo(covg_info,get_ith_lineage_name);
+    }
+    else
+    {
+      print_json_called_variant_item( "Unknown lineage", 0, true);
+    }    
     print_json_lineage_end(); 
+}
+
+boolean tuberculosis_is_present(SpeciesInfo* species_info){
+  return (species_info->species_covg_info->present[tuberculosis]);
+}
+boolean myco_is_present(SpeciesInfo* species_info){
+  boolean MTBC_is_present = species_info->complex_covg_info->present[MTBC];
+  boolean NTM_is_present = species_info->complex_covg_info->present[NTM];
+  return (MTBC_is_present || NTM_is_present);
 }
 
 void print_json_phylogenetics(SpeciesInfo* species_info){
     print_json_phylogenetics_start();
     print_json_complex(species_info);
-    print_json_species(species_info);
-    print_json_lineage(species_info);
+    if (myco_is_present(species_info)){
+      print_json_species(species_info);
+      if (tuberculosis_is_present(species_info)){
+        print_json_lineage(species_info);
+      }      
+    }
     print_json_phylogenetics_end();  
 }

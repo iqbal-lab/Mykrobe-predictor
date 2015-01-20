@@ -131,7 +131,8 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
                           int max_branch_len,
                           int NUM_PANELS,
                           int ignore_first,
-                          int ignore_last);
+                          int ignore_last,
+                          int threshold);
 SampleType get_sample_type(SpeciesInfo* species_info);
 
 void load_all_mtbc_and_ntm_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
@@ -160,8 +161,11 @@ char* get_ith_lineage_name(CovgInfo* covg_info, int i);
 char* get_pure_lineage_name(SpeciesInfo* species_info);
 int get_ith_lineage_coverage(SpeciesInfo* species_info,int i);
 int get_pure_lineage_coverage(SpeciesInfo* species_info);
-
+void print_json_indiv_phylo(CovgInfo* covg_info,
+                           char* (*get_ith_name)(CovgInfo*, int));
 void print_json_complex(SpeciesInfo* species_info);
 void print_json_species(SpeciesInfo* species_info);
 void print_json_lineage(SpeciesInfo* species_info);
 void print_json_phylogenetics(SpeciesInfo* species_info);
+boolean myco_is_present(SpeciesInfo* species_info);
+boolean tuberculosis_is_present(SpeciesInfo* species_info);
