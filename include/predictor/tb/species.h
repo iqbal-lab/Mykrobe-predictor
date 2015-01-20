@@ -61,20 +61,19 @@ typedef enum
   peregrinum = 27, 
   phage = 28, 
   pyrenivorans = 29, 
-  rhodesiae = 30, 
-  rufum = 31, 
-  rutilum = 32, 
-  scrofulaceum = 33, 
-  senegalense = 34, 
-  smegmatis = 35, 
-  sphagni = 36, 
-  szulgai = 37, 
-  triplex = 38, 
-  tuberculosis = 39, 
-  tusciae = 40, 
-  ulcerans = 41, 
-  vaccae = 42, 
-  xenopi = 43
+  rufum = 30,
+  rutilum = 31,
+  scrofulaceum = 32,
+  senegalense = 33,
+  smegmatis = 34,
+  sphagni = 35,
+  szulgai = 36,
+  triplex = 37,
+  tuberculosis = 38,
+  tusciae = 39,
+  ulcerans = 40,
+  vaccae = 41,
+  xenopi = 42
   } Myc_species ;
 
 #define NUM_SPECIES 43
@@ -82,31 +81,37 @@ typedef enum
   typedef enum 
  {
   beijing = 0,
-  lineage1 = 2,
-  lineage2 = 3, 
-  lineage3 = 4, 
-  lineage4 = 5, 
-  lineage5 = 6
+  lineage1 = 1,
+  lineage2 = 2, 
+  lineage3 = 3, 
+  lineage4 = 4, 
+  lineage5 = 5
   } Myc_lineage ;
  #define NUM_LINEAGES 6
 
 
+
+
 typedef struct
 {
-  SampleType sample_type;
   boolean present[NUM_SPECIES];
   int percentage_coverage[NUM_SPECIES];
   int median_coverage[NUM_SPECIES];
-  int num_species;
+  int num_panels_present;
+  int NUM_PANELS;
+} CovgInfo;
 
+
+
+typedef struct
+{
+  CovgInfo* complex_covg_info;
+  CovgInfo* species_covg_info;
+  CovgInfo* lineage_covg_info;
 } SpeciesInfo;
 
 
-
-
-
-
-
+CovgInfo* alloc_and_init_covg_info();
 void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
                              StrBuf** panel_file_paths,
                             int max_branch_len, dBGraph *db_graph,
@@ -118,10 +123,16 @@ void are_mtbc_and_ntm_present(int* percentage_coverage,boolean* present,
 boolean sample_is_mixed(boolean NTM_is_present,boolean MTBC_is_present);
 boolean sample_is_MTBC(boolean NTM_is_present,boolean MTBC_is_present);
 boolean sample_is_NTM(boolean NTM_is_present,boolean MTBC_is_present);
-boolean is_NTM_present(boolean* complex_presence, boolean* species_presence);
-boolean is_MTBC_present(boolean* complex_presence, boolean* species_presence);
+boolean is_NTM_present(SpeciesInfo* species_info);
+boolean is_MTBC_present(SpeciesInfo* species_info);
 
-SampleType get_sample_type(boolean* complex_presence, boolean* species_presence);
+CovgInfo* get_coverage_info(dBGraph *db_graph,
+                          StrBuf** file_paths,
+                          int max_branch_len,
+                          int NUM_PANELS,
+                          int ignore_first,
+                          int ignore_last);
+SampleType get_sample_type(SpeciesInfo* species_info);
 
 void load_all_mtbc_and_ntm_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
 void load_all_lineage_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
@@ -131,17 +142,26 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
-void find_which_panels_are_present(int* percentage_coverage,boolean* present,
-                                    int* num_panels, boolean has_catalayse);
+void find_which_panels_are_present(CovgInfo* covg_info,int threshold);
 
-void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf);
+void map_complex_enum_to_str(Myc_complex sp, StrBuf* sbuf);
 void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf);
+void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf);
+
 
 Myc_species map_lineage_enum_to_species_enum(Myc_lineage sp);
 
-char* get_ith_lineage_name(SpeciesInfo* species_info, int i);
+int get_ith_present_panel(CovgInfo* covg_info, int i);
+char* get_ith_complex_name(CovgInfo* covg_info, int i);
+char* get_ith_species_name(CovgInfo* covg_info, int i);
+char* get_ith_lineage_name(CovgInfo* covg_info, int i);
+
+
 char* get_pure_lineage_name(SpeciesInfo* species_info);
 int get_ith_lineage_coverage(SpeciesInfo* species_info,int i);
 int get_pure_lineage_coverage(SpeciesInfo* species_info);
 
-
+void print_json_complex(SpeciesInfo* species_info);
+void print_json_species(SpeciesInfo* species_info);
+void print_json_lineage(SpeciesInfo* species_info);
+void print_json_phylogenetics(SpeciesInfo* species_info);

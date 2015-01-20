@@ -19,6 +19,8 @@ void print_json_start();
 void print_json_end();
 void print_json_species_start();
 void print_json_species_end();
+void print_json_complex_start();
+void print_json_complex_end();
 void print_json_lineage_start();
 void print_json_lineage_end();
 void print_json_phylogenetics_start();

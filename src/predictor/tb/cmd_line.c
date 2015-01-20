@@ -46,7 +46,7 @@ int default_opts(CmdLine * c)
   strbuf_reset(c->install_dir);
   c->genome_size = 4000000;
   c->num_bases_around_mut_in_fasta=30;//our antibiotic fasta have 30 bases before/after the mutation
-  c->kmer_size = 21;
+  c->kmer_size = 15;
   c->mem_width = 100;
   c->mem_height= 16;
   c->max_expected_sup_len=50000;

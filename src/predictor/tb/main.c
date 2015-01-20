@@ -280,114 +280,32 @@ int main(int argc, char **argv)
   SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
                                   expected_depth,1,1);
   fflush(stdout);
-  // printf("Sample Type: %i\n",st);
-  if (species_info->sample_type == MixedTB)
-    {
-      strbuf_append_str(tmp_name, "Mixed");
-      strbuf_append_str(tmp_name, " + ");
-
-
-    }
-  else if (species_info->sample_type == NonTB)
-    {
-      strbuf_append_str(tmp_name, "Staphylococcus Mixed ");
-
-    }
-  else if (species_info->sample_type == PureNTM)
-    {
-      strbuf_append_str(tmp_name, "Non tuberculous mycobacteria");
-
-    }    
-  else if (species_info->sample_type == PureMTBC)
-    {
-      strbuf_append_str(tmp_name, "Mycobacterium tuberculosis complex");
-    }
-  
-  if (cmd_line->format==Stdout)
-    {
-      printf("** Species\n");
-      if (species_info->sample_type == NonTB )
-	{
-	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
-	  timestamp();
-	  
-	  //cleanup
-	  strbuf_free(tmp_name);
-	  free_antibiotic_info(abi);
-	  free_var_on_background(tmp_vob);
-	  free_gene_info(tmp_gi);
-	  free_reading_utils(ru);
-	  
-	  cmd_line_free(cmd_line);
-	  hash_table_free(&db_graph);
-	  
-	  return 0;
-	}
-      else
-	{
-	  printf("%s\n", tmp_name->buff);
-	  timestamp();
-	  
-	  printf("** Antimicrobial susceptibility predictions\n");
-	}
-    }
-  else//JSON
+  if (cmd_line->format==JSON)
     {
       print_json_start();
-      print_json_called_variant_item("expected_depth",expected_depth,false);
-      print_json_phylogenetics_start();
-      print_json_species_start();
-      
-      if (species_info->sample_type == PureMTBC)
-	    {
-        print_json_item("Mycobacterium tuberculosis complex","Major",true);
-
-	    }
-      else if (species_info->sample_type == MixedTB) 
+      print_json_called_variant_item("expected_depth",expected_depth,false);      
+      print_json_phylogenetics(species_info);
+      if (get_sample_type(species_info) == NonTB)
     	{
-    	  print_json_item("Mycobacterium tuberculosis complex + Non tuberculous mycobacteria", "Mixed",true);
+
+    	  print_json_susceptibility_start(); 
+    	  print_json_susceptibility_end();
+    	  print_json_virulence_start();
+    	  print_json_virulence_end();
+    	  print_json_end();
+
+    	  //cleanup
+    	  strbuf_free(tmp_name);
+    	  free_antibiotic_info(abi);
+    	  free_var_on_background(tmp_vob);
+    	  free_gene_info(tmp_gi);
+    	  free_reading_utils(ru);
+    	  
+    	  cmd_line_free(cmd_line);
+    	  hash_table_free(&db_graph);
+    	  
+    	  return 0;
     	}
-      else if (species_info->sample_type == PureNTM) 
-      {
-        print_json_item("Non tuberculous mycobacteria","Major",true);
-      }      
-      else
-	{
-        print_json_item("Unidentified Species - Non Mycobacterium","Major",true);
-
-	}
-      print_json_species_end();
-      print_json_lineage_start();
-      if (species_info->sample_type == PureMTBC)
-	{
-	}
-      
-      print_json_lineage_end();
-      
-      
-      print_json_phylogenetics_end();
-      
-      
-      if (species_info->sample_type == NonTB)
-	{
-	  print_json_susceptibility_start(); 
-	  print_json_susceptibility_end();
-	  print_json_virulence_start();
-	  print_json_virulence_end();
-	  print_json_end();
-
-	  //cleanup
-	  strbuf_free(tmp_name);
-	  free_antibiotic_info(abi);
-	  free_var_on_background(tmp_vob);
-	  free_gene_info(tmp_gi);
-	  free_reading_utils(ru);
-	  
-	  cmd_line_free(cmd_line);
-	  hash_table_free(&db_graph);
-	  
-	  return 0;
-	}
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.

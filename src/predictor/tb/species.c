@@ -21,29 +21,245 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 
-void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
-{
-  if (sp==tuberculosis)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M. tuberculosis");
-    }
-  else if (sp==africanum)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M. africanum");
-    }
-    else if (sp==bovis)
-    {
-      strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"M. bovis");      
-    }
 
+void map_complex_enum_to_str(Myc_complex sp, StrBuf* sbuf)
+{
+  if(sp==MTBC){
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf, "MTBC");
+  }
+   else if(sp== NTM){
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf, "NTM");
+   }
   else
     {
-      die("Coding error - I would expect the compiler to prevent assigning a bad enum value - we get %d\n", sp);
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
     }
-  
+}
+
+
+void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
+{
+  if (sp==abscessus)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"abscessus");
+    }
+  else if (sp==africanum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"africanum");
+  }
+  else if (sp==aromaticivorans)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"aromaticivorans");
+  }
+  else if (sp==avium)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"avium");
+  }
+  else if (sp==bovis)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"bovis");
+  }
+  else if (sp==branderi)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"branderi");
+  }
+  else if (sp==caprae)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"caprae");
+  }
+  else if (sp==chelonae)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"chelonae");
+  }
+  else if (sp==chlorophenolicum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"chlorophenolicum");
+  }
+  else if (sp==chubuense)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"chubuense");
+  }
+  else if (sp==colombiense)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"colombiense");
+  }
+  else if (sp==crocinum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"crocinum");
+  }
+  else if (sp==flavescens)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"flavescens");
+  }
+  else if (sp==fluoranthenivorans)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"fluoranthenivorans");
+  }
+  else if (sp==fortuitum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"fortuitum");
+  }
+  else if (sp==gilvum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"gilvum");
+  }
+  else if (sp==gordonae)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"gordonae");
+  }
+  else if (sp==hodleri)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"hodleri");
+  }
+  else if (sp==interjectum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"interjectum");
+  }
+  else if (sp==intracellulare)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"intracellulare");
+  }
+  else if (sp==kansasii)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"kansasii");
+  }
+  else if (sp==lentiflavum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"lentiflavum");
+  }
+  else if (sp==leprae)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"leprae");
+  }
+  else if (sp==malmoense)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"malmoense");
+  }
+  else if (sp==marinum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"marinum");
+  }
+  else if (sp==mucogenicum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"mucogenicum");
+  }
+  else if (sp==pallens)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"pallens");
+  }
+  else if (sp==peregrinum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"peregrinum");
+  }
+  else if (sp==phage)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"phage");
+  }
+  else if (sp==pyrenivorans)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"pyrenivorans");
+  }
+  else if (sp==rufum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"rufum");
+  }
+  else if (sp==rutilum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"rutilum");
+  }
+  else if (sp==scrofulaceum)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"scrofulaceum");
+  }
+  else if (sp==senegalense)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"senegalense");
+  }
+  else if (sp==smegmatis)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"smegmatis");
+  }
+  else if (sp==sphagni)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"sphagni");
+  }
+  else if (sp==szulgai)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"szulgai");
+  }
+  else if (sp==triplex)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"triplex");
+  }
+  else if (sp==tuberculosis)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"tuberculosis");
+  }
+  else if (sp==tusciae)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"tusciae");
+  }
+  else if (sp==ulcerans)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"ulcerans");
+  }
+  else if (sp==vaccae)
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"vaccae");
+  }
+  else if (sp==xenopi    )
+  {
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf,"xenopi");
+  }
+  else
+    {
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
+    }
 }
 
 void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf)
@@ -82,76 +298,86 @@ void map_lineage_enum_to_str(Myc_lineage sp, StrBuf* sbuf)
     {
       die("Coding error - I would expect the compiler to prevent assigning a bad enum value\n");
     }
-  
 }
 
-
-
-char* get_ith_lineage_name(SpeciesInfo* species_info, int i)
-{
-  Myc_lineage species=0;
-  StrBuf* pure_lineage_name = strbuf_new(); 
+int get_ith_present_panel(CovgInfo* covg_info, int i){
+  int  panel=10000000;
   int j; 
-  int species_index = 0;
-  if (i > species_info->num_species -1 ){
-    die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
+  int panel_index = 0;  
+  if (i > covg_info->num_panels_present -1 ){
+    die("We only have %i panel, we can't find %i \n",  covg_info->num_panels_present,i+1);
   }
   else
   {
-    for (j=0; j<NUM_LINEAGES; j++)
+    for (j=0; j<covg_info->NUM_PANELS; j++)
     {
-      if (species_info->present[j])
+      if (covg_info->present[j])
       {
-        if (species_index == i)
+        if (panel_index == i)
         {
-            // We at the required species
-            species = j;
+            // We at the required panel
+            panel = j;
         }
-        species_index = species_index + 1;
+        panel_index = panel_index + 1;
       }
     }    
   }
-  map_species_enum_to_str(species, pure_lineage_name);
-  return pure_lineage_name->buff;
+  return (panel);
 }
 
-
-int get_ith_lineage_coverage(SpeciesInfo* species_info,int i)
+char* get_ith_complex_name(CovgInfo* covg_info, int i)
 {
-  int covg=0;
-  int j;
-  int species_index=0;
-  if (i > species_info->num_species -1 ){
-    die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
-  }
-  else
-  {
-    for (j=0; j<NUM_LINEAGES; j++)
-    {
-      if (species_info->present[j])
-      {
-        if (species_index == i)
-        {
-            // We at the required species
-            covg = species_info->median_coverage[j];
-        }
-        species_index = species_index + 1;
-      }
-    }    
-  }
-  return covg;
-
+  Myc_complex complex;
+  StrBuf* complex_name = strbuf_new(); 
+  complex = get_ith_present_panel( covg_info, i);
+  map_complex_enum_to_str(complex, complex_name);
+  return complex_name->buff;
 }
-
-char* get_pure_lineage_name(SpeciesInfo* species_info)
+char* get_ith_species_name(CovgInfo* covg_info, int i)
 {
-  return get_ith_lineage_name(species_info, 0 );
+  Myc_species species;
+  StrBuf* species_name = strbuf_new(); 
+  species = get_ith_present_panel( covg_info, i);
+  map_species_enum_to_str(species, species_name);
+  return species_name->buff;
+}
+char* get_ith_lineage_name(CovgInfo* covg_info, int i)
+{
+  Myc_lineage lineage;
+  StrBuf* lineage_name = strbuf_new(); 
+  lineage = get_ith_present_panel( covg_info, i);
+  map_lineage_enum_to_str(lineage, lineage_name);
+  return lineage_name->buff;
 }
 
-int get_pure_lineage_coverage(SpeciesInfo* species_info)
-{
-  return get_ith_lineage_coverage(species_info, 0 );
-}
+
+
+// int get_ith_lineage_coverage(SpeciesInfo* species_info,int i)
+// {
+//   int covg=0;
+//   int j;
+//   int species_index=0;
+//   if (i > species_info->num_species -1 ){
+//     die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
+//   }
+//   else
+//   {
+//     for (j=0; j<NUM_LINEAGES; j++)
+//     {
+//       if (species_info->present[j])
+//       {
+//         if (species_index == i)
+//         {
+//             // We at the required species
+//             covg = species_info->median_coverage[j];
+//         }
+//         species_index = species_index + 1;
+//       }
+//     }    
+//   }
+//   return covg;
+
+// }
 
 
 void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
@@ -260,134 +486,29 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
   }
 }
 
-
-
 boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
 {
   if (per_cov >= threshold)
   {
-      return true;
+    return (true);
   }
   else
   {
-    return false;
+    return (false);
   }
 }
 
-
-
-
-void find_which_lineage_panels_are_present(int* percentage_coverage,boolean* present, 
-                                  int* num_panels)
+void find_which_panels_are_present(CovgInfo* covg_info,int threshold)
 {
   int i;
-  for (i=0; i<NUM_LINEAGES; i++)
+  for (i=0; i<covg_info->NUM_PANELS; i++)
   {
-    printf("lineage %d : %d \n", i, percentage_coverage[i]);
-    if (is_percentage_coverage_above_threshold(percentage_coverage[i],90))
+    covg_info->present[i] = is_percentage_coverage_above_threshold(covg_info->percentage_coverage[i],threshold);
+    if (covg_info->present[i])
     {
-      *num_panels = *num_panels +1;
+      covg_info->num_panels_present = covg_info->num_panels_present +1;
     }
   }
-}
-
-void find_which_species_panels_are_present(int* percentage_coverage,boolean* present, 
-                                  int* num_panels)
-{
-  int i;
-  for (i=0; i<NUM_SPECIES; i++)
-  {
-    printf("species %d : %d \n", i, percentage_coverage[i]);
-    if (is_percentage_coverage_above_threshold(percentage_coverage[i],30))
-    {
-      *num_panels = *num_panels +1;
-    }
-  }
-}
-
-void are_mtbc_and_ntm_present(int* percentage_coverage,boolean* present, 
-                                  int* num_panels)
-{
-  boolean is_MTBC_present = is_percentage_coverage_above_threshold(percentage_coverage[0],70);
-  boolean is_NTM_present = is_percentage_coverage_above_threshold(percentage_coverage[1],70);
-  present[0] = is_MTBC_present;
-  present[1] = is_NTM_present;
-  printf("MTBC : %d \n",percentage_coverage[0] );
-  printf("NTM : %d \n",percentage_coverage[1] );
-
-
-  int i;
-  for (i=0; i<2; i++)
-  {
-    if (present[i])
-    {
-      *num_panels = *num_panels +1;
-    }
-  }
-
-}
-
-
-
-boolean sample_is_mixed(boolean NTM_is_present,boolean MTBC_is_present)
-
-{
-  boolean is_mixed = NTM_is_present && MTBC_is_present;
-  return (is_mixed);
-}
-
-boolean sample_is_MTBC(boolean NTM_is_present,boolean MTBC_is_present)
-{
-  boolean is_MTBC = MTBC_is_present && !NTM_is_present;
-  return (is_MTBC);
-}
-
-boolean sample_is_NTM(boolean NTM_is_present,boolean MTBC_is_present)
-{
-  boolean is_NTM = !MTBC_is_present && NTM_is_present;
-  return (is_NTM);
-}
-
-boolean is_NTM_present(boolean* complex_presence, boolean* species_presence)
-{
-  // Is combined NTM panel present OR any of the NTM species panels
-  return (false);
-}
-
-boolean is_MTBC_present(boolean* complex_presence, boolean* species_presence)
-{
-  // Is combined MTBC panel present OR any of the MTBC species panels
-
-  return (false);
-}
-
-
-SampleType get_sample_type(boolean* complex_presence, boolean* species_presence)
-{
-  boolean NTM_is_present = is_NTM_present(complex_presence,  species_presence);
-  boolean MTBC_is_present = is_MTBC_present(complex_presence,  species_presence);
-
-
-  SampleType sample_type;
-  if ( sample_is_mixed(NTM_is_present,MTBC_is_present) )
-    {
-      sample_type=MixedTB;
-    }
-  else{
-    if ( sample_is_MTBC(NTM_is_present,MTBC_is_present) ){
-      sample_type = PureMTBC;
-    }
-    else if ( sample_is_NTM(NTM_is_present,MTBC_is_present) )
-    {
-      sample_type = PureNTM;
-    }
-    else
-    {
-      sample_type = NonTB;
-    }    
-
-  }
-  return sample_type;  
 }
 
 void load_all_mtbc_and_ntm_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
@@ -476,8 +597,6 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
   strbuf_append_str(panel_file_paths[phage], "data/tb/species/phage.fa");
   panel_file_paths[pyrenivorans] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[pyrenivorans], "data/tb/species/pyrenivorans.fa");
-  panel_file_paths[rhodesiae] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[rhodesiae], "data/tb/species/rhodesiae.fa");
   panel_file_paths[rufum] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[rufum], "data/tb/species/rufum.fa");
   panel_file_paths[rutilum] = strbuf_create(install_dir->buff);
@@ -505,65 +624,175 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
   panel_file_paths[xenopi] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[xenopi], "data/tb/species/xenopi.fa");
 }
+CovgInfo* alloc_and_init_covg_info(){
+  CovgInfo* covg_info=(CovgInfo *)malloc(sizeof(CovgInfo));   
+  covg_info->num_panels_present = 0 ;
+  int j;
+  for(j = 0; j < NUM_SPECIES; j++) {
+    covg_info->percentage_coverage[j] = 0;
+    covg_info->median_coverage[j] =0;
+    covg_info->present[j]=false;
+  }    
+  return (covg_info);
+}
+CovgInfo* get_coverage_info(dBGraph *db_graph,
+                          StrBuf** file_paths,
+                          int max_branch_len,
+                          int NUM_PANELS,
+                          int ignore_first,
+                          int ignore_last){
 
+  CovgInfo* covg_info = alloc_and_init_covg_info();
+  covg_info->NUM_PANELS = NUM_PANELS;    
+  get_coverage_on_panels(covg_info->percentage_coverage,
+                          covg_info->median_coverage,
+                          file_paths,
+                          max_branch_len,db_graph,
+                          ignore_first,ignore_last,
+                          NUM_PANELS);
+  find_which_panels_are_present(covg_info,30);  
+
+  return (covg_info);
+}
 
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last)
 
 {
-  // Complex
-  int num_complex_panels_present =0 ;
   StrBuf* mtbc_and_ntm_file_paths[NUM_COMPLEX];
   load_all_mtbc_and_ntm_file_paths(mtbc_and_ntm_file_paths,install_dir);
-  int mtbc_and_ntm_percentage_coverage[NUM_COMPLEX]; // for storing the percentage coverage of each reference
-  int mtbc_and_ntm_median_coverage[NUM_COMPLEX]; //median covg
-  boolean mtbc_and_ntm_presence[NUM_COMPLEX];
-  get_coverage_on_panels(mtbc_and_ntm_percentage_coverage,mtbc_and_ntm_median_coverage,
-                          mtbc_and_ntm_file_paths,max_branch_len,db_graph,
-                          ignore_first,ignore_last,NUM_COMPLEX);
-  are_mtbc_and_ntm_present(mtbc_and_ntm_percentage_coverage,mtbc_and_ntm_presence,
-                                &num_complex_panels_present);
-  //species
-  int num_species_present =0 ;
   StrBuf* species_file_paths[NUM_SPECIES];
   load_all_species_file_paths(species_file_paths,install_dir);
-  int species_percentage_coverage[NUM_SPECIES]; // for storing the percentage coverage of each reference
-  int species_median_coverage[NUM_SPECIES]; //median covg
-  boolean species_presence[NUM_SPECIES];
-  get_coverage_on_panels(species_percentage_coverage,species_median_coverage,
-                          species_file_paths,max_branch_len,db_graph,
-                          ignore_first,ignore_last,NUM_SPECIES);
-  find_which_species_panels_are_present(species_percentage_coverage,species_presence,
-                              &num_species_present);
-  SampleType sample_type = get_sample_type(mtbc_and_ntm_presence,species_presence);
-
-
-  // Lineage (ONLY if MTBC - tuberculois)
-
-  int num_lineages_present =0 ;
   StrBuf* lineage_file_paths[NUM_LINEAGES];
   load_all_lineage_file_paths(lineage_file_paths,install_dir);
-  int lineage_percentage_coverage[NUM_LINEAGES]; // for storing the percentage coverage of each reference
-  int lineage_median_coverage[NUM_LINEAGES]; //median covg
-  boolean lineage_presence[NUM_LINEAGES];
-  get_coverage_on_panels(lineage_percentage_coverage,lineage_median_coverage,
-                          lineage_file_paths,max_branch_len,db_graph,
-                          ignore_first,ignore_last,NUM_LINEAGES);
-  find_which_lineage_panels_are_present(lineage_percentage_coverage,lineage_presence,
-                              &num_lineages_present);
+
+
+  CovgInfo* complex_covg_info = get_coverage_info(db_graph,
+                                                  mtbc_and_ntm_file_paths,
+                                                  max_branch_len,NUM_COMPLEX,
+                                                  ignore_first,ignore_last);
+  CovgInfo* species_covg_info = get_coverage_info(db_graph,
+                                                  species_file_paths,
+                                                  max_branch_len,NUM_SPECIES,
+                                                  ignore_first,ignore_last);
+  CovgInfo* lineage_covg_info = get_coverage_info(db_graph,
+                                                  lineage_file_paths,
+                                                  max_branch_len,NUM_LINEAGES,
+                                                  ignore_first,ignore_last);
 
 
   SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
-  species_info->sample_type = sample_type;
-  species_info->num_species = num_lineages_present;
-
-  memcpy (species_info->present, lineage_presence, sizeof(lineage_presence));
-  memcpy (species_info->percentage_coverage, lineage_percentage_coverage, sizeof(lineage_percentage_coverage));
-  memcpy (species_info->median_coverage, lineage_median_coverage, sizeof(lineage_median_coverage));
+  species_info->complex_covg_info = complex_covg_info;
+  species_info->species_covg_info = species_covg_info;
+  species_info->lineage_covg_info = lineage_covg_info;
   return species_info;
 }
 
+boolean sample_is_mixed(boolean NTM_is_present,boolean MTBC_is_present)
+
+{
+  boolean is_mixed = NTM_is_present && MTBC_is_present;
+  return (is_mixed);
+}
+
+boolean sample_is_MTBC(boolean NTM_is_present,boolean MTBC_is_present)
+{
+  boolean is_MTBC = MTBC_is_present && !NTM_is_present;
+  return (is_MTBC);
+}
+
+boolean sample_is_NTM(boolean NTM_is_present,boolean MTBC_is_present)
+{
+  boolean is_NTM = !MTBC_is_present && NTM_is_present;
+  return (is_NTM);
+}
+
+boolean is_NTM_present(SpeciesInfo* species_info)
+{
+  // Is combined NTM panel present OR any of the NTM species panels
+  if (species_info->complex_covg_info->present[NTM])
+  {
+    return (true);
+  }
+  else
+  {
+    return (false);
+  }
+  
+}
+
+boolean is_MTBC_present(SpeciesInfo* species_info)
+{
+  // Is combined MTBC panel present OR any of the MTBC species panels
+
+  if (species_info->complex_covg_info->present[MTBC]){
+    return (true);
+  }
+  else{
+    return (false);
+  }
+}
 
 
+SampleType get_sample_type(SpeciesInfo* species_info)
+{
+  boolean NTM_is_present = is_NTM_present(species_info);
+  boolean MTBC_is_present = is_MTBC_present(species_info);
+  SampleType sample_type;
+  if ( sample_is_mixed(NTM_is_present,MTBC_is_present) )
+    {
+      sample_type=MixedTB;
+    }
+  else{
+    if ( sample_is_MTBC(NTM_is_present,MTBC_is_present) ){
+      sample_type = PureMTBC;
+    }
+    else if ( sample_is_NTM(NTM_is_present,MTBC_is_present) )
+    {
+      sample_type = PureNTM;
+    }
+    else
+    {
+      sample_type = NonTB;
+    }    
 
+  }
+  return sample_type;  
+}
+
+void print_json_indiv_phylo(CovgInfo* covg_info, char* (*get_ith_name)(CovgInfo*, int) ){
+    int i;
+    boolean last = false;
+    for (i=0; i < covg_info->num_panels_present; i++)
+    {
+      if (i == covg_info->num_panels_present-1){
+        last = true;
+      }
+      print_json_called_variant_item( (*get_ith_name)(covg_info,i), 0, last);
+    }     
+}
+
+void print_json_complex(SpeciesInfo* species_info){
+    print_json_complex_start();
+     print_json_indiv_phylo(species_info->complex_covg_info, get_ith_complex_name );
+    print_json_complex_end();  
+}
+void print_json_species(SpeciesInfo* species_info){
+    print_json_species_start();
+    print_json_indiv_phylo(species_info->species_covg_info, get_ith_species_name );
+    print_json_species_end();  
+}
+void print_json_lineage(SpeciesInfo* species_info){
+    print_json_lineage_start();
+    print_json_indiv_phylo(species_info->lineage_covg_info, get_ith_lineage_name );
+    print_json_lineage_end(); 
+}
+
+void print_json_phylogenetics(SpeciesInfo* species_info){
+    print_json_phylogenetics_start();
+    print_json_complex(species_info);
+    print_json_species(species_info);
+    print_json_lineage(species_info);
+    print_json_phylogenetics_end();  
+}
