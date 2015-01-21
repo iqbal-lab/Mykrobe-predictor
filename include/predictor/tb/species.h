@@ -166,6 +166,21 @@ int get_pure_lineage_coverage(SpeciesInfo* species_info);
 void print_json_indiv_phylo(CovgInfo* covg_info,
                            char* (*get_ith_name)(CovgInfo*, int));
 void print_json_complex(SpeciesInfo* species_info);
+Myc_species get_best_hit(CovgInfo* covg_info,boolean* mask);
+boolean* create_mask(boolean default_value);
+boolean* create_MTBC_mask();
+boolean* create_NTM_mask();
+Myc_species get_best_MTBC_species(SpeciesInfo* species_info );
+Myc_species get_best_NTM_species(SpeciesInfo* species_info );
+Myc_lineage get_best_lineage(SpeciesInfo* species_info );
+boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask);
+boolean MTBC_panels_are_present(SpeciesInfo* species_info);
+boolean NTM_panels_are_present(SpeciesInfo* species_info);
+boolean no_MTBC_panels_are_present(SpeciesInfo* species_info);
+boolean no_NTM_panels_are_present(SpeciesInfo* species_info);
+boolean no_lineage_panels_are_present(SpeciesInfo* species_info);
+
+
 void print_json_species(SpeciesInfo* species_info);
 void print_json_lineage(SpeciesInfo* species_info);
 void print_json_phylogenetics(SpeciesInfo* species_info);

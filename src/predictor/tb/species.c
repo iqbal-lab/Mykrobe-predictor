@@ -681,6 +681,37 @@ void load_all_lineage_thresholds(int* thresholds){
   } 
 
 }
+
+int max(int int1,int int2){
+  if (int1 > int2){
+    return (int1);
+  }
+  else{
+    return (int2);
+  }
+
+}
+
+void update_complex_presence_and_coverage_from_species(SpeciesInfo* species_info){
+  if (MTBC_panels_are_present(species_info)){
+    if (! species_info->complex_covg_info->present[MTBC]){
+      species_info->complex_covg_info->present[MTBC] = true;
+      species_info->complex_covg_info->num_panels_present = species_info->complex_covg_info->num_panels_present + 1;
+    }
+    Myc_species best_MTBC_species = get_best_MTBC_species(species_info);
+    species_info->complex_covg_info->percentage_coverage[MTBC] = max(species_info->complex_covg_info->percentage_coverage[MTBC] , species_info->species_covg_info->percentage_coverage[best_MTBC_species] );
+    species_info->complex_covg_info->median_coverage[MTBC] = max(species_info->complex_covg_info->median_coverage[MTBC] , species_info->species_covg_info->median_coverage[best_MTBC_species] );
+  }
+  if (NTM_panels_are_present(species_info)){
+    if (! species_info->complex_covg_info->present[NTM]){
+      species_info->complex_covg_info->present[NTM] = true;
+      species_info->complex_covg_info->num_panels_present = species_info->complex_covg_info->num_panels_present + 1;
+    }
+    Myc_species best_NTM_species = get_best_NTM_species(species_info);
+    species_info->complex_covg_info->percentage_coverage[NTM] = max(species_info->complex_covg_info->percentage_coverage[NTM] , species_info->species_covg_info->percentage_coverage[best_NTM_species] );
+    species_info->complex_covg_info->median_coverage[NTM] = max(species_info->complex_covg_info->median_coverage[NTM] , species_info->species_covg_info->median_coverage[best_NTM_species] );
+  }
+}
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last)
@@ -711,31 +742,35 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                                                   load_all_lineage_thresholds);
 
 
+
   SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
   species_info->complex_covg_info = complex_covg_info;
   species_info->species_covg_info = species_covg_info;
   species_info->lineage_covg_info = lineage_covg_info;
+
+  update_complex_presence_and_coverage_from_species(species_info);
+
   return species_info;
 }
 
-boolean sample_is_mixed(boolean NTM_is_present,boolean MTBC_is_present)
+// boolean sample_is_mixed(boolean NTM_is_present,boolean MTBC_is_present)
 
-{
-  boolean is_mixed = NTM_is_present && MTBC_is_present;
-  return (is_mixed);
-}
+// {
+//   boolean is_mixed = NTM_is_present && MTBC_is_present;
+//   return (is_mixed);
+// }
 
-boolean sample_is_MTBC(boolean NTM_is_present,boolean MTBC_is_present)
-{
-  boolean is_MTBC = MTBC_is_present && !NTM_is_present;
-  return (is_MTBC);
-}
+// boolean sample_is_MTBC(boolean NTM_is_present,boolean MTBC_is_present)
+// {
+//   boolean is_MTBC = MTBC_is_present && !NTM_is_present;
+//   return (is_MTBC);
+// }
 
-boolean sample_is_NTM(boolean NTM_is_present,boolean MTBC_is_present)
-{
-  boolean is_NTM = !MTBC_is_present && NTM_is_present;
-  return (is_NTM);
-}
+// boolean sample_is_NTM(boolean NTM_is_present,boolean MTBC_is_present)
+// {
+//   boolean is_NTM = !MTBC_is_present && NTM_is_present;
+//   return (is_NTM);
+// }
 
 boolean is_NTM_present(SpeciesInfo* species_info)
 {
@@ -764,31 +799,31 @@ boolean is_MTBC_present(SpeciesInfo* species_info)
 }
 
 
-SampleType get_sample_type(SpeciesInfo* species_info)
-{
-  boolean NTM_is_present = is_NTM_present(species_info);
-  boolean MTBC_is_present = is_MTBC_present(species_info);
-  SampleType sample_type;
-  if ( sample_is_mixed(NTM_is_present,MTBC_is_present) )
-    {
-      sample_type=MixedTB;
-    }
-  else{
-    if ( sample_is_MTBC(NTM_is_present,MTBC_is_present) ){
-      sample_type = PureMTBC;
-    }
-    else if ( sample_is_NTM(NTM_is_present,MTBC_is_present) )
-    {
-      sample_type = PureNTM;
-    }
-    else
-    {
-      sample_type = NonTB;
-    }    
+// SampleType get_sample_type(SpeciesInfo* species_info)
+// {
+//   boolean NTM_is_present = is_NTM_present(species_info);
+//   boolean MTBC_is_present = is_MTBC_present(species_info);
+//   SampleType sample_type;
+//   if ( sample_is_mixed(NTM_is_present,MTBC_is_present) )
+//     {
+//       sample_type=MixedTB;
+//     }
+//   else{
+//     if ( sample_is_MTBC(NTM_is_present,MTBC_is_present) ){
+//       sample_type = PureMTBC;
+//     }
+//     else if ( sample_is_NTM(NTM_is_present,MTBC_is_present) )
+//     {
+//       sample_type = PureNTM;
+//     }
+//     else
+//     {
+//       sample_type = NonTB;
+//     }    
 
-  }
-  return sample_type;  
-}
+//   }
+//   return sample_type;  
+// }
 
 void print_json_indiv_phylo(CovgInfo* covg_info,
                            char* (*get_ith_name)(CovgInfo*, int)){
@@ -812,7 +847,7 @@ void print_json_complex(SpeciesInfo* species_info){
     }
     else
     {
-      print_json_called_variant_item( "Non TB", 0, true);
+      print_json_called_variant_item( "Non TB", -1, true);
     }
     print_json_complex_end();  
 }
@@ -841,7 +876,8 @@ Myc_species get_best_hit(CovgInfo* covg_info,boolean* mask)
   return (Myc_lineage) curr;
 }
 
-boolean* create_mask(boolean default_value){
+boolean* create_mask(boolean default_value)
+{
   boolean* mask = malloc(NUM_SPECIES * sizeof(boolean));
   int j;
   for(j = 0; j < NUM_SPECIES; j++) {
@@ -850,7 +886,8 @@ boolean* create_mask(boolean default_value){
   return (mask);
 }
 
-boolean* create_MTBC_mask(){
+boolean* create_MTBC_mask()
+{
   boolean* mask= create_mask(false);
   mask[tuberculosis] = true;
   mask[bovis] = true;
@@ -859,7 +896,8 @@ boolean* create_MTBC_mask(){
   return (mask);
 }
 
-boolean* create_NTM_mask(){
+boolean* create_NTM_mask()
+{
   boolean* mask= create_mask(true);
   mask[tuberculosis] = false;
   mask[bovis] = false;
@@ -900,23 +938,30 @@ boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask){
   return (panels_are_present);
 }
 
-boolean no_MTBC_panels_are_present(SpeciesInfo* species_info){
+boolean MTBC_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_MTBC_mask();
   boolean MTBC_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
-  return (!MTBC_species_panels_are_present);
+  return (MTBC_species_panels_are_present);
 }
-boolean no_NTM_panels_are_present(SpeciesInfo* species_info){
+boolean NTM_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_NTM_mask();
   boolean NTM_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
-  return (!NTM_species_panels_are_present);  
+  return (NTM_species_panels_are_present);  
+}
+
+boolean no_MTBC_panels_are_present(SpeciesInfo* species_info){
+  return (!MTBC_panels_are_present(species_info));
+}
+boolean no_NTM_panels_are_present(SpeciesInfo* species_info){
+  return (!NTM_panels_are_present(species_info));  
 }
 
 boolean no_lineage_panels_are_present(SpeciesInfo* species_info){
   if (species_info->lineage_covg_info->num_panels_present >0 ){
-    return (true);
+    return (false);
   }
   else{
-    return (false);
+    return (true);
   }
 }
 
@@ -988,7 +1033,7 @@ void print_json_species(SpeciesInfo* species_info){
     }
     else
     {
-      print_json_called_variant_item( "Unknown Species", 0, true);
+      print_json_called_variant_item( "Unknown Species", -1, true);
     }    
 
     print_json_species_end();  
@@ -1000,7 +1045,7 @@ void print_json_lineage(SpeciesInfo* species_info){
     }
     else
     {
-      print_json_called_variant_item( "Unknown lineage", 0, true);
+      print_json_called_variant_item( "Unknown lineage", -1, true);
     }    
     print_json_lineage_end(); 
 }
@@ -1017,11 +1062,11 @@ boolean myco_is_present(SpeciesInfo* species_info){
 void print_json_phylogenetics(SpeciesInfo* species_info){
     print_json_phylogenetics_start();
     print_json_complex(species_info);
-    if (myco_is_present(species_info)){
-      print_json_species(species_info);
-      if (tuberculosis_is_present(species_info)){
-        print_json_lineage(species_info);
-      }      
-    }
+    // if (myco_is_present(species_info)){
+    print_json_species(species_info);
+      // if (tuberculosis_is_present(species_info)){
+    print_json_lineage(species_info);
+      // }      
+    // }
     print_json_phylogenetics_end();  
 }
