@@ -886,27 +886,90 @@ Myc_lineage get_best_lineage(SpeciesInfo* species_info ){
   return (lineage);
 }
 
+boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask){
+  boolean panels_are_present = false;
+  int i;
+  for (i=0; i<covg_info->NUM_PANELS; i++)
+  {
+    if (mask[i]){
+      if (covg_info->present[i]){
+        panels_are_present = true;
+      }
+    }
+  }
+  return (panels_are_present);
+}
+
+boolean no_MTBC_panels_are_present(SpeciesInfo* species_info){
+  boolean* mask = create_MTBC_mask();
+  boolean MTBC_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  return (!MTBC_species_panels_are_present);
+}
+boolean no_NTM_panels_are_present(SpeciesInfo* species_info){
+  boolean* mask = create_NTM_mask();
+  boolean NTM_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  return (!NTM_species_panels_are_present);  
+}
+
+boolean no_lineage_panels_are_present(SpeciesInfo* species_info){
+  if (species_info->lineage_covg_info->num_panels_present >0 ){
+    return (true);
+  }
+  else{
+    return (false);
+  }
+}
 
 void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
-  Myc_species MTBC_species = get_best_MTBC_species(species_info);
-  Myc_species NTM_species = get_best_NTM_species(species_info);  
-  print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], false);
-  print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
+  if (no_MTBC_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown MTBC Species", -1 , false);
+  }
+  else
+  {  
+    Myc_species MTBC_species = get_best_MTBC_species(species_info);
+    print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], false);
+  }
+  if (no_NTM_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown NTM Species", -1 , false);
+  }
+  else
+  {  
+    Myc_species NTM_species = get_best_NTM_species(species_info);  
+    print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
+  }
 }
 
 void print_json_best_hit_MBTC(SpeciesInfo* species_info){
+  if (no_MTBC_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown MTBC Species", -1 , true);
+  }
+  else{
   Myc_species MTBC_species = get_best_MTBC_species(species_info);
-  print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], true);
+  print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], true);    
+  }
 }
 
 void print_json_best_hit_NTM(SpeciesInfo* species_info){
-  Myc_species NTM_species = get_best_NTM_species(species_info);  
-  print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
+  if (no_NTM_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown NTM Species", -1 , true);
+  }
+  else
+  {  
+    Myc_species NTM_species = get_best_NTM_species(species_info);  
+    print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
+  }
+
 }
 
 void print_json_best_hit_lineage(SpeciesInfo* species_info){
-  Myc_lineage lineage = get_best_lineage(species_info);  
-  print_json_called_variant_item( get_char_name_of_lineage_enum(lineage), species_info->lineage_covg_info->median_coverage[lineage], true);
+  if (no_lineage_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown Lineage", -1 , true);
+  }
+  else
+  {    
+    Myc_lineage lineage = get_best_lineage(species_info);  
+    print_json_called_variant_item( get_char_name_of_lineage_enum(lineage), species_info->lineage_covg_info->median_coverage[lineage], true);
+  }
 }
 
 void print_json_species(SpeciesInfo* species_info){
