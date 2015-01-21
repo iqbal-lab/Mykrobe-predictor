@@ -285,7 +285,7 @@ int main(int argc, char **argv)
       print_json_start();
       print_json_called_variant_item("expected_depth",expected_depth,false);      
       print_json_phylogenetics(species_info);
-      if (get_sample_type(species_info) == NonTB)
+      if (!myco_is_present(species_info))
     	{
 
     	  print_json_susceptibility_start(); 

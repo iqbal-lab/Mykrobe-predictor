@@ -353,6 +353,18 @@ int get_ith_present_panel(CovgInfo* covg_info, int i){
   return (panel);
 }
 
+char* get_char_name_of_species_enum(Myc_species species){
+  StrBuf* species_name = strbuf_new(); 
+  map_species_enum_to_str(species, species_name);
+  return species_name->buff;
+}
+
+char* get_char_name_of_lineage_enum(Myc_lineage lineage){
+  StrBuf* lineage_name = strbuf_new(); 
+  map_lineage_enum_to_str(lineage, lineage_name);
+  return lineage_name->buff;
+}
+
 char* get_ith_complex_name(CovgInfo* covg_info, int i)
 {
   Myc_complex complex;
@@ -364,18 +376,15 @@ char* get_ith_complex_name(CovgInfo* covg_info, int i)
 char* get_ith_species_name(CovgInfo* covg_info, int i)
 {
   Myc_species species;
-  StrBuf* species_name = strbuf_new(); 
   species = get_ith_present_panel( covg_info, i);
-  map_species_enum_to_str(species, species_name);
-  return species_name->buff;
+  return get_char_name_of_species_enum(species);
 }
+
 char* get_ith_lineage_name(CovgInfo* covg_info, int i)
 {
   Myc_lineage lineage;
-  StrBuf* lineage_name = strbuf_new(); 
   lineage = get_ith_present_panel( covg_info, i);
-  map_lineage_enum_to_str(lineage, lineage_name);
-  return lineage_name->buff;
+  return get_char_name_of_lineage_enum(lineage);
 }
 
 void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
@@ -664,7 +673,6 @@ void load_all_species_thresholds(int* thresholds){
   for(j = 0; j < NUM_SPECIES; j++) {
     thresholds[j] = 75;
   } 
-
 }
 void load_all_lineage_thresholds(int* thresholds){
   int j;
@@ -808,25 +816,125 @@ void print_json_complex(SpeciesInfo* species_info){
     }
     print_json_complex_end();  
 }
+
+Myc_species get_best_hit(CovgInfo* covg_info,boolean* mask)
+{
+  int i;
+  int best_perc_cov_so_far=0;
+  int best_median_cov_so_far=0;
+  int curr=-1;
+
+  for (i=0; i<covg_info->NUM_PANELS; i++)
+  {
+    if (mask[i]){
+      if (covg_info->percentage_coverage[i] >= best_perc_cov_so_far)
+      {
+         best_perc_cov_so_far = covg_info->percentage_coverage[i];
+        // Only update if the median coverage has also improved
+        if (covg_info->median_coverage[i] > best_median_cov_so_far){
+          best_median_cov_so_far = covg_info->median_coverage[i];
+          curr=i;
+        }          
+      }      
+    }
+  }
+  return (Myc_lineage) curr;
+}
+
+boolean* create_mask(boolean default_value){
+  boolean* mask = malloc(NUM_SPECIES * sizeof(boolean));
+  int j;
+  for(j = 0; j < NUM_SPECIES; j++) {
+    mask[j] = default_value;
+  }   
+  return (mask);
+}
+
+boolean* create_MTBC_mask(){
+  boolean* mask= create_mask(false);
+  mask[tuberculosis] = true;
+  mask[bovis] = true;
+  mask[caprae] = true;
+  mask[africanum] = true;
+  return (mask);
+}
+
+boolean* create_NTM_mask(){
+  boolean* mask= create_mask(true);
+  mask[tuberculosis] = false;
+  mask[bovis] = false;
+  mask[caprae] = false;
+  mask[africanum] = false;
+  return (mask);
+}
+
+Myc_species get_best_MTBC_species(SpeciesInfo* species_info ){
+  boolean* mask = create_MTBC_mask();
+  Myc_species species = get_best_hit(species_info->species_covg_info,mask);
+  return (species);
+}
+
+Myc_species get_best_NTM_species(SpeciesInfo* species_info ){
+  boolean* mask = create_NTM_mask();
+  Myc_species species = get_best_hit(species_info->species_covg_info,mask);
+  return (species);
+}
+
+Myc_lineage get_best_lineage(SpeciesInfo* species_info ){
+  boolean* mask= create_mask(true);
+  Myc_lineage lineage = get_best_hit(species_info->lineage_covg_info,mask);
+  return (lineage);
+}
+
+
+void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
+  Myc_species MTBC_species = get_best_MTBC_species(species_info);
+  Myc_species NTM_species = get_best_MTBC_species(species_info);  
+  print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], false);
+  print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
+}
+
+void print_json_best_hit_MBTC(SpeciesInfo* species_info){
+  Myc_species MTBC_species = get_best_MTBC_species(species_info);
+  print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], true);
+}
+
+void print_json_best_hit_NTM(SpeciesInfo* species_info){
+  Myc_species NTM_species = get_best_NTM_species(species_info);  
+  print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
+}
+
+void print_json_best_hit_lineage(SpeciesInfo* species_info){
+  Myc_lineage lineage = get_best_lineage(species_info);  
+  print_json_called_variant_item( get_char_name_of_lineage_enum(lineage), species_info->lineage_covg_info->median_coverage[lineage], true);
+}
+
 void print_json_species(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->species_covg_info;
-    int num_panels_present = covg_info->num_panels_present;
+    Myc_species MTBC_is_present = is_MTBC_present(species_info);
+    Myc_species NTM_is_present = is_NTM_present(species_info);
     print_json_species_start();
-    if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_species_name);
+    if (MTBC_is_present && NTM_is_present){
+      print_json_best_hit_NTM_and_MBTC(species_info);
+    }
+    else if (MTBC_is_present){
+      print_json_best_hit_MBTC(species_info);
+
+    }
+    else if (NTM_is_present){
+      print_json_best_hit_NTM(species_info);
     }
     else
     {
       print_json_called_variant_item( "Unknown Species", 0, true);
     }    
+
     print_json_species_end();  
 }
 void print_json_lineage(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->lineage_covg_info ; 
     int num_panels_present = covg_info->num_panels_present;    
     print_json_lineage_start();
-    if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_lineage_name);
+    if (tuberculosis_is_present(species_info)){
+      print_json_best_hit_lineage(species_info);
     }
     else
     {
