@@ -889,7 +889,7 @@ Myc_lineage get_best_lineage(SpeciesInfo* species_info ){
 
 void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
   Myc_species MTBC_species = get_best_MTBC_species(species_info);
-  Myc_species NTM_species = get_best_MTBC_species(species_info);  
+  Myc_species NTM_species = get_best_NTM_species(species_info);  
   print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], false);
   print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
 }
@@ -931,7 +931,6 @@ void print_json_species(SpeciesInfo* species_info){
     print_json_species_end();  
 }
 void print_json_lineage(SpeciesInfo* species_info){
-    int num_panels_present = covg_info->num_panels_present;    
     print_json_lineage_start();
     if (tuberculosis_is_present(species_info)){
       print_json_best_hit_lineage(species_info);
