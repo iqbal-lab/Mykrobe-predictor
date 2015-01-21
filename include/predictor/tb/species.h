@@ -97,6 +97,7 @@ typedef struct
   boolean present[NUM_SPECIES];
   int percentage_coverage[NUM_SPECIES];
   int median_coverage[NUM_SPECIES];
+  int percentage_threshold[NUM_SPECIES];  
   int num_panels_present;
   int NUM_PANELS;
 } CovgInfo;
@@ -132,7 +133,8 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
                           int NUM_PANELS,
                           int ignore_first,
                           int ignore_last,
-                          int threshold);
+                          void (*load_thresholds)()
+                          );
 SampleType get_sample_type(SpeciesInfo* species_info);
 
 void load_all_mtbc_and_ntm_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
@@ -143,7 +145,7 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
-void find_which_panels_are_present(CovgInfo* covg_info,int threshold);
+void find_which_panels_are_present(CovgInfo* covg_info);
 
 void map_complex_enum_to_str(Myc_complex sp, StrBuf* sbuf);
 void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf);

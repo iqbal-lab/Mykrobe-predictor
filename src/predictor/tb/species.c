@@ -496,12 +496,12 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
   }
 }
 
-void find_which_panels_are_present(CovgInfo* covg_info,int threshold)
+void find_which_panels_are_present(CovgInfo* covg_info)
 {
   int i;
   for (i=0; i<covg_info->NUM_PANELS; i++)
   {
-    covg_info->present[i] = is_percentage_coverage_above_threshold(covg_info->percentage_coverage[i],threshold);
+    covg_info->present[i] = is_percentage_coverage_above_threshold(covg_info->percentage_coverage[i],covg_info->percentage_threshold[i]);
     if (covg_info->present[i])
     {
       covg_info->num_panels_present = covg_info->num_panels_present +1;
@@ -639,21 +639,40 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
                           int NUM_PANELS,
                           int ignore_first,
                           int ignore_last,
-                          int threshold){
+                          void (*load_thresholds)()
+                          ){
 
   CovgInfo* covg_info = alloc_and_init_covg_info();
-  covg_info->NUM_PANELS = NUM_PANELS;    
+  covg_info->NUM_PANELS = NUM_PANELS;  
+  load_thresholds(covg_info->percentage_threshold);
   get_coverage_on_panels(covg_info->percentage_coverage,
                           covg_info->median_coverage,
                           file_paths,
                           max_branch_len,db_graph,
                           ignore_first,ignore_last,
                           NUM_PANELS);
-  find_which_panels_are_present(covg_info,threshold);  
+  find_which_panels_are_present(covg_info);  
 
   return (covg_info);
 }
+void load_all_complex_thresholds(int* thresholds){
+  thresholds[MTBC] = 90;
+  thresholds[NTM] = 25;
+}
+void load_all_species_thresholds(int* thresholds){
+  int j;
+  for(j = 0; j < NUM_SPECIES; j++) {
+    thresholds[j] = 75;
+  } 
 
+}
+void load_all_lineage_thresholds(int* thresholds){
+  int j;
+  for(j = 0; j < NUM_SPECIES; j++) {
+    thresholds[j] = 90;
+  } 
+
+}
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last)
@@ -671,17 +690,17 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                                                   mtbc_and_ntm_file_paths,
                                                   max_branch_len,NUM_COMPLEX,
                                                   ignore_first,ignore_last,
-                                                  30);
+                                                  load_all_complex_thresholds);
   CovgInfo* species_covg_info = get_coverage_info(db_graph,
                                                   species_file_paths,
                                                   max_branch_len,NUM_SPECIES,
                                                   ignore_first,ignore_last,
-                                                  30);
+                                                  load_all_species_thresholds);
   CovgInfo* lineage_covg_info = get_coverage_info(db_graph,
                                                   lineage_file_paths,
                                                   max_branch_len,NUM_LINEAGES,
                                                   ignore_first,ignore_last,
-                                                  90);
+                                                  load_all_lineage_thresholds);
 
 
   SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
