@@ -975,7 +975,7 @@ void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
     print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], false);
   }
   if (no_NTM_panels_are_present(species_info)){
-    print_json_called_variant_item( "Unknown NTM Species", -1 , false);
+    print_json_called_variant_item( "Unknown NTM Species", -1 , true);
   }
   else
   {  
