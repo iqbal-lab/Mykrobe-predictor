@@ -1,9 +1,3 @@
-../../staph/species/cat.fasta
-../../staph/species/Saureus.fasta
-../../staph/species/Sepidermidis.fasta
-../../staph/species/Shaemolyticus.fasta
-../../staph/species/Sother.fasta
-../../staph/virulence/luks.fa
 ../../staph/antibiotics/aacAaphD.fa
 ../../staph/antibiotics/blaZ.fa
 ../../staph/antibiotics/ciprofloxacin.fa
@@ -37,3 +31,8 @@
 ../../staph/antibiotics/vanA.fa
 ../../staph/antibiotics/vancomycin.fa
 ../../staph/antibiotics/vga_A_LC.fa
+../../staph/species/cat.fasta
+../../staph/species/Saureus.fasta
+../../staph/species/Sepidermidis.fasta
+../../staph/species/Shaemolyticus.fasta
+../../staph/species/Sother.fasta

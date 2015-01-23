@@ -1,12 +1,3 @@
-../../tb/species/animal_lineage.fa
-../../tb/species/beijing_sublineage.fa
-../../tb/species/lineage_1.fa
-../../tb/species/lineage_2.fa
-../../tb/species/lineage_3.fa
-../../tb/species/lineage_4.fa
-../../tb/species/lineage_5.fa
-../../tb/species/lineage_6.fa
-../../tb/species/lineage_7.fa
 ../../tb/antibiotics/amikacin.fa
 ../../tb/antibiotics/capreomycin.fa
 ../../tb/antibiotics/ethambutol.fa
@@ -17,3 +8,12 @@
 ../../tb/antibiotics/rifampicin.fa
 ../../tb/antibiotics/streptomycin .fa
 ../../tb/antibiotics/streptomycin.fa
+../../tb/species/animal_lineage.fa
+../../tb/species/beijing_sublineage.fa
+../../tb/species/lineage_1.fa
+../../tb/species/lineage_2.fa
+../../tb/species/lineage_3.fa
+../../tb/species/lineage_4.fa
+../../tb/species/lineage_5.fa
+../../tb/species/lineage_6.fa
+../../tb/species/lineage_7.fa

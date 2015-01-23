@@ -365,7 +365,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-    InfectionType is_amikacin_susceptible(dBGraph* db_graph,
+InfectionType is_amikacin_susceptible(dBGraph* db_graph,
                int (*file_reader)(FILE * fp, 
                           Sequence * seq, 
                           int max_read_length, 
@@ -386,9 +386,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       //setup antibiotic info object
       abi->ab = amikacin;
       strbuf_append_str(abi->m_fasta, install_dir->buff);
-
       strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/amikacin.fa");
-
       abi->num_mutations = 4;
       abi->num_genes=0;
       double epsilon = pow(1-err_rate, db_graph->kmer_size);
