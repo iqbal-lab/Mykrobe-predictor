@@ -510,6 +510,7 @@ void find_which_panels_are_present(CovgInfo* covg_info)
   int i;
   for (i=0; i<covg_info->NUM_PANELS; i++)
   {
+    // printf("panel %d has coverage %d \n",i,covg_info->percentage_coverage[i]);
     covg_info->present[i] = is_percentage_coverage_above_threshold(covg_info->percentage_coverage[i],covg_info->percentage_threshold[i]);
     if (covg_info->present[i])
     {
@@ -665,13 +666,13 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
   return (covg_info);
 }
 void load_all_complex_thresholds(int* thresholds){
-  thresholds[MTBC] = 90;
+  thresholds[MTBC] = 70;
   thresholds[NTM] = 25;
 }
 void load_all_species_thresholds(int* thresholds){
   int j;
   for(j = 0; j < NUM_SPECIES; j++) {
-    thresholds[j] = 75;
+    thresholds[j] = 30;
   } 
 }
 void load_all_lineage_thresholds(int* thresholds){
