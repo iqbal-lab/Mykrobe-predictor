@@ -34,19 +34,19 @@ typedef enum
  {
    NoDrug=0,
    
-   Clindamycin=1,
+   Erythromycin=1,
    
-   Gentamicin=2,
+   Clindamycin=2,
    
-   Biocides=3,
+   Gentamicin=3,
    
-   Chloramphenicol=4,
+   Biocides=4,
    
-   Linezolid=5,
+   Chloramphenicol=5,
    
-   Penicillin=6,
+   Linezolid=6,
    
-   Erythromycin=7,
+   Penicillin=7,
    
    Mupirocin=8,
    
@@ -138,6 +138,24 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       int expected_covg,
 				       StrBuf* install_dir);
 
+
+InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
+				  int (*file_reader)(FILE * fp, 
+						     Sequence * seq, 
+						     int max_read_length, 
+						     boolean new_entry, 
+						     boolean * full_entry),
+				  ReadingUtils* rutils,
+				  VarOnBackground* tmp_vob,
+				  GeneInfo* tmp_gi,
+				  AntibioticInfo* abi,
+				  StrBuf* install_dir,
+				  int ignore_first, int ignore_last, int expected_covg,
+				  double lambda_g, double lambda_e, double err_rate,
+            	   boolean* any_erm_present,				  
+				   CalledVariant* called_variants,CalledGene* called_genes,
+				   CmdLine* cmd_line
+				  );
 
 InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
@@ -243,24 +261,6 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
             	  				  
-				   CalledVariant* called_variants,CalledGene* called_genes,
-				   CmdLine* cmd_line
-				  );
-
-InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
-				  int (*file_reader)(FILE * fp, 
-						     Sequence * seq, 
-						     int max_read_length, 
-						     boolean new_entry, 
-						     boolean * full_entry),
-				  ReadingUtils* rutils,
-				  VarOnBackground* tmp_vob,
-				  GeneInfo* tmp_gi,
-				  AntibioticInfo* abi,
-				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg,
-				  double lambda_g, double lambda_e, double err_rate,
-            	   boolean* any_erm_present,				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );

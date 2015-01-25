@@ -708,9 +708,9 @@ char* map_var_id_to_drug_resistance(KnownMutation km)
         
     
         
-        case twentythreeS_G2576T  : return "Linezolid";
-        
     
+        
+        case twentythreeS_G2576T  : return "Linezolid";
         
     
         

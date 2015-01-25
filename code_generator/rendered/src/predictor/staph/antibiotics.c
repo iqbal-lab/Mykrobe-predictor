@@ -125,6 +125,12 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
       strbuf_append_str(name, "NoDrug");
     }
   
+  else if (ab==Erythromycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "Erythromycin");
+    }
+  
   else if (ab==Clindamycin)
     {
       strbuf_reset(name);
@@ -159,12 +165,6 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
     {
       strbuf_reset(name);
       strbuf_append_str(name, "Penicillin");
-    }
-  
-  else if (ab==Erythromycin)
-    {
-      strbuf_reset(name);
-      strbuf_append_str(name, "Erythromycin");
     }
   
   else if (ab==Mupirocin)
@@ -518,6 +518,109 @@ void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
   if ( (*I_permenant==Unsure) || (*I_permenant==Susceptible) ){
     *I_permenant = *I_new;
   }
+}
+
+
+InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+             boolean* any_erm_present,
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permenant = Unsure;
+  reset_antibiotic_info(abi);
+   *any_erm_present=false;
+
+
+  //setup antibiotic info object
+  abi->ab = Erythromycin;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/erythromycin.fa");
+  
+    abi->which_genes[0]=ermB;
+  
+    abi->which_genes[1]=ermC;
+  
+    abi->which_genes[2]=ermA;
+  
+    abi->which_genes[3]=ermY;
+  
+    abi->which_genes[4]=ermT;
+  
+    abi->which_genes[5]=msrA;
+  
+    abi->which_genes[6]=mphC;
+  
+  abi->num_genes=7;
+  abi->num_mutations = 0;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  InfectionType I;
+
+
+
+for (i=0; i<7; i++)
+    {
+      InfectionType I =
+	     resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, lambda_e, epsilon, expected_covg,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_STANDARD);
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
+        {
+          max_sus_conf = best_model.conf;
+        }
+      if (best_model.conf<min_conf)
+        {
+          min_conf = best_model.conf;
+        }
+      if ( (I==Resistant) || (I==MixedInfection) ) 
+        {
+         
+          if ( (abi->which_genes[i] == ermA) || (abi->which_genes[i] == ermB) || (abi->which_genes[i] == ermC) || (abi->which_genes[i] == ermY) || (abi->which_genes[i] == ermT) )
+          {
+            *any_erm_present=true;
+          }
+        
+          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+        }
+        update_infection_type(&I,&I_permenant);
+    }
+  
+
+
+  
+  
+   
+  return I_permenant;
+  
+
 }
 
 
@@ -1064,109 +1167,6 @@ I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size,
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
   update_infection_type(&I,&I_permenant);
-  
-
-
-  
-  
-   
-  return I_permenant;
-  
-
-}
-
-
-InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
-             boolean* any_erm_present,
-             CalledVariant* called_variants,CalledGene* called_genes,
-             CmdLine* cmd_line
-				    )
-
-{
-  InfectionType I_permenant = Unsure;
-  reset_antibiotic_info(abi);
-   *any_erm_present=false;
-
-
-  //setup antibiotic info object
-  abi->ab = Erythromycin;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/erythromycin.fa");
-  
-    abi->which_genes[0]=ermB;
-  
-    abi->which_genes[1]=ermC;
-  
-    abi->which_genes[2]=ermA;
-  
-    abi->which_genes[3]=ermY;
-  
-    abi->which_genes[4]=ermT;
-  
-    abi->which_genes[5]=msrA;
-  
-    abi->which_genes[6]=mphC;
-  
-  abi->num_genes=7;
-  abi->num_mutations = 0;
-
-  double epsilon = pow(1-err_rate, db_graph->kmer_size);
-  load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
-  double max_sus_conf=0;
-  double min_conf=9999999;  
-  int i;
-  Model best_model;
-  InfectionType I;
-
-
-
-for (i=0; i<7; i++)
-    {
-      InfectionType I =
-	     resistotype_gene(abi->genes[abi->which_genes[i]], 
-			 err_rate, db_graph->kmer_size, 
-			 lambda_g, lambda_e, epsilon, expected_covg,
-			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
-        {
-          max_sus_conf = best_model.conf;
-        }
-      if (best_model.conf<min_conf)
-        {
-          min_conf = best_model.conf;
-        }
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-        {
-         
-          if ( (abi->which_genes[i] == ermA) || (abi->which_genes[i] == ermB) || (abi->which_genes[i] == ermC) || (abi->which_genes[i] == ermY) || (abi->which_genes[i] == ermT) )
-          {
-            *any_erm_present=true;
-          }
-        
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-        update_infection_type(&I,&I_permenant);
-    }
   
 
 

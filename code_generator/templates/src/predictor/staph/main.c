@@ -424,16 +424,19 @@ int main(int argc, char **argv)
             ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
             &any_erm_present,
             called_variants,called_genes);
-  {% else %}
-  {% if loop.last %}
-  output_last=true;
-  {% endif %}
+  {% elif not drug.name == "Clindamycin" %}
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_{{drug | lower }}_susceptible, tmp_name, cmd_line->install_dir,
           ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
                       called_variants,called_genes);   
   {% endif %}
   {% endfor %}
+  output_last=true;
+  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+           &is_clindamycin_susceptible, tmp_name, 
+           any_erm_present,cmd_line->install_dir,
+           ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+           called_variants,called_genes);
 
    
   if (cmd_line->format==JSON)

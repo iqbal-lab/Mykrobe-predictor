@@ -46,11 +46,14 @@ class StaphCodeGenerator(CodeGenerator):
 
     @property 
     def drugs(self):
+
         return [StaphDrugCodeGenerator(drug) for drug in self.drug_names ]
 
     @property 
     def drug_names(self):
-        return unique(self.gene_induced_drug_names + self.mutation_induced_drug_names)                        
+        drug_names = unique(self.gene_induced_drug_names + self.mutation_induced_drug_names) 
+        drug_names.insert(0, drug_names.pop(drug_names.index("Erythromycin")))
+        return drug_names                        
 
     @property 
     def gene_induced_drug_names(self):
