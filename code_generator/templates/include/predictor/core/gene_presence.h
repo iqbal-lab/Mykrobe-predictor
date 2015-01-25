@@ -20,109 +20,13 @@
 
 typedef enum
   {
-    
-    vgbA=0,
-    
-    aacAaphD=1,
-    
-    IsaB=2,
-    
-    aadEant6Ia=3,
-    
-    aadDaph4Ia=4,
-    
-    qacB=5,
-    
-    qacA=6,
-    
-    cfr=7,
-    
-    blaZ=8,
-    
-    lnuA=9,
-    
-    lnuB=10,
-    
-    ermB=11,
-    
-    ermC=12,
-    
-    ermA=13,
-    
-    ermY=14,
-    
-    mupB=15,
-    
-    mupA=16,
-    
-    aph2Ic=17,
-    
-    ant9Ia=18,
-    
-    mecA=19,
-    
-    ermT=20,
-    
-    ant9Ib=21,
-    
-    aphA3aph3III=22,
-    
-    dfrA=23,
-    
-    vgaALC=24,
-    
-    dfrC=25,
-    
-    dfrD=26,
-    
-    dfrG=27,
-    
-    mecC=28,
-    
-    aad9spc=29,
-    
-    dfrK=30,
-    
-    vgaB=31,
-    
-    vgaA=32,
-    
-    tetK=33,
-    
-    tetM=34,
-    
-    tetL=35,
-    
-    tetO=36,
-    
-    msrA=37,
-    
-    mphC=38,
-    
-    sat4=39,
-    
-    cat=40,
-    
-    vanA=41,
-    
-    vanC=42,
-    
-    vanB=43,
-    
-    fusB=44,
-    
-    fusC=45,
-    
-    str=46,
-    
-    qacCsmr=47,
-    
-    luk=48,
-    
-    unspecified_gpg = 49
+    {% for gene in selfer.genes %}
+    {{gene}}={{loop.index0}},
+    {% endfor %}
+    unspecified_gpg = {{selfer.genes | length}}
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 49    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES {{selfer.genes | length}}    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
