@@ -6,3 +6,4 @@
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, {{drug.genes_resistance_induced_by[0]}}, abi->genes[{{drug.genes_resistance_induced_by[0]}}], best_model.conf );
   }
+  update_infection_type(&I,&I_permenant);

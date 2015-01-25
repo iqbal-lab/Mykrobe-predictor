@@ -542,6 +542,7 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -549,6 +550,8 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Lincosamides;
@@ -586,7 +589,6 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<6; i++)
     {
       InfectionType I =
@@ -605,6 +607,7 @@ for (i=0; i<6; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -634,6 +637,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -641,6 +645,8 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Gentamicin;
@@ -680,7 +686,6 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<7; i++)
     {
       InfectionType I =
@@ -699,6 +704,7 @@ for (i=0; i<7; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -728,6 +734,7 @@ InfectionType is_biocides_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -735,6 +742,8 @@ InfectionType is_biocides_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Biocides;
@@ -766,7 +775,6 @@ InfectionType is_biocides_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<3; i++)
     {
       InfectionType I =
@@ -785,6 +793,7 @@ for (i=0; i<3; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -814,6 +823,7 @@ InfectionType is_chloramphenicol_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -821,6 +831,8 @@ InfectionType is_chloramphenicol_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Chloramphenicol;
@@ -850,7 +862,6 @@ InfectionType is_chloramphenicol_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<2; i++)
     {
       InfectionType I =
@@ -869,6 +880,7 @@ for (i=0; i<2; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -898,6 +910,7 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -905,6 +918,8 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Linezolid;
@@ -939,6 +954,7 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, cfr, abi->genes[cfr], best_model.conf );
   }
+  update_infection_type(&I,&I_permenant);
   
 
 
@@ -964,6 +980,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -971,6 +988,8 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Penicillin;
@@ -1005,6 +1024,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
+  update_infection_type(&I,&I_permenant);
   
 
 
@@ -1030,6 +1050,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+             boolean* any_erm_present,
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1037,6 +1058,8 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+   *any_erm_present=false;
+
 
   //setup antibiotic info object
   abi->ab = Erythromycin;
@@ -1076,7 +1099,6 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<7; i++)
     {
       InfectionType I =
@@ -1095,6 +1117,12 @@ for (i=0; i<7; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+         
+          if ( (abi->which_genes[i] == ermA) || (abi->which_genes[i] == ermB) || (abi->which_genes[i] == ermC) || (abi->which_genes[i] == ermY) || (abi->which_genes[i] == ermT) )
+          {
+            *any_erm_present=true;
+          }
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1124,6 +1152,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1131,6 +1160,8 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Mupirocin;
@@ -1160,7 +1191,6 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<2; i++)
     {
       InfectionType I =
@@ -1179,6 +1209,7 @@ for (i=0; i<2; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1208,6 +1239,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1215,6 +1247,8 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Methicillin;
@@ -1244,7 +1278,6 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<2; i++)
     {
       InfectionType I =
@@ -1263,6 +1296,7 @@ for (i=0; i<2; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1292,6 +1326,7 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1299,6 +1334,8 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Spectinomycin;
@@ -1328,7 +1365,6 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<2; i++)
     {
       InfectionType I =
@@ -1347,6 +1383,7 @@ for (i=0; i<2; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1376,6 +1413,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1383,6 +1421,8 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Trimethoprim;
@@ -1452,7 +1492,6 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<5; i++)
     {
       InfectionType I =
@@ -1471,6 +1510,7 @@ for (i=0; i<5; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1516,6 +1556,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1523,6 +1564,8 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Clindamycin;
@@ -1557,6 +1600,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, vgaALC, abi->genes[vgaALC], best_model.conf );
   }
+  update_infection_type(&I,&I_permenant);
   
 
 
@@ -1582,6 +1626,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1589,6 +1634,8 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Tetracycline;
@@ -1622,7 +1669,6 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<4; i++)
     {
       InfectionType I =
@@ -1641,6 +1687,7 @@ for (i=0; i<4; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1670,6 +1717,7 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1677,6 +1725,8 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Streptothricin;
@@ -1711,6 +1761,7 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, sat4, abi->genes[sat4], best_model.conf );
   }
+  update_infection_type(&I,&I_permenant);
   
 
 
@@ -1736,6 +1787,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1743,6 +1795,8 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Vancomycin;
@@ -1774,7 +1828,6 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<3; i++)
     {
       InfectionType I =
@@ -1793,6 +1846,7 @@ for (i=0; i<3; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -1822,6 +1876,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -1829,6 +1884,8 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = FusidicAcid;
@@ -1892,7 +1949,6 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
 
 
 
-
 for (i=0; i<2; i++)
     {
       InfectionType I =
@@ -1911,6 +1967,7 @@ for (i=0; i<2; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);
@@ -2056,6 +2113,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -2063,6 +2121,8 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Rifampicin;
@@ -2200,6 +2260,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -2207,6 +2268,8 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  
+
 
   //setup antibiotic info object
   abi->ab = Ciprofloxacin;

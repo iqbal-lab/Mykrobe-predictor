@@ -1,5 +1,4 @@
 
-
 for (i=0; i<{{drug.num_genes}}; i++)
     {
       InfectionType I =
@@ -18,6 +17,12 @@ for (i=0; i<{{drug.num_genes}}; i++)
         }
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
+        {% if drug.name =="Erythromycin" %} 
+          if ( (abi->which_genes[i] == ermA) || (abi->which_genes[i] == ermB) || (abi->which_genes[i] == ermC) || (abi->which_genes[i] == ermY) || (abi->which_genes[i] == ermT) )
+          {
+            *any_erm_present=true;
+          }
+        {% endif %}
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
         update_infection_type(&I,&I_permenant);

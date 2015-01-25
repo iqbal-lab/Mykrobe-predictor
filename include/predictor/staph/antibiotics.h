@@ -154,6 +154,7 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -171,6 +172,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -188,6 +190,7 @@ InfectionType is_biocides_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -205,6 +208,7 @@ InfectionType is_chloramphenicol_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -222,6 +226,7 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -239,6 +244,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -256,6 +262,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	   boolean* any_erm_present,				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -273,6 +280,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -290,6 +298,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -307,6 +316,7 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -324,6 +334,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -341,6 +352,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -358,6 +370,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -375,6 +388,7 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -392,6 +406,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -409,6 +424,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -426,6 +442,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
@@ -443,6 +460,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				  StrBuf* install_dir,
 				  int ignore_first, int ignore_last, int expected_covg,
 				  double lambda_g, double lambda_e, double err_rate,
+            	  				  
 				   CalledVariant* called_variants,CalledGene* called_genes,
 				   CmdLine* cmd_line
 				  );
