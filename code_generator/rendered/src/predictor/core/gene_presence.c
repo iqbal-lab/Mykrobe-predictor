@@ -111,11 +111,6 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return ant9Ia;
     }
   
-  else if(strcmp(sbuf->buff, "mecA")==0)
-    {
-      return mecA;
-    }
-  
   else if(strcmp(sbuf->buff, "ermT")==0)
     {
       return ermT;
@@ -161,9 +156,9 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return mecC;
     }
   
-  else if(strcmp(sbuf->buff, "aad9spc")==0)
+  else if(strcmp(sbuf->buff, "mecA")==0)
     {
-      return aad9spc;
+      return mecA;
     }
   
   else if(strcmp(sbuf->buff, "dfrK")==0)
@@ -369,11 +364,6 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "ant9Ia.fa");
     }
   
-  else if(gene==mecA)
-    {
-      strbuf_append_str(fa, "mecA.fa");
-    }
-  
   else if(gene==ermT)
     {
       strbuf_append_str(fa, "ermT.fa");
@@ -419,9 +409,9 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "mecC.fa");
     }
   
-  else if(gene==aad9spc)
+  else if(gene==mecA)
     {
-      strbuf_append_str(fa, "aad9spc.fa");
+      strbuf_append_str(fa, "mecA.fa");
     }
   
   else if(gene==dfrK)
@@ -570,8 +560,6 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     
     case ant9Ia : return "ant9Ia";
     
-    case mecA : return "mecA";
-    
     case ermT : return "ermT";
     
     case ant9Ib : return "ant9Ib";
@@ -590,7 +578,7 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     
     case mecC : return "mecC";
     
-    case aad9spc : return "aad9spc";
+    case mecA : return "mecA";
     
     case dfrK : return "dfrK";
     

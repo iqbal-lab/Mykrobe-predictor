@@ -14,179 +14,183 @@
   typedef enum
   {
     
-    dfrB=0,
+    twentythreeS=0,
     
-    fusA=1,
+    dfrB=1,
     
-    rpoB=2,
+    fusA=2,
     
-    gyrA=3,
+    rpoB=3,
     
-    grlA=4,
+    gyrA=4,
     
-    Unknown = 5
+    grlA=5,
+    
+    Unknown = 6
   }GeneMutationGene;
-  #define NUM_KNOWN_GENES 5
+  #define NUM_KNOWN_GENES 6
  typedef enum
   {
     
-    dfrB_F99I=0,
+    twentythreeS_G2576T=0,
     
-    dfrB_F99S=1,
+    dfrB_F99I=1,
     
-    dfrB_F99Y=2,
+    dfrB_F99S=2,
     
-    dfrB_H150R=3,
+    dfrB_F99Y=3,
     
-    dfrB_H31N=4,
+    dfrB_H150R=4,
     
-    dfrB_L21V=5,
+    dfrB_H31N=5,
     
-    dfrB_L41F=6,
+    dfrB_L21V=6,
     
-    dfrB_N60I=7,
+    dfrB_L41F=7,
     
-    fusA_A655P=8,
+    dfrB_N60I=8,
     
-    fusA_A655E=9,
+    fusA_A655P=9,
     
-    fusA_E444V=10,
+    fusA_A655E=10,
     
-    fusA_E444K=11,
+    fusA_E444V=11,
     
-    fusA_F652S=12,
+    fusA_E444K=12,
     
-    fusA_Y654N=13,
+    fusA_F652S=13,
     
-    fusA_G451V=14,
+    fusA_Y654N=14,
     
-    fusA_G452C=15,
+    fusA_G451V=15,
     
-    fusA_G452S=16,
+    fusA_G452C=16,
     
-    fusA_G556S=17,
+    fusA_G452S=17,
     
-    fusA_G617D=18,
+    fusA_G556S=18,
     
-    fusA_G664S=19,
+    fusA_G617D=19,
     
-    fusA_H438N=20,
+    fusA_G664S=20,
     
-    fusA_H457Q=21,
+    fusA_H438N=21,
     
-    fusA_H457Y=22,
+    fusA_H457Q=22,
     
-    fusA_L456F=23,
+    fusA_H457Y=23,
     
-    fusA_L461F=24,
+    fusA_L456F=24,
     
-    fusA_A376V=25,
+    fusA_L461F=25,
     
-    fusA_D463G=26,
+    fusA_A376V=26,
     
-    fusA_L461K=27,
+    fusA_D463G=27,
     
-    fusA_L461S=28,
+    fusA_L461K=28,
     
-    fusA_M453I=29,
+    fusA_L461S=29,
     
-    fusA_M651I=30,
+    fusA_M453I=30,
     
-    fusA_P114H=31,
+    fusA_M651I=31,
     
-    fusA_P404L=32,
+    fusA_P114H=32,
     
-    fusA_P404Q=33,
+    fusA_P404L=33,
     
-    fusA_P406L=34,
+    fusA_P404Q=34,
     
-    fusA_P478S=35,
+    fusA_P406L=35,
     
-    fusA_Q115L=36,
+    fusA_P478S=36,
     
-    fusA_R464C=37,
+    fusA_Q115L=37,
     
-    fusA_R464H=38,
+    fusA_R464C=38,
     
-    fusA_R464S=39,
+    fusA_R464H=39,
     
-    fusA_R659C=40,
+    fusA_R464S=40,
     
-    fusA_R659H=41,
+    fusA_R659C=41,
     
-    fusA_R659L=42,
+    fusA_R659H=42,
     
-    fusA_R659S=43,
+    fusA_R659L=43,
     
-    fusA_T385N=44,
+    fusA_R659S=44,
     
-    fusA_T436I=45,
+    fusA_T385N=45,
     
-    fusA_T656K=46,
+    fusA_T436I=46,
     
-    fusA_V90I=47,
+    fusA_T656K=47,
     
-    fusA_D434N=48,
+    fusA_V90I=48,
     
-    fusA_T326I=49,
+    fusA_D434N=49,
     
-    fusA_E468V=50,
+    fusA_T326I=50,
     
-    rpoB_A477D=51,
+    fusA_E468V=51,
     
-    rpoB_A477V=52,
+    rpoB_A477D=52,
     
-    rpoB_D471G=53,
+    rpoB_A477V=53,
     
-    rpoB_D471Y=54,
+    rpoB_D471G=54,
     
-    rpoB_D550G=55,
+    rpoB_D471Y=55,
     
-    rpoB_H481D=56,
+    rpoB_D550G=56,
     
-    rpoB_H481N=57,
+    rpoB_H481D=57,
     
-    rpoB_H481Y=58,
+    rpoB_H481N=58,
     
-    rpoB_I527F=59,
+    rpoB_H481Y=59,
     
-    rpoB_ins475G=60,
+    rpoB_I527F=60,
     
-    rpoB_ins475H=61,
+    rpoB_ins475G=61,
     
-    rpoB_M470T=62,
+    rpoB_ins475H=62,
     
-    rpoB_Q468K=63,
+    rpoB_M470T=63,
     
-    rpoB_Q468L=64,
+    rpoB_Q468K=64,
     
-    rpoB_Q468R=65,
+    rpoB_Q468L=65,
     
-    rpoB_R484H=66,
+    rpoB_Q468R=66,
     
-    rpoB_S463P=67,
+    rpoB_R484H=67,
     
-    rpoB_S464P=68,
+    rpoB_S463P=68,
     
-    rpoB_S486L=69,
+    rpoB_S464P=69,
     
-    rpoB_N474K=70,
+    rpoB_S486L=70,
     
-    gyrA_E88K=71,
+    rpoB_N474K=71,
     
-    gyrA_S84A=72,
+    gyrA_E88K=72,
     
-    gyrA_S84L=73,
+    gyrA_S84A=73,
     
-    gyrA_S85P=74,
+    gyrA_S84L=74,
     
-    grlA_S80F=75,
+    gyrA_S85P=75,
     
-    grlA_S80Y=76,
+    grlA_S80F=76,
     
-    NotSpecified = 77
+    grlA_S80Y=77,
+    
+    NotSpecified = 78
   } KnownMutation;
-#define NUM_KNOWN_MUTATIONS 77
+#define NUM_KNOWN_MUTATIONS 78
 
 #endif
 

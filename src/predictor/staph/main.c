@@ -417,58 +417,145 @@ int main(int argc, char **argv)
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
   
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);  
+          &is_clindamycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
+          &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_biocides_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
+          &is_chloramphenicol_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_linezolid_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
   boolean any_erm_present=false;
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
-				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
-				    &any_erm_present,
+            &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
+            ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
+            &any_erm_present,
             called_variants,called_genes);
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_fusidicacid_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_spectinomycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_streptothricin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_fusidicacid_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  
   output_last=true;
-  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				   &is_clindamycin_susceptible, tmp_name, 
-				   any_erm_present,cmd_line->install_dir,
-				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-           called_variants,called_genes);
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
 
    
   if (cmd_line->format==JSON)

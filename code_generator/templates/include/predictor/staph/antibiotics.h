@@ -28,7 +28,7 @@
 #define MIN_PERC_COVG_FUSBC 60
 #define MIN_PERC_COVG_STANDARD 80
 #define GENE_THRESH_pvl 70
-#define MAX_GENES_PER_ANTIBIOTIC 6
+#define MAX_GENES_PER_ANTIBIOTIC 10
 
 {% include 'include/predictor/staph/antibiotic_enum.h' %}
 

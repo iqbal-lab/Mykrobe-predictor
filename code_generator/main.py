@@ -102,10 +102,20 @@ class StaphCodeGenerator(CodeGenerator):
         with open(os.path.join(self.render_dir,'include/predictor/core/gene_presence.h'),'w') as outfile:
             outfile.write(st) 
 
+    def render_main_src(self):
+        return self.render_str('src/predictor/staph/main.c')
+
+    def render_and_write_main(self):
+        st = self.render_main_src()
+        with open(os.path.join(self.render_dir,'src/predictor/staph/main.c'),'w') as outfile:
+            outfile.write(st)    
+
     def render_and_write_all(self):
         self.render_and_write_antibiotics() 
         self.render_and_write_known_mutations() 
         self.render_and_write_gene_presence()
+        self.render_and_write_main()
+        
 
     @property 
     def all_mutations(self):

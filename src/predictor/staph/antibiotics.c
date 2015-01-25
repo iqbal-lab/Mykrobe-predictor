@@ -18,11 +18,11 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
    switch (gene) 
    {
     
-    case vgbA : return "Lincosamides";
+    case vgbA : return "Clindamycin";
     
     case aacAaphD : return "Gentamicin";
     
-    case IsaB : return "Lincosamides";
+    case IsaB : return "Clindamycin";
     
     case aadEant6Ia : return "Gentamicin";
     
@@ -36,9 +36,9 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case blaZ : return "Penicillin";
     
-    case lnuA : return "Lincosamides";
+    case lnuA : return "Clindamycin";
     
-    case lnuB : return "Lincosamides";
+    case lnuB : return "Clindamycin";
     
     case ermB : return "Erythromycin";
     
@@ -55,8 +55,6 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     case aph2Ic : return "Gentamicin";
     
     case ant9Ia : return "Gentamicin";
-    
-    case mecA : return "Methicillin";
     
     case ermT : return "Erythromycin";
     
@@ -76,13 +74,13 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case mecC : return "Methicillin";
     
-    case aad9spc : return "Spectinomycin";
+    case mecA : return "Methicillin";
     
     case dfrK : return "Trimethoprim";
     
-    case vgaB : return "Lincosamides";
+    case vgaB : return "Clindamycin";
     
-    case vgaA : return "Lincosamides";
+    case vgaA : return "Clindamycin";
     
     case tetK : return "Tetracycline";
     
@@ -127,10 +125,10 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
       strbuf_append_str(name, "NoDrug");
     }
   
-  else if (ab==Lincosamides)
+  else if (ab==Clindamycin)
     {
       strbuf_reset(name);
-      strbuf_append_str(name, "Lincosamides");
+      strbuf_append_str(name, "Clindamycin");
     }
   
   else if (ab==Gentamicin)
@@ -175,12 +173,6 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
       strbuf_append_str(name, "Mupirocin");
     }
   
-  else if (ab==Methicillin)
-    {
-      strbuf_reset(name);
-      strbuf_append_str(name, "Methicillin");
-    }
-  
   else if (ab==Spectinomycin)
     {
       strbuf_reset(name);
@@ -193,10 +185,10 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
       strbuf_append_str(name, "Trimethoprim");
     }
   
-  else if (ab==Clindamycin)
+  else if (ab==Methicillin)
     {
       strbuf_reset(name);
-      strbuf_append_str(name, "Clindamycin");
+      strbuf_append_str(name, "Methicillin");
     }
   
   else if (ab==Tetracycline)
@@ -529,7 +521,7 @@ void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
 }
 
 
-InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
+InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -554,9 +546,9 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
 
 
   //setup antibiotic info object
-  abi->ab = Lincosamides;
+  abi->ab = Clindamycin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/lincosamides.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/clindamycin.fa");
   
     abi->which_genes[0]=vgbA;
   
@@ -566,11 +558,13 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
   
     abi->which_genes[3]=lnuB;
   
-    abi->which_genes[4]=vgaB;
+    abi->which_genes[4]=vgaALC;
   
-    abi->which_genes[5]=vgaA;
+    abi->which_genes[5]=vgaB;
   
-  abi->num_genes=6;
+    abi->which_genes[6]=vgaA;
+  
+  abi->num_genes=7;
   abi->num_mutations = 0;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
@@ -586,10 +580,11 @@ InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
-for (i=0; i<6; i++)
+for (i=0; i<7; i++)
     {
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
@@ -683,6 +678,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
@@ -772,6 +768,7 @@ InfectionType is_biocides_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
@@ -859,6 +856,7 @@ InfectionType is_chloramphenicol_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
@@ -929,7 +927,7 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
     abi->which_genes[0]=cfr;
   
   abi->num_genes=1;
-  abi->num_mutations = 0;
+  abi->num_mutations = 1;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
@@ -944,10 +942,35 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
+
+  int mut = twentythreeS_G2576T;
+  i = mut;
+  boolean any_allele_non_null=false;
+  if (both_alleles_null(abi->vars[i])==true)
+	{
+	  any_allele_non_null=true;
+	}
+  I=resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+    lambda_g, lambda_e, epsilon,
+    &best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops);
+  if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
+  if (best_model.conf<min_conf)
+	{
+	  min_conf = best_model.conf;
+	}
+  if ( (I==Resistant) || (I==MixedInfection) ) 
+	{
+	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+	}
+  update_infection_type(&I,&I_permenant);
 
 
-  InfectionType I=
-    resistotype_gene(abi->genes[cfr], err_rate, db_graph->kmer_size, 
+I= resistotype_gene(abi->genes[cfr], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
          MIN_PERC_COVG_BLAZ);
@@ -960,8 +983,24 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 
   
   
-   
-  return I_permenant;
+  
+  if( (I_permenant==Resistant) || (I_permenant==MixedInfection) ) {
+    return I_permenant;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
   
 
 }
@@ -1014,10 +1053,10 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
-  InfectionType I=
-    resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
+I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
          MIN_PERC_COVG_BLAZ);
@@ -1096,6 +1135,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
@@ -1188,93 +1228,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-
-
-
-for (i=0; i<2; i++)
-    {
-      InfectionType I =
-	     resistotype_gene(abi->genes[abi->which_genes[i]], 
-			 err_rate, db_graph->kmer_size, 
-			 lambda_g, lambda_e, epsilon, expected_covg,
-			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
-        {
-          max_sus_conf = best_model.conf;
-        }
-      if (best_model.conf<min_conf)
-        {
-          min_conf = best_model.conf;
-        }
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-        {
-        
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-        update_infection_type(&I,&I_permenant);
-    }
-  
-
-
-  
-  
-   
-  return I_permenant;
-  
-
-}
-
-
-InfectionType is_methicillin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
-            
-             CalledVariant* called_variants,CalledGene* called_genes,
-             CmdLine* cmd_line
-				    )
-
-{
-  InfectionType I_permenant = Unsure;
-  reset_antibiotic_info(abi);
-  
-
-
-  //setup antibiotic info object
-  abi->ab = Methicillin;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/methicillin.fa");
-  
-    abi->which_genes[0]=mecA;
-  
-    abi->which_genes[1]=mecC;
-  
-  abi->num_genes=2;
-  abi->num_mutations = 0;
-
-  double epsilon = pow(1-err_rate, db_graph->kmer_size);
-  load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
-  double max_sus_conf=0;
-  double min_conf=9999999;  
-  int i;
-  Model best_model;
+  InfectionType I;
 
 
 
@@ -1344,9 +1298,7 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
   
     abi->which_genes[0]=ant9Ib;
   
-    abi->which_genes[1]=aad9spc;
-  
-  abi->num_genes=2;
+  abi->num_genes=1;
   abi->num_mutations = 0;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
@@ -1362,32 +1314,17 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
-
-for (i=0; i<2; i++)
-    {
-      InfectionType I =
-	     resistotype_gene(abi->genes[abi->which_genes[i]], 
-			 err_rate, db_graph->kmer_size, 
-			 lambda_g, lambda_e, epsilon, expected_covg,
-			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
-        {
-          max_sus_conf = best_model.conf;
-        }
-      if (best_model.conf<min_conf)
-        {
-          min_conf = best_model.conf;
-        }
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-        {
-        
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-        update_infection_type(&I,&I_permenant);
-    }
+I= resistotype_gene(abi->genes[ant9Ib], err_rate, db_graph->kmer_size, 
+         lambda_g, lambda_e, epsilon,expected_covg,
+         &best_model, MaxAPosteriori,
+         MIN_PERC_COVG_BLAZ);
+  if ( (I==Resistant) || (I==MixedInfection) ) {
+    update_called_genes(called_genes, ant9Ib, abi->genes[ant9Ib], best_model.conf );
+  }
+  update_infection_type(&I,&I_permenant);
   
 
 
@@ -1455,6 +1392,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
   int first_mut = dfrB_F99I;
   int last_mut = dfrB_N60I;
@@ -1543,7 +1481,7 @@ for (i=0; i<5; i++)
 }
 
 
-InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
+InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				    int (*file_reader)(FILE * fp, 
 						       Sequence * seq, 
 						       int max_read_length, 
@@ -1568,13 +1506,15 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 
 
   //setup antibiotic info object
-  abi->ab = Clindamycin;
+  abi->ab = Methicillin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/clindamycin.fa");
+  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/methicillin.fa");
   
-    abi->which_genes[0]=vgaALC;
+    abi->which_genes[0]=mecC;
   
-  abi->num_genes=1;
+    abi->which_genes[1]=mecA;
+  
+  abi->num_genes=2;
   abi->num_mutations = 0;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
@@ -1590,17 +1530,33 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
-  InfectionType I=
-    resistotype_gene(abi->genes[vgaALC], err_rate, db_graph->kmer_size, 
-         lambda_g, lambda_e, epsilon,expected_covg,
-         &best_model, MaxAPosteriori,
-         MIN_PERC_COVG_BLAZ);
-  if ( (I==Resistant) || (I==MixedInfection) ) {
-    update_called_genes(called_genes, vgaALC, abi->genes[vgaALC], best_model.conf );
-  }
-  update_infection_type(&I,&I_permenant);
+
+for (i=0; i<2; i++)
+    {
+      InfectionType I =
+	     resistotype_gene(abi->genes[abi->which_genes[i]], 
+			 err_rate, db_graph->kmer_size, 
+			 lambda_g, lambda_e, epsilon, expected_covg,
+			 &best_model, MaxAPosteriori,
+			 MIN_PERC_COVG_STANDARD);
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
+        {
+          max_sus_conf = best_model.conf;
+        }
+      if (best_model.conf<min_conf)
+        {
+          min_conf = best_model.conf;
+        }
+      if ( (I==Resistant) || (I==MixedInfection) ) 
+        {
+        
+          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+        }
+        update_infection_type(&I,&I_permenant);
+    }
   
 
 
@@ -1666,6 +1622,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
@@ -1751,10 +1708,10 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
-  InfectionType I=
-    resistotype_gene(abi->genes[sat4], err_rate, db_graph->kmer_size, 
+I= resistotype_gene(abi->genes[sat4], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
          MIN_PERC_COVG_BLAZ);
@@ -1825,6 +1782,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
 
 
@@ -1912,6 +1870,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
   int first_mut = fusA_A655P;
   int last_mut = fusA_E468V;
@@ -2145,6 +2104,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
   int first_mut = rpoB_A477D;
   int last_mut = rpoB_N474K;
@@ -2292,6 +2252,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
+  InfectionType I;
 
   int first_mut = gyrA_E88K;
   int last_mut = grlA_S80Y;

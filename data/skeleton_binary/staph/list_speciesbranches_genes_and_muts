@@ -1,4 +1,3 @@
-../../staph/antibiotics/23s.fa
 ../../staph/antibiotics/aacAaphD.fa
 ../../staph/antibiotics/aadDaph4Ia.fa
 ../../staph/antibiotics/aadEant6Ia.fa
@@ -47,6 +46,9 @@
 ../../staph/antibiotics/mupB.fa
 ../../staph/antibiotics/mupirocin.fa
 ../../staph/antibiotics/penicillin.fa
+../../staph/antibiotics/qacA.fa
+../../staph/antibiotics/qacB.fa
+../../staph/antibiotics/qacCsmr.fa
 ../../staph/antibiotics/rifampicin.fa
 ../../staph/antibiotics/sat4.fa
 ../../staph/antibiotics/spectinomycin.fa
@@ -58,6 +60,7 @@
 ../../staph/antibiotics/tetO.fa
 ../../staph/antibiotics/tetracycline.fa
 ../../staph/antibiotics/trimethoprim.fa
+../../staph/antibiotics/twentythreeS.fa
 ../../staph/antibiotics/vanA.fa
 ../../staph/antibiotics/vanB.fa
 ../../staph/antibiotics/vanC.fa

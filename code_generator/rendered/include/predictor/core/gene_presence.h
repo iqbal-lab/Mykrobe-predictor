@@ -59,70 +59,68 @@ typedef enum
     
     ant9Ia=18,
     
-    mecA=19,
+    ermT=19,
     
-    ermT=20,
+    ant9Ib=20,
     
-    ant9Ib=21,
+    aphA3aph3III=21,
     
-    aphA3aph3III=22,
+    dfrA=22,
     
-    dfrA=23,
+    vgaALC=23,
     
-    vgaALC=24,
+    dfrC=24,
     
-    dfrC=25,
+    dfrD=25,
     
-    dfrD=26,
+    dfrG=26,
     
-    dfrG=27,
+    mecC=27,
     
-    mecC=28,
+    mecA=28,
     
-    aad9spc=29,
+    dfrK=29,
     
-    dfrK=30,
+    vgaB=30,
     
-    vgaB=31,
+    vgaA=31,
     
-    vgaA=32,
+    tetK=32,
     
-    tetK=33,
+    tetM=33,
     
-    tetM=34,
+    tetL=34,
     
-    tetL=35,
+    tetO=35,
     
-    tetO=36,
+    msrA=36,
     
-    msrA=37,
+    mphC=37,
     
-    mphC=38,
+    sat4=38,
     
-    sat4=39,
+    cat=39,
     
-    cat=40,
+    vanA=40,
     
-    vanA=41,
+    vanC=41,
     
-    vanC=42,
+    vanB=42,
     
-    vanB=43,
+    fusB=43,
     
-    fusB=44,
+    fusC=44,
     
-    fusC=45,
+    str=45,
     
-    str=46,
+    qacCsmr=46,
     
-    qacCsmr=47,
+    luk=47,
     
-    luk=48,
-    
-    unspecified_gpg = 49
+    unspecified_gpg = 48
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 49    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES 48    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);

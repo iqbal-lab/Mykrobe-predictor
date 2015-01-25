@@ -28,13 +28,13 @@
 #define MIN_PERC_COVG_FUSBC 60
 #define MIN_PERC_COVG_STANDARD 80
 #define GENE_THRESH_pvl 70
-#define MAX_GENES_PER_ANTIBIOTIC 6
+#define MAX_GENES_PER_ANTIBIOTIC 10
 
 typedef enum 
  {
    NoDrug=0,
    
-   Lincosamides=1,
+   Clindamycin=1,
    
    Gentamicin=2,
    
@@ -50,25 +50,23 @@ typedef enum
    
    Mupirocin=8,
    
-   Methicillin=9,
+   Spectinomycin=9,
    
-   Spectinomycin=10,
+   Trimethoprim=10,
    
-   Trimethoprim=11,
+   Methicillin=11,
    
-   Clindamycin=12,
+   Tetracycline=12,
    
-   Tetracycline=13,
+   Streptothricin=13,
    
-   Streptothricin=14,
+   Vancomycin=14,
    
-   Vancomycin=15,
+   FusidicAcid=15,
    
-   FusidicAcid=16,
+   Rifampicin=16,
    
-   Rifampicin=17,
-   
-   Ciprofloxacin=18
+   Ciprofloxacin=17
    
   } Antibiotic;
 
@@ -141,7 +139,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       StrBuf* install_dir);
 
 
-InfectionType is_lincosamides_susceptible(dBGraph* db_graph,
+InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 
@@ -285,24 +283,6 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				   CmdLine* cmd_line
 				  );
 
-InfectionType is_methicillin_susceptible(dBGraph* db_graph,
-				  int (*file_reader)(FILE * fp, 
-						     Sequence * seq, 
-						     int max_read_length, 
-						     boolean new_entry, 
-						     boolean * full_entry),
-				  ReadingUtils* rutils,
-				  VarOnBackground* tmp_vob,
-				  GeneInfo* tmp_gi,
-				  AntibioticInfo* abi,
-				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg,
-				  double lambda_g, double lambda_e, double err_rate,
-            	  				  
-				   CalledVariant* called_variants,CalledGene* called_genes,
-				   CmdLine* cmd_line
-				  );
-
 InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
@@ -339,7 +319,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				   CmdLine* cmd_line
 				  );
 
-InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
+InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				  int (*file_reader)(FILE * fp, 
 						     Sequence * seq, 
 						     int max_read_length, 

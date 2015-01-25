@@ -1,5 +1,4 @@
-  InfectionType I=
-    resistotype_gene(abi->genes[{{drug.genes_resistance_induced_by[0]}}], err_rate, db_graph->kmer_size, 
+I= resistotype_gene(abi->genes[{{drug.genes_resistance_induced_by[0]}}], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
          MIN_PERC_COVG_BLAZ);
