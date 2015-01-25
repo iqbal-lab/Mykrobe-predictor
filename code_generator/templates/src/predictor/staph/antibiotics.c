@@ -619,98 +619,17 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
 ///virulence
-Troolean is_pvl_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/luks.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_STANDARD)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
 
 
-void print_pvl_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
 
-  Troolean result = is_pvl_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("PVL\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      print_json_virulence_start();
-      if (result==true)
-	{
-	  print_json_item("PVL", "positive", true);
-	}
-      else
-	{
-	  print_json_item("PVL", "negative", true);
-	}
-      print_json_virulence_end();
-    }
-}
+
+{% for gene in selfer.virulence_genes %}
+{% with %}
+    {% set loop_last = loop.last %}
+	{% include 'src/predictor/staph/is_virulence_gene_positive.c' %}
+	{% include 'src/predictor/staph/print_virulence_gene_presence.c' %}
+{% endwith %}
+{% endfor %}
+
+
+

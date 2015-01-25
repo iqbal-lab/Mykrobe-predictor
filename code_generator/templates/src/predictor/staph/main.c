@@ -449,9 +449,13 @@ int main(int argc, char **argv)
     {
       printf("** Virulence markers\n");
     }
-  print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_pvl_positive, 
+    print_json_virulence_start();
+  {% for gene in selfer.virulence_genes %}
+  print_{{gene|lower}}_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_{{gene|lower}}_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
+  {% endfor %}
+  print_json_virulence_end();
 
   if (cmd_line->format==Stdout)
     {

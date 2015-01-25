@@ -27,6 +27,7 @@
 #define MIN_PERC_COVG_BLAZ 30
 #define MIN_PERC_COVG_FUSBC 60
 #define MIN_PERC_COVG_STANDARD 80
+#define MIN_PERC_COVG_VIRULENCE 30 
 #define GENE_THRESH_pvl 70
 #define MAX_GENES_PER_ANTIBIOTIC 10
 
@@ -207,7 +208,8 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 CalledVariant* called_variants,CalledGene* called_genes
 					 );
 
-Troolean is_pvl_positive(dBGraph* db_graph,
+{% for gene in selfer.virulence_genes %}
+Troolean is_{{gene|lower}}_positive(dBGraph* db_graph,
 			int (*file_reader)(FILE * fp, 
 					   Sequence * seq, 
 					   int max_read_length, 
@@ -217,7 +219,7 @@ Troolean is_pvl_positive(dBGraph* db_graph,
 			GeneInfo* tmp_gi,
 			StrBuf* install_dir);
 
-void print_pvl_presence(dBGraph* db_graph,
+void print_{{gene|lower}}_presence(dBGraph* db_graph,
 			int (*file_reader)(FILE * fp, 
 					   Sequence * seq, 
 					   int max_read_length, 
@@ -235,4 +237,6 @@ void print_pvl_presence(dBGraph* db_graph,
 					GeneInfo* tmp_gi,
 					StrBuf* install_dir),
 			StrBuf* install_dir, OutputFormat format);
+{% endfor %}
+
 #endif

@@ -251,9 +251,174 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return qacCsmr;
     }
   
+  else if(strcmp(sbuf->buff, "arcA")==0)
+    {
+      return arcA;
+    }
+  
+  else if(strcmp(sbuf->buff, "arcB")==0)
+    {
+      return arcB;
+    }
+  
+  else if(strcmp(sbuf->buff, "arcC")==0)
+    {
+      return arcC;
+    }
+  
+  else if(strcmp(sbuf->buff, "arcD")==0)
+    {
+      return arcD;
+    }
+  
+  else if(strcmp(sbuf->buff, "ccrA")==0)
+    {
+      return ccrA;
+    }
+  
+  else if(strcmp(sbuf->buff, "ccrB")==0)
+    {
+      return ccrB;
+    }
+  
+  else if(strcmp(sbuf->buff, "ccrCa")==0)
+    {
+      return ccrCa;
+    }
+  
+  else if(strcmp(sbuf->buff, "ccrCb")==0)
+    {
+      return ccrCb;
+    }
+  
+  else if(strcmp(sbuf->buff, "ccrCc")==0)
+    {
+      return ccrCc;
+    }
+  
+  else if(strcmp(sbuf->buff, "eta")==0)
+    {
+      return eta;
+    }
+  
+  else if(strcmp(sbuf->buff, "etb")==0)
+    {
+      return etb;
+    }
+  
+  else if(strcmp(sbuf->buff, "etd")==0)
+    {
+      return etd;
+    }
+  
   else if(strcmp(sbuf->buff, "luk")==0)
     {
       return luk;
+    }
+  
+  else if(strcmp(sbuf->buff, "lukPVF")==0)
+    {
+      return lukPVF;
+    }
+  
+  else if(strcmp(sbuf->buff, "lukPVS")==0)
+    {
+      return lukPVS;
+    }
+  
+  else if(strcmp(sbuf->buff, "lukM")==0)
+    {
+      return lukM;
+    }
+  
+  else if(strcmp(sbuf->buff, "lukMF")==0)
+    {
+      return lukMF;
+    }
+  
+  else if(strcmp(sbuf->buff, "sasX")==0)
+    {
+      return sasX;
+    }
+  
+  else if(strcmp(sbuf->buff, "sea")==0)
+    {
+      return sea;
+    }
+  
+  else if(strcmp(sbuf->buff, "seb")==0)
+    {
+      return seb;
+    }
+  
+  else if(strcmp(sbuf->buff, "sec")==0)
+    {
+      return sec;
+    }
+  
+  else if(strcmp(sbuf->buff, "sed")==0)
+    {
+      return sed;
+    }
+  
+  else if(strcmp(sbuf->buff, "see")==0)
+    {
+      return see;
+    }
+  
+  else if(strcmp(sbuf->buff, "seg")==0)
+    {
+      return seg;
+    }
+  
+  else if(strcmp(sbuf->buff, "seh")==0)
+    {
+      return seh;
+    }
+  
+  else if(strcmp(sbuf->buff, "sei")==0)
+    {
+      return sei;
+    }
+  
+  else if(strcmp(sbuf->buff, "sej")==0)
+    {
+      return sej;
+    }
+  
+  else if(strcmp(sbuf->buff, "seu")==0)
+    {
+      return seu;
+    }
+  
+  else if(strcmp(sbuf->buff, "selR")==0)
+    {
+      return selR;
+    }
+  
+  else if(strcmp(sbuf->buff, "sep")==0)
+    {
+      return sep;
+    }
+  
+  else if(strcmp(sbuf->buff, "tsst1")==0)
+    {
+      return tsst1;
+    }
+  
+  else if(strcmp(sbuf->buff, "chp")==0)
+    {
+      return chp;
+    }
+  
+  else if(strcmp(sbuf->buff, "sak")==0)
+    {
+      return sak;
+    }
+  
+  else if(strcmp(sbuf->buff, "scn")==0)
+    {
+      return scn;
     }
   
   else 
@@ -504,9 +669,174 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "qacCsmr.fa");
     }
   
+  else if(gene==arcA)
+    {
+      strbuf_append_str(fa, "arcA.fa");
+    }
+  
+  else if(gene==arcB)
+    {
+      strbuf_append_str(fa, "arcB.fa");
+    }
+  
+  else if(gene==arcC)
+    {
+      strbuf_append_str(fa, "arcC.fa");
+    }
+  
+  else if(gene==arcD)
+    {
+      strbuf_append_str(fa, "arcD.fa");
+    }
+  
+  else if(gene==ccrA)
+    {
+      strbuf_append_str(fa, "ccrA.fa");
+    }
+  
+  else if(gene==ccrB)
+    {
+      strbuf_append_str(fa, "ccrB.fa");
+    }
+  
+  else if(gene==ccrCa)
+    {
+      strbuf_append_str(fa, "ccrCa.fa");
+    }
+  
+  else if(gene==ccrCb)
+    {
+      strbuf_append_str(fa, "ccrCb.fa");
+    }
+  
+  else if(gene==ccrCc)
+    {
+      strbuf_append_str(fa, "ccrCc.fa");
+    }
+  
+  else if(gene==eta)
+    {
+      strbuf_append_str(fa, "eta.fa");
+    }
+  
+  else if(gene==etb)
+    {
+      strbuf_append_str(fa, "etb.fa");
+    }
+  
+  else if(gene==etd)
+    {
+      strbuf_append_str(fa, "etd.fa");
+    }
+  
   else if(gene==luk)
     {
       strbuf_append_str(fa, "luk.fa");
+    }
+  
+  else if(gene==lukPVF)
+    {
+      strbuf_append_str(fa, "lukPVF.fa");
+    }
+  
+  else if(gene==lukPVS)
+    {
+      strbuf_append_str(fa, "lukPVS.fa");
+    }
+  
+  else if(gene==lukM)
+    {
+      strbuf_append_str(fa, "lukM.fa");
+    }
+  
+  else if(gene==lukMF)
+    {
+      strbuf_append_str(fa, "lukMF.fa");
+    }
+  
+  else if(gene==sasX)
+    {
+      strbuf_append_str(fa, "sasX.fa");
+    }
+  
+  else if(gene==sea)
+    {
+      strbuf_append_str(fa, "sea.fa");
+    }
+  
+  else if(gene==seb)
+    {
+      strbuf_append_str(fa, "seb.fa");
+    }
+  
+  else if(gene==sec)
+    {
+      strbuf_append_str(fa, "sec.fa");
+    }
+  
+  else if(gene==sed)
+    {
+      strbuf_append_str(fa, "sed.fa");
+    }
+  
+  else if(gene==see)
+    {
+      strbuf_append_str(fa, "see.fa");
+    }
+  
+  else if(gene==seg)
+    {
+      strbuf_append_str(fa, "seg.fa");
+    }
+  
+  else if(gene==seh)
+    {
+      strbuf_append_str(fa, "seh.fa");
+    }
+  
+  else if(gene==sei)
+    {
+      strbuf_append_str(fa, "sei.fa");
+    }
+  
+  else if(gene==sej)
+    {
+      strbuf_append_str(fa, "sej.fa");
+    }
+  
+  else if(gene==seu)
+    {
+      strbuf_append_str(fa, "seu.fa");
+    }
+  
+  else if(gene==selR)
+    {
+      strbuf_append_str(fa, "selR.fa");
+    }
+  
+  else if(gene==sep)
+    {
+      strbuf_append_str(fa, "sep.fa");
+    }
+  
+  else if(gene==tsst1)
+    {
+      strbuf_append_str(fa, "tsst1.fa");
+    }
+  
+  else if(gene==chp)
+    {
+      strbuf_append_str(fa, "chp.fa");
+    }
+  
+  else if(gene==sak)
+    {
+      strbuf_append_str(fa, "sak.fa");
+    }
+  
+  else if(gene==scn)
+    {
+      strbuf_append_str(fa, "scn.fa");
     }
   
   else if (gene==unspecified_gpg)
@@ -616,7 +946,73 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     
     case qacCsmr : return "qacCsmr";
     
+    case arcA : return "arcA";
+    
+    case arcB : return "arcB";
+    
+    case arcC : return "arcC";
+    
+    case arcD : return "arcD";
+    
+    case ccrA : return "ccrA";
+    
+    case ccrB : return "ccrB";
+    
+    case ccrCa : return "ccrCa";
+    
+    case ccrCb : return "ccrCb";
+    
+    case ccrCc : return "ccrCc";
+    
+    case eta : return "eta";
+    
+    case etb : return "etb";
+    
+    case etd : return "etd";
+    
     case luk : return "luk";
+    
+    case lukPVF : return "lukPVF";
+    
+    case lukPVS : return "lukPVS";
+    
+    case lukM : return "lukM";
+    
+    case lukMF : return "lukMF";
+    
+    case sasX : return "sasX";
+    
+    case sea : return "sea";
+    
+    case seb : return "seb";
+    
+    case sec : return "sec";
+    
+    case sed : return "sed";
+    
+    case see : return "see";
+    
+    case seg : return "seg";
+    
+    case seh : return "seh";
+    
+    case sei : return "sei";
+    
+    case sej : return "sej";
+    
+    case seu : return "seu";
+    
+    case selR : return "selR";
+    
+    case sep : return "sep";
+    
+    case tsst1 : return "tsst1";
+    
+    case chp : return "chp";
+    
+    case sak : return "sak";
+    
+    case scn : return "scn";
     
     case unspecified_gpg  : return "unknown";
    }

@@ -115,12 +115,78 @@ typedef enum
     
     qacCsmr=46,
     
-    luk=47,
+    arcA=47,
     
-    unspecified_gpg = 48
+    arcB=48,
+    
+    arcC=49,
+    
+    arcD=50,
+    
+    ccrA=51,
+    
+    ccrB=52,
+    
+    ccrCa=53,
+    
+    ccrCb=54,
+    
+    ccrCc=55,
+    
+    eta=56,
+    
+    etb=57,
+    
+    etd=58,
+    
+    luk=59,
+    
+    lukPVF=60,
+    
+    lukPVS=61,
+    
+    lukM=62,
+    
+    lukMF=63,
+    
+    sasX=64,
+    
+    sea=65,
+    
+    seb=66,
+    
+    sec=67,
+    
+    sed=68,
+    
+    see=69,
+    
+    seg=70,
+    
+    seh=71,
+    
+    sei=72,
+    
+    sej=73,
+    
+    seu=74,
+    
+    selR=75,
+    
+    sep=76,
+    
+    tsst1=77,
+    
+    chp=78,
+    
+    sak=79,
+    
+    scn=80,
+    
+    unspecified_gpg = 81
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 48    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES 81    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
