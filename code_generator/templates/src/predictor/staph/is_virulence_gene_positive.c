@@ -32,7 +32,6 @@ Troolean is_{{gene| lower}}_positive(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s {{gene}} per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;

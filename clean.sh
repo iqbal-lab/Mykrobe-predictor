@@ -6,7 +6,10 @@ cd ../../../
 cd data/skeleton_binary/staph/
 ls ../../staph/antibiotics/*.fa -1 > list_speciesbranches_genes_and_muts
 ls ../../staph/species/*.fa -1 >> list_speciesbranches_genes_and_muts
+ls ../../staph/virulence/*.fa -1 >> list_speciesbranches_genes_and_muts
+
 ls ../../staph/antibiotics/*.fasta -1 >> list_speciesbranches_genes_and_muts
+ls ../../staph/virulence/*.fasta -1 >> list_speciesbranches_genes_and_muts
 ls ../../staph/species/*.fasta -1 >> list_speciesbranches_genes_and_muts
 cd ../../../
 cd code_generator

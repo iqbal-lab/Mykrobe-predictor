@@ -2736,7 +2736,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s arcA per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -2833,7 +2832,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s arcB per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -2930,7 +2928,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s arcC per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3027,7 +3024,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s arcD per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3124,7 +3120,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s ccrA per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3221,7 +3216,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s ccrB per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3318,7 +3312,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s ccrCa per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3415,7 +3408,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s ccrCb per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3512,7 +3504,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s ccrCc per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3609,7 +3600,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s eta per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3706,7 +3696,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s etb per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3803,7 +3792,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s etd per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3900,7 +3888,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s luk per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -3997,7 +3984,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s lukPVF per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4094,7 +4080,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s lukPVS per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4191,7 +4176,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s lukM per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4288,7 +4272,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s lukMF per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4385,7 +4368,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sasX per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4482,7 +4464,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sea per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4579,7 +4560,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s seb per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4676,7 +4656,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sec per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4773,7 +4752,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sed per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4870,7 +4848,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s see per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -4967,7 +4944,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s seg per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5064,7 +5040,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s seh per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5161,7 +5136,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sei per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5258,7 +5232,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sej per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5355,7 +5328,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s seu per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5452,7 +5424,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s selR per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5549,7 +5520,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sep per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5646,7 +5616,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s tsst1 per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5743,7 +5712,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s chp per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5840,7 +5808,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s sak per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
@@ -5937,7 +5904,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 			       rutils->array_or,
 			       rutils->working_ca,
 			       MAX_LEN_GENE);
-      printf("%s scn per_cov is %d %d \n",fa->buff,tmp_gi->percent_nonzero ,MAX_LEN_GENE);
       if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
 	{
 	  is_pos=true;
