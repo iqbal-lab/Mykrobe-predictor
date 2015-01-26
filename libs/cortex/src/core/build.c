@@ -211,7 +211,7 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 
 
   int ascii_fq_offset = 33;
-  int qual_thresh = 10;
+  int qual_thresh = 0; //10;
   int homopolymer_cutoff=0;
 
   unsigned int num_files_loaded=0;
