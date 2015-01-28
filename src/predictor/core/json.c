@@ -25,6 +25,10 @@ void print_json_species_start()
 {
   printf("\t\t\"species\": {\n");
 }
+void print_json_complex_start()
+{
+  printf("\t\t\"complex\": {\n");
+}
 void print_json_phylogenetics_start()
 {
   printf("\t\"phylogenetics\": {\n");
@@ -36,6 +40,10 @@ void print_json_lineage_start()
 
 
 void print_json_species_end()
+{
+  printf("\t\t},\n");
+}
+void print_json_complex_end()
 {
   printf("\t\t},\n");
 }
