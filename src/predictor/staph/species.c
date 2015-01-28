@@ -304,7 +304,7 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
 void find_which_panels_are_present(int* percentage_coverage,boolean* present, 
                                   int* num_panels,boolean has_catalayse)
 {
-  boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
+  boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],50);
   boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
   boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],30);
   boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],30);  
