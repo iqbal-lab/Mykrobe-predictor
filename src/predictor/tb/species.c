@@ -44,217 +44,217 @@ void map_species_enum_to_str(Myc_species sp, StrBuf* sbuf)
   if (sp==abscessus)
     {
       strbuf_reset(sbuf);
-      strbuf_append_str(sbuf,"abscessus");
+      strbuf_append_str(sbuf,"M. abscessus");
     }
   else if (sp==africanum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"africanum");
+    strbuf_append_str(sbuf,"M. africanum");
   }
   else if (sp==aromaticivorans)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"aromaticivorans");
+    strbuf_append_str(sbuf,"M. aromaticivorans");
   }
   else if (sp==avium)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"avium");
+    strbuf_append_str(sbuf,"M. avium");
   }
   else if (sp==bovis)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"bovis");
+    strbuf_append_str(sbuf,"M. bovis");
   }
   else if (sp==branderi)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"branderi");
+    strbuf_append_str(sbuf,"M. branderi");
   }
   else if (sp==caprae)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"caprae");
+    strbuf_append_str(sbuf,"M. caprae");
   }
   else if (sp==chelonae)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"chelonae");
+    strbuf_append_str(sbuf,"M. chelonae");
   }
   else if (sp==chlorophenolicum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"chlorophenolicum");
+    strbuf_append_str(sbuf,"M. chlorophenolicum");
   }
   else if (sp==chubuense)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"chubuense");
+    strbuf_append_str(sbuf,"M. chubuense");
   }
   else if (sp==colombiense)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"colombiense");
+    strbuf_append_str(sbuf,"M. colombiense");
   }
   else if (sp==crocinum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"crocinum");
+    strbuf_append_str(sbuf,"M. crocinum");
   }
   else if (sp==flavescens)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"flavescens");
+    strbuf_append_str(sbuf,"M. flavescens");
   }
   else if (sp==fluoranthenivorans)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"fluoranthenivorans");
+    strbuf_append_str(sbuf,"M. fluoranthenivorans");
   }
   else if (sp==fortuitum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"fortuitum");
+    strbuf_append_str(sbuf,"M. fortuitum");
   }
   else if (sp==gilvum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"gilvum");
+    strbuf_append_str(sbuf,"M. gilvum");
   }
   else if (sp==gordonae)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"gordonae");
+    strbuf_append_str(sbuf,"M. gordonae");
   }
   else if (sp==hodleri)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"hodleri");
+    strbuf_append_str(sbuf,"M. hodleri");
   }
   else if (sp==interjectum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"interjectum");
+    strbuf_append_str(sbuf,"M. interjectum");
   }
   else if (sp==intracellulare)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"intracellulare");
+    strbuf_append_str(sbuf,"M. intracellulare");
   }
   else if (sp==kansasii)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"kansasii");
+    strbuf_append_str(sbuf,"M. kansasii");
   }
   else if (sp==lentiflavum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"lentiflavum");
+    strbuf_append_str(sbuf,"M. lentiflavum");
   }
   else if (sp==leprae)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"leprae");
+    strbuf_append_str(sbuf,"M. leprae");
   }
   else if (sp==malmoense)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"malmoense");
+    strbuf_append_str(sbuf,"M. malmoense");
   }
   else if (sp==marinum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"marinum");
+    strbuf_append_str(sbuf,"M. marinum");
   }
   else if (sp==mucogenicum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"mucogenicum");
+    strbuf_append_str(sbuf,"M. mucogenicum");
   }
   else if (sp==pallens)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"pallens");
+    strbuf_append_str(sbuf,"M. pallens");
   }
   else if (sp==peregrinum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"peregrinum");
+    strbuf_append_str(sbuf,"M. peregrinum");
   }
   else if (sp==phage)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"phage");
+    strbuf_append_str(sbuf,"M. phage");
   }
   else if (sp==pyrenivorans)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"pyrenivorans");
+    strbuf_append_str(sbuf,"M. pyrenivorans");
   }
   else if (sp==rufum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"rufum");
+    strbuf_append_str(sbuf,"M. rufum");
   }
   else if (sp==rutilum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"rutilum");
+    strbuf_append_str(sbuf,"M. rutilum");
   }
   else if (sp==scrofulaceum)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"scrofulaceum");
+    strbuf_append_str(sbuf,"M. scrofulaceum");
   }
   else if (sp==senegalense)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"senegalense");
+    strbuf_append_str(sbuf,"M. senegalense");
   }
   else if (sp==smegmatis)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"smegmatis");
+    strbuf_append_str(sbuf,"M. smegmatis");
   }
   else if (sp==sphagni)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"sphagni");
+    strbuf_append_str(sbuf,"M. sphagni");
   }
   else if (sp==szulgai)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"szulgai");
+    strbuf_append_str(sbuf,"M. szulgai");
   }
   else if (sp==triplex)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"triplex");
+    strbuf_append_str(sbuf,"M. triplex");
   }
   else if (sp==tuberculosis)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"tuberculosis");
+    strbuf_append_str(sbuf,"M. tuberculosis");
   }
   else if (sp==tusciae)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"tusciae");
+    strbuf_append_str(sbuf,"M. tusciae");
   }
   else if (sp==ulcerans)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"ulcerans");
+    strbuf_append_str(sbuf,"M. ulcerans");
   }
   else if (sp==vaccae)
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"vaccae");
+    strbuf_append_str(sbuf,"M. vaccae");
   }
   else if (sp==xenopi    )
   {
     strbuf_reset(sbuf);
-    strbuf_append_str(sbuf,"xenopi");
+    strbuf_append_str(sbuf,"M. xenopi");
   }
   else
     {
@@ -848,7 +848,7 @@ void print_json_complex(SpeciesInfo* species_info){
     }
     else
     {
-      print_json_called_variant_item( "Non TB", -1, true);
+      print_json_called_variant_item( "Non Mycobacterium", -1, true);
     }
     print_json_complex_end();  
 }
@@ -1046,7 +1046,7 @@ void print_json_lineage(SpeciesInfo* species_info){
     }
     else
     {
-      print_json_called_variant_item( "Unknown lineage", -1, true);
+      print_json_called_variant_item( "N/A", -1, true);
     }    
     print_json_lineage_end(); 
 }

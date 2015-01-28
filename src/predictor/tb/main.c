@@ -290,8 +290,6 @@ int main(int argc, char **argv)
 
     	  print_json_susceptibility_start(); 
     	  print_json_susceptibility_end();
-    	  print_json_virulence_start();
-    	  print_json_virulence_end();
     	  print_json_end();
 
     	  //cleanup

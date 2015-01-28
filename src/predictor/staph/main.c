@@ -376,7 +376,7 @@ int main(int argc, char **argv)
   	}
     else
   	{
-  	  print_json_item("Non-staphylococcal", "Major", true);
+  	  print_json_item("Non-staphylococcal", "-1", true);
   	}
       print_json_species_end(); 
 
