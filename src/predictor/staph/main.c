@@ -307,12 +307,7 @@ int main(int argc, char **argv)
   if (species_info->sample_type == MixedStaph)
     {
       strbuf_append_str(tmp_name, "Staphylococcus Mixed ");
-      // strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
     }
-  // else if (species_info->sample_type == MinorStaphAureusAndMajorNonCoag)
-  //   {
-  //     strbuf_append_str(tmp_name, species_mod->name_of_non_aureus_species->buff);
-  //   }
   else if (species_info->sample_type == NonStaphylococcal)
     {
       strbuf_append_str(tmp_name, "Non-staphylococcal");
@@ -322,35 +317,36 @@ int main(int argc, char **argv)
       strbuf_append_str(tmp_name, "S.aureus");
     }
 
+
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n");
       if (species_info->sample_type != PureStaph)
-	{
-	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
-	  timestamp();
-	  // free_sample_model(species_mod);
+    	{
+    	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
+    	  timestamp();
+    	  // free_sample_model(species_mod);
 
-	  //cleanup
-	  strbuf_free(tmp_name);
-	  free_antibiotic_info(abi);
-	  free_var_on_background(tmp_vob);
-	  free_gene_info(tmp_gi);
-	  free_reading_utils(ru);
-	  
-	  cmd_line_free(cmd_line);
-	  hash_table_free(&db_graph);
-	  
-	  return 0;
-	}
+    	  //cleanup
+    	  strbuf_free(tmp_name);
+    	  free_antibiotic_info(abi);
+    	  free_var_on_background(tmp_vob);
+    	  free_gene_info(tmp_gi);
+    	  free_reading_utils(ru);
+    	  
+    	  cmd_line_free(cmd_line);
+    	  hash_table_free(&db_graph);
+    	  
+    	  return 0;
+	   }
       else
-	{
-	  printf("%s\n", tmp_name->buff);
-	  timestamp();
-	  // free_sample_model(species_mod);
+  	{
+  	  printf("%s\n", tmp_name->buff);
+  	  timestamp();
+  	  // free_sample_model(species_mod);
 
-	  printf("** Antimicrobial susceptibility predictions\n");
-	}
+  	  printf("** Antimicrobial susceptibility predictions\n");
+  	}
     }
   else//JSON
     {
@@ -380,26 +376,26 @@ int main(int argc, char **argv)
   	}
       print_json_species_end(); 
 
-      if (species_info->sample_type == NonStaphylococcal)
-	{
-	  print_json_susceptibility_start(); 
-	  print_json_susceptibility_end();
-	  print_json_virulence_start();
-	  print_json_virulence_end();
-	  print_json_end();
+  if ( ! aureus_is_present(species_info) )
+  	{
+  	  print_json_susceptibility_start(); 
+  	  print_json_susceptibility_end();
+  	  print_json_virulence_start();
+  	  print_json_virulence_end();
+  	  print_json_end();
 
-	  //cleanup
-	  strbuf_free(tmp_name);
-	  free_antibiotic_info(abi);
-	  free_var_on_background(tmp_vob);
-	  free_gene_info(tmp_gi);
-	  free_reading_utils(ru);
-	  
-	  cmd_line_free(cmd_line);
-	  hash_table_free(&db_graph);
-	  
-	  return 0;
-	}
+  	  //cleanup
+  	  strbuf_free(tmp_name);
+  	  free_antibiotic_info(abi);
+  	  free_var_on_background(tmp_vob);
+  	  free_gene_info(tmp_gi);
+  	  free_reading_utils(ru);
+  	  
+  	  cmd_line_free(cmd_line);
+  	  hash_table_free(&db_graph);
+  	  
+  	  return 0;
+  	}
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.

@@ -76,3 +76,4 @@ int get_ith_species_coverage(SpeciesInfo* species_info,int i);
 int get_pure_species_coverage(SpeciesInfo* species_info);
 
 
+boolean aureus_is_present(SpeciesInfo* species_info);

@@ -130,8 +130,7 @@ boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
     if (percentage_cov_cat > 20)
     {
       return true;
-    }   
-    else
+    }    else
     {
       return false;
     }
@@ -513,37 +512,7 @@ int get_pure_species_coverage(SpeciesInfo* species_info)
 
 
 
-// Staph_species get_best_hit(int* arr_perc_cov, 
-//         Covg* arr_median, 
-//         boolean* found, 
-//         boolean exclude_aureus)
-// {
-//   int i;
-//   int prod=0;
-//   int curr=-1;
-//   for (i=0; i<NUM_SPECIES; i++)
-//     {
-//       if ( (exclude_aureus==true) && ((Staph_species)i==Aureus))
-//  {
-//    continue;
-//  }
-//       //      if (arr_perc_cov[i] * arr_median[i]>prod)
-//       if (arr_perc_cov[i] > prod)
-//  {
-//    //prod = arr_perc_cov[i]* arr_median[i];
-//    prod =arr_perc_cov[i];
-//    curr=i;
-//  }
-//     }
-//   if (curr==-1)
-//     {
-//       *found=false;
-//       return Aureus;
-//     }
-//   else
-//     {
-//       *found=true;
-//       return (Staph_species) curr;
-//     }
-// }
+boolean aureus_is_present(SpeciesInfo* species_info){
+  return (species_info->present[Saureus]);
+}
 
