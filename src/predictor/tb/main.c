@@ -290,6 +290,9 @@ int main(int argc, char **argv)
 
     	  print_json_susceptibility_start(); 
     	  print_json_susceptibility_end();
+        print_json_called_variants_start();
+        boolean last = true;
+        print_json_called_variants_end(last);
     	  print_json_end();
 
     	  //cleanup
