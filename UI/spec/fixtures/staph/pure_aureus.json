@@ -1,0 +1,71 @@
+{
+  "expected_depth": "130",
+  "mean_read_length": "91",
+  "species": {
+    "S. aureus": "149"
+  },
+  "susceptibility": {
+    "Erythromycin": "S",
+    "Gentamicin": "S",
+    "Biocides": "S",
+    "Chloramphenicol": "S",
+    "Linezolid": "Inconclusive",
+    "Penicillin": "R",
+    "Mupirocin": "S",
+    "Spectinomycin": "S",
+    "Trimethoprim": "S",
+    "Methicillin": "S",
+    "Tetracycline": "S",
+    "Streptothricin": "S",
+    "Vancomycin": "S",
+    "FusidicAcid": "S",
+    "Rifampicin": "S",
+    "Ciprofloxacin": "S",
+    "Clindamycin": "S"
+  },
+  "called_variants": {},
+  "called_genes": {
+    "blaZ": {
+      "per_cov": "100",
+      "median_cov": "298",
+      "conf": "891",
+      "induced_resistance": "Penicillin"
+    }
+  },
+  "virulence_toxins": {
+    "arcA": "negative",
+    "arcB": "negative",
+    "arcC": "negative",
+    "arcD": "negative",
+    "ccrA": "negative",
+    "ccrB": "negative",
+    "ccrCa": "negative",
+    "ccrCb": "negative",
+    "ccrCc": "negative",
+    "chp": "positive",
+    "eta": "negative",
+    "etb": "negative",
+    "etd": "negative",
+    "luk": "negative",
+    "lukM": "negative",
+    "lukMF": "negative",
+    "lukPVF": "negative",
+    "lukPVS": "negative",
+    "sak": "positive",
+    "sasX": "negative",
+    "scn": "positive",
+    "sea": "negative",
+    "seb": "positive",
+    "sec": "negative",
+    "sed": "negative",
+    "see": "negative",
+    "seg": "negative",
+    "seh": "negative",
+    "sei": "negative",
+    "sej": "negative",
+    "selR": "negative",
+    "sep": "negative",
+    "seu": "negative",
+    "tsst1": "negative"
+  }
+}

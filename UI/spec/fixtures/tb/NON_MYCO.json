@@ -1,0 +1,15 @@
+{
+  "expected_depth": "42",
+  "phylogenetics": {
+    "complex": {
+      "Non TB": "-1"
+    },
+    "species": {
+      "Unknown Species": "-1"
+    },
+    "lineage": {
+      "Unknown lineage": "-1"
+    }
+  },
+  "susceptibility": {}
+}

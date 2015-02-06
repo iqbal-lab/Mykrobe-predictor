@@ -17,3 +17,16 @@ src/obj
 
 ## test file that is too big for github
 data/test/myKrobe/predictor/test1.bam
+
+## UI / node / JS files
+UI/node_modules
+UI/npm-debug.log
+UI/tmp
+UI/.tmp
+UI/.grunt
+UI/.sass-cache
+UI/build
+UI/app/bower_components
+UI/dist
+UI/cache
+UI/_SpecRunner.html

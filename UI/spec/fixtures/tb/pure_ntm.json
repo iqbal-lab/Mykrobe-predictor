@@ -1,0 +1,15 @@
+{
+  "expected_depth": "78",
+  "phylogenetics": {
+    "complex": {
+      "NTM": "49"
+    },
+    "species": {
+      "Unknown NTM Species": "-1"
+    },
+    "lineage": {
+      "N/A": "-1"
+    }
+  },
+  "susceptibility": {}
+}

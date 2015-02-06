@@ -1,0 +1,29 @@
+{
+  "expected_depth": "41",
+  "phylogenetics": {
+    "complex": {
+      "MTBC": "55",
+      "NTM": "4"
+    },
+    "species": {
+      "tuberculosis": "39",
+      "avium": "4"
+    },
+    "lineage": {
+      "European/American": "54",
+      "N/A": "-1"
+    }
+  },
+  "susceptibility": {
+    "Isoniazid": "S",
+    "Rifampicin": "S",
+    "Ethambutol": "S",
+    "Pyrazinamide": "S",
+    "Quinolones": "S",
+    "Streptomycin": "S",
+    "Amikacin": "S",
+    "Capreomycin": "S",
+    "Kanamycin": "S"
+  },
+  "called_variants": {}
+}

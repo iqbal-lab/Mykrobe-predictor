@@ -1,0 +1,9 @@
+{
+  "expected_depth": "56",
+  "mean_read_length": "124",
+  "species": {
+    "S. haemolyticus": "64"
+  },
+  "susceptibility": {},
+  "virulence_toxins": {}
+}

@@ -1,0 +1,9 @@
+{
+  "expected_depth": "0",
+  "mean_read_length": "16",
+  "species": {
+    "Non-staphylococcal": "Major"
+  },
+  "susceptibility": {},
+  "virulence_toxins": {}
+}
