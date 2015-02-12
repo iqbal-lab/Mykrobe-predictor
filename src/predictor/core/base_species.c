@@ -269,6 +269,16 @@ int get_best_hit(CovgInfo* covg_info,boolean* mask)
   return  curr;
 }
 
+boolean* create_mask(boolean default_value)
+{
+  boolean* mask = malloc(NUM_SPECIES * sizeof(boolean));
+  int j;
+  for(j = 0; j < NUM_SPECIES; j++) {
+    mask[j] = default_value;
+  }   
+  return (mask);
+}
+
 boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask){
   boolean panels_are_present = false;
   int i;
@@ -283,6 +293,44 @@ boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask){
   return (panels_are_present);
 }
 
+char* get_char_name_of_species_enum(Species species){
+  StrBuf* species_name = strbuf_new(); 
+  map_species_enum_to_str(species, species_name);
+  return species_name->buff;
+}
+
+
+
+char* get_ith_complex_name(CovgInfo* covg_info, int i)
+{
+  Complex complex;
+  StrBuf* complex_name = strbuf_new(); 
+  complex = get_ith_present_panel( covg_info, i);
+  map_complex_enum_to_str(complex, complex_name);
+  return complex_name->buff;
+}
+char* get_ith_species_name(CovgInfo* covg_info, int i)
+{
+  Species species;
+  species = get_ith_present_panel( covg_info, i);
+  return get_char_name_of_species_enum(species);
+}
+
+
+
+void print_json_indiv_phylo(CovgInfo* covg_info,
+                           char* (*get_ith_name)(CovgInfo*, int)){
+    int i;
+    boolean last = false;
+    for (i=0; i < covg_info->num_panels_present; i++)
+    {
+      if (i == covg_info->num_panels_present-1){
+        last = true;
+      }
+      print_json_called_variant_item( (*get_ith_name)(covg_info,i), get_ith_coverage_panel(covg_info,i), last);
+    }     
+}
+
 void print_json_phylogenetics(SpeciesInfo* species_info){
     print_json_phylogenetics_start();
     print_json_complex(species_info);
@@ -290,3 +338,20 @@ void print_json_phylogenetics(SpeciesInfo* species_info){
     print_json_lineage(species_info);
     print_json_phylogenetics_end();  
 }
+
+#ifdef TB
+
+char* get_char_name_of_lineage_enum(Lineage lineage){
+  StrBuf* lineage_name = strbuf_new(); 
+  map_lineage_enum_to_str(lineage, lineage_name);
+  return lineage_name->buff;
+}
+
+char* get_ith_lineage_name(CovgInfo* covg_info, int i)
+{
+  Lineage lineage;
+  lineage = get_ith_present_panel( covg_info, i);
+  return get_char_name_of_lineage_enum(lineage);
+}
+
+ #endif

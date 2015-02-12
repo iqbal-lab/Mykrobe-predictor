@@ -302,45 +302,6 @@ void map_lineage_enum_to_str(Lineage sp, StrBuf* sbuf)
 
 
 
-
-
-char* get_char_name_of_species_enum(Species species){
-  StrBuf* species_name = strbuf_new(); 
-  map_species_enum_to_str(species, species_name);
-  return species_name->buff;
-}
-
-char* get_char_name_of_lineage_enum(Lineage lineage){
-  StrBuf* lineage_name = strbuf_new(); 
-  map_lineage_enum_to_str(lineage, lineage_name);
-  return lineage_name->buff;
-}
-
-char* get_ith_complex_name(CovgInfo* covg_info, int i)
-{
-  Complex complex;
-  StrBuf* complex_name = strbuf_new(); 
-  complex = get_ith_present_panel( covg_info, i);
-  map_complex_enum_to_str(complex, complex_name);
-  return complex_name->buff;
-}
-char* get_ith_species_name(CovgInfo* covg_info, int i)
-{
-  Species species;
-  species = get_ith_present_panel( covg_info, i);
-  return get_char_name_of_species_enum(species);
-}
-
-char* get_ith_lineage_name(CovgInfo* covg_info, int i)
-{
-  Lineage lineage;
-  lineage = get_ith_present_panel( covg_info, i);
-  return get_char_name_of_lineage_enum(lineage);
-}
-
-
-
-
 void load_all_mtbc_and_ntm_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
 {
   panel_file_paths[0] = strbuf_create(install_dir->buff);
@@ -547,60 +508,17 @@ boolean is_NTM_present(SpeciesInfo* species_info)
   {
     return (false);
   }
-  
 }
 
 boolean is_MTBC_present(SpeciesInfo* species_info)
 {
   // Is combined MTBC panel present OR any of the MTBC species panels
-
   if (species_info->complex_covg_info->present[MTBC]){
     return (true);
   }
   else{
     return (false);
   }
-}
-
-
-
-void print_json_indiv_phylo(CovgInfo* covg_info,
-                           char* (*get_ith_name)(CovgInfo*, int)){
-    int i;
-    boolean last = false;
-    for (i=0; i < covg_info->num_panels_present; i++)
-    {
-      if (i == covg_info->num_panels_present-1){
-        last = true;
-      }
-      print_json_called_variant_item( (*get_ith_name)(covg_info,i), get_ith_coverage_panel(covg_info,i), last);
-    }     
-}
-
-void print_json_complex(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->complex_covg_info;
-    int num_panels_present = covg_info->num_panels_present;
-    print_json_complex_start();
-    if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_complex_name);
-    }
-    else
-    {
-      print_json_called_variant_item( "Non Mycobacterium", -1, true);
-    }
-    print_json_complex_end();  
-}
-
-
-
-boolean* create_mask(boolean default_value)
-{
-  boolean* mask = malloc(NUM_SPECIES * sizeof(boolean));
-  int j;
-  for(j = 0; j < NUM_SPECIES; j++) {
-    mask[j] = default_value;
-  }   
-  return (mask);
 }
 
 boolean* create_MTBC_mask()
@@ -673,7 +591,7 @@ boolean no_lineage_panels_are_present(SpeciesInfo* species_info){
 
 void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
   if (no_MTBC_panels_are_present(species_info)){
-    print_json_called_variant_item( "Unknown MTBC Species", -1 , false);
+    print_json_called_variant_item( "Unknown Species", -1 , false);
   }
   else
   {  
@@ -681,7 +599,7 @@ void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
     print_json_called_variant_item( get_char_name_of_species_enum(MTBC_species), species_info->species_covg_info->median_coverage[MTBC_species], false);
   }
   if (no_NTM_panels_are_present(species_info)){
-    print_json_called_variant_item( "Unknown NTM Species", -1 , true);
+    print_json_called_variant_item( "Unknown Species", -1 , true);
   }
   else
   {  
@@ -692,7 +610,7 @@ void print_json_best_hit_NTM_and_MBTC(SpeciesInfo* species_info){
 
 void print_json_best_hit_MBTC(SpeciesInfo* species_info){
   if (no_MTBC_panels_are_present(species_info)){
-    print_json_called_variant_item( "Unknown MTBC Species", -1 , true);
+    print_json_called_variant_item( "Unknown Species", -1 , true);
   }
   else{
   Species MTBC_species = get_best_MTBC_species(species_info);
@@ -702,14 +620,13 @@ void print_json_best_hit_MBTC(SpeciesInfo* species_info){
 
 void print_json_best_hit_NTM(SpeciesInfo* species_info){
   if (no_NTM_panels_are_present(species_info)){
-    print_json_called_variant_item( "Unknown NTM Species", -1 , true);
+    print_json_called_variant_item( "Unknown Species", -1 , true);
   }
   else
   {  
     Species NTM_species = get_best_NTM_species(species_info);  
     print_json_called_variant_item( get_char_name_of_species_enum(NTM_species), species_info->species_covg_info->median_coverage[NTM_species], true);
   }
-
 }
 
 void print_json_best_hit_lineage(SpeciesInfo* species_info){
@@ -721,6 +638,19 @@ void print_json_best_hit_lineage(SpeciesInfo* species_info){
     Lineage lineage = get_best_lineage(species_info);  
     print_json_called_variant_item( get_char_name_of_lineage_enum(lineage), species_info->lineage_covg_info->median_coverage[lineage], true);
   }
+}
+void print_json_complex(SpeciesInfo* species_info){
+    CovgInfo* covg_info =species_info->complex_covg_info;
+    int num_panels_present = covg_info->num_panels_present;
+    print_json_complex_start();
+    if (num_panels_present > 0){
+      print_json_indiv_phylo(covg_info,get_ith_complex_name);
+    }
+    else
+    {
+      print_json_called_variant_item( "Non Mycobacterium", -1, true);
+    }
+    print_json_complex_end();  
 }
 
 void print_json_species(SpeciesInfo* species_info){

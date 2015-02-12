@@ -17,10 +17,10 @@
 
 typedef enum 
  {
-   Staphylococcus = 0  
+   Staph = 0  
 } Complex ;
 
-#define NUM_COMPLEX 2
+#define NUM_COMPLEX 1
 
  typedef enum 
 {
@@ -31,9 +31,6 @@ Sother=3
 } Species ;
 
 #define NUM_SPECIES 4
-
-
-#define NUM_LINEAGE 0
 
  #endif
 
@@ -108,6 +105,10 @@ typedef enum
   } Lineage ;
  #define NUM_LINEAGES 6
 
+void map_lineage_enum_to_str(Lineage sp, StrBuf* sbuf);
+char* get_char_name_of_lineage_enum(Lineage lineage);
+
+
  #endif
 typedef struct
 {
@@ -119,14 +120,16 @@ typedef struct
   int NUM_PANELS;
 } CovgInfo;
 
-
-
 typedef struct
 {
   CovgInfo* complex_covg_info;
   CovgInfo* species_covg_info;
   CovgInfo* lineage_covg_info;
 } SpeciesInfo;
+
+void map_complex_enum_to_str(Complex sp, StrBuf* sbuf);
+void map_species_enum_to_str(Species sp, StrBuf* sbuf);
+
 
 void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
                             StrBuf** panel_file_paths,
@@ -152,9 +155,16 @@ CovgInfo* get_coverage_info(dBGraph *db_graph,
 
 int max(int int1,int int2);
 int get_best_hit(CovgInfo* covg_info,boolean* mask);
-
+boolean* create_mask(boolean default_value);
 boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask);
 
+char* get_char_name_of_species_enum(Species species);
+
+char* get_ith_complex_name(CovgInfo* covg_info, int i);
+char* get_ith_species_name(CovgInfo* covg_info, int i);
+char* get_ith_lineage_name(CovgInfo* covg_info, int i);
+void print_json_indiv_phylo(CovgInfo* covg_info,
+                           char* (*get_ith_name)(CovgInfo*, int));
 void print_json_phylogenetics(SpeciesInfo* species_info);
 void print_json_complex(SpeciesInfo* species_info);
 void print_json_species(SpeciesInfo* species_info);

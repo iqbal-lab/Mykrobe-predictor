@@ -283,7 +283,9 @@ int main(int argc, char **argv)
   if (cmd_line->format==JSON)
     {
       print_json_start();
-      print_json_called_variant_item("expected_depth",expected_depth,false);      
+      print_json_called_variant_item("expected_depth",expected_depth,false);  
+      print_json_called_variant_item("mean_read_length",mean_read_length,false);
+  
       print_json_phylogenetics(species_info);
       if (!is_MTBC_present(species_info))
     	{
@@ -369,8 +371,13 @@ int main(int argc, char **argv)
     {
       print_json_susceptibility_end();
     }
-  print_called_variants(called_variants,cmd_line->format,true); // true here means that this is the last element of the JSON output
-  // print_called_genes(called_genes,cmd_line->format);
+  print_called_variants(called_variants,cmd_line->format,false); // true here means that this is the last element of the JSON output
+  print_json_called_genes_start();
+  print_json_called_genes_end();
+  print_json_virulence_start();
+  print_json_virulence_end();
+
+
   if (cmd_line->format==Stdout)
     {
       timestamp();

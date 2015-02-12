@@ -32,19 +32,14 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                             int ignore_first,int ignore_last);
 void find_which_panels_are_present(CovgInfo* covg_info);
 
-void map_complex_enum_to_str(Complex sp, StrBuf* sbuf);
-void map_species_enum_to_str(Species sp, StrBuf* sbuf);
-void map_lineage_enum_to_str(Lineage sp, StrBuf* sbuf);
 
 
-char* get_ith_complex_name(CovgInfo* covg_info, int i);
-char* get_ith_species_name(CovgInfo* covg_info, int i);
-char* get_ith_lineage_name(CovgInfo* covg_info, int i);
+
+
 
 
 char* get_pure_lineage_name(SpeciesInfo* species_info);
-void print_json_indiv_phylo(CovgInfo* covg_info,
-                           char* (*get_ith_name)(CovgInfo*, int));
+
 boolean* create_mask(boolean default_value);
 boolean* create_MTBC_mask();
 boolean* create_NTM_mask();

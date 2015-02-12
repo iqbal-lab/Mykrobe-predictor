@@ -304,24 +304,11 @@ int main(int argc, char **argv)
   SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
                                   expected_depth,1,1);
 
-  if (species_info->sample_type == MixedStaph)
-    {
-      strbuf_append_str(tmp_name, "Staphylococcus Mixed ");
-    }
-  else if (species_info->sample_type == NonStaphylococcal)
-    {
-      strbuf_append_str(tmp_name, "Non-staphylococcal");
-    }
-  else
-    {
-      strbuf_append_str(tmp_name, "S.aureus");
-    }
-
-
+  fflush(stdout);
   if (cmd_line->format==Stdout)
     {
       printf("** Species\n");
-      if (species_info->sample_type != PureStaph)
+      if (!is_aureus_present(species_info))
     	{
     	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
     	  timestamp();
@@ -352,50 +339,30 @@ int main(int argc, char **argv)
     {
       print_json_start();
       print_json_called_variant_item("expected_depth",expected_depth,false);
-      print_json_called_variant_item("mean_read_length",mean_read_length,false);
-      print_json_species_start();
-      if (species_info->sample_type == PureStaph)
-	    {
-	     print_json_called_variant_item(get_pure_species_name(species_info), get_pure_species_coverage(species_info), true);
-	   }
-      else if (species_info->sample_type == MixedStaph) 
-  	{
-      int i;
-      boolean last = false;
-      for (i=0; i < species_info->num_species; i++)
+      print_json_called_variant_item("mean_read_length",mean_read_length,false);   
+      print_json_phylogenetics(species_info);
+      if (!is_aureus_present(species_info))
       {
-        if (i == species_info->num_species-1){
-          last = true;
-        }
-        print_json_called_variant_item(get_ith_species_name(species_info,i), get_ith_species_coverage(species_info,i), last);
+        print_json_susceptibility_start(); 
+        print_json_susceptibility_end();
+        print_json_called_variants_start();
+        boolean last = true;
+        print_json_called_variants_end(last);
+        print_json_end();
+
+        //cleanup
+        strbuf_free(tmp_name);
+        free_antibiotic_info(abi);
+        free_var_on_background(tmp_vob);
+        free_gene_info(tmp_gi);
+        free_reading_utils(ru);
+        
+        cmd_line_free(cmd_line);
+        hash_table_free(&db_graph);
+        
+        return 0;
+      
       }
-  	}
-    else
-  	{
-  	  print_json_item("Non-staphylococcal", "-1", true);
-  	}
-      print_json_species_end(); 
-
-  if ( ! aureus_is_present(species_info) )
-  	{
-  	  print_json_susceptibility_start(); 
-  	  print_json_susceptibility_end();
-  	  print_json_virulence_start();
-  	  print_json_virulence_end();
-  	  print_json_end();
-
-  	  //cleanup
-  	  strbuf_free(tmp_name);
-  	  free_antibiotic_info(abi);
-  	  free_var_on_background(tmp_vob);
-  	  free_gene_info(tmp_gi);
-  	  free_reading_utils(ru);
-  	  
-  	  cmd_line_free(cmd_line);
-  	  hash_table_free(&db_graph);
-  	  
-  	  return 0;
-  	}
     }
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
