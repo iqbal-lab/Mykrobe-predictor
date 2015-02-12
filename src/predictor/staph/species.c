@@ -120,7 +120,7 @@ boolean* create_staph_mask()
 
 boolean* create_non_aureus_mask()
 {
-  boolean* mask= create_mask(false);
+  boolean* mask= create_mask(true);
   mask[Saureus] = false;
   return (mask);
 }

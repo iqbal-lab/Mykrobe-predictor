@@ -137,15 +137,6 @@ int main(int argc, char **argv)
     {
       return -1;
     }
-  
-
-  if (cmd_line->format==Stdout)
-    {
-      printf("** Start time\n");
-      timestamp();
-      printf("** Sample:\n%s\n", cmd_line->id->buff);
-    }
- 
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
   uint64_t bp_loaded=0;
@@ -192,20 +183,13 @@ int main(int argc, char **argv)
 	}
       else
 	{
-	  if (cmd_line->format==Stdout)
-	    {
-	      timestamp();
-	    }
 	  int num=0;
 	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
 	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
 	  graph_info_free(ginfo);
 	  set_all_coverages_to_zero(db_graph, 0);
-    if (cmd_line->format==Stdout){
-    }
 	}
       strbuf_free(sk);
-      
       only_load_pre_existing_kmers=true;
     }
   else
@@ -224,9 +208,7 @@ int main(int argc, char **argv)
       //timestamp();
     }
   boolean progressbar_remainder=true;
-  if (cmd_line->format==Stdout){
-    timestamp();
-  }
+
 
   bp_loaded = build_unclean_graph(db_graph, 
 				  cmd_line->seq_path,
@@ -251,9 +233,6 @@ int main(int argc, char **argv)
       return 1;
 
     }
-  if (cmd_line->format==Stdout){
-    timestamp();
-  }
   
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
 							   cmd_line->readlen_distrib_size);
@@ -305,66 +284,30 @@ int main(int argc, char **argv)
                                   expected_depth,1,1);
 
   fflush(stdout);
-  if (cmd_line->format==Stdout)
-    {
-      printf("** Species\n");
-      if (!is_aureus_present(species_info))
-    	{
-    	  printf("%s\n No AMR predictions given.\n** End time\n", tmp_name->buff);
-    	  timestamp();
-    	  // free_sample_model(species_mod);
+  print_json_start();
+  print_json_called_variant_item("expected_depth",expected_depth,false);
+  print_json_called_variant_item("mean_read_length",mean_read_length,false);   
+  print_json_phylogenetics(species_info);
+  if (!is_aureus_present(species_info))
+  {
+    print_json_susceptibility_start(); 
+    print_json_susceptibility_end();
+    print_json_called_variants_start();
+    boolean last = true;
+    print_json_called_variants_end(last);
+    print_json_end();
 
-    	  //cleanup
-    	  strbuf_free(tmp_name);
-    	  free_antibiotic_info(abi);
-    	  free_var_on_background(tmp_vob);
-    	  free_gene_info(tmp_gi);
-    	  free_reading_utils(ru);
-    	  
-    	  cmd_line_free(cmd_line);
-    	  hash_table_free(&db_graph);
-    	  
-    	  return 0;
-	   }
-      else
-  	{
-  	  printf("%s\n", tmp_name->buff);
-  	  timestamp();
-  	  // free_sample_model(species_mod);
-
-  	  printf("** Antimicrobial susceptibility predictions\n");
-  	}
-    }
-  else//JSON
-    {
-      print_json_start();
-      print_json_called_variant_item("expected_depth",expected_depth,false);
-      print_json_called_variant_item("mean_read_length",mean_read_length,false);   
-      print_json_phylogenetics(species_info);
-      if (!is_aureus_present(species_info))
-      {
-        print_json_susceptibility_start(); 
-        print_json_susceptibility_end();
-        print_json_called_variants_start();
-        boolean last = true;
-        print_json_called_variants_end(last);
-        print_json_end();
-
-        //cleanup
-        strbuf_free(tmp_name);
-        free_antibiotic_info(abi);
-        free_var_on_background(tmp_vob);
-        free_gene_info(tmp_gi);
-        free_reading_utils(ru);
-        
-        cmd_line_free(cmd_line);
-        hash_table_free(&db_graph);
-        
-        return 0;
-      
-      }
-    }
-  
+    //cleanup
+    strbuf_free(tmp_name);
+    free_antibiotic_info(abi);
+    free_var_on_background(tmp_vob);
+    free_gene_info(tmp_gi);
+    free_reading_utils(ru);
+    
+    cmd_line_free(cmd_line);
+    hash_table_free(&db_graph);
+    return 0;
+  }  
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
   //if k=29, we want to ignore 3 kmers at start and end.. etc
@@ -372,10 +315,7 @@ int main(int argc, char **argv)
 
   //if we get here, is s. aureus
 
-  if (cmd_line->format==JSON)
-    {
-      print_json_susceptibility_start();
-    }
+  print_json_susceptibility_start();
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
   
@@ -433,29 +373,13 @@ int main(int argc, char **argv)
            called_variants,called_genes);
 
    
-  if (cmd_line->format==JSON)
-    {
-      print_json_susceptibility_end();
-    }
+  print_json_susceptibility_end();
   print_called_variants(called_variants,cmd_line->format,false);// false here means that this is NOT the last element of the JSON output
   print_called_genes(called_genes,cmd_line->format);
-  if (cmd_line->format==Stdout)
-    {
-      printf("** Virulence markers\n");
-    }
   print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_pvl_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
-
-  if (cmd_line->format==Stdout)
-    {
-      timestamp();
-    }
-  else
-    {
-      print_json_end();
-      printf("\n");
-    }
+  print_json_end();
 
 
   if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )
