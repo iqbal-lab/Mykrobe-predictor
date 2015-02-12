@@ -2,7 +2,27 @@
  * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
- *  species.c
+ * **********************************************************************
+ *
+ * This file is part of Mykrobe.
+ *
+ * Mykrobe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mykrobe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mykrobe.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * **********************************************************************
+ */
+/*
+  species.c
 */
 
 
@@ -22,7 +42,6 @@
 #include "species.h"
 #include "gene_presence.h"
 #include "genotyping_known.h"
-
 
 
 
@@ -127,36 +146,21 @@ boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
                                         ignore_last,
                                         &percentage_cov_cat,
                                         &median_cov_cat);
-    if (percentage_cov_cat > 20)
+    if (percentage_cov_cat > 50)
     {
       return true;
-    }    else
+    }   
+    else
     {
       return false;
     }
 
 }
 
-boolean has_coverage_on_any_panel(boolean* present)
-{
-  boolean has_coverage = false;
-  int i;
-  for (i=0; i<NUM_SPECIES; i++)
-  {
-    if (present[i])
-    {
-      has_coverage = true;
-    }
-  }
-  return (has_coverage);
-}
-
- 
-
-boolean sample_is_staph(boolean has_catalayse, boolean* present)
+boolean sample_is_staph(boolean has_catalayse)
 {
   // Check if catalayse exists
-  if (has_catalayse || has_coverage_on_any_panel(present))
+  if (has_catalayse)
   {
     return true;
   }
@@ -301,7 +305,7 @@ boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
 
 
 void find_which_panels_are_present(int* percentage_coverage,boolean* present, 
-                                  int* num_panels,boolean has_catalayse)
+                                  int* num_panels)
 {
   boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
   boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
@@ -311,13 +315,6 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
   present[Sepidermidis] = is_epi_present;
   present[Shaemolyticus] = is_haem_present;
   present[Sother] = is_sother_present && !(is_epi_present || is_haem_present) ;
-  // In that case where no panels are present, we must call it as Staph since 
-  // we've already seen that cat is in the sample. 
-  if ( has_catalayse && (! (is_aureus_present || is_epi_present || is_haem_present  || is_sother_present )) )
-  {
-    present[Sother] = true;
-  }
-
   int i;
   for (i=0; i<NUM_SPECIES; i++)
   {
@@ -326,7 +323,6 @@ void find_which_panels_are_present(int* percentage_coverage,boolean* present,
       *num_panels = *num_panels +1;
     }
   }
-
 }
 
 boolean coverage_exists_on_aureus_and_at_least_one_other_panel(boolean* present)
@@ -359,7 +355,7 @@ boolean sample_is_mixed(boolean* present)
 SampleType get_sample_type(boolean has_catalayse, boolean* present)
 {
   SampleType sample_type;
-  if (sample_is_staph(has_catalayse, present) ) 
+  if (sample_is_staph(has_catalayse) ) 
   {
       if (sample_is_mixed(present))
       {
@@ -400,9 +396,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                                 install_dir,ignore_first, 
                                 ignore_last);
   int num_panels =0 ;
-  find_which_panels_are_present(percentage_coverage,present,&num_panels,has_catalayse);
-
-
+  find_which_panels_are_present(percentage_coverage,present,&num_panels);
   SampleType sample_type = get_sample_type(has_catalayse,present);
 
   species_info->sample_type = sample_type;
@@ -512,7 +506,37 @@ int get_pure_species_coverage(SpeciesInfo* species_info)
 
 
 
-boolean aureus_is_present(SpeciesInfo* species_info){
-  return (species_info->present[Saureus]);
-}
+// Staph_species get_best_hit(int* arr_perc_cov, 
+//         Covg* arr_median, 
+//         boolean* found, 
+//         boolean exclude_aureus)
+// {
+//   int i;
+//   int prod=0;
+//   int curr=-1;
+//   for (i=0; i<NUM_SPECIES; i++)
+//     {
+//       if ( (exclude_aureus==true) && ((Staph_species)i==Aureus))
+//  {
+//    continue;
+//  }
+//       //      if (arr_perc_cov[i] * arr_median[i]>prod)
+//       if (arr_perc_cov[i] > prod)
+//  {
+//    //prod = arr_perc_cov[i]* arr_median[i];
+//    prod =arr_perc_cov[i];
+//    curr=i;
+//  }
+//     }
+//   if (curr==-1)
+//     {
+//       *found=false;
+//       return Aureus;
+//     }
+//   else
+//     {
+//       *found=true;
+//       return (Staph_species) curr;
+//     }
+// }
 
