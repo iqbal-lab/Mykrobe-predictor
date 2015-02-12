@@ -23,7 +23,7 @@ boolean staphylococcus_is_present(SpeciesInfo* species_info);
 
 Species get_best_staph_species(SpeciesInfo* species_info );
 
-void update_complex_presence_and_coverage_from_species(SpeciesInfo* species_info);
+void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_info);
 
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,

@@ -18,7 +18,7 @@
 typedef enum 
  {
    Staph = 0  
-} Complex ;
+} PhyloGroup ;
 
 #define NUM_COMPLEX 1
 
@@ -41,7 +41,7 @@ typedef enum
  {
    MTBC = 0,
    NTM = 1
-  } Complex ;
+  } PhyloGroup ;
 
 #define NUM_COMPLEX 2
 
@@ -122,12 +122,12 @@ typedef struct
 
 typedef struct
 {
-  CovgInfo* complex_covg_info;
+  CovgInfo* phylo_group_covg_info;
   CovgInfo* species_covg_info;
   CovgInfo* lineage_covg_info;
 } SpeciesInfo;
 
-void map_complex_enum_to_str(Complex sp, StrBuf* sbuf);
+void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf);
 void map_species_enum_to_str(Species sp, StrBuf* sbuf);
 
 
@@ -160,12 +160,12 @@ boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask);
 
 char* get_char_name_of_species_enum(Species species);
 
-char* get_ith_complex_name(CovgInfo* covg_info, int i);
+char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 char* get_ith_species_name(CovgInfo* covg_info, int i);
 char* get_ith_lineage_name(CovgInfo* covg_info, int i);
 void print_json_indiv_phylo(CovgInfo* covg_info,
                            char* (*get_ith_name)(CovgInfo*, int));
 void print_json_phylogenetics(SpeciesInfo* species_info);
-void print_json_complex(SpeciesInfo* species_info);
+void print_json_phylo_group(SpeciesInfo* species_info);
 void print_json_species(SpeciesInfo* species_info);
 void print_json_lineage(SpeciesInfo* species_info);

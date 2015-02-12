@@ -43,7 +43,7 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 
-void map_complex_enum_to_str(Complex sp, StrBuf* sbuf)
+void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf)
 {
   if(sp==Staph){
     strbuf_reset(sbuf);
@@ -138,15 +138,15 @@ Species get_best_staph_species(SpeciesInfo* species_info ){
   return (species);
 }
 
-void update_complex_presence_and_coverage_from_species(SpeciesInfo* species_info){
+void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_info){
   if (staphylococcus_is_present(species_info)){
-    if (! species_info->complex_covg_info->present[Staph]){
-      species_info->complex_covg_info->present[Staph] = true;
-      species_info->complex_covg_info->num_panels_present = species_info->complex_covg_info->num_panels_present + 1;
+    if (! species_info->phylo_group_covg_info->present[Staph]){
+      species_info->phylo_group_covg_info->present[Staph] = true;
+      species_info->phylo_group_covg_info->num_panels_present = species_info->phylo_group_covg_info->num_panels_present + 1;
     }
     Species best_staph_species = get_best_staph_species(species_info);
-    species_info->complex_covg_info->percentage_coverage[Staph] = max(species_info->complex_covg_info->percentage_coverage[Staph] , species_info->species_covg_info->percentage_coverage[best_staph_species] );
-    species_info->complex_covg_info->median_coverage[Staph] = max(species_info->complex_covg_info->median_coverage[Staph] , species_info->species_covg_info->median_coverage[best_staph_species] );
+    species_info->phylo_group_covg_info->percentage_coverage[Staph] = max(species_info->phylo_group_covg_info->percentage_coverage[Staph] , species_info->species_covg_info->percentage_coverage[best_staph_species] );
+    species_info->phylo_group_covg_info->median_coverage[Staph] = max(species_info->phylo_group_covg_info->median_coverage[Staph] , species_info->species_covg_info->median_coverage[best_staph_species] );
   }
 }
 
@@ -161,7 +161,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
   load_all_species_file_paths(species_file_paths,install_dir);
 
 
-  CovgInfo* complex_covg_info = get_coverage_info(db_graph,
+  CovgInfo* phylo_group_covg_info = get_coverage_info(db_graph,
                                                   catalayse_file_paths,
                                                   max_branch_len,NUM_COMPLEX,
                                                   ignore_first,ignore_last,
@@ -175,25 +175,25 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
 
 
   SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
-  species_info->complex_covg_info = complex_covg_info;
+  species_info->phylo_group_covg_info = phylo_group_covg_info;
   species_info->species_covg_info = species_covg_info;
-  update_complex_presence_and_coverage_from_species(species_info);
+  update_phylo_group_presence_and_coverage_from_species(species_info);
 
   return species_info;
 }
 
-void print_json_complex(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->complex_covg_info;
+void print_json_phylo_group(SpeciesInfo* species_info){
+    CovgInfo* covg_info =species_info->phylo_group_covg_info;
     int num_panels_present = covg_info->num_panels_present;
-    print_json_complex_start();
+    print_json_phylo_group_start();
     if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_complex_name);
+      print_json_indiv_phylo(covg_info,get_ith_phylo_group_name);
     }
     else
     {
       print_json_called_variant_item( "Non Staphylococcus", -1, true);
     }
-    print_json_complex_end();  
+    print_json_phylo_group_end();  
 }
 boolean is_aureus_present(SpeciesInfo* species_info)
 {

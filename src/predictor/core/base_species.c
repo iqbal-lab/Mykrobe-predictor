@@ -301,13 +301,13 @@ char* get_char_name_of_species_enum(Species species){
 
 
 
-char* get_ith_complex_name(CovgInfo* covg_info, int i)
+char* get_ith_phylo_group_name(CovgInfo* covg_info, int i)
 {
-  Complex complex;
-  StrBuf* complex_name = strbuf_new(); 
-  complex = get_ith_present_panel( covg_info, i);
-  map_complex_enum_to_str(complex, complex_name);
-  return complex_name->buff;
+  PhyloGroup phylo_group;
+  StrBuf* phylo_group_name = strbuf_new(); 
+  phylo_group = get_ith_present_panel( covg_info, i);
+  map_phylo_group_enum_to_str(phylo_group, phylo_group_name);
+  return phylo_group_name->buff;
 }
 char* get_ith_species_name(CovgInfo* covg_info, int i)
 {
@@ -333,7 +333,7 @@ void print_json_indiv_phylo(CovgInfo* covg_info,
 
 void print_json_phylogenetics(SpeciesInfo* species_info){
     print_json_phylogenetics_start();
-    print_json_complex(species_info);
+    print_json_phylo_group(species_info);
     print_json_species(species_info);
     print_json_lineage(species_info);
     print_json_phylogenetics_end();  
