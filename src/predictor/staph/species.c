@@ -213,8 +213,8 @@ boolean is_non_aureus_staph_present(SpeciesInfo* species_info)
   }
 }
 
-void print_json_aureus(SpeciesInfo* species_info){
-    print_json_called_variant_item( get_char_name_of_species_enum (Saureus) ,species_info->species_covg_info->median_coverage[Saureus], true);
+void print_json_aureus(SpeciesInfo* species_info, boolean last){
+    print_json_called_variant_item( get_char_name_of_species_enum (Saureus) ,species_info->species_covg_info->median_coverage[Saureus], last);
 }
 
 Species get_best_non_aureus_species(SpeciesInfo* species_info ){
@@ -249,7 +249,7 @@ void print_json_best_hit_non_aureus(SpeciesInfo* species_info){
 
 void print_json_aureus_and_best_hit_non_aureus(SpeciesInfo* species_info){
   if (is_aureus_present(species_info)){
-    print_json_aureus(species_info);
+    print_json_aureus(species_info,false);
   }
   else
   {  
@@ -273,7 +273,7 @@ void print_json_species(SpeciesInfo* species_info){
       print_json_aureus_and_best_hit_non_aureus(species_info);
     }
     else if (aureus_is_present){
-      print_json_aureus(species_info);
+      print_json_aureus(species_info,true);
     }
     else if (non_aureus_staph_is_present){
       print_json_best_hit_non_aureus(species_info);

@@ -32,7 +32,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
 
 boolean is_aureus_present(SpeciesInfo* species_info);
 boolean is_non_aureus_staph_present(SpeciesInfo* species_info);
-void print_json_aureus(SpeciesInfo* species_info);
+void print_json_aureus(SpeciesInfo* species_info,boolean last);
 
 Species get_best_non_aureus_species(SpeciesInfo* species_info );
 
