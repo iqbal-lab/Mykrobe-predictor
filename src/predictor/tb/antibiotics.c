@@ -1166,8 +1166,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
       )
 
     {
-
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
