@@ -34,6 +34,10 @@ boolean is_aureus_present(SpeciesInfo* species_info);
 boolean is_non_aureus_staph_present(SpeciesInfo* species_info);
 void print_json_aureus(SpeciesInfo* species_info,boolean last);
 
+boolean catalayse_exists_in_sample(SpeciesInfo* species_info);
+int get_coverage_on_catalayse(SpeciesInfo* species_info);
+void load_all_cat_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
+
 Species get_best_non_aureus_species(SpeciesInfo* species_info );
 
 boolean non_aureus_panels_are_present(SpeciesInfo* species_info);

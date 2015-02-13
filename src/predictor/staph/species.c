@@ -88,6 +88,8 @@ void map_species_enum_to_str(Species staph_species, StrBuf* sbuf)
   
 }
 
+
+
 void load_all_phylo_group_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
 {
   panel_file_paths[CoagPos] = strbuf_create(install_dir->buff);
@@ -112,6 +114,10 @@ void phylo_group_threshold(int* thresholds){
   thresholds[CoagPos] = 70;
   thresholds[CoagNeg] = 25;
 
+}
+
+void cat_threshold(int* thresholds){
+  thresholds[0] = 20;
 }
 void load_all_species_thresholds(int* thresholds){
   int j;
@@ -216,11 +222,21 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                                                   ignore_first,ignore_last,
                                                   load_all_species_thresholds);
 
+  StrBuf* cat_file_paths[1];
+  load_all_cat_file_paths(cat_file_paths,install_dir);    
+  CovgInfo* cat_covg_info = get_coverage_info(db_graph,
+                                            cat_file_paths,
+                                            max_branch_len,1,
+                                            ignore_first,ignore_last,
+                                            cat_threshold);   
+
 
 
   SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
   species_info->phylo_group_covg_info = phylo_group_covg_info;
   species_info->species_covg_info = species_covg_info;
+  species_info->other_covg_info = cat_covg_info;
+
   update_phylo_group_presence_and_coverage_from_species(species_info);
 
   return species_info;
@@ -260,8 +276,33 @@ void print_json_aureus_and_best_hit_non_aureus(SpeciesInfo* species_info){
   }
 }
 
+
+
+boolean catalayse_exists_in_sample(SpeciesInfo* species_info)
+
+{    
+    if (species_info->other_covg_info->percentage_coverage[0] > 20)
+    {
+      return true;
+    }else
+    {
+      return false;
+    }
+}
+
+int get_coverage_on_catalayse(SpeciesInfo* species_info)
+{    
+  return(species_info->other_covg_info->median_coverage[0]);
+}
+
+void load_all_cat_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
+{
+  panel_file_paths[0] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[0], "data/staph/species/coag_neg.fasta" ); 
+}
+
 void print_json_phylo_group(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->phylo_group_covg_info;
+    CovgInfo* covg_info =species_info->phylo_group_covg_info;    
     int num_panels_present = covg_info->num_panels_present;
     print_json_phylo_group_start();
     if (num_panels_present > 0){
@@ -269,7 +310,12 @@ void print_json_phylo_group(SpeciesInfo* species_info){
     }
     else
     {
-      print_json_called_variant_item( "Non Staphylococcus", -1, true);
+      if (catalayse_exists_in_sample(species_info)){
+        print_json_called_variant_item( "Coagulase-Negative Staphylococcus", get_coverage_on_catalayse(species_info), true);
+      }
+      else{
+        print_json_called_variant_item( "Non Staphylococcus", -1, true);
+      }
     }
     print_json_phylo_group_end();  
 }

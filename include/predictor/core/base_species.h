@@ -126,6 +126,7 @@ typedef struct
   CovgInfo* phylo_group_covg_info;
   CovgInfo* species_covg_info;
   CovgInfo* lineage_covg_info;
+  CovgInfo* other_covg_info;
 } SpeciesInfo;
 
 void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf);
