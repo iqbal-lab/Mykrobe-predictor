@@ -17,10 +17,11 @@
 
 typedef enum 
  {
-   Staph = 0  
+   CoagPos = 0,
+   CoagNeg = 1
 } PhyloGroup ;
 
-#define NUM_COMPLEX 1
+#define NUM_COMPLEX 2
 
  typedef enum 
 {
