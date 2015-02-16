@@ -120,10 +120,10 @@ void cat_threshold(int* thresholds){
   thresholds[0] = 20;
 }
 void load_all_species_thresholds(int* thresholds){
-  int j;
-  for(j = 0; j < NUM_SPECIES; j++) {
-    thresholds[j] = 30;
-  } 
+  thresholds[Saureus] = 90;
+  thresholds[Sepidermidis] = 30;
+  thresholds[Shaemolyticus] = 30;
+  thresholds[Sother] = 10;
 }
 
 boolean* create_staph_mask()
