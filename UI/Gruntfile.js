@@ -41,10 +41,7 @@ module.exports = function(grunt) {
                 build_dir: './build', // Where the build version of my node-webkit app is saved
                 // credits: './public/credits.html',
                 mac_icns: './resources/icon/<%= pkg.targetName %>/icon.icns',
-                mac: true,
-                win: true,
-                linux32: false,
-                linux64: false,
+                platforms: ['osx32','win32']
             },
             src: '<%= config.dist %>/**/*'
         },
@@ -126,7 +123,7 @@ module.exports = function(grunt) {
                         packageJson = grunt.file.readJSON(config.app + '/package.json'),
                         appPath,
                         command;
-                    appPath = path.join(nodewebkit.options.build_dir, packageJson.name, 'osx', packageJson.name + '.app');
+                    appPath = path.join(nodewebkit.options.build_dir, packageJson.name, 'osx32', packageJson.name + '.app');
                     command = 'resources/mac/plist.sh "' + appPath + '"';
                     grunt.log.writeln(command);
                     return command;
@@ -141,7 +138,7 @@ module.exports = function(grunt) {
                         packageJson = grunt.file.readJSON(config.app + '/package.json'),
                         appPath,
                         command;
-                    appPath = path.join(nodewebkit.options.build_dir, packageJson.name, 'osx', packageJson.name + '.app');
+                    appPath = path.join(nodewebkit.options.build_dir, packageJson.name, 'osx32', packageJson.name + '.app');
                     command = 'resources/mac/sign.sh "' + appPath + '"';
                     grunt.log.writeln(command);
                     return command;
@@ -156,7 +153,7 @@ module.exports = function(grunt) {
                         packageJson = grunt.file.readJSON(config.app + '/package.json'),
                         appPath,
                         command;
-                    appPath = path.join(nodewebkit.options.build_dir, packageJson.name, 'osx', packageJson.name + '.app');
+                    appPath = path.join(nodewebkit.options.build_dir, packageJson.name, 'osx32', packageJson.name + '.app');
                     command = 'resources/mac/package.sh "' + packageJson.name + '" "'+appPath+'" "' + packageJson.targetName + '"';
                     grunt.log.writeln(command);
                     return command;
