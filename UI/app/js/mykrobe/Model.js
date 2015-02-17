@@ -127,19 +127,13 @@ var Model = Class.extend({
             isValid = false;
             requiredSpecies = [];
             if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-                requiredSpecies = [
-                    'M. tuberculosis',
-                    'M. africanum',
-                    'M. bovis',
-                    'Mixed MTB complex'
-                ];
+                requiredSpecies = 'MTBC';
             }
             else {
-                requiredSpecies = [
-                    'S.aureus'
-                ];
+                requiredSpecies = 'Staphylococcus aureus';
             }
-            isValid = requiredSpecies.indexOf(that.species[0]) !== -1;
+            // isValid = requiredSpecies.indexOf(that.species[0]) !== -1;
+            isValid = _.includes(that.phyloGroup,requiredSpecies);
             if ( isValid ) {
                 $(that).trigger("Model:didLoad", false);
             }
@@ -151,7 +145,7 @@ var Model = Class.extend({
                 "..is methicillin/penicillin resistant S. lugdunensis"
                 */
 
-                sampleName = that.species.join(' / ');
+                sampleName = that.phyloGroup.join(' / ');
                 if ( that.resistant.length ) {
                     resistantName = that.resistant.join(' / ');
                     sampleName = resistantName +' resistant ' + sampleName;
@@ -159,7 +153,7 @@ var Model = Class.extend({
 
                 $(that).trigger("Model:error", {
                     'path':path_, 
-                    'description':'This sample seems to be '+sampleName+', not '+requiredSpecies.join(' / ')+', and therefore the predictor does not give susceptibility predictions' 
+                    'description':'This sample seems to be '+sampleName+', not '+requiredSpecies+', and therefore the predictor does not give susceptibility predictions' 
                 });
             }
 
@@ -320,10 +314,7 @@ var Model = Class.extend({
         that.inducible = [];
 
         susceptibilityModel = that.json['susceptibility'];
-        virulenceModel = that.json['virulence_toxins'];
-        // now display in the order provided
-        // susceptibilityModel = that._sortObject(susceptibilityModel);
-        // virulenceModel = that._sortObject(virulenceModel);
+
 
         calledVariants = that.json['called_variants'];
         calledGenes = that.json['called_genes'];
@@ -371,30 +362,34 @@ var Model = Class.extend({
 
         that.evidenceModel = that._sortObject(that.evidenceModel);
 
+        // ignore the values
+        that.phyloGroup = _.keys(that.json.phylogenetics.phylo_group);
+
         // build array of included species
-        that.species = [];
-        if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-            sourceSpecies = that.json.phylogenetics.species;
-        }
-        else {
-            sourceSpecies = that.json.species;
-        }
-        for ( key in sourceSpecies ) {
-            value = sourceSpecies[key].toLowerCase();
-            if ( 'major' === value ) {
-                that.species.push(key);
-            }
-        }
+        that.species = _.keys(that.json.phylogenetics.species);
+                // if ( kTargetSpeciesTB === MykrobeTarget.species ) {
+            // sourceSpecies = that.json.phylogenetics.species;
+        // }
+        // else {
+        //     sourceSpecies = that.json.species;
+        // }
+        // for ( key in sourceSpecies ) {
+        //     value = sourceSpecies[key].toLowerCase();
+        //     if ( 'major' === value ) {
+        //         that.species.push(key);
+        //     }
+        // }
 
         that.lineage = [];
         if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-            sourceLineage = that.json.phylogenetics.lineage;
-            for ( key in sourceLineage ) {
-                value = sourceLineage[key].toLowerCase();
-                if ( 'major' === value ) {
-                    that.lineage.push(key);
-                }
-            }
+            that.lineage = _.keys(that.json.phylogenetics.lineage);
+            // sourceLineage = that.json.phylogenetics.lineage;
+            // for ( key in sourceLineage ) {
+                // value = sourceLineage[key].toLowerCase();
+                // if ( 'major' === value ) {
+                // that.lineage.push(key);
+                // }
+            // }
         }
 
         for ( key in susceptibilityModel ) {
@@ -414,13 +409,16 @@ var Model = Class.extend({
             }
         }
 
-        for ( key in virulenceModel ) {
-            value = virulenceModel[key].toUpperCase();
-            if ( 'POSITIVE' === value ) {
-                that.positive.push(key);
-            }       
-            else if ( 'NEGATIVE' === value ) {
-                that.negative.push(key);
+        if ( 'virulence_toxins' in that.json) {
+            virulenceModel = that.json['virulence_toxins'];
+            for ( key in virulenceModel ) {
+                value = virulenceModel[key].toUpperCase();
+                if ( 'POSITIVE' === value ) {
+                    that.positive.push(key);
+                }       
+                else if ( 'NEGATIVE' === value ) {
+                    that.negative.push(key);
+                }
             }
         }
 
@@ -696,10 +694,10 @@ var Model = Class.extend({
         }
 
         if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-            that.speciesModel = that.species[0] +' (lineage: '+that.lineage[0]+')';
+            that.speciesModel = that.species.join(' / ') +' (lineage: '+that.lineage[0]+')';
         }
         else {
-            that.speciesModel = that.species[0];
+            that.speciesModel = that.species.join(' / ');
         }
         return that;
     },

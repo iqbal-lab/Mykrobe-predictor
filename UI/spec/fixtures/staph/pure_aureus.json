@@ -1,71 +1,62 @@
 {
-  "expected_depth": "130",
-  "mean_read_length": "91",
-  "species": {
-    "S. aureus": "149"
+  "expected_depth": "77",
+  "mean_read_length": "48",
+  "phylogenetics": {
+    "phylo_group": {
+      "Staphylococcus aureus": "82"
+    },
+    "species": {
+      "S. aureus": "82"
+    },
+    "lineage": {
+      "N/A": "-1"
+    }
   },
   "susceptibility": {
-    "Erythromycin": "S",
     "Gentamicin": "S",
-    "Biocides": "S",
-    "Chloramphenicol": "S",
-    "Linezolid": "Inconclusive",
     "Penicillin": "R",
-    "Mupirocin": "S",
-    "Spectinomycin": "S",
+    "Methicillin": "R",
     "Trimethoprim": "S",
-    "Methicillin": "S",
-    "Tetracycline": "S",
-    "Streptothricin": "S",
-    "Vancomycin": "S",
+    "Erythromycin": "R",
     "FusidicAcid": "S",
+    "Ciprofloxacin": "R",
     "Rifampicin": "S",
-    "Ciprofloxacin": "S",
-    "Clindamycin": "S"
+    "Tetracycline": "S",
+    "Vancomycin": "S",
+    "Mupirocin": "S",
+    "Clindamycin": "R(inducible)"
   },
-  "called_variants": {},
+  "called_variants": {
+    "gyrA_S84L": {
+      "R_per_cov": "100",
+      "S_per_cov": "0",
+      "R_median_cov": "101",
+      "S_median_cov": "0",
+      "conf": "1092",
+      "induced_resistance": "Ciprofloxacin"
+    }
+  },
   "called_genes": {
     "blaZ": {
-      "per_cov": "100",
-      "median_cov": "298",
-      "conf": "891",
+      "per_cov": "74",
+      "median_cov": "82",
+      "conf": "42298",
       "induced_resistance": "Penicillin"
+    },
+    "ermC": {
+      "per_cov": "99",
+      "median_cov": "834",
+      "conf": "2496",
+      "induced_resistance": "Erythromycin"
+    },
+    "mecA": {
+      "per_cov": "99",
+      "median_cov": "96",
+      "conf": "285",
+      "induced_resistance": "Methicillin"
     }
   },
   "virulence_toxins": {
-    "arcA": "negative",
-    "arcB": "negative",
-    "arcC": "negative",
-    "arcD": "negative",
-    "ccrA": "negative",
-    "ccrB": "negative",
-    "ccrCa": "negative",
-    "ccrCb": "negative",
-    "ccrCc": "negative",
-    "chp": "positive",
-    "eta": "negative",
-    "etb": "negative",
-    "etd": "negative",
-    "luk": "negative",
-    "lukM": "negative",
-    "lukMF": "negative",
-    "lukPVF": "negative",
-    "lukPVS": "negative",
-    "sak": "positive",
-    "sasX": "negative",
-    "scn": "positive",
-    "sea": "negative",
-    "seb": "positive",
-    "sec": "negative",
-    "sed": "negative",
-    "see": "negative",
-    "seg": "negative",
-    "seh": "negative",
-    "sei": "negative",
-    "sej": "negative",
-    "selR": "negative",
-    "sep": "negative",
-    "seu": "negative",
-    "tsst1": "negative"
+    "PVL": "negative"
   }
 }

@@ -1,9 +1,17 @@
 {
-  "expected_depth": "56",
-  "mean_read_length": "124",
-  "species": {
-    "S. haemolyticus": "64"
+  "expected_depth": "12",
+  "mean_read_length": "295",
+  "phylogenetics": {
+    "phylo_group": {
+      "Coagulase-Negative Staphylococcus": "10"
+    },
+    "species": {
+      "S. epidermidis": "10"
+    },
+    "lineage": {
+      "N/A": "-1"
+    }
   },
   "susceptibility": {},
-  "virulence_toxins": {}
+  "called_variants": {}
 }

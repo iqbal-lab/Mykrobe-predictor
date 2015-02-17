@@ -1,15 +1,17 @@
 {
-  "expected_depth": "78",
+  "expected_depth": "28",
+  "mean_read_length": "128",
   "phylogenetics": {
-    "complex": {
-      "NTM": "49"
+    "phylo_group": {
+      "NTM": "21"
     },
     "species": {
-      "Unknown NTM Species": "-1"
+      "M. smegmatis": "21"
     },
     "lineage": {
       "N/A": "-1"
     }
   },
-  "susceptibility": {}
+  "susceptibility": {},
+  "called_variants": {}
 }

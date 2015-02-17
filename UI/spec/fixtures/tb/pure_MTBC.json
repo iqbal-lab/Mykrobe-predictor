@@ -1,59 +1,38 @@
 {
-  "expected_depth": "54",
+  "expected_depth": "71",
+  "mean_read_length": "90",
   "phylogenetics": {
-    "complex": {
-      "MTBC": "87"
+    "phylo_group": {
+      "MTBC": "121"
     },
     "species": {
-      "tuberculosis": "60"
+      "M. tuberculosis": "79"
     },
     "lineage": {
-      "Beijing/East Asia": "66"
+      "Delhi/Central Asia": "89"
     }
   },
   "susceptibility": {
     "Isoniazid": "R",
-    "Rifampicin": "R",
+    "Rifampicin": "S",
     "Ethambutol": "S",
     "Pyrazinamide": "S",
     "Quinolones": "S",
-    "Streptomycin": "R",
-    "Amikacin": "R",
-    "Capreomycin": "R",
-    "Kanamycin": "R"
+    "Streptomycin": "S",
+    "Amikacin": "S",
+    "Capreomycin": "S",
+    "Kanamycin": "S"
   },
   "called_variants": {
-    "rpoB_S450X": {
-      "R_per_cov": "100",
-      "S_per_cov": "0",
-      "R_median_cov": "79",
-      "S_median_cov": "0",
-      "conf": "854",
-      "induced_resistance": "Rifampicin"
-    },
-    "rrs_A1401X": {
-      "R_per_cov": "100",
-      "S_per_cov": "0",
-      "R_median_cov": "79",
-      "S_median_cov": "0",
-      "conf": "854",
-      "induced_resistance": "Kanamycin,Capreomycin,Amikacin"
-    },
     "katG_S315X": {
       "R_per_cov": "100",
-      "S_per_cov": "0",
-      "R_median_cov": "63",
-      "S_median_cov": "0",
-      "conf": "681",
+      "S_per_cov": "100",
+      "R_median_cov": "87",
+      "S_median_cov": "1",
+      "conf": "227",
       "induced_resistance": "Isoniazid"
-    },
-    "rpsL_K43R": {
-      "R_per_cov": "100",
-      "S_per_cov": "0",
-      "R_median_cov": "77",
-      "S_median_cov": "0",
-      "conf": "832",
-      "induced_resistance": "Streptomycin"
     }
-  }
+  },
+  "called_genes": {},
+  "virulence_toxins": {}
 }

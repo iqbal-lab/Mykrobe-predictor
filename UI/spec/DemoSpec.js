@@ -1,5 +1,7 @@
 // FIXME: this is a naive workround to rpevent errors
-require = function() {};
+// require = function() {};
+// var _ = require('lodash');
+
 MykrobeTarget = {};
 kTargetSpeciesTB = 1;
 kTargetSpeciesSAureus = 0;
@@ -50,7 +52,7 @@ describe('mixed_staph.json', function() {
         $(model).on("Model:error", function(event_, error_) {
             console.log('Error: ' + error_.description);
         });
-        model.loadFileWithPath('spec/fixtures/mixed_staph.json');
+        model.loadFileWithPath('spec/fixtures/staph/mixed_staph.json');
     });
 
     it('can determine species and lineage', function() {

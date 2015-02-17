@@ -1,15 +1,17 @@
 {
-  "expected_depth": "42",
+  "expected_depth": "8",
+  "mean_read_length": "300",
   "phylogenetics": {
-    "complex": {
-      "Non TB": "-1"
+    "phylo_group": {
+      "Non Mycobacterium": "-1"
     },
     "species": {
       "Unknown Species": "-1"
     },
     "lineage": {
-      "Unknown lineage": "-1"
+      "N/A": "-1"
     }
   },
-  "susceptibility": {}
+  "susceptibility": {},
+  "called_variants": {}
 }
