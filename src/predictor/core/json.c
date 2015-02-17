@@ -25,9 +25,9 @@ void print_json_species_start()
 {
   printf("\t\t\"species\": {\n");
 }
-void print_json_complex_start()
+void print_json_phylo_group_start()
 {
-  printf("\t\t\"complex\": {\n");
+  printf("\t\t\"phylo_group\": {\n");
 }
 void print_json_phylogenetics_start()
 {
@@ -43,7 +43,7 @@ void print_json_species_end()
 {
   printf("\t\t},\n");
 }
-void print_json_complex_end()
+void print_json_phylo_group_end()
 {
   printf("\t\t},\n");
 }

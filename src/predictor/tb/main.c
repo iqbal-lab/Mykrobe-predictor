@@ -127,13 +127,6 @@ int main(int argc, char **argv)
       return -1;
     }
   
-
-  if (cmd_line->format==Stdout)
-    {
-      printf("** Start time\n");
-      timestamp();
-      printf("** Sample:\n%s\n", cmd_line->id->buff);
-    }
  
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
@@ -247,7 +240,7 @@ int main(int argc, char **argv)
     }
   else
     {
-      cmd_line->min_frac_to_detect_minor_pops = 0.35;
+      cmd_line->min_frac_to_detect_minor_pops = 0.3;
     }
   }
 
@@ -280,34 +273,32 @@ int main(int argc, char **argv)
   SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
                                   expected_depth,1,1);
   fflush(stdout);
-  if (cmd_line->format==JSON)
-    {
-      print_json_start();
-      print_json_called_variant_item("expected_depth",expected_depth,false);      
-      print_json_phylogenetics(species_info);
-      if (!is_MTBC_present(species_info))
-    	{
+  print_json_start();
+  print_json_called_variant_item("expected_depth",expected_depth,false);  
+  print_json_called_variant_item("mean_read_length",mean_read_length,false);
+  print_json_phylogenetics(species_info);
+  if (!is_MTBC_present(species_info))
+	{
 
-    	  print_json_susceptibility_start(); 
-    	  print_json_susceptibility_end();
-        print_json_called_variants_start();
-        boolean last = true;
-        print_json_called_variants_end(last);
-    	  print_json_end();
+	  print_json_susceptibility_start(); 
+	  print_json_susceptibility_end();
+    print_json_called_variants_start();
+    boolean last = true;
+    print_json_called_variants_end(last);
+	  print_json_end();
 
-    	  //cleanup
-    	  strbuf_free(tmp_name);
-    	  free_antibiotic_info(abi);
-    	  free_var_on_background(tmp_vob);
-    	  free_gene_info(tmp_gi);
-    	  free_reading_utils(ru);
-    	  
-    	  cmd_line_free(cmd_line);
-    	  hash_table_free(&db_graph);
-    	  
-    	  return 0;
-    	}
-    }
+	  //cleanup
+	  strbuf_free(tmp_name);
+	  free_antibiotic_info(abi);
+	  free_var_on_background(tmp_vob);
+	  free_gene_info(tmp_gi);
+	  free_reading_utils(ru);
+	  
+	  cmd_line_free(cmd_line);
+	  hash_table_free(&db_graph);
+	  
+	  return 0;
+	}
   
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
@@ -315,11 +306,7 @@ int main(int argc, char **argv)
 
 
   //if we get here, is MTB
-
-  if (cmd_line->format==JSON)
-    {
-      print_json_susceptibility_start();
-    }
+  print_json_susceptibility_start();
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
@@ -360,31 +347,13 @@ int main(int argc, char **argv)
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
 
-
-
-
-
-
-  if (cmd_line->format==JSON)
-    {
-      print_json_susceptibility_end();
-    }
-  print_called_variants(called_variants,cmd_line->format,true); // true here means that this is the last element of the JSON output
-  // print_called_genes(called_genes,cmd_line->format);
-  if (cmd_line->format==Stdout)
-    {
-      timestamp();
-    }
-  else
-    {
-      /*      time_t ltime;
-      ltime = time(NULL);
-      char * time_end =asctime(localtime(&ltime));
-      time_end[strlen(time_end)-1] = '\0';
-      print_json_item("end_time",time_end,true); */
-      print_json_end();
-
-    }
+  print_json_susceptibility_end();
+  print_called_variants(called_variants,cmd_line->format,false); // true here means that this is the last element of the JSON output
+  print_json_called_genes_start();
+  print_json_called_genes_end();
+  print_json_virulence_start();
+  print_json_virulence_end();
+  print_json_end();
 
 
   if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )
