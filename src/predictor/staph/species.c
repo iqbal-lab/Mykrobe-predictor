@@ -121,21 +121,6 @@ boolean* create_staph_mask()
 
 boolean* create_non_aureus_mask()
 {
-  boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],50);
-  boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
-  boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],30);
-  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],30);  
-  present[Saureus] = is_aureus_present;
-  present[Sepidermidis] = is_epi_present;
-  present[Shaemolyticus] = is_haem_present;
-  present[Sother] = is_sother_present && !(is_epi_present || is_haem_present) ;
-  // In that case where no panels are present, we must call it as Staph since 
-  // we've already seen that cat is in the sample. 
-  if ( has_catalayse && (! (is_aureus_present || is_epi_present || is_haem_present  || is_sother_present )) )
-  {
-    present[Sother] = true;
-  }
-
   boolean* mask= create_mask(true);
   mask[Saureus] = false;
   return (mask);
