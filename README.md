@@ -25,17 +25,9 @@ creates an executable bin/Mykrobe.predictor.tb
 
 
 
-Two typical uses
+Standard usage
 
-1. Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/myKrobe-predictor
-
-or, to build the full genome and then draw inferences from that
-
-2. Mykrobe.predictor.tb --file some_file.fastq --method WgAssemblyAndGenotyping --install_dir /path/to/myKrobe-predictor
-
-Add 
---format Stdout
-if you want output to screen with timestamps
+Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/myKrobe-predictor
 
 Add --progress
 if you want to see progress.
