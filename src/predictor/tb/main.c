@@ -226,7 +226,7 @@ int main(int argc, char **argv)
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
                  cmd_line->readlen_distrib_size);
 
-  double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
+  double err_rate = 0.15; //estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
   if (err_rate<0.01)
     {
       err_rate=0.01;
