@@ -247,7 +247,7 @@ int main(int argc, char **argv)
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
-  
+  printf("bp loaded %f\n", bp_loaded);
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
         * (mean_read_length-cmd_line->kmer_size+1)
@@ -270,14 +270,14 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
-                                  expected_depth,1,1);
+  //  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
+  //                                expected_depth,1,1);
   fflush(stdout);
   print_json_start();
   print_json_called_variant_item("expected_depth",expected_depth,false);  
   print_json_called_variant_item("mean_read_length",mean_read_length,false);
-  print_json_phylogenetics(species_info);
-  if (!is_MTBC_present(species_info))
+  //print_json_phylogenetics(species_info);
+  if (1) //(!is_MTBC_present(species_info))
 	{
 
 	  print_json_susceptibility_start(); 
