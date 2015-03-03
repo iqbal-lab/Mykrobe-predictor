@@ -11,6 +11,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
 				    StrBuf* install_dir,
 				    int ignore_first, int ignore_last, int expected_covg,
 				    double lambda_g, double lambda_e, double err_rate,
+            {% if drug.name =="Erythromycin" %} boolean* any_erm_present,{% endif %}
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
 				    )
@@ -18,6 +19,8 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
 {
   InfectionType I_permenant = Unsure;
   reset_antibiotic_info(abi);
+  {% if drug.name =="Erythromycin" %} *any_erm_present=false;{% endif %}
+
 
   //setup antibiotic info object
   abi->ab = {{drug}};
@@ -42,8 +45,11 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-{% if drug.num_mutations > 0 %}
+  InfectionType I;
+{% if drug.num_mutations > 1 %}
 {% include 'src/predictor/staph/mutations_iter.c' %}
+{% elif drug.num_mutations == 1 %}
+{% include 'src/predictor/staph/single_mut.c' %}
 {% endif %}
 {% if drug.num_genes ==1 %}
 {% include 'src/predictor/staph/single_gene.c' %}

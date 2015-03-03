@@ -319,67 +319,286 @@ int main(int argc, char **argv)
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
   
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);  
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes); 
+  
   boolean any_erm_present=false;
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
-				    ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
-				    &any_erm_present,
+            &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
+            ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
+            &any_erm_present,
             called_variants,called_genes);
+  
+  
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_fusidicacid_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_biocides_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_chloramphenicol_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_linezolid_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);
+          &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_spectinomycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_streptothricin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_fusidicacid_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
+  
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);   
+  
+  
   output_last=true;
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				   &is_clindamycin_susceptible, tmp_name, 
-				   any_erm_present,cmd_line->install_dir,
-				   ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+           &is_clindamycin_susceptible, tmp_name, 
+           any_erm_present,cmd_line->install_dir,
+           ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
            called_variants,called_genes);
 
    
   print_json_susceptibility_end();
   print_called_variants(called_variants,cmd_line->format,false);// false here means that this is NOT the last element of the JSON output
   print_called_genes(called_genes,cmd_line->format);
-  print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_pvl_positive, 
+  if (cmd_line->format==Stdout)
+    {
+      printf("** Virulence markers\n");
+    }
+    print_json_virulence_start();
+  
+  print_arca_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_arca_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
-  print_json_end();
+  
+  print_arcb_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_arcb_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_arcc_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_arcc_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_arcd_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_arcd_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_ccra_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_ccra_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_ccrb_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_ccrb_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_ccrca_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_ccrca_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_ccrcb_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_ccrcb_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_ccrcc_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_ccrcc_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_eta_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_eta_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_etb_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_etb_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_etd_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_etd_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_luk_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_luk_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_lukpvf_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_lukpvf_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_lukpvs_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_lukpvs_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_lukm_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_lukm_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_lukmf_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_lukmf_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sasx_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sasx_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sea_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sea_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_seb_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_seb_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sec_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sec_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sed_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sed_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_see_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_see_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_seg_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_seg_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_seh_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_seh_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sei_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sei_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sej_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sej_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_seu_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_seu_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_selr_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_selr_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sep_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sep_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_tsst1_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_tsst1_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_chp_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_chp_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sak_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sak_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_scn_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_scn_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_json_virulence_end();
+
+  if (cmd_line->format==Stdout)
+    {
+      timestamp();
+    }
+  else
+    {
+      print_json_end();
+      printf("\n");
+    }
 
 
   if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )

@@ -1,6 +1,7 @@
 import jinja2
 import os
 import json
+import csv
 from utils import unique,flatten
 from mutations import MutationFasta
 
@@ -9,7 +10,8 @@ class CodeGenerator(object):
     def __init__(self):
         self.template_dir = os.path.join(os.path.dirname(__file__), 'templates')
         self.jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(self.template_dir),
-                               autoescape = False)        
+                               autoescape = False,
+                               extensions=['jinja2.ext.with_'])        
        
     def render_str(self, template, **params):
         try:
@@ -22,7 +24,13 @@ class CodeGenerator(object):
     def load_gene_enum_to_drug_name(self):
         with open('data/%s/gene_to_drug.json'  % self.species ,'r') as infile:
             d =  json.load(infile)
-        return d          
+        return d 
+
+    def load_virulence_genes(self):
+        with open('data/%s/virulence_genes.csv'  % self.species ,'r') as infile:
+            reader = csv.reader(infile)
+            row = reader.next()
+        return row
 
 
 
@@ -31,18 +39,16 @@ class StaphCodeGenerator(CodeGenerator):
     def __init__(self):
         self.species = "staph"
         self.gene_enum_to_drug_name = self.load_gene_enum_to_drug_name()
+        self.virulence_genes = unique(self.load_virulence_genes())
         self.template_dir = os.path.join(os.path.dirname(__file__), 'templates/' )
         self.render_dir = os.path.join(os.path.dirname(__file__), 'rendered/' )
 
         self.jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(self.template_dir),
-                               autoescape = False)
+                               autoescape = False,
+                               extensions=['jinja2.ext.with_'])
     @property 
     def genes(self):
         return unique(self.gene_enum_to_drug_name.keys() + self.virulence_genes)
-
-    @property
-    def virulence_genes(self):
-        return ['luk']
 
     @property 
     def drugs(self):
@@ -50,7 +56,9 @@ class StaphCodeGenerator(CodeGenerator):
 
     @property 
     def drug_names(self):
-        return unique(self.gene_induced_drug_names + self.mutation_induced_drug_names)                        
+        drug_names = unique(self.gene_induced_drug_names + self.mutation_induced_drug_names) 
+        drug_names.insert(0, drug_names.pop(drug_names.index("Erythromycin")))
+        return drug_names                        
 
     @property 
     def gene_induced_drug_names(self):
@@ -102,10 +110,20 @@ class StaphCodeGenerator(CodeGenerator):
         with open(os.path.join(self.render_dir,'include/predictor/core/gene_presence.h'),'w') as outfile:
             outfile.write(st) 
 
+    def render_main_src(self):
+        return self.render_str('src/predictor/staph/main.c')
+
+    def render_and_write_main(self):
+        st = self.render_main_src()
+        with open(os.path.join(self.render_dir,'src/predictor/staph/main.c'),'w') as outfile:
+            outfile.write(st)    
+
     def render_and_write_all(self):
         self.render_and_write_antibiotics() 
         self.render_and_write_known_mutations() 
         self.render_and_write_gene_presence()
+        self.render_and_write_main()
+        
 
     @property 
     def all_mutations(self):
