@@ -6030,7 +6030,7 @@ void cat_threshold(int* thresholds){
 void load_all_species_thresholds(int* thresholds){
   int j;
   for(j = 0; j < NUM_SPECIES; j++) {
-    thresholds[j] = 90;
+    thresholds[j] = 70;
   }   
   thresholds[Saureus] = 90;
   thresholds[Sepidermidis] = 30;
