@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 			    "data/skeleton_binary/staph/list_speciesbranches_genes_and_muts");
 	  uint64_t dummy=0;
 	  boolean is_rem=true;
-	  timestamp();
+	  //timestamp();
 	  build_unclean_graph(db_graph, 
 			      skeleton_flist,
 			      true,
