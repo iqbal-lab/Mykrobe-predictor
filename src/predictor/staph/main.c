@@ -280,7 +280,8 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
+  int MAX_BRANCH_LENGTH = 20000;
+  SpeciesInfo* species_info = get_species_info(db_graph, MAX_BRANCH_LENGTH, cmd_line->install_dir,
                                   expected_depth,1,1);
 
   fflush(stdout);
