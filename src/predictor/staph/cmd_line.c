@@ -50,7 +50,7 @@ int default_opts(CmdLine * c)
   c->mem_width = 100;
   c->mem_height= 23;
   c->max_expected_sup_len=50000;
-  c->method=InSilicoOligos;//other options WGAssemblyThenGenotyping and WGAssemblyAndTranslation
+  c->method=WGAssemblyThenGenotyping;//other options WGAssemblyThenGenotyping and WGAssemblyAndTranslation
   c->input_file=false;
   c->input_list=false;
   c->output_supernodes = false;
