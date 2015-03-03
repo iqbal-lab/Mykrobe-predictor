@@ -227,6 +227,8 @@ int main(int argc, char **argv)
       printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
     }
   fflush(stdout);
+  printf("bp loaded %" PRId64" \n", bp_loaded);
+
   if (bp_loaded==0)
     {
       printf("No data\n");
