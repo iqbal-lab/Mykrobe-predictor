@@ -2,7 +2,27 @@
  * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
- *  species.c
+ * **********************************************************************
+ *
+ * This file is part of Mykrobe.
+ *
+ * Mykrobe is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Mykrobe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Mykrobe.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * **********************************************************************
+ */
+/*
+  species.c
 */
 
 
@@ -23,399 +43,23 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 
-
-
-
-
-void get_coverage_on_best_catalayse_gene(dBGraph *db_graph,int max_branch_len,
-                                        StrBuf* install_dir,int ignore_first, 
-                                        int ignore_last,
-                                        int* percentage_cov_cat,
-                                        Covg* median_cov_cat)
+void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf)
 {
-  FILE* fp;
-  AlleleInfo* ai = alloc_allele_info();
-  //----------------------------------
-  // allocate the memory used to read the sequences
-  //----------------------------------
-  Sequence * seq = malloc(sizeof(Sequence));
-  if (seq == NULL){
-    die("Out of memory trying to allocate Sequence");
+  if(sp==CoagPos){
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf, "Staphylococcus aureus");
   }
-  alloc_sequence(seq,max_branch_len,LINE_MAX);
-
-  //We are going to load all the bases into a single sliding window 
-  KmerSlidingWindow* kmer_window = malloc(sizeof(KmerSlidingWindow));
-  if (kmer_window==NULL)
-    {
-      die("Failed to malloc kmer sliding window");
-    }
-
-
-  CovgArray* working_ca = alloc_and_init_covg_array(max_branch_len);
-  dBNode** array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_branch_len);
-  Orientation* array_or =(Orientation*)  malloc(sizeof(Orientation)*max_branch_len);
-  kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_branch_len-db_graph->kmer_size+1));
-  if (kmer_window->kmer==NULL)
-    {
-      die("Failed to malloc kmer_window->kmer");
-    }
-  kmer_window->nkmers=0;
-  //create file readers
-  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry){
-    long long ret;
-    int offset = 0;
-    if (new_entry == false){
-      offset = db_graph->kmer_size;
-    }
-    ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
-    
-    return ret;
-  }
-  
-  
-  
-  if ( (array_nodes==NULL) || (array_or==NULL))
-    {
-      die("Cannot alloc array of nodes or of orientations");
-    }
-
-  // Does the data support the existance of catalayse?
-  StrBuf* catalayse_fasta_file = strbuf_create(install_dir->buff);
-  strbuf_append_str(catalayse_fasta_file, "data/staph/species/cat.fasta");
-  fp = fopen(catalayse_fasta_file->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open this file - %s", catalayse_fasta_file->buff);
-    }
-  // while the entry is valid iterate through the fasta file
-
-  int num_kmers=0;
-  int per_cov_cat=0;
-  Covg med_cov_cat=0;
-  do {
-    num_kmers= get_next_single_allele_info(fp, db_graph, ai,
-             true,
-             seq, kmer_window,
-             &file_reader_fasta,
-             array_nodes, array_or, 
-             working_ca, max_branch_len,
-             ignore_first, ignore_last);
-    if (ai->percent_nonzero >= per_cov_cat)
-    {
-      if (ai->median_covg_on_nonzero_nodes > med_cov_cat)
-      {
-        per_cov_cat=ai->percent_nonzero;;
-        med_cov_cat=ai->median_covg_on_nonzero_nodes;
-      }
-    }
-  } while ( num_kmers>0);
-  *percentage_cov_cat = per_cov_cat;
-  *median_cov_cat = med_cov_cat ;
-  fclose(fp); 
-
-}
-
-boolean catalayse_exists_in_sample(dBGraph *db_graph,int max_branch_len,
-                                StrBuf* install_dir,int ignore_first, 
-                                int ignore_last)
-{   
-    int percentage_cov_cat=0;
-    Covg median_cov_cat=0;
-    get_coverage_on_best_catalayse_gene(db_graph,max_branch_len,
-                                        install_dir,ignore_first, 
-                                        ignore_last,
-                                        &percentage_cov_cat,
-                                        &median_cov_cat);
-    if (percentage_cov_cat > 20)
-    {
-      return true;
-    }   
-    else
-    {
-      return false;
-    }
-
-}
-
-boolean has_coverage_on_any_panel(boolean* present)
-{
-  boolean has_coverage = false;
-  int i;
-  for (i=0; i<NUM_SPECIES; i++)
-  {
-    if (present[i])
-    {
-      has_coverage = true;
-    }
-  }
-  return (has_coverage);
-}
-
- 
-
-boolean sample_is_staph(boolean has_catalayse, boolean* present)
-{
-  // Check if catalayse exists
-  if (has_catalayse || has_coverage_on_any_panel(present))
-  {
-    return true;
-  }
+  else if(sp==CoagNeg){
+    strbuf_reset(sbuf);
+    strbuf_append_str(sbuf, "Coagulase-Negative Staphylococcus");
+  }  
   else
-  {
-    return false;
-  }
-}
-
-
-void load_all_species_panel_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
-{
-  panel_file_paths[Saureus] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[Saureus], "data/staph/species/Saureus.fasta" );
-  panel_file_paths[Sepidermidis] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[Sepidermidis], "data/staph/species/Sepidermidis.fasta" );
-  panel_file_paths[Shaemolyticus] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[Shaemolyticus], "data/staph/species/Shaemolyticus.fasta" );
-  panel_file_paths[Sother] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[Sother], "data/staph/species/Sother.fasta" );
-}
-
-void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
-                            StrBuf** panel_file_paths,
-                            int max_branch_len, dBGraph *db_graph,
-                            int ignore_first, int ignore_last )
-
-{
-  int i;
-  FILE* fp;
-  AlleleInfo* ai = alloc_allele_info();
-  int number_of_reads = 0;
-  int number_of_covered_reads =0; 
-  int num_kmers=0;
-  Covg tot_pos_kmers;
-  Covg tot_kmers;
-  Covg med;  
-  //----------------------------------
-  // allocate the memory used to read the sequences
-  //----------------------------------
-  Sequence * seq = malloc(sizeof(Sequence));
-  if (seq == NULL)
-  {
-    die("Out of memory trying to allocate Sequence");
-  }
-  alloc_sequence(seq,max_branch_len,LINE_MAX);
-  //We are going to load all the bases into a single sliding window 
-  KmerSlidingWindow* kmer_window = malloc(sizeof(KmerSlidingWindow));
-  if (kmer_window==NULL)
-  {
-    die("Failed to malloc kmer sliding window");
-  }
-  CovgArray* working_ca = alloc_and_init_covg_array(max_branch_len);
-  dBNode** array_nodes = (dBNode**) malloc(sizeof(dBNode*)*max_branch_len);
-  Orientation* array_or =(Orientation*)  malloc(sizeof(Orientation)*max_branch_len);
-  kmer_window->kmer = (BinaryKmer*) malloc(sizeof(BinaryKmer)*(max_branch_len-db_graph->kmer_size+1));
-  if (kmer_window->kmer==NULL)
-  {
-    die("Failed to malloc kmer_window->kmer");
-  }
-  kmer_window->nkmers=0;
-  //create file readers
-  int file_reader_fasta(FILE * fp, Sequence * seq, int max_read_length, boolean new_entry, boolean * full_entry)
-  {
-    long long ret;
-    int offset = 0;
-    if (new_entry == false)
     {
-      offset = db_graph->kmer_size;
+      die("Coding error - I would expect the compiler to prevent assigning a bad enum value %i \n",sp );
     }
-    ret =  read_sequence_from_fasta(fp,seq,max_read_length,new_entry,full_entry,offset);
-    return ret;
-  }
-  if ( (array_nodes==NULL) || (array_or==NULL))
-  {
-    die("Cannot alloc array of nodes or of orientations");
-  }
-  for (i = 0; i < NUM_SPECIES; i++)
-  {
-    // Reset counters
-    tot_pos_kmers = 0; 
-    tot_kmers = 0; 
-    med = 0;
-    number_of_covered_reads = 0;
-      fp = fopen(panel_file_paths[i]->buff, "r");
-      if (fp==NULL)
-      {
-        die("Cannot open this file - %s", panel_file_paths[i]->buff);
-      } 
-      // while the entry is valid iterate through the fasta file
-      do 
-      {
-        num_kmers= get_next_single_allele_info(fp, db_graph, ai,
-                                               true,
-                                               seq, kmer_window,
-                                               &file_reader_fasta,
-                                               array_nodes, array_or, 
-                                               working_ca, max_branch_len,
-                                               ignore_first, ignore_last);
-
-        number_of_reads = number_of_reads + 1;
-        int pos_kmers = num_kmers * (double) (ai->percent_nonzero)/100;
-        if (ai->percent_nonzero > 0 ){
-          number_of_covered_reads = number_of_covered_reads +1; 
-        }
-        //calculate a running pseudo median, before you update the tots
-        if  (tot_kmers+num_kmers>0)
-          {
-              med += ai->median_covg ; 
-              tot_kmers += num_kmers;
-              tot_pos_kmers += pos_kmers;
-          }
-      }while ( num_kmers > 0);
-
-    if ( (number_of_reads > 0) && (tot_kmers>0) )
-    {
-      percentage_coverage[i] = (int) (100 * tot_pos_kmers) / tot_kmers;
-      median_coverage[i] = (double) (med) / number_of_covered_reads ;
-    }
-        else
-    {
-      percentage_coverage[i]=0;
-      median_coverage[i]=0;
-    } 
-  fclose(fp);
-  }
 }
 
-
-
-boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
-{
-  if (per_cov >= threshold)
-  {
-      return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-
-void find_which_panels_are_present(int* percentage_coverage,boolean* present, 
-                                  int* num_panels,boolean has_catalayse)
-{
-  boolean is_aureus_present = is_percentage_coverage_above_threshold(percentage_coverage[Saureus],90);
-  boolean is_epi_present = is_percentage_coverage_above_threshold(percentage_coverage[Sepidermidis],30);
-  boolean is_haem_present = is_percentage_coverage_above_threshold(percentage_coverage[Shaemolyticus],30);
-  boolean is_sother_present = is_percentage_coverage_above_threshold(percentage_coverage[Sother],10);  
-  present[Saureus] = is_aureus_present;
-  present[Sepidermidis] = is_epi_present;
-  present[Shaemolyticus] = is_haem_present;
-  present[Sother] = is_sother_present && !(is_epi_present || is_haem_present) ;
-  // In that case where no panels are present, we must call it as Staph since 
-  // we've already seen that cat is in the sample. 
-  if ( has_catalayse && (! (is_aureus_present || is_epi_present || is_haem_present  || is_sother_present )) )
-  {
-    present[Sother] = true;
-  }
-
-  int i;
-  for (i=0; i<NUM_SPECIES; i++)
-  {
-    if (present[i])
-    {
-      *num_panels = *num_panels +1;
-    }
-  }
-
-}
-
-boolean coverage_exists_on_aureus_and_at_least_one_other_panel(boolean* present)
-{
-  // get the coverage on all our panels
-  // do we have > 10% coverage on more than one panel
-
-  boolean is_coag_neg_present = false;
-  if (present[Sepidermidis] || present[Shaemolyticus] || present[Sother])
-  {
-    is_coag_neg_present = true;
-  }
-  if (present[Saureus] && is_coag_neg_present)
-  {
-      return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-
-boolean sample_is_mixed(boolean* present)
-{
-  boolean is_mixed = coverage_exists_on_aureus_and_at_least_one_other_panel(present);
-  return (is_mixed);
-}
-
-
-SampleType get_sample_type(boolean has_catalayse, boolean* present)
-{
-  SampleType sample_type;
-  if (sample_is_staph(has_catalayse, present) ) 
-  {
-      if (sample_is_mixed(present))
-      {
-          sample_type=MixedStaph;
-      }
-      else
-      {
-          sample_type=PureStaph;
-      }
-      
-  }
-  else
-  {
-      sample_type = NonStaphylococcal;
-  }
-  
-  return sample_type;  
-}
-
-
-
-SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
-                            StrBuf* install_dir,int expected_covg,
-                            int ignore_first,int ignore_last)
-
-{
-  SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
-
-  StrBuf* panel_file_paths[NUM_SPECIES];
-  load_all_species_panel_file_paths(panel_file_paths,install_dir);
-  int percentage_coverage[NUM_SPECIES]; // for storing the percentage coverage of each reference
-  int median_coverage[NUM_SPECIES]; //median covg
-  boolean present[NUM_SPECIES];
-  get_coverage_on_panels(percentage_coverage,median_coverage,
-                          panel_file_paths,max_branch_len,db_graph,
-                          ignore_first,ignore_last);
-  boolean has_catalayse =  catalayse_exists_in_sample(db_graph,max_branch_len,
-                                install_dir,ignore_first, 
-                                ignore_last);
-  int num_panels =0 ;
-  find_which_panels_are_present(percentage_coverage,present,&num_panels,has_catalayse);
-
-
-  SampleType sample_type = get_sample_type(has_catalayse,present);
-
-  species_info->sample_type = sample_type;
-  species_info->num_species = num_panels;
-
-  memcpy (species_info->present, present, sizeof(present));
-  memcpy (species_info->percentage_coverage, percentage_coverage, sizeof(percentage_coverage));
-  memcpy (species_info->median_coverage, median_coverage, sizeof(median_coverage));
-  return species_info;
-}
-
-void map_species_enum_to_str(Staph_species staph_species, StrBuf* sbuf)
+void map_species_enum_to_str(Species staph_species, StrBuf* sbuf)
 {
   if (staph_species==Saureus)
     {
@@ -445,105 +89,260 @@ void map_species_enum_to_str(Staph_species staph_species, StrBuf* sbuf)
 }
 
 
-char* get_ith_species_name(SpeciesInfo* species_info, int i)
+
+void load_all_phylo_group_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
 {
-  Staph_species species=Saureus;
-  StrBuf* pure_species_name = strbuf_new(); 
-  int j; 
-  int species_index = 0;
-  if (i > species_info->num_species -1 ){
-    die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
+  panel_file_paths[CoagPos] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[CoagPos], "data/staph/species/Saureus.fasta" );
+  panel_file_paths[CoagNeg] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[CoagNeg], "data/staph/species/coag_neg.fasta" );  
+}
+
+void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
+{
+  panel_file_paths[Saureus] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[Saureus], "data/staph/species/Saureus.fasta" );
+  panel_file_paths[Sepidermidis] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[Sepidermidis], "data/staph/species/Sepidermidis.fasta" );
+  panel_file_paths[Shaemolyticus] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[Shaemolyticus], "data/staph/species/Shaemolyticus.fasta" );
+  panel_file_paths[Sother] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[Sother], "data/staph/species/Sother.fasta" );
+}
+
+void phylo_group_threshold(int* thresholds){
+  thresholds[CoagPos] = 90;
+  thresholds[CoagNeg] = 25;
+
+}
+
+void cat_threshold(int* thresholds){
+  thresholds[0] = 20;
+}
+void load_all_species_thresholds(int* thresholds){
+  thresholds[Saureus] = 90;
+  thresholds[Sepidermidis] = 30;
+  thresholds[Shaemolyticus] = 30;
+  thresholds[Sother] = 10;
+}
+
+boolean* create_staph_mask()
+{
+  boolean* mask= create_mask(true);
+  return (mask);
+}
+
+boolean* create_non_aureus_mask()
+{
+  boolean* mask= create_mask(true);
+  mask[Saureus] = false;
+  return (mask);
+}
+
+boolean non_aureus_panels_are_present(SpeciesInfo* species_info){
+  boolean* mask = create_non_aureus_mask();
+  boolean non_aureus_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  return (non_aureus_species_panels_are_present);
+}
+
+boolean no_non_aureus_panels_are_present(SpeciesInfo* species_info){
+  return (!non_aureus_panels_are_present(species_info));
+}
+
+boolean staphylococcus_is_present(SpeciesInfo* species_info){
+  boolean* mask = create_staph_mask();
+  boolean staph_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  return (staph_species_panels_are_present);
+}
+
+Species get_best_staph_species(SpeciesInfo* species_info ){
+  boolean* mask = create_staph_mask();
+  int species_enum = get_best_hit(species_info->species_covg_info,mask);
+  Species species = species_enum;
+  return (species);
+}
+
+Species get_best_non_aureus_species(SpeciesInfo* species_info ){
+  boolean* mask = create_non_aureus_mask();
+  int species_enum  = get_best_hit(species_info->species_covg_info,mask);
+  Species species = species_enum;
+  return (species);
+}
+
+
+boolean is_aureus_present(SpeciesInfo* species_info)
+{
+  return (species_info->species_covg_info->present[Saureus]);
+}
+
+boolean is_non_aureus_staph_present(SpeciesInfo* species_info)
+{
+  boolean is_epi_present = species_info->species_covg_info->present[Sepidermidis];
+  boolean is_haem_present = species_info->species_covg_info->present[Shaemolyticus];
+  boolean is_sother_present = species_info->species_covg_info->present[Sother];
+  if (is_epi_present || is_haem_present  || is_sother_present){
+    return (true);
+  }
+  else{
+    return (false);
+  }
+}
+
+void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_info){
+  if (non_aureus_panels_are_present(species_info)){
+    if (! species_info->phylo_group_covg_info->present[CoagNeg]){
+      species_info->phylo_group_covg_info->present[CoagNeg] = true;
+      species_info->phylo_group_covg_info->num_panels_present = species_info->phylo_group_covg_info->num_panels_present + 1;
+    }
+    Species best_staph_species = get_best_non_aureus_species(species_info);
+    species_info->phylo_group_covg_info->percentage_coverage[CoagNeg] = max(species_info->phylo_group_covg_info->percentage_coverage[CoagNeg] , species_info->species_covg_info->percentage_coverage[best_staph_species] );
+    species_info->phylo_group_covg_info->median_coverage[CoagNeg] = max(species_info->phylo_group_covg_info->median_coverage[CoagNeg] , species_info->species_covg_info->median_coverage[best_staph_species] );
+  }
+}
+
+SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
+                            StrBuf* install_dir,int expected_covg,
+                            int ignore_first,int ignore_last)
+
+{
+  StrBuf* phylo_group_file_paths[NUM_COMPLEX];
+  load_all_phylo_group_file_paths(phylo_group_file_paths,install_dir);
+  StrBuf* species_file_paths[NUM_SPECIES];
+  load_all_species_file_paths(species_file_paths,install_dir);
+
+
+  CovgInfo* phylo_group_covg_info = get_coverage_info(db_graph,
+                                                  phylo_group_file_paths,
+                                                  max_branch_len,NUM_COMPLEX,
+                                                  ignore_first,ignore_last,
+                                                  phylo_group_threshold);
+  CovgInfo* species_covg_info = get_coverage_info(db_graph,
+                                                  species_file_paths,
+                                                  max_branch_len,NUM_SPECIES,
+                                                  ignore_first,ignore_last,
+                                                  load_all_species_thresholds);
+
+  StrBuf* cat_file_paths[1];
+  load_all_cat_file_paths(cat_file_paths,install_dir);    
+  CovgInfo* cat_covg_info = get_coverage_info(db_graph,
+                                            cat_file_paths,
+                                            max_branch_len,1,
+                                            ignore_first,ignore_last,
+                                            cat_threshold);   
+
+
+
+  SpeciesInfo* species_info=(SpeciesInfo *)malloc(sizeof(SpeciesInfo)); 
+  species_info->phylo_group_covg_info = phylo_group_covg_info;
+  species_info->species_covg_info = species_covg_info;
+  species_info->other_covg_info = cat_covg_info;
+
+  update_phylo_group_presence_and_coverage_from_species(species_info);
+
+  return species_info;
+}
+
+
+
+void print_json_aureus(SpeciesInfo* species_info, boolean last){
+    print_json_called_variant_item( get_char_name_of_species_enum (Saureus) ,species_info->species_covg_info->median_coverage[Saureus], last);
+}
+
+void print_json_best_hit_non_aureus(SpeciesInfo* species_info){
+  if (no_non_aureus_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown Species", -1 , true);
+  }
+  else{
+  Species staph_species = get_best_non_aureus_species(species_info);
+  print_json_called_variant_item( get_char_name_of_species_enum(staph_species), species_info->species_covg_info->median_coverage[staph_species], true);    
+  }
+}
+
+void print_json_aureus_and_best_hit_non_aureus(SpeciesInfo* species_info){
+  if (is_aureus_present(species_info)){
+    print_json_aureus(species_info,false);
   }
   else
-  {
-    for (j=0; j<NUM_SPECIES; j++)
-    {
-      if (species_info->present[j])
-      {
-        if (species_index == i)
-        {
-            // We at the required species
-            species = j;
-        }
-        species_index = species_index + 1;
-      }
-    }    
+  {  
+    print_json_called_variant_item( "Unknown Species", -1 , false);
   }
-  map_species_enum_to_str(species, pure_species_name);
-  return pure_species_name->buff;
-}
-
-
-int get_ith_species_coverage(SpeciesInfo* species_info,int i)
-{
-  int covg=0;
-  int j;
-  int species_index=0;
-  if (i > species_info->num_species -1 ){
-    die("We only have %i species, we can't find %i \n",  species_info->num_species,i+1);
+  if (no_non_aureus_panels_are_present(species_info)){
+    print_json_called_variant_item( "Unknown Species", -1 , true);
   }
   else
-  {
-    for (j=0; j<NUM_SPECIES; j++)
-    {
-      if (species_info->present[j])
-      {
-        if (species_index == i)
-        {
-            // We at the required species
-            covg = species_info->median_coverage[j];
-        }
-        species_index = species_index + 1;
-      }
-    }    
+  {  
+    Species staph_species = get_best_non_aureus_species(species_info);  
+    print_json_called_variant_item( get_char_name_of_species_enum(staph_species), species_info->species_covg_info->median_coverage[staph_species], true);    
   }
-  return covg;
-
 }
 
-char* get_pure_species_name(SpeciesInfo* species_info)
+
+
+boolean catalayse_exists_in_sample(SpeciesInfo* species_info)
+
+{    
+    if (species_info->other_covg_info->percentage_coverage[0] > 20)
+    {
+      return true;
+    }else
+    {
+      return false;
+    }
+}
+
+int get_coverage_on_catalayse(SpeciesInfo* species_info)
+{    
+  return(species_info->other_covg_info->median_coverage[0]);
+}
+
+void load_all_cat_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
 {
-  return get_ith_species_name(species_info, 0 );
+  panel_file_paths[0] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[0], "data/staph/species/coag_neg.fasta" ); 
 }
 
-int get_pure_species_coverage(SpeciesInfo* species_info)
-{
-  return get_ith_species_coverage(species_info, 0 );
+void print_json_phylo_group(SpeciesInfo* species_info){
+    CovgInfo* covg_info =species_info->phylo_group_covg_info;    
+    int num_panels_present = covg_info->num_panels_present;
+    print_json_phylo_group_start();
+    if (num_panels_present > 0){
+      print_json_indiv_phylo(covg_info,get_ith_phylo_group_name);
+    }
+    else
+    {
+      if (catalayse_exists_in_sample(species_info)){
+        print_json_called_variant_item( "Coagulase-Negative Staphylococcus", get_coverage_on_catalayse(species_info), true);
+      }
+      else{
+        print_json_called_variant_item( "Non Staphylococcus", -1, true);
+      }
+    }
+    print_json_phylo_group_end();  
 }
 
 
+void print_json_species(SpeciesInfo* species_info){
+    Species aureus_is_present = is_aureus_present(species_info);
+    Species non_aureus_staph_is_present = is_non_aureus_staph_present(species_info);
+    print_json_species_start();
+    if (aureus_is_present && non_aureus_staph_is_present){
+      print_json_aureus_and_best_hit_non_aureus(species_info);
+    }
+    else if (aureus_is_present){
+      print_json_aureus(species_info,true);
+    }
+    else if (non_aureus_staph_is_present){
+      print_json_best_hit_non_aureus(species_info);
+    }
+    else
+    {
+      print_json_called_variant_item( "Unknown Species", -1, true);
+    }    
+    print_json_species_end();  
+}
 
-// Staph_species get_best_hit(int* arr_perc_cov, 
-//         Covg* arr_median, 
-//         boolean* found, 
-//         boolean exclude_aureus)
-// {
-//   int i;
-//   int prod=0;
-//   int curr=-1;
-//   for (i=0; i<NUM_SPECIES; i++)
-//     {
-//       if ( (exclude_aureus==true) && ((Staph_species)i==Aureus))
-//  {
-//    continue;
-//  }
-//       //      if (arr_perc_cov[i] * arr_median[i]>prod)
-//       if (arr_perc_cov[i] > prod)
-//  {
-//    //prod = arr_perc_cov[i]* arr_median[i];
-//    prod =arr_perc_cov[i];
-//    curr=i;
-//  }
-//     }
-//   if (curr==-1)
-//     {
-//       *found=false;
-//       return Aureus;
-//     }
-//   else
-//     {
-//       *found=true;
-//       return (Staph_species) curr;
-//     }
-// }
-
+void print_json_lineage(SpeciesInfo* species_info){
+    print_json_lineage_start();
+    print_json_called_variant_item( "N/A", -1, true);
+    print_json_lineage_end(); 
+}

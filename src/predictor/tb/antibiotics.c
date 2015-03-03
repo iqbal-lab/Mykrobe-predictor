@@ -458,7 +458,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -558,7 +558,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -663,7 +663,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -763,7 +763,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -863,7 +863,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -963,7 +963,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -1063,7 +1063,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -1164,8 +1164,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       )
 
     {
-
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
@@ -1266,7 +1265,7 @@ boolean any_unsure_mixed_call=false;
       )
 
     {
-      return Unsure;
+      return Susceptible;
     }
   else if (max_sus_conf>MIN_CONFIDENCE_S)
     {
