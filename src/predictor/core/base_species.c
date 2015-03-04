@@ -266,7 +266,11 @@ int get_best_hit(CovgInfo* covg_info,boolean* mask)
       }      
     }
   }
-  return  curr;
+  if (curr>=0)
+    {
+      return  curr;
+    }
+  return 0;
 }
 
 boolean* create_mask(boolean default_value)

@@ -545,6 +545,7 @@ Species get_best_MTBC_species(SpeciesInfo* species_info ){
   boolean* mask = create_MTBC_mask();
   int species_enum = get_best_hit(species_info->species_covg_info,mask);
   Species species = species_enum;
+  free(mask);
   return (species);
 }
 
@@ -552,6 +553,7 @@ Species get_best_NTM_species(SpeciesInfo* species_info ){
   boolean* mask = create_NTM_mask();
   int species_enum  = get_best_hit(species_info->species_covg_info,mask);
   Species species = species_enum;
+  free(mask);
   return (species);
 }
 
@@ -559,17 +561,20 @@ Lineage get_best_lineage(SpeciesInfo* species_info ){
   boolean* mask= create_mask(true);
   int lineage_enum  = get_best_hit(species_info->lineage_covg_info,mask);
   Lineage lineage = lineage_enum;
+  free(mask);
   return (lineage);
 }
 
 boolean MTBC_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_MTBC_mask();
   boolean MTBC_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  free(mask);
   return (MTBC_species_panels_are_present);
 }
 boolean NTM_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_NTM_mask();
   boolean NTM_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  free(mask);
   return (NTM_species_panels_are_present);  
 }
 
