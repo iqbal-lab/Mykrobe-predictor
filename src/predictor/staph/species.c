@@ -48,7 +48,12 @@ void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf)
 
 void map_species_enum_to_str(Species staph_species, StrBuf* sbuf)
 {
-  if (staph_species==Saureus)
+  if (staph_species==unknown)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"Unknown Species");
+    }
+  else if (staph_species==Saureus)
     {
       strbuf_reset(sbuf);
       strbuf_append_str(sbuf,"S. aureus");
