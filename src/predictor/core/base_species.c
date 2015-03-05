@@ -192,6 +192,7 @@ void find_which_panels_are_present(CovgInfo* covg_info)
   int i;
   for (i=0; i<covg_info->NUM_PANELS; i++)
   {
+    // printf("%i : %i \n", i , covg_info->percentage_coverage[i] );
     covg_info->present[i] = is_percentage_coverage_above_threshold(covg_info->percentage_coverage[i],covg_info->percentage_threshold[i]);
     if (covg_info->present[i])
     {
@@ -258,9 +259,9 @@ int get_best_hit(CovgInfo* covg_info,boolean* mask)
     if (mask[i]){
       if (covg_info->percentage_coverage[i] >= best_perc_cov_so_far)
       {
+        if ( (covg_info->median_coverage[i] > best_median_cov_so_far) || (covg_info->percentage_coverage[i] > best_perc_cov_so_far)){
          best_perc_cov_so_far = covg_info->percentage_coverage[i];
-        // Only update if the median coverage has also improved
-        if (covg_info->median_coverage[i] > best_median_cov_so_far){
+        // Only update if the median coverage has also improved          
           best_median_cov_so_far = covg_info->median_coverage[i];
           curr=i;
         }          

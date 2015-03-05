@@ -247,7 +247,7 @@ int main(int argc, char **argv)
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
-  printf("bp loaded %" PRId64" \n", bp_loaded);
+  // printf("bp loaded %" PRId64" \n", bp_loaded);
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
         * (mean_read_length-cmd_line->kmer_size+1)

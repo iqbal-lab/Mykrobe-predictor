@@ -422,13 +422,13 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 }
 
 void load_all_phylo_group_thresholds(int* thresholds){
-  thresholds[MTBC] = 70;
+  thresholds[MTBC] = 25;
   thresholds[NTM] = 25;
 }
 void load_all_species_thresholds(int* thresholds){
   int j;
   for(j = 0; j < NUM_SPECIES; j++) {
-    thresholds[j] = 30;
+    thresholds[j] = 15;
   } 
 }
 void load_all_lineage_thresholds(int* thresholds){
