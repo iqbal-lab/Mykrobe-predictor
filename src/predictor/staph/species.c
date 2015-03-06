@@ -112,7 +112,7 @@ void cat_threshold(int* thresholds){
   thresholds[0] = 20;
 }
 void load_all_species_thresholds(int* thresholds){
-  thresholds[Saureus] = 90;
+  thresholds[Saureus] = 70;
   thresholds[Sepidermidis] = 30;
   thresholds[Shaemolyticus] = 30;
   thresholds[Sother] = 10;

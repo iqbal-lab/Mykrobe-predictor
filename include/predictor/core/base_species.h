@@ -144,7 +144,7 @@ int get_ith_coverage_panel(CovgInfo* covg_info, int i);
 int get_ith_present_panel(CovgInfo* covg_info, int i);
 
 
-boolean is_percentage_coverage_above_threshold(int per_cov,int threshold);
+boolean is_percentage_coverage_above_threshold(int per_cov,int med_cov, int threshold);
 
 
 CovgInfo* alloc_and_init_covg_info();
