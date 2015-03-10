@@ -6212,7 +6212,7 @@ void print_json_aureus_and_best_hit_non_aureus(SpeciesInfo* species_info){
 
 
 
-boolean catalayse_exists_in_sample(SpeciesInfo* species_info)
+boolean catalase_exists_in_sample(SpeciesInfo* species_info)
 
 {    
     if (species_info->other_covg_info->percentage_coverage[0] > 20)
@@ -6224,7 +6224,7 @@ boolean catalayse_exists_in_sample(SpeciesInfo* species_info)
     }
 }
 
-int get_coverage_on_catalayse(SpeciesInfo* species_info)
+int get_coverage_on_catalase(SpeciesInfo* species_info)
 {    
   return(species_info->other_covg_info->median_coverage[0]);
 }
@@ -6244,8 +6244,8 @@ void print_json_phylo_group(SpeciesInfo* species_info){
     }
     else
     {
-      if (catalayse_exists_in_sample(species_info)){
-        print_json_called_variant_item( "Coagulase-Negative Staphylococcus", get_coverage_on_catalayse(species_info), true);
+      if (catalase_exists_in_sample(species_info)){
+        print_json_called_variant_item( "Coagulase-Negative Staphylococcus", get_coverage_on_catalase(species_info), true);
       }
       else{
         print_json_called_variant_item( "Non Staphylococcus", -1, true);
