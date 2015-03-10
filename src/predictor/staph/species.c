@@ -61,7 +61,12 @@ void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf)
 
 void map_species_enum_to_str(Species staph_species, StrBuf* sbuf)
 {
-  if (staph_species==Saureus)
+  if (staph_species==unknown)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"Unknown Species");
+    }
+  else if (staph_species==Saureus)
     {
       strbuf_reset(sbuf);
       strbuf_append_str(sbuf,"S. aureus");
@@ -111,7 +116,7 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 }
 
 void phylo_group_threshold(int* thresholds){
-  thresholds[CoagPos] = 70;
+  thresholds[CoagPos] = 90;
   thresholds[CoagNeg] = 25;
 
 }
