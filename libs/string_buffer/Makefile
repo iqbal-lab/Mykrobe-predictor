@@ -1,9 +1,25 @@
+UNAME=$(shell uname)
+ifeq ($(UNAME),Darwin)
+	MAC=1
+else
+	ifeq ($(UNAME),CYGWIN_NT-6.1)
+	WIN=1
+	endif
+endif
+
 ifndef CC
   CC = gcc
 endif
 
-CFLAGS := -Wall -Wextra
-LIBFLAGS := -L. -lstrbuf -lz
+ifdef WIN
+	CFLAGS := -m64 -D__mingw__ -Wall -Wc++-compat  -Wall -Wextra -I/usr/include
+	LIBFLAGS := -L. -L/usr/lib -lstrbuf -lz
+	CC = gcc
+else
+	CFLAGS := -Wall -Wextra
+	LIBFLAGS := -L. -lstrbuf -lz
+endif
+
 
 ifdef DEBUG
 	CFLAGS := $(CFLAGS) -DDEBUG=1 --debug -g -ggdb
