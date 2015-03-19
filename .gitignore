@@ -3,7 +3,14 @@
 *.colour_covgs
 #binaries
 /bin
-.ctx
+*.ctx
+*.bam
+tb.fastq
+*.tmp
+run.sh
+run_tb.sh
+
+libs
 
 #object files
 src/obj
