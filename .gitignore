@@ -6,14 +6,15 @@
 *.ctx
 *.bam
 tb.fastq
-*.tmp
+
 run.sh
 run_tb.sh
-
-libs
+*.sublime-project
+*.sublime-workspace
 
 #object files
 src/obj
+*.o
 
 ##libraries
 
@@ -21,6 +22,20 @@ src/obj
 ## temp files
 *~
 *#
+*.fuse_hidden*
+*.tmp2
+*.tmp
+
+## scripts
+make.sh
+data/staph/antibiotics/getallMuts.py
+
+## OLD
+data/tb/antibiotics/backup/
+data/tb/antibiotics/all_NS/
+data/staph/species/coag_neg_old.fa
+
+
 
 ## test file that is too big for github
 data/test/myKrobe/predictor/test1.bam
