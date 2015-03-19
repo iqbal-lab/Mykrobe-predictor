@@ -1,14 +1,8 @@
 #!/bin/bash
 
 
-cp Makefile.mingw Makefile
+cp Makefile.master Makefile
 
-
-
-export CFLAGS="-fPIC -pie -I/usr/include -O3"
-export CPPFLAGS="$CFLAGS"
-
-export LDFLAGS="-rdynamic -L/usr/lib"
 
 
 make STAPH=1 predictor

@@ -6,8 +6,13 @@ NUM_COLS = 1
 # Test if running on a mac
 UNAME=$(shell uname)
 ifeq ($(UNAME),Darwin)
-	MAC = 1
+	MAC=1
+else
+	ifeq ($(UNAME),CYGWIN_NT-6.1)
+	WIN=1
+	endif
 endif
+
 
 
 # Library paths
@@ -31,11 +36,18 @@ IDIR_HASH_TABLE_TESTS = libs/cortex/include/test/hash_table
 IDIR_PREDICTOR_TESTS = include/test/myKrobe/predictor
 
 
-#IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
-#LDIR_CUNIT = /home/zam/bin/lib
+IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
+LDIR_CUNIT = /home/zam/bin/lib
 #IDIR_CUNIT = /home/phelimb/local/include/CUnit
 #LDIR_CUNIT = /home/phelimb/local/lib
 
+ifdef WIN
+	export CFLAGS="-fPIC -pie -I/usr/include -O3"
+	export CPPFLAGS="$CFLAGS"
+	export LDFLAGS="-rdynamic -L/usr/lib"
+$(info ************ WIN **********)
+
+endif
 
 ifdef MAC
 	MACFLAG = -fnested-functions
@@ -75,9 +87,15 @@ endif
 # (it already checks if hg is installed)
 #VERSION_STR=$(shell if [ `command -v hg` ]; then echo ' (commit' `hg id --num --id`')'; else echo; fi)
 
+ifdef WIN
 OPT := $(ARCH) $(MACFLAG) -DVERSION_STR='"$(VERSION_STR)"' \
        -D__mingw__ -DLINE_MAX=2048 -DNUMBER_OF_BITFIELDS_IN_BINARY_KMER=$(BITFIELDS) \
        -DNUMBER_OF_COLOURS=$(NUM_COLS) 
+else
+OPT := $(ARCH) -Wall $(MACFLAG) -DVERSION_STR='"$(VERSION_STR)"' \
+       -DNUMBER_OF_BITFIELDS_IN_BINARY_KMER=$(BITFIELDS) \
+       -DNUMBER_OF_COLOURS=$(NUM_COLS)
+endif
 
 ifeq ($(STAPH),1)
 	OPT := $(OPT) -DSTAPH=$(STAPH)
@@ -86,18 +104,19 @@ else
 endif
 
 
-ifeq ($(DEBUG),1)
-        OPT := -O0 -g -march=armv4 $(OPT)
+ifdef DEBUG
+	OPT := -O0 -g $(OPT)
 else
-        OPT := -O2 $(OPT)
+	OPT := -O3 $(OPT)
 endif
 
-LIBLIST = -lpthread -lseqfile -lstrbuf -lhts -lz -lm -lws2_32
+ifdef WIN
+	LIBLIST = -lpthread -lseqfile -lstrbuf -lhts -lz -lm -lws2_32
 
+else
+	LIBLIST = -lseqfile -lstrbuf -lhts -lpthread -lz -lm
 
-ifdef DEBUG_ANDROID
-        LIBLIST := $(LIBLIST) -llog
-endif
+endif 
 
 TEST_LIBLIST = -lcunit -lncurses $(LIBLIST)
 
