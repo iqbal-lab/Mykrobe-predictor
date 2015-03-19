@@ -59,7 +59,11 @@ void mkdir_p(const char *fmt, ...)
         if ( *p )
         {
             *p = 0;
+#ifndef __mingw__
             mkdir(tmp,S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#else
+        _CRTIMP int __cdecl __MINGW_NOTHROW mkdir (const char*); 
+#endif
             *p = '/';
             p++;
         }

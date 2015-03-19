@@ -16,6 +16,7 @@ run_tb.sh
 src/obj
 *.o
 *.a
+*exe
 
 libs/htslib/htscmd
 libs/seq_file/new_api/benchmarks/ktest

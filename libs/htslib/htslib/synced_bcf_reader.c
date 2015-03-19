@@ -550,7 +550,11 @@ int bcf_sr_set_samples(readers_t *files, const char *fname)
         while (b)
         {
             str.l = 0;
+#ifdef __mingw__
+            const char *e = strchr(b,','); 
+#else
             const char *e = index(b,','); 
+#endif
             if ( !(e-b) ) break;
             if ( e ) { kputsn(b, e-b, &str); e++; }
             else kputs(b, &str);
