@@ -2,8 +2,17 @@ ifndef CC
 	CC=gcc
 endif
 
-CFLAGS=-O3 -Wall -Wextra -I .. -I $(HTSLIB)/htslib/ -L $(HTSLIB)/htslib/
+MINGW=1
+
+CFLAGS= -m64 -D__mingw__ -Wall -Wc++-compat -O3 -Wall -Wextra -I .. -I $(HTSLIB)/htslib/ -L $(HTSLIB)/htslib/
+
+
 LINKING=-lhts -lpthread -lz
+
+ifdef MINGW
+        LINKING := $(LINKING) -lws2_32
+endif
+
 
 all: ../bin/facat ../bin/fqcat ../bin/seqcat
 

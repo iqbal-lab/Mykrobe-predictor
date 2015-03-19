@@ -200,9 +200,16 @@ void _set_seq_filetype(SeqFile *sf)
   if(file_type == SEQ_SAM || file_type == SEQ_BAM)
   {
     sf->file_type = file_type;
+#ifdef DEBUG_ANDROID
+    printf("DEBUG_ANDROID: About to INIT BAM.  Allocates to RAM.\n");
+#endif
     _init_sam_bam(sf);
+#ifdef DEBUG_ANDROID
+    printf("DEBUG_ANDROID: Completed INIT BAM.\n");
+#endif
     return;
   }
+
 
   // If not SAM or BAM, we can open it and determine its contents -
   // more reliable
@@ -221,6 +228,9 @@ void _set_seq_filetype(SeqFile *sf)
   if(first_char == -1)
   {
     sf->file_type = SEQ_PLAIN;
+#ifdef DEBUG_ANDROID
+  fprintf(stderr, "DEBUG_ANDROID: PATH %s\n", sf->path);
+#endif
     fprintf(stderr, "%s:%i: Warning -- empty sequence file\n", __FILE__, __LINE__);
     return;
   }

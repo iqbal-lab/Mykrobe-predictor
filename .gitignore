@@ -6,6 +6,7 @@
 *.ctx
 *.bam
 tb.fastq
+*.mk
 
 run.sh
 run_tb.sh
