@@ -15,6 +15,20 @@ run_tb.sh
 #object files
 src/obj
 *.o
+*.a
+
+libs/htslib/htscmd
+libs/seq_file/new_api/benchmarks/ktest
+libs/seq_file/new_api/benchmarks/seqtest
+libs/seq_file/new_api/bin/facat
+libs/seq_file/new_api/bin/fqcat
+libs/seq_file/new_api/bin/seqcat
+libs/seq_file/new_api/dev/btest
+libs/seq_file/new_api/dev/seqcmdline
+libs/seq_file/new_api/dev/seqstat
+libs/seq_file/seq_convert
+libs/seq_file/seq_file_test
+libs/string_buffer/strbuf_test
 
 ##libraries
 
