@@ -1,16 +1,22 @@
-ifndef CC
-  CC = gcc
-endif
+CC = gcc
 
-ifdef DEBUG
-	CFLAGS := -DDEBUG=1 --debug -g
+UNAME=$(shell uname)
+ifeq ($(UNAME),Darwin)
+	MAC=1
 else
-	CFLAGS := -O3
+	ifeq ($(UNAME),CYGWIN_NT-6.1)
+	WIN=1
+	endif
 endif
 
-CFLAGS := $(CFLAGS) -Wall -Wextra -I $(HTS_PATH)/htslib/ -I $(STRING_BUF_PATH)
+CFLAGS := -Wall -Wextra -I $(HTS_PATH)/htslib/ -I $(STRING_BUF_PATH)
 
 LIB_FLAGS = -L $(HTS_PATH)/htslib/ -L $(STRING_BUF_PATH) -lstrbuf -lhts -lpthread -lz -lm
+
+ifdef WIN
+	LIB_FLAGS := $(LIB_FLAGS) -lws2_32
+	CFLAGS := $(CFLAGS) -m64 -D__mingw__ -Wall -Wc++-compat -O3
+endif
 
 OBJS = seq_file.o seq_common.o seq_fasta.o seq_fastq.o seq_plain.o seq_sam.o
 
