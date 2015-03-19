@@ -56,6 +56,16 @@
 #include "build.h"
 #include "graph_info.h"
 
+#ifdef DEBUG_ANDROID
+  #include <android/log.h>
+#endif
+
+#ifdef __mingw__
+  #define __override_realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+#else
+  #define __override_realpath(N,R) realpath(N,R)
+#endif
+  
 #define is_base_char(x) ((x) == 'a' || (x) == 'A' || \
                          (x) == 'c' || (x) == 'C' || \
                          (x) == 'g' || (x) == 'G' || \
@@ -81,7 +91,15 @@ char _ensure_dir_exists(const char *path, mode_t mode)
   if(stat(path, &st) != 0)
   {
     // Directory does not exist   
+#ifdef __mingw__
+
+    // Run external MinGW function
+    _CRTIMP int __cdecl __MINGW_NOTHROW mkdir (path);
+    // Do another stat check and return this
+    return stat(path, &st) == 0 ? 1 : 0;
+#else
     return mkdir(path, mode) == 0 ? 1 : 0;
+#endif
   }
   else if(!S_ISDIR(st.st_mode))
   {
@@ -956,7 +974,7 @@ long long load_multicolour_binary_from_filename_into_graph(char* filename,  dBGr
 {
 
   //printf("Load this binary - %s\n", filename);
-  FILE* fp_bin = fopen(filename, "r");
+  FILE* fp_bin = __fopen_read_override_mingw(filename, "r");
   long long  seq_length = 0;
   dBNode node_from_file;
   element_initialise_kmer_covgs_edges_and_status_to_zero(&node_from_file);
@@ -1410,7 +1428,7 @@ void load_se_filelist_into_graph_colour(
 
   // Get absolute path
   char absolute_path[PATH_MAX+1];
-  char* se_filelist_abs_path = realpath(se_filelist_path, absolute_path);
+  char* se_filelist_abs_path = __override_realpath(se_filelist_path, absolute_path);
 
   if(se_filelist_abs_path == NULL)
   {
@@ -1420,7 +1438,7 @@ void load_se_filelist_into_graph_colour(
   /* COMMENT_OUT_DURING_TESTS 
   printf("  path: %s\n", se_filelist_abs_path);
     */
-  FILE* se_list_file = fopen(se_filelist_abs_path, "r");
+  FILE* se_list_file = __fopen_read_override_mingw(se_filelist_abs_path, "r");
 
   if(se_list_file == NULL)
   {
@@ -1452,7 +1470,7 @@ void load_se_filelist_into_graph_colour(
         strbuf_insert(line, 0, dir, 0, strbuf_len(dir));
 
       // Get absolute paths
-      char* path_ptr = realpath(line->buff, absolute_path);
+      char* path_ptr = __override_realpath(line->buff, absolute_path);
 
       if(path_ptr == NULL)
       {
@@ -1540,8 +1558,8 @@ void load_pe_filelists_into_graph_colour(
   // Get absolute paths
   char absolute_path1[PATH_MAX+1], absolute_path2[PATH_MAX+1];
 
-  char* pe_filelist_abs_path1 = realpath(pe_filelist_path1, absolute_path1);
-  char* pe_filelist_abs_path2 = realpath(pe_filelist_path2, absolute_path2);
+  char* pe_filelist_abs_path1 = __override_realpath(pe_filelist_path1, absolute_path1);
+  char* pe_filelist_abs_path2 = __override_realpath(pe_filelist_path2, absolute_path2);
 
   if(pe_filelist_abs_path1 == NULL)
   {
@@ -1555,8 +1573,8 @@ void load_pe_filelists_into_graph_colour(
   }
 
   // Open files
-  FILE* pe_list_file1 = fopen(pe_filelist_abs_path1, "r");
-  FILE* pe_list_file2 = fopen(pe_filelist_abs_path2, "r");
+  FILE* pe_list_file1 = __fopen_read_override_mingw(pe_filelist_abs_path1, "r");
+  FILE* pe_list_file2 = __fopen_read_override_mingw(pe_filelist_abs_path2, "r");
 
   if(pe_list_file1 == NULL)
   {
@@ -1610,8 +1628,8 @@ void load_pe_filelists_into_graph_colour(
         strbuf_insert(line2, 0, dir2, 0, strbuf_len(dir2));
 
       // Get absolute paths
-      char* path_ptr1 = realpath(line1->buff, absolute_path1);
-      char* path_ptr2 = realpath(line2->buff, absolute_path2);
+      char* path_ptr1 = __override_realpath(line1->buff, absolute_path1);
+      char* path_ptr2 = __override_realpath(line2->buff, absolute_path2);
 
       if(path_ptr1 == NULL)
       {
@@ -2948,14 +2966,14 @@ int load_paths_from_filelist(char* filelist_path, char** path_array)
 {
   // Get absolute path
   char absolute_path[PATH_MAX+1];
-  char* filelist_abs_path = realpath(filelist_path, absolute_path);
+  char* filelist_abs_path = __override_realpath(filelist_path, absolute_path);
 
   if(filelist_abs_path == NULL)
   {
     die( "Cannot get absolute path to filelist: %s\n", filelist_path);
   }
 
-  FILE* filelist_handle = fopen(filelist_abs_path, "r");
+  FILE* filelist_handle = __fopen_read_override_mingw(filelist_abs_path, "r");
 
   if(filelist_handle == NULL)
   {
@@ -2984,7 +3002,7 @@ int load_paths_from_filelist(char* filelist_path, char** path_array)
       strtok(line->buff, "\t");
 
       // Get absolute paths
-      char* path_ptr = realpath(line->buff, absolute_path);
+      char* path_ptr = __override_realpath(line->buff, absolute_path);
 
       if(path_ptr == NULL)
       {
@@ -3133,7 +3151,7 @@ uint64_t count_all_reads(StrBuf* path, //may be file or list of files
     {
       // Get absolute path
       char absolute_path[PATH_MAX+1];
-      char* abs_path = realpath(path->buff, absolute_path);
+      char* abs_path = __override_realpath(path->buff, absolute_path);
       
       if(abs_path == NULL)
 	{
@@ -3145,7 +3163,7 @@ uint64_t count_all_reads(StrBuf* path, //may be file or list of files
       StrBuf *dir = file_reader_get_strbuf_of_dir_path(abs_path);
       
       StrBuf *line = strbuf_new();
-      FILE* fp = fopen(path->buff, "r");
+      FILE* fp = __fopen_read_override_mingw(path->buff, "r");
       if (fp==NULL)
 	{
 	  printf("Failed to open %s - carrying on\n", path->buff);
@@ -3162,7 +3180,7 @@ uint64_t count_all_reads(StrBuf* path, //may be file or list of files
 		strbuf_insert(line, 0, dir, 0, strbuf_len(dir));
 	      
 	      // Get absolute paths
-	      char* path_ptr = realpath(line->buff, absolute_path);
+	      char* path_ptr = __override_realpath(line->buff, absolute_path);
 	      
 	      if(path_ptr == NULL)
 		{
