@@ -3,10 +3,34 @@
 *.colour_covgs
 #binaries
 /bin
-.ctx
+*.ctx
+*.bam
+tb.fastq
+*.mk
+
+run.sh
+run_tb.sh
+*.sublime-project
+*.sublime-workspace
 
 #object files
 src/obj
+*.o
+*.a
+*exe
+
+libs/htslib/htscmd
+libs/seq_file/new_api/benchmarks/ktest
+libs/seq_file/new_api/benchmarks/seqtest
+libs/seq_file/new_api/bin/facat
+libs/seq_file/new_api/bin/fqcat
+libs/seq_file/new_api/bin/seqcat
+libs/seq_file/new_api/dev/btest
+libs/seq_file/new_api/dev/seqcmdline
+libs/seq_file/new_api/dev/seqstat
+libs/seq_file/seq_convert
+libs/seq_file/seq_file_test
+libs/string_buffer/strbuf_test
 
 ##libraries
 
@@ -14,6 +38,20 @@ src/obj
 ## temp files
 *~
 *#
+*.fuse_hidden*
+*.tmp2
+*.tmp
+
+## scripts
+make.sh
+data/staph/antibiotics/getallMuts.py
+
+## OLD
+data/tb/antibiotics/backup/
+data/tb/antibiotics/all_NS/
+data/staph/species/coag_neg_old.fa
+
+
 
 ## test file that is too big for github
 data/test/myKrobe/predictor/test1.bam

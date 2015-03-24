@@ -34,9 +34,18 @@
 #ifndef GLOBAL_H_
 #define GLOBAL_H_
 
-#include <err.h>
+#ifndef _WIN32
+  #include <err.h>
+#endif
+
 #include <stdint.h>
 #include "string_buffer.h"
+
+#ifdef __mingw__
+  #define __fopen_read_override_mingw(a,b) fopen(a,b)
+#else
+  #define __fopen_read_override_mingw(a,b) fopen(a,"r")
+#endif
 
 typedef uint32_t Covg;
 // COVG_MAX is defined as UINT_MAX in global.c

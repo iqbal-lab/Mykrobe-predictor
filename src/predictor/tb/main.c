@@ -27,6 +27,10 @@
 #include "species.h"
 #include "json.h"
 
+#ifdef __mingw__
+  #define drand48() (((double)rand())/((double)RAND_MAX))
+#endif
+  
 void timestamp();
 
 int main(int argc, char **argv)

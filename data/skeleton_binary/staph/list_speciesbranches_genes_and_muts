@@ -32,6 +32,7 @@
 ../../staph/antibiotics/vancomycin.fa
 ../../staph/antibiotics/vga_A_LC.fa
 ../../staph/species/cat.fasta
+../../staph/species/coag_neg.fasta
 ../../staph/species/Saureus.fasta
 ../../staph/species/Sepidermidis.fasta
 ../../staph/species/Shaemolyticus.fasta
