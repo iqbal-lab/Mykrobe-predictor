@@ -42,7 +42,7 @@ module.exports = function(grunt) {
                 // credits: './public/credits.html',
                 // version: '0.9.2',
                 mac_icns: './resources/icon/<%= pkg.targetName %>/icon.icns',
-                platforms: ['osx32','win32']
+                platforms: ['osx32','win64']
             },
             src: '<%= config.dist %>/**/*'
         },

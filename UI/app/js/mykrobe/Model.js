@@ -66,22 +66,29 @@ var Model = Class.extend({
     _pathToBin:function() {
         var that = this,
             path = require("path"),
-            platform = require("os").platform,
+            platform = require("os").platform(),
+            platformFolder = '',
             chmodSync = require("fs").chmodSync,
             pathToBin = '';
-        switch (platform()) {
+
+        // will be 'darwin', 'win32' or 'win64'
+        // FIXME: not tested for Linux
+        platformFolder = platform;
+
+        switch (platform) {
             case "darwin":
-                if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-                    pathToBin = path.join('bin',MykrobeTarget.targetName,'osx','Mykrobe.predictor.tb');
-                }
-                else {
-                    pathToBin = path.join('bin',MykrobeTarget.targetName,'osx','Mykrobe.predictor.staph');
-                }
+                // use 'osx' folder for Mac
+                platformFolder = 'osx';
                 break;
-            case "win32":
-                pathToBin = path.join('bin',MykrobeTarget.targetName,'win32','MykrobeStub.exe');
-                break;
+        };
+
+        if ( kTargetSpeciesTB === MykrobeTarget.species ) {
+            pathToBin = path.join('bin',MykrobeTarget.targetName,platformFolder,'Mykrobe.predictor.tb');
         }
+        else {
+            pathToBin = path.join('bin',MykrobeTarget.targetName,platformFolder,'Mykrobe.predictor.staph');
+        }
+
         chmodSync(pathToBin, 0755);
         return pathToBin;
     },

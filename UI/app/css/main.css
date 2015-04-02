@@ -128,12 +128,10 @@ table {
   font-family: 'Minion-Regular';
   src: url("webfonts/2AB146_0_0.eot");
   src: url("webfonts/2AB146_0_0.eot?#iefix") format("embedded-opentype"), url("webfonts/2AB146_0_0.woff") format("woff"), url("webfonts/2AB146_0_0.ttf") format("truetype"); }
-
 @font-face {
   font-family: 'Bryant2-Bold';
   src: url("webfonts/BryantWebBold.eot");
   src: url("webfonts/BryantWebBold.eot?#iefix") format("embedded-opentype"), url("webfonts/BryantWebBold.woff") format("woff"); }
-
 body {
   font-family: "Minion-Regular", serif;
   font-size: 150%;
@@ -142,6 +140,21 @@ body {
   background-color: #f7f6f1;
   -webkit-font-smoothing: antialiased;
   -webkit-font-kerning: normal; }
+
+a {
+  color: #5bbee2;
+  text-decoration: none;
+  -webkit-transition: color 0.1s, background-color 0.1s, border 0.1s;
+  -moz-transition: color 0.1s, background-color 0.1s, border 0.1s;
+  -ms-transition: color 0.1s, background-color 0.1s, border 0.1s;
+  -o-transition: color 0.1s, background-color 0.1s, border 0.1s; }
+
+a:hover, a:visited:hover {
+  color: #30addb; }
+
+a:focus {
+  border: none;
+  outline: none; }
 
 #file-drag-and-drop {
   -webkit-box-sizing: border-box;
@@ -351,42 +364,30 @@ nav.buttons {
 @-webkit-keyframes dotone {
   0% {
     opacity: 0; }
-
   20% {
     opacity: 0; }
-
   60% {
     opacity: 1; }
-
   100% {
     opacity: 1; } }
-
 @-webkit-keyframes dottwo {
   0% {
     opacity: 0; }
-
   30% {
     opacity: 0; }
-
   70% {
     opacity: 1; }
-
   100% {
     opacity: 1; } }
-
 @-webkit-keyframes dotthree {
   0% {
     opacity: 0; }
-
   40% {
     opacity: 0; }
-
   80% {
     opacity: 1; }
-
   100% {
     opacity: 1; } }
-
 #processing-screen .message-dots {
   position: absolute;
   left: 0;
@@ -1001,3 +1002,5 @@ body {
   filter: "alpha(opacity=40)";
   -ms-filter: "alpha(opacity=40)";
   /* old ie */ }
+
+/*# sourceMappingURL=main.css.map */
