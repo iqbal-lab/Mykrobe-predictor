@@ -111,7 +111,7 @@ else
 endif
 
 ifdef WIN
-	LIBLIST = -lpthread -lseqfile -lstrbuf -lhts -lz -lm -lws2_32
+	LIBLIST = -static -lpthread -lseqfile -lstrbuf -lhts -lz -lm -lws2_32
 
 else
 	LIBLIST = -lseqfile -lstrbuf -lhts -lpthread -lz -lm
