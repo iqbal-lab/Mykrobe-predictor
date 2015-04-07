@@ -1,7 +1,15 @@
 myKrobe-predictor
 =================
 
+This repo uses submodules so to clone run:
 
+git clone --recursive https://github.com/iqbal-lab/Mykrobe-predictor.git
+
+Then run 
+
+sh install.sh 
+
+to compile dependancies. 
 
 ------ Compilation ---------
 
