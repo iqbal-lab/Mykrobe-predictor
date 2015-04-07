@@ -71,7 +71,7 @@ var Model = Class.extend({
             chmodSync = require("fs").chmodSync,
             pathToBin = '';
 
-        // will be 'darwin', 'win64' or 'win64'
+        // will be 'darwin', 'win32' or 'win32'
         // FIXME: not tested for Linux
         platformFolder = platform;
 
