@@ -28,6 +28,21 @@ body {
     -webkit-font-kerning: normal;
 }
 
+a {
+	color: $color-blue-text;
+	text-decoration: none;
+	@include transition(color 0.1s, background-color 0.1s, border 0.1s);
+}
+
+a:hover, a:visited:hover {
+	color: $color-blue-hover-text;
+}
+
+a:focus {
+	border: none;
+	outline: none;
+}
+
 #file-drag-and-drop {
 	@include box-sizing(border-box);
 	@include transition(border 0.1s, background-color 0.1s);

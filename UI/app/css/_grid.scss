@@ -22,23 +22,23 @@ $use-percentages: false;
   $_use-percentages: $use-percentages;
 
   // use the new settings
-  $total-columns: $total-columns_;
-  $column-width: $column-width_;
-  $gutter-width: $gutter-width_;
-  $margin-left-width: $margin-left-width_;
-  $margin-right-width: $margin-right-width_;
-  $use-percentages: $use-percentages_;
+  $total-columns: $total-columns_ !global;
+  $column-width: $column-width_ !global;
+  $gutter-width: $gutter-width_ !global;
+  $margin-left-width: $margin-left-width_ !global;
+  $margin-right-width: $margin-right-width_ !global;
+  $use-percentages: $use-percentages_ !global;
 
   // apply to contents
   @content;
 
   // re-instate the defaults
-  $total-columns: $_total-columns;
-  $column-width: $_column-width;
-  $gutter-width: $_gutter-width;
-  $margin-left-width: $_margin-left-width;
-  $margin-right-width: $_margin-right-width;
-  $use-percentages: $_use-percentages;
+  $total-columns: $_total-columns !global;
+  $column-width: $_column-width !global;
+  $gutter-width: $_gutter-width !global;
+  $margin-left-width: $_margin-left-width !global;
+  $margin-right-width: $_margin-right-width !global;
+  $use-percentages: $_use-percentages !global;
 }
 
 @mixin with-interim-columns-margins($total-columns_: $total-columns, $margin-left-width_: $margin-left-width, $margin-right-width_: $margin-right-width) {
@@ -46,21 +46,21 @@ $use-percentages: false;
   $_margin-left-width: $margin-left-width;
   $_margin-right-width: $margin-right-width;
 
-  $total-columns: $total-columns_;
-  $margin-left-width: $margin-left-width_;
-  $margin-right-width: $margin-right-width_;
+  $total-columns: $total-columns_ !global;
+  $margin-left-width: $margin-left-width_ !global;
+  $margin-right-width: $margin-right-width_ !global;
   @content;
 
-  $total-columns: $_total-columns;
-  $margin-left-width: $_margin-left-width;
-  $margin-right-width: $_margin-right-width;
+  $total-columns: $_total-columns !global;
+  $margin-left-width: $_margin-left-width !global;
+  $margin-right-width: $_margin-right-width !global;
 }
 
 @mixin with-use-percentages($use-percentages_:true) {
   $_use-percentages: $use-percentages;
-  $use-percentages: $use-percentages_;
+  $use-percentages: $use-percentages_ !global;
   @content;
-  $use-percentages: $_use-percentages;
+  $use-percentages: $_use-percentages !global;
 }
 
 //

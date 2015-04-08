@@ -12,45 +12,6 @@ var Model = Class.extend({
     },
 
     loadFileWithPath:function(path_) {
-	
-	
-	    // Remove skeleton
-		var fs = require('fs');
-		
-		var path_skel = require('path');
-		
-		var delete_skeleton_file_tb = path_skel.join(process.cwd(),'/bin/predictor-tb/data/skeleton_binary/tb/skeleton.k15.ctx');		
-		console.log('CHECKING ' + delete_skeleton_file_tb);
-		fs.stat(delete_skeleton_file_tb, function(err, stat) {
-		if(err == null) {
-			console.log('Skeleton file exists, removing.');
-			
-			fs.unlink(delete_skeleton_file_tb, function (err) {
-				if (err) throw err;
-				console.log('DELETE ' + delete_skeleton_file_tb);
-			});
-			
-		} else {
-			console.log('This file does not exist:\n\n' + delete_skeleton_file_tb);
-		}
-		});
-		
-		var delete_skeleton_file_staph = path_skel.join(process.cwd(),'/bin/predictor-s-aureus/data/skeleton_binary/staph/skeleton.k15.ctx');		
-		console.log('CHECKING ' + delete_skeleton_file_staph);
-		fs.stat(delete_skeleton_file_staph, function(err, stat) {
-		if(err == null) {
-			console.log('Skeleton file exists, removing.');
-			
-			fs.unlink(delete_skeleton_file_staph, function (err) {
-				if (err) throw err;
-				console.log('DELETE ' + delete_skeleton_file_staph);
-			});
-			
-		} else {
-			console.log('This file does not exist:\n\n' + delete_skeleton_file_staph);
-		}
-		});
-	
         var that = this,
             extension;
         that.cancelLoadFile();
@@ -110,7 +71,7 @@ var Model = Class.extend({
             chmodSync = require("fs").chmodSync,
             pathToBin = '';
 
-        // will be 'darwin', 'win64' or 'win64'
+        // will be 'darwin', 'win32' or 'win32'
         // FIXME: not tested for Linux
         platformFolder = platform;
 
