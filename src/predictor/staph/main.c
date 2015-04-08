@@ -154,7 +154,7 @@ int main(int argc, char **argv)
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
       strbuf_append_str(sk, "data/skeleton_binary/staph/skeleton.k15.ctx");
-      if ( (access(sk->buff,F_OK)!=0) || (WIN==1) )
+      if ( (access(sk->buff,F_OK)!=0) || (WINDOWS==1) )
 	{
 	  StrBuf* skeleton_flist = strbuf_new();
 	  strbuf_append_str(skeleton_flist, 
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 			      &subsample_null,
 			      false, &dummy, 0, &is_rem);
 
-	  if (WIN==0)
+	  if (WINDOWS==0)
 	    {
 	      //dump binary so can reuse
 	      db_graph_dump_binary(sk->buff, 
