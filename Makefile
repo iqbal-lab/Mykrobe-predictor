@@ -83,10 +83,6 @@ endif
 
 
 
-# Comment out this line to turn off adding the commit version
-# (it already checks if hg is installed)
-#VERSION_STR=$(shell if [ `command -v hg` ]; then echo ' (commit' `hg id --num --id`')'; else echo; fi)
-
 ifdef WIN
 OPT := $(ARCH) $(MACFLAG) -DVERSION_STR='"$(VERSION_STR)"' \
        -D__mingw__ -DLINE_MAX=2048 -DNUMBER_OF_BITFIELDS_IN_BINARY_KMER=$(BITFIELDS) \

@@ -145,7 +145,7 @@ int main(int argc, char **argv)
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
       strbuf_append_str(sk, "data/skeleton_binary/tb/skeleton.k15.ctx");
-      if (access(sk->buff,F_OK)!=0)
+      if ( (access(sk->buff,F_OK)!=0) || (WIN==1) )
 	{
 	  StrBuf* skeleton_flist = strbuf_new();
 	  strbuf_append_str(skeleton_flist, 
@@ -165,12 +165,15 @@ int main(int argc, char **argv)
 			      &subsample_null,
 			      false, &dummy, 0, &is_rem);
 	  
-	  //dump binary so can reuse
-	  db_graph_dump_binary(sk->buff, 
-			       &db_node_condition_always_true,
-			       db_graph,
-			       NULL,
-			       BINVERSION);
+	  if (WIN==0)
+	    {
+	      //dump binary so can reuse
+	      db_graph_dump_binary(sk->buff, 
+				   &db_node_condition_always_true,
+				   db_graph,
+				   NULL,
+				   BINVERSION);
+	    }
 	  strbuf_free(skeleton_flist);
 	  set_all_coverages_to_zero(db_graph, 0);
 	}
