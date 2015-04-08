@@ -11,19 +11,19 @@ $sheet-icon-height:0;
   $_sheet-icon-width: $sheet-icon-width;
   $_sheet-icon-height: $sheet-icon-height;
 
-  $sheet-image-url: $sheet-image-url_;
-  $sheet-width: $sheet-width_;
-  $sheet-height: $sheet-height_;
-  $sheet-icon-width: $sheet-icon-width_;
-  $sheet-icon-height: $sheet-icon-height_;
+  $sheet-image-url: $sheet-image-url_ !global;
+  $sheet-width: $sheet-width_ !global;
+  $sheet-height: $sheet-height_ !global;
+  $sheet-icon-width: $sheet-icon-width_ !global;
+  $sheet-icon-height: $sheet-icon-height_ !global;
 
   @content;
 
-  $sheet-image-url: $_sheet-image-url;
-  $sheet-width: $_sheet-width;
-  $sheet-height: $_sheet-height;
-  $sheet-icon-width: $_sheet-icon-width;
-  $sheet-icon-height: $_sheet-icon-height;
+  $sheet-image-url: $_sheet-image-url !global;
+  $sheet-width: $_sheet-width !global;
+  $sheet-height: $_sheet-height !global;
+  $sheet-icon-width: $_sheet-icon-width !global;
+  $sheet-icon-height: $_sheet-icon-height !global;
 }
 
 @mixin sprite-sheet-icon($icon-x:0, $icon-y:0, $adjust-x:0, $adjust-y:0, $width:$sheet-icon-width, $height:$sheet-icon-height) {

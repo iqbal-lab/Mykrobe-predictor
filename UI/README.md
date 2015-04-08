@@ -65,6 +65,7 @@ The app distribution build will only contain the binaries for the specified targ
 ### Deployment ###
 
 ~~~~
+npm install grunt-contrib-sass --save-dev
 grunt dist
 ~~~~
 
