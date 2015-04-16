@@ -1,14 +1,6 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
- *
- * **********************************************************************
- *
- * This file is part of Mykrobe.
- *
- * **********************************************************************
- */
-/*
   species.c
 */
 
@@ -103,7 +95,7 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 }
 
 void phylo_group_threshold(int* thresholds){
-  thresholds[CoagPos] = 70;
+  thresholds[CoagPos] = 90;
   thresholds[CoagNeg] = 25;
 
 }

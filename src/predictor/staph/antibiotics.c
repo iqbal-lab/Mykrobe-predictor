@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *  antibiotics.c 
 */
@@ -419,7 +419,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Gentamicin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/gentamicin.fa");
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/gentamicin.fa");
   abi->which_genes[0]=aacAaphD;
   abi->num_genes=1;
   abi->num_mutations = 0;//entirely determined by gene presence
@@ -471,8 +471,8 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 
   //setup antibiotic info object
   abi->ab = Penicillin;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/penicillin.fa");
+  // strbuf_append_str(abi->m_fasta, install_dir->buff);
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/penicillin.fa");
   abi->num_mutations = 0;//entirely determined by gene presence
   abi->which_genes[0]=blaZ;
   abi->num_genes=1;
@@ -658,7 +658,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Erythromycin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/erythromycin.fa");
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/erythromycin.fa");
 
 
   abi->num_mutations = 0;
@@ -750,8 +750,8 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Methicillin;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/methicillin.fa");
+  // strbuf_append_str(abi->m_fasta, install_dir->buff);
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/methicillin.fa");
   abi->num_mutations = 0;
   abi->which_genes[0]=mecA;
   abi->num_genes=1;
@@ -1043,8 +1043,8 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab =Tetracycline;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/tetracycline.fa");
+  // strbuf_append_str(abi->m_fasta, install_dir->buff);
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/tetracycline.fa");
   abi->num_mutations = 0;
   abi->which_genes[0]=tetK;
   abi->which_genes[1]=tetL;
@@ -1126,8 +1126,8 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Mupirocin;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/mupirocin.fa");
+  // strbuf_append_str(abi->m_fasta, install_dir->buff);
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/mupirocin.fa");
 
   abi->num_mutations = 0;
   abi->which_genes[0]=mupA;
@@ -1412,7 +1412,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = Clindamycin;
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/clindamycin.fa");
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/clindamycin.fa");
   abi->num_mutations = 0;
   abi->which_genes[0]=vga_A_LC;
   abi->num_genes=1;
@@ -1466,8 +1466,8 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
   
   //setup antibiotic info object
   abi->ab = Vancomycin;
-  strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/vancomycin.fa");
+  // strbuf_append_str(abi->m_fasta, install_dir->buff);
+  // strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/vancomycin.fa");
 
   abi->num_mutations = 0;
   abi->which_genes[0]=vanA;

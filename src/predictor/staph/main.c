@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  *
   main.c 
 */
@@ -26,6 +26,10 @@
 #include "species.h"
 #include "json.h"
 
+#ifdef __mingw__
+  #define drand48() (((double)rand())/((double)RAND_MAX))
+#endif
+  
 void timestamp();
 
 int main(int argc, char **argv)
@@ -150,7 +154,7 @@ int main(int argc, char **argv)
       StrBuf* sk = strbuf_new();
       strbuf_append_str(sk, cmd_line->install_dir->buff);
       strbuf_append_str(sk, "data/skeleton_binary/staph/skeleton.k15.ctx");
-      if (access(sk->buff,F_OK)!=0)
+      if ( (access(sk->buff,F_OK)!=0) || (WINDOWS==1) )
 	{
 	  StrBuf* skeleton_flist = strbuf_new();
 	  strbuf_append_str(skeleton_flist, 
@@ -171,13 +175,15 @@ int main(int argc, char **argv)
 			      &subsample_null,
 			      false, &dummy, 0, &is_rem);
 
-	  //dump binary so can reuse
-
-	  db_graph_dump_binary(sk->buff, 
-			       &db_node_condition_always_true,
-			       db_graph,
-			       NULL,
-			       BINVERSION);
+	  if (WINDOWS==0)
+	    {
+	      //dump binary so can reuse
+	      db_graph_dump_binary(sk->buff, 
+				   &db_node_condition_always_true,
+				   db_graph,
+				   NULL,
+				   BINVERSION);
+	    }
 	  strbuf_free(skeleton_flist);
 	  set_all_coverages_to_zero(db_graph, 0);
 	}

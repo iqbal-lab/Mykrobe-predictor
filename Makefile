@@ -6,8 +6,13 @@ NUM_COLS = 1
 # Test if running on a mac
 UNAME=$(shell uname)
 ifeq ($(UNAME),Darwin)
-	MAC = 1
+	MAC=1
+else
+	ifeq ($(UNAME),CYGWIN_NT-6.1)
+	WIN=1
+	endif
 endif
+
 
 
 # Library paths
@@ -36,6 +41,13 @@ LDIR_CUNIT = /home/zam/bin/lib
 #IDIR_CUNIT = /home/phelimb/local/include/CUnit
 #LDIR_CUNIT = /home/phelimb/local/lib
 
+ifdef WIN
+	export CFLAGS="-fPIC -pie -I/usr/include -O3"
+	export CPPFLAGS="$CFLAGS"
+	export LDFLAGS="-rdynamic -L/usr/lib"
+$(info ************ WIN **********)
+
+endif
 
 ifdef MAC
 	MACFLAG = -fnested-functions
@@ -71,13 +83,15 @@ endif
 
 
 
-# Comment out this line to turn off adding the commit version
-# (it already checks if hg is installed)
-#VERSION_STR=$(shell if [ `command -v hg` ]; then echo ' (commit' `hg id --num --id`')'; else echo; fi)
-
-OPT := $(ARCH) -Wall $(MACFLAG) -DVERSION_STR='"$(VERSION_STR)"' \
+ifdef WIN
+OPT := $(ARCH) $(MACFLAG) -DWINDOWS=1 -DVERSION_STR='"$(VERSION_STR)"' \
+       -D__mingw__ -DLINE_MAX=2048 -DNUMBER_OF_BITFIELDS_IN_BINARY_KMER=$(BITFIELDS) \
+       -DNUMBER_OF_COLOURS=$(NUM_COLS) 
+else
+OPT := $(ARCH) -Wall $(MACFLAG) -DWINDOWS=0 -DVERSION_STR='"$(VERSION_STR)"' \
        -DNUMBER_OF_BITFIELDS_IN_BINARY_KMER=$(BITFIELDS) \
        -DNUMBER_OF_COLOURS=$(NUM_COLS)
+endif
 
 ifeq ($(STAPH),1)
 	OPT := $(OPT) -DSTAPH=$(STAPH)
@@ -92,7 +106,14 @@ else
 	OPT := -O3 $(OPT)
 endif
 
-LIBLIST = -lseqfile -lstrbuf -lhts -lpthread -lz -lm
+ifdef WIN
+	LIBLIST = -static -lpthread -lseqfile -lstrbuf -lhts -lz -lm -lws2_32
+
+else
+	LIBLIST = -lseqfile -lstrbuf -lhts -lpthread -lz -lm
+
+endif 
+
 TEST_LIBLIST = -lcunit -lncurses $(LIBLIST)
 
 # Add -L/usr/local/lib/ to satisfy some systems that struggle to link libz
@@ -205,4 +226,3 @@ src/obj/predictor/%.o : libs/cortex/src/hash_table/open_hash/%.c libs/cortex/inc
 
 src/obj/test/predictor/%.o : src/test/predictor/%.c include/test/predictor/%.h
 	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(CFLAGS_PREDICTOR_CORE) $(OPT) -c $< -o $@
-

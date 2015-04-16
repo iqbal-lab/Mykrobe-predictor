@@ -1,0 +1,17 @@
+{
+  "expected_depth": "8",
+  "mean_read_length": "300",
+  "phylogenetics": {
+    "phylo_group": {
+      "Non Mycobacterium": "-1"
+    },
+    "species": {
+      "Unknown Species": "-1"
+    },
+    "lineage": {
+      "N/A": "-1"
+    }
+  },
+  "susceptibility": {},
+  "called_variants": {}
+}

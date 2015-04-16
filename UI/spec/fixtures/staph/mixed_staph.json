@@ -1,0 +1,67 @@
+{
+  "expected_depth": "42",
+  "mean_read_length": "97",
+  "phylogenetics": {
+    "phylo_group": {
+      "Staphylococcus aureus": "40",
+      "Coagulase-Negative Staphylococcus": "10"
+    },
+    "species": {
+      "S. aureus": "40",
+      "S. epidermidis": "10"
+    },
+    "lineage": {
+      "N/A": "-1"
+    }
+  },
+  "susceptibility": {
+    "Gentamicin": "R",
+    "Penicillin": "R",
+    "Methicillin": "R",
+    "Trimethoprim": "R",
+    "Erythromycin": "S",
+    "FusidicAcid": "R",
+    "Ciprofloxacin": "S",
+    "Rifampicin": "S",
+    "Tetracycline": "S",
+    "Vancomycin": "S",
+    "Mupirocin": "S",
+    "Clindamycin": "S"
+  },
+  "called_variants": {},
+  "called_genes": {
+    "aacAaphD": {
+      "per_cov": "99",
+      "median_cov": "8",
+      "conf": "23",
+      "induced_resistance": "Gentamicin"
+    },
+    "blaZ": {
+      "per_cov": "99",
+      "median_cov": "14",
+      "conf": "41",
+      "induced_resistance": "Penicillin"
+    },
+    "dfrA": {
+      "per_cov": "100",
+      "median_cov": "18",
+      "conf": "53",
+      "induced_resistance": "Trimethoprim"
+    },
+    "fusB": {
+      "per_cov": "97",
+      "median_cov": "4",
+      "conf": "11",
+      "induced_resistance": "FusidicAcid"
+    },
+    "mecA": {
+      "per_cov": "99",
+      "median_cov": "9",
+      "conf": "26",
+      "induced_resistance": "Methicillin"
+    }
+  },
+  "virulence_toxins": {
+    "PVL": "negative"
+  }
+}

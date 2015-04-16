@@ -13,3 +13,4 @@ osascript resources/mac/dmgStyler.applescript
 hdiutil detach "/Volumes/$1"
 hdiutil convert "dist/$1.tmp.dmg" -format UDZO -imagekey zlib-level=9 -o "dist/$1.dmg" -puppetstrings
 rm "dist/$1.tmp.dmg"
+./resources/mac/licenseDMG.py "dist/$1.dmg" LICENSE.txt 

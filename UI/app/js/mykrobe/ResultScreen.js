@@ -32,17 +32,20 @@ var ResultScreen = BaseScreen.extend({
                 <div class="screen screen-view screen-view-antibiotic-class"><div class="modules"></div></div>\
                 <div class="screen screen-view screen-view-virulence"><div class="modules"></div></div>\
                 <div class="screen screen-view screen-view-evidence"><div class="modules"></div></div>\
-            ');
+                <div class="screen screen-view screen-view-species"><div class="modules"></div></div>\
+			');
 			that.viewAllScreenCell = new ResultScreenModuleCell('View all',$('.screen-view-all',that.container),['susceptible','resistant','inducible','inconclusive']);
-			that.antibioticClassScreenCell = new ResultScreenModuleCell('Antibiotic class',$('.screen-view-antibiotic-class',that.container),['susceptible','resistant','inducible','inconclusive']);
+			that.antibioticClassScreenCell = new ResultScreenModuleCell('Class',$('.screen-view-antibiotic-class',that.container),['susceptible','resistant','inducible','inconclusive']);
 			that.virulenceScreenCell = new ResultScreenModuleCell('Virulence',$('.screen-view-virulence',that.container),['positive','negative']);
 			that.evidenceScreenCell = new ResultScreenEvidenceCell('Evidence',$('.screen-view-evidence',that.container),['none']);
-
+			that.speciesScreenCell = new ResultScreenSpeciesCell('Species',$('.screen-view-species',that.container),['none']);
+			
 			that.screens = [
 				that.viewAllScreenCell,
 				that.antibioticClassScreenCell,
 				that.virulenceScreenCell,
-				that.evidenceScreenCell
+				that.evidenceScreenCell,
+				that.speciesScreenCell
 			];
 		}
 
@@ -89,7 +92,19 @@ var ResultScreen = BaseScreen.extend({
 	willShow:function(animated_) {
 		var that = this;
 		that._super(animated_);
-		that.displayCellAtIndex(0);
+		that.displayInitialCell();
+		return that;
+	},
+
+	displayInitialCell:function() {
+		var that = this;
+		if ( that.model.species.length > 1 ) {
+			// go to species
+			that.displayCellAtIndex(that.screens.indexOf(that.speciesScreenCell));
+		}
+		else {	
+			that.displayCellAtIndex(0);
+		}
 		return that;
 	},
 
@@ -194,11 +209,13 @@ var ResultScreen = BaseScreen.extend({
 			that.evidenceScreenCell.setViewModel(that.model.evidenceModel);
 		}
 		else {
+			that.speciesScreenCell.setViewModel(that.model.speciesModel);
 			that.viewAllScreenCell.setViewModel(that.model.viewAllModel);
 			that.antibioticClassScreenCell.setViewModel(that.model.antibioticClassModel);
 			that.virulenceScreenCell.setViewModel(that.model.virulenceMarkersModel);
 			that.evidenceScreenCell.setViewModel(that.model.evidenceModel);
 		}
+		that.displayInitialCell();
 		return that;
 	}
 });

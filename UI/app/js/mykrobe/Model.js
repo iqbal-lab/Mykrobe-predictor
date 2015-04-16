@@ -12,6 +12,45 @@ var Model = Class.extend({
     },
 
     loadFileWithPath:function(path_) {
+	
+	
+	    // Remove skeleton
+		var fs = require('fs');
+		
+		var path_skel = require('path');
+		
+		var delete_skeleton_file_tb = path_skel.join(process.cwd(),'/bin/predictor-tb/data/skeleton_binary/tb/skeleton.k15.ctx');		
+		console.log('CHECKING ' + delete_skeleton_file_tb);
+		fs.stat(delete_skeleton_file_tb, function(err, stat) {
+		if(err == null) {
+			console.log('Skeleton file exists, removing.');
+			
+			fs.unlink(delete_skeleton_file_tb, function (err) {
+				if (err) throw err;
+				console.log('DELETE ' + delete_skeleton_file_tb);
+			});
+			
+		} else {
+			console.log('This file does not exist:\n\n' + delete_skeleton_file_tb);
+		}
+		});
+		
+		var delete_skeleton_file_staph = path_skel.join(process.cwd(),'/bin/predictor-s-aureus/data/skeleton_binary/staph/skeleton.k15.ctx');		
+		console.log('CHECKING ' + delete_skeleton_file_staph);
+		fs.stat(delete_skeleton_file_staph, function(err, stat) {
+		if(err == null) {
+			console.log('Skeleton file exists, removing.');
+			
+			fs.unlink(delete_skeleton_file_staph, function (err) {
+				if (err) throw err;
+				console.log('DELETE ' + delete_skeleton_file_staph);
+			});
+			
+		} else {
+			console.log('This file does not exist:\n\n' + delete_skeleton_file_staph);
+		}
+		});
+	
         var that = this,
             extension;
         that.cancelLoadFile();
@@ -66,22 +105,29 @@ var Model = Class.extend({
     _pathToBin:function() {
         var that = this,
             path = require("path"),
-            platform = require("os").platform,
+            platform = require("os").platform(),
+            platformFolder = '',
             chmodSync = require("fs").chmodSync,
             pathToBin = '';
-        switch (platform()) {
+
+        // will be 'darwin', 'win64' or 'win64'
+        // FIXME: not tested for Linux
+        platformFolder = platform;
+
+        switch (platform) {
             case "darwin":
-                if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-                    pathToBin = path.join('bin',MykrobeTarget.targetName,'osx','Mykrobe.predictor.tb');
-                }
-                else {
-                    pathToBin = path.join('bin',MykrobeTarget.targetName,'osx','Mykrobe.predictor.staph');
-                }
+                // use 'osx' folder for Mac
+                platformFolder = 'osx';
                 break;
-            case "win32":
-                pathToBin = path.join('bin',MykrobeTarget.targetName,'win32','MykrobeStub.exe');
-                break;
+        };
+
+        if ( kTargetSpeciesTB === MykrobeTarget.species ) {
+            pathToBin = path.join('bin',MykrobeTarget.targetName,platformFolder,'Mykrobe.predictor.tb');
         }
+        else {
+            pathToBin = path.join('bin',MykrobeTarget.targetName,platformFolder,'Mykrobe.predictor.staph');
+        }
+
         chmodSync(pathToBin, 0755);
         return pathToBin;
     },
@@ -127,19 +173,13 @@ var Model = Class.extend({
             isValid = false;
             requiredSpecies = [];
             if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-                requiredSpecies = [
-                    'M. tuberculosis',
-                    'M. africanum',
-                    'M. bovis',
-                    'Mixed MTB complex'
-                ];
+                requiredSpecies = 'MTBC';
             }
             else {
-                requiredSpecies = [
-                    'S.aureus'
-                ];
+                requiredSpecies = 'Staphylococcus aureus';
             }
-            isValid = requiredSpecies.indexOf(that.species[0]) !== -1;
+            // isValid = requiredSpecies.indexOf(that.species[0]) !== -1;
+            isValid = _.includes(that.phyloGroup,requiredSpecies);
             if ( isValid ) {
                 $(that).trigger("Model:didLoad", false);
             }
@@ -151,7 +191,7 @@ var Model = Class.extend({
                 "..is methicillin/penicillin resistant S. lugdunensis"
                 */
 
-                sampleName = that.species.join(' / ');
+                sampleName = that.phyloGroup.join(' / ');
                 if ( that.resistant.length ) {
                     resistantName = that.resistant.join(' / ');
                     sampleName = resistantName +' resistant ' + sampleName;
@@ -159,7 +199,7 @@ var Model = Class.extend({
 
                 $(that).trigger("Model:error", {
                     'path':path_, 
-                    'description':'This sample seems to be '+sampleName+', not '+requiredSpecies.join(' / ')+', and therefore the predictor does not give susceptibility predictions' 
+                    'description':'This sample seems to be '+sampleName+', not '+requiredSpecies+', and therefore the predictor does not give susceptibility predictions' 
                 });
             }
 
@@ -320,10 +360,7 @@ var Model = Class.extend({
         that.inducible = [];
 
         susceptibilityModel = that.json['susceptibility'];
-        virulenceModel = that.json['virulence_toxins'];
-        // now display in the order provided
-        // susceptibilityModel = that._sortObject(susceptibilityModel);
-        // virulenceModel = that._sortObject(virulenceModel);
+
 
         calledVariants = that.json['called_variants'];
         calledGenes = that.json['called_genes'];
@@ -371,30 +408,34 @@ var Model = Class.extend({
 
         that.evidenceModel = that._sortObject(that.evidenceModel);
 
+        // ignore the values
+        that.phyloGroup = _.keys(that.json.phylogenetics.phylo_group);
+
         // build array of included species
-        that.species = [];
-        if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-            sourceSpecies = that.json.phylogenetics.species;
-        }
-        else {
-            sourceSpecies = that.json.species;
-        }
-        for ( key in sourceSpecies ) {
-            value = sourceSpecies[key].toLowerCase();
-            if ( 'major' === value ) {
-                that.species.push(key);
-            }
-        }
+        that.species = _.keys(that.json.phylogenetics.species);
+                // if ( kTargetSpeciesTB === MykrobeTarget.species ) {
+            // sourceSpecies = that.json.phylogenetics.species;
+        // }
+        // else {
+        //     sourceSpecies = that.json.species;
+        // }
+        // for ( key in sourceSpecies ) {
+        //     value = sourceSpecies[key].toLowerCase();
+        //     if ( 'major' === value ) {
+        //         that.species.push(key);
+        //     }
+        // }
 
         that.lineage = [];
         if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-            sourceLineage = that.json.phylogenetics.lineage;
-            for ( key in sourceLineage ) {
-                value = sourceLineage[key].toLowerCase();
-                if ( 'major' === value ) {
-                    that.lineage.push(key);
-                }
-            }
+            that.lineage = _.keys(that.json.phylogenetics.lineage);
+            // sourceLineage = that.json.phylogenetics.lineage;
+            // for ( key in sourceLineage ) {
+                // value = sourceLineage[key].toLowerCase();
+                // if ( 'major' === value ) {
+                // that.lineage.push(key);
+                // }
+            // }
         }
 
         for ( key in susceptibilityModel ) {
@@ -414,13 +455,16 @@ var Model = Class.extend({
             }
         }
 
-        for ( key in virulenceModel ) {
-            value = virulenceModel[key].toUpperCase();
-            if ( 'POSITIVE' === value ) {
-                that.positive.push(key);
-            }       
-            else if ( 'NEGATIVE' === value ) {
-                that.negative.push(key);
+        if ( 'virulence_toxins' in that.json) {
+            virulenceModel = that.json['virulence_toxins'];
+            for ( key in virulenceModel ) {
+                value = virulenceModel[key].toUpperCase();
+                if ( 'POSITIVE' === value ) {
+                    that.positive.push(key);
+                }       
+                else if ( 'NEGATIVE' === value ) {
+                    that.negative.push(key);
+                }
             }
         }
 
@@ -696,10 +740,10 @@ var Model = Class.extend({
         }
 
         if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-            that.speciesModel = that.species[0] +' (lineage: '+that.lineage[0]+')';
+            that.speciesModel = that.species.join(' / ') +' (lineage: '+that.lineage[0]+')';
         }
         else {
-            that.speciesModel = that.species[0];
+            that.speciesModel = that.species.join(' / ');
         }
         return that;
     },
