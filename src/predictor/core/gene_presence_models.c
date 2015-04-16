@@ -387,7 +387,7 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 
 
   double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
-  double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
+  double llk_M = -999999; //get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
   double llk_S = get_log_lik_truly_susceptible(gi, 
 					       lambda_e, 
 					       kmer);
