@@ -11,7 +11,7 @@ sh install.sh
 
 to compile libraries. 
 
------- Compilation ---------
+### Compilation ###
 
 To compile for Staphylococcus
 
@@ -25,8 +25,21 @@ make TB=1 predictor
 
 creates an executable bin/Mykrobe.predictor.tb
 
+See below for compiling on a Mac
 
-### To download and compile on Mac ###
+---- Usage -----
+
+Standard usage
+
+Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/myKrobe-predictor
+
+Add --progress
+if you want to see progress.
+
+
+Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases
+
+--- To download and compile on Mac ---
 
 In order to install on Mac you may need to install gcc via homebrew or macports. 
 
@@ -41,14 +54,5 @@ not
 
 Apple LLVM version 6.0 (clang-600.0.57)
 
----- Usage -----
 
-Standard usage
-
-Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/myKrobe-predictor
-
-Add --progress
-if you want to see progress.
-
-
-Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases.
+.
