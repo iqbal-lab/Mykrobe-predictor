@@ -39,6 +39,9 @@ if you want to see progress.
 
 Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases
 
+
+
+
 --- To download and compile on Mac ---
 
 In order to install on Mac you may need to install gcc via homebrew or macports. 
