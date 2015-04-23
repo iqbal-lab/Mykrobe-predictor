@@ -27,7 +27,7 @@ creates an executable bin/Mykrobe.predictor.tb
 
 See below for compiling on a Mac
 
----- Usage -----
+### Usage ###
 
 Standard usage
 
