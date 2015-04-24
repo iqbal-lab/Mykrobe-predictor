@@ -13,7 +13,7 @@ sh install.sh
 
 To compile for S.aureus, run the following command 
 
-** make STAPH=1 predictor **
+**make STAPH=1 predictor**
 
 to create this executable 
 
@@ -21,7 +21,7 @@ bin/Mykrobe.predictor.staph
 
 To compile for M.tuberculosis, run the following command 
 
-** make TB=1 predictor **
+**make TB=1 predictor**
 
 to create this executable 
 
