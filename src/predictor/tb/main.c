@@ -328,15 +328,15 @@ int main(int argc, char **argv)
 				  &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes);   
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+  /*  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); 
+				  called_variants,called_genes); */
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
-    print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
 				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
