@@ -32,7 +32,7 @@ Apple LLVM version 6.0 (clang-600.0.57)
 
 Standard usage
 
-Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/myKrobe-predictor
+Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/Mykrobe-predictor
 
 Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases
 
