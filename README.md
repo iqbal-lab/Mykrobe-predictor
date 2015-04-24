@@ -28,14 +28,11 @@ to create this executable
 bin/Mykrobe.predictor.tb
 
 
-To download and compile on Mac
-
-In order to install on Mac you may need to install gcc via homebrew or macports. Running 
-$ gcc -v 
+[In order to install on Mac you may need to install gcc via homebrew or macports. Running  "gcc -v" 
 should return something like:
-gcc version 4.9.2 (Homebrew gcc49 4.9.2_1)
+"gcc version 4.9.2 (Homebrew gcc49 4.9.2_1)"
 not 
-Apple LLVM version 6.0 (clang-600.0.57)
+"Apple LLVM version 6.0 (clang-600.0.57)"
 
 ### Usage ###
 
