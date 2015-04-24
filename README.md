@@ -19,7 +19,14 @@ To compile for M.tuberculosis, the following command creates an executable bin/M
 
 make TB=1 predictor
 
-See below for compiling on a Mac
+To download and compile on Mac
+
+In order to install on Mac you may need to install gcc via homebrew or macports. Running 
+$ gcc -v 
+should return something like:
+gcc version 4.9.2 (Homebrew gcc49 4.9.2_1)
+not 
+Apple LLVM version 6.0 (clang-600.0.57)
 
 ### Usage ###
 
@@ -34,20 +41,7 @@ Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, w
 We have a preprint of the paper describing Mykrobe predictor here:
 
 
---- To download and compile on Mac ---
 
-In order to install on Mac you may need to install gcc via homebrew or macports. 
-
-Running 
-$ gcc -v 
-
-should return something like:
-
-gcc version 4.9.2 (Homebrew gcc49 4.9.2_1)
-
-not 
-
-Apple LLVM version 6.0 (clang-600.0.57)
 
 
 .
