@@ -45,6 +45,8 @@ Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, w
 
 ### Paper, citation ###
 We have a preprint of the paper describing Mykrobe predictor here:
+http://biorxiv.org/content/early/2015/04/26/018564
+Please cite us if you use Mykrobe predictor in a publication
 
 
 
