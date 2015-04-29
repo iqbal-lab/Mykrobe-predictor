@@ -130,6 +130,8 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case ccrCc : return "";
     
+    case chp : return "";
+    
     case eta : return "";
     
     case etb : return "";
@@ -138,15 +140,19 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case luk : return "";
     
-    case lukPVF : return "";
-    
-    case lukPVS : return "";
-    
     case lukM : return "";
     
     case lukMF : return "";
     
+    case lukPVF : return "";
+    
+    case lukPVS : return "";
+    
+    case sak : return "";
+    
     case sasX : return "";
+    
+    case scn : return "";
     
     case sea : return "";
     
@@ -166,19 +172,13 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case sej : return "";
     
-    case seu : return "";
-    
     case selR : return "";
     
     case sep : return "";
     
+    case seu : return "";
+    
     case tsst1 : return "";
-    
-    case chp : return "";
-    
-    case sak : return "";
-    
-    case scn : return "";
     
    }
    return "unknown";
@@ -3566,6 +3566,102 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
     
+	Troolean is_chp_positive(dBGraph* db_graph,
+			   int (*file_reader)(FILE * fp, 
+					      Sequence * seq, 
+					      int max_read_length, 
+					      boolean new_entry, 
+					      boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
+			   
+
+{
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/chp.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  strbuf_free(fa);
+  return is_pos;
+
+}
+	void print_chp_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
+{
+
+  Troolean result = is_chp_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  
+  if (format==Stdout)
+    {
+      printf("chp\t");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
+    }
+  else
+    {
+      
+      if (result==true)
+	{
+	  print_json_item("chp", "positive",  false  );
+	}
+      else
+	{
+	  print_json_item("chp", "negative",  false );
+	}
+      
+    }
+}
+
+
+
+    
 	Troolean is_eta_positive(dBGraph* db_graph,
 			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
@@ -3950,198 +4046,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
     
-	Troolean is_lukpvf_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/lukPVF.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
-	void print_lukpvf_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
-
-  Troolean result = is_lukpvf_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("lukPVF\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      
-      if (result==true)
-	{
-	  print_json_item("lukPVF", "positive",  false  );
-	}
-      else
-	{
-	  print_json_item("lukPVF", "negative",  false );
-	}
-      
-    }
-}
-
-
-
-    
-	Troolean is_lukpvs_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/lukPVS.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
-	void print_lukpvs_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
-
-  Troolean result = is_lukpvs_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("lukPVS\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      
-      if (result==true)
-	{
-	  print_json_item("lukPVS", "positive",  false  );
-	}
-      else
-	{
-	  print_json_item("lukPVS", "negative",  false );
-	}
-      
-    }
-}
-
-
-
-    
 	Troolean is_lukm_positive(dBGraph* db_graph,
 			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
@@ -4334,6 +4238,294 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
     
+	Troolean is_lukpvf_positive(dBGraph* db_graph,
+			   int (*file_reader)(FILE * fp, 
+					      Sequence * seq, 
+					      int max_read_length, 
+					      boolean new_entry, 
+					      boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
+			   
+
+{
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/lukPVF.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  strbuf_free(fa);
+  return is_pos;
+
+}
+	void print_lukpvf_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
+{
+
+  Troolean result = is_lukpvf_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  
+  if (format==Stdout)
+    {
+      printf("lukPVF\t");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
+    }
+  else
+    {
+      
+      if (result==true)
+	{
+	  print_json_item("lukPVF", "positive",  false  );
+	}
+      else
+	{
+	  print_json_item("lukPVF", "negative",  false );
+	}
+      
+    }
+}
+
+
+
+    
+	Troolean is_lukpvs_positive(dBGraph* db_graph,
+			   int (*file_reader)(FILE * fp, 
+					      Sequence * seq, 
+					      int max_read_length, 
+					      boolean new_entry, 
+					      boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
+			   
+
+{
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/lukPVS.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  strbuf_free(fa);
+  return is_pos;
+
+}
+	void print_lukpvs_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
+{
+
+  Troolean result = is_lukpvs_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  
+  if (format==Stdout)
+    {
+      printf("lukPVS\t");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
+    }
+  else
+    {
+      
+      if (result==true)
+	{
+	  print_json_item("lukPVS", "positive",  false  );
+	}
+      else
+	{
+	  print_json_item("lukPVS", "negative",  false );
+	}
+      
+    }
+}
+
+
+
+    
+	Troolean is_sak_positive(dBGraph* db_graph,
+			   int (*file_reader)(FILE * fp, 
+					      Sequence * seq, 
+					      int max_read_length, 
+					      boolean new_entry, 
+					      boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
+			   
+
+{
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/sak.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  strbuf_free(fa);
+  return is_pos;
+
+}
+	void print_sak_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
+{
+
+  Troolean result = is_sak_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  
+  if (format==Stdout)
+    {
+      printf("sak\t");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
+    }
+  else
+    {
+      
+      if (result==true)
+	{
+	  print_json_item("sak", "positive",  false  );
+	}
+      else
+	{
+	  print_json_item("sak", "negative",  false );
+	}
+      
+    }
+}
+
+
+
+    
 	Troolean is_sasx_positive(dBGraph* db_graph,
 			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
@@ -4422,6 +4614,102 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
       else
 	{
 	  print_json_item("sasX", "negative",  false );
+	}
+      
+    }
+}
+
+
+
+    
+	Troolean is_scn_positive(dBGraph* db_graph,
+			   int (*file_reader)(FILE * fp, 
+					      Sequence * seq, 
+					      int max_read_length, 
+					      boolean new_entry, 
+					      boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
+			   
+
+{
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/scn.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  strbuf_free(fa);
+  return is_pos;
+
+}
+	void print_scn_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
+{
+
+  Troolean result = is_scn_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  
+  if (format==Stdout)
+    {
+      printf("scn\t");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
+    }
+  else
+    {
+      
+      if (result==true)
+	{
+	  print_json_item("scn", "positive",  false  );
+	}
+      else
+	{
+	  print_json_item("scn", "negative",  false );
 	}
       
     }
@@ -5294,102 +5582,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
     
-	Troolean is_seu_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/seu.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
-	void print_seu_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
-
-  Troolean result = is_seu_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("seu\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      
-      if (result==true)
-	{
-	  print_json_item("seu", "positive",  false  );
-	}
-      else
-	{
-	  print_json_item("seu", "negative",  false );
-	}
-      
-    }
-}
-
-
-
-    
 	Troolean is_selr_positive(dBGraph* db_graph,
 			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
@@ -5582,6 +5774,102 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 
 
     
+	Troolean is_seu_positive(dBGraph* db_graph,
+			   int (*file_reader)(FILE * fp, 
+					      Sequence * seq, 
+					      int max_read_length, 
+					      boolean new_entry, 
+					      boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir)
+			   
+
+{
+  StrBuf* fa = strbuf_create(install_dir->buff);
+  strbuf_append_str(fa, "data/staph/virulence/seu.fa");
+
+  FILE* fp = fopen(fa->buff, "r");
+  if (fp==NULL)
+    {
+      die("Cannot open %s\n", fa->buff);
+    }
+  int num=1;
+  boolean is_pos=false;
+  while (num>0)
+    {
+      num = get_next_gene_info(fp,
+			       db_graph,
+			       tmp_gi,
+			       rutils->seq,
+			       rutils->kmer_window,
+			       file_reader,
+			       rutils->array_nodes,
+			       rutils->array_or,
+			       rutils->working_ca,
+			       MAX_LEN_GENE);
+      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
+	{
+	  is_pos=true;
+	}
+    }
+  fclose(fp);
+  strbuf_free(fa);
+  return is_pos;
+
+}
+	void print_seu_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format)
+{
+
+  Troolean result = is_seu_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
+  
+  if (format==Stdout)
+    {
+      printf("seu\t");
+      if (result==true)
+	{
+	  printf("positive\n");
+	}
+      else
+	{
+	  printf("negative\n");
+	}
+    }
+  else
+    {
+      
+      if (result==true)
+	{
+	  print_json_item("seu", "positive",  false  );
+	}
+      else
+	{
+	  print_json_item("seu", "negative",  false );
+	}
+      
+    }
+}
+
+
+
+    
 	Troolean is_tsst1_positive(dBGraph* db_graph,
 			   int (*file_reader)(FILE * fp, 
 					      Sequence * seq, 
@@ -5665,299 +5953,11 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
       
       if (result==true)
 	{
-	  print_json_item("tsst1", "positive",  false  );
+	  print_json_item("tsst1", "positive", true  );
 	}
       else
 	{
-	  print_json_item("tsst1", "negative",  false );
-	}
-      
-    }
-}
-
-
-
-    
-	Troolean is_chp_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/chp.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
-	void print_chp_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
-
-  Troolean result = is_chp_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("chp\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      
-      if (result==true)
-	{
-	  print_json_item("chp", "positive",  false  );
-	}
-      else
-	{
-	  print_json_item("chp", "negative",  false );
-	}
-      
-    }
-}
-
-
-
-    
-	Troolean is_sak_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/sak.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
-	void print_sak_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
-
-  Troolean result = is_sak_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("sak\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      
-      if (result==true)
-	{
-	  print_json_item("sak", "positive",  false  );
-	}
-      else
-	{
-	  print_json_item("sak", "negative",  false );
-	}
-      
-    }
-}
-
-
-
-    
-	Troolean is_scn_positive(dBGraph* db_graph,
-			   int (*file_reader)(FILE * fp, 
-					      Sequence * seq, 
-					      int max_read_length, 
-					      boolean new_entry, 
-					      boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir)
-			   
-
-{
-  StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/staph/virulence/scn.fa");
-
-  FILE* fp = fopen(fa->buff, "r");
-  if (fp==NULL)
-    {
-      die("Cannot open %s\n", fa->buff);
-    }
-  int num=1;
-  boolean is_pos=false;
-  while (num>0)
-    {
-      num = get_next_gene_info(fp,
-			       db_graph,
-			       tmp_gi,
-			       rutils->seq,
-			       rutils->kmer_window,
-			       file_reader,
-			       rutils->array_nodes,
-			       rutils->array_or,
-			       rutils->working_ca,
-			       MAX_LEN_GENE);
-      if (tmp_gi->percent_nonzero > MIN_PERC_COVG_VIRULENCE)
-	{
-	  is_pos=true;
-	}
-    }
-  fclose(fp);
-  strbuf_free(fa);
-  return is_pos;
-
-}
-	void print_scn_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format)
-{
-
-  Troolean result = is_scn_positive(db_graph, file_reader, rutils, tmp_gi, install_dir);
-  
-  if (format==Stdout)
-    {
-      printf("scn\t");
-      if (result==true)
-	{
-	  printf("positive\n");
-	}
-      else
-	{
-	  printf("negative\n");
-	}
-    }
-  else
-    {
-      
-      if (result==true)
-	{
-	  print_json_item("scn", "positive", true  );
-	}
-      else
-	{
-	  print_json_item("scn", "negative", true );
+	  print_json_item("tsst1", "negative", true );
 	}
       
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  *
  *  cmd_line.c
 */
@@ -13,8 +13,26 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <math.h>
-#include <err.h>
+#ifndef _WIN32
+  #include <err.h>
+#endif
 #include <errno.h>
+
+#ifdef __mingw__
+  #define __override_realpath(N,R) _fullpath((R),(N),_MAX_PATH)
+  #define warnx(...) do { \
+        fprintf (stderr, __VA_ARGS__); \
+        fprintf (stderr, "\n"); \
+  } while (0)
+
+  #define errx(code, ...) do { \
+        fprintf (stderr, __VA_ARGS__); \
+        fprintf (stderr, "\n"); \
+        exit (code); \
+  } while (0)
+#else
+  #define __override_realpath(N,R) realpath(N,R)
+#endif
 
 // myKrobe headers
 #include "cmd_line.h"
@@ -172,7 +190,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	  }
 	}	
 	strbuf_append_str(cmdline_ptr->install_dir, tmp->buff);
-	strbuf_append_str(tmp, "data/staph/antibiotics/penicillin.fa");
+	strbuf_append_str(tmp, "data/staph/species/Saureus.fasta");
 	if (access(tmp->buff,F_OK)!=0)
 	  {
 	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of myKrobe.predictor. Cannot find %s\n", tmp->buff);
@@ -184,7 +202,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       {
 	if (access(optarg,F_OK)==0) 
 	  {
-	    char* full_path = realpath(optarg,NULL);
+	    char* full_path = __override_realpath(optarg,NULL);
 	    strbuf_append_str(cmdline_ptr->seq_path,full_path );
 	    free(full_path);
 	    cmdline_ptr->input_list=true;
@@ -200,7 +218,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       {
 	if (access(optarg,F_OK)==0)
 	  {
-	    char* full_path = realpath(optarg,NULL);
+	    char* full_path = __override_realpath(optarg,NULL);
 	    strbuf_append_str(cmdline_ptr->seq_path, full_path);
 	    free(full_path);
 	    cmdline_ptr->input_file=true;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
  *  genotyping_known.c - taking known resistance mutations and genotyping

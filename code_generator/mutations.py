@@ -1,4 +1,5 @@
 from Bio import SeqIO
+from os import path
 
 class MutationFasta(object):
 
@@ -9,14 +10,16 @@ class MutationFasta(object):
 		self.read_mut_file()
 
 	def read_mut_file(self):
-		handle = open("%s.fa" % self.filepath, "r")
-		for record in SeqIO.parse(handle, "fasta") :
-			mut = self.mut_enum(record.id)
-			if not mut in self.mut_list:
-				self.mut_list.append(mut)
-			gene = self.gene_enum(record.id)
-			if not gene in self.mut_gene_list:
-				self.mut_gene_list.append(gene)
+		filepath = "%s.fa" % self.filepath
+		if path.exists(filepath):
+			handle = open(filepath, "r")
+			for record in SeqIO.parse(handle, "fasta") :
+				mut = self.mut_enum(record.id)
+				if not mut in self.mut_list:
+					self.mut_list.append(mut)
+				gene = self.gene_enum(record.id)
+				if not gene in self.mut_gene_list:
+					self.mut_gene_list.append(gene)
 
 	def mut_enum(self,record_id):
 		mut_code = record_id.split('_')[1]

@@ -1,0 +1,38 @@
+{
+  "expected_depth": "71",
+  "mean_read_length": "90",
+  "phylogenetics": {
+    "phylo_group": {
+      "MTBC": "121"
+    },
+    "species": {
+      "M. tuberculosis": "79"
+    },
+    "lineage": {
+      "Delhi/Central Asia": "89"
+    }
+  },
+  "susceptibility": {
+    "Isoniazid": "R",
+    "Rifampicin": "S",
+    "Ethambutol": "S",
+    "Pyrazinamide": "S",
+    "Quinolones": "S",
+    "Streptomycin": "S",
+    "Amikacin": "S",
+    "Capreomycin": "S",
+    "Kanamycin": "S"
+  },
+  "called_variants": {
+    "katG_S315X": {
+      "R_per_cov": "100",
+      "S_per_cov": "100",
+      "R_median_cov": "87",
+      "S_median_cov": "1",
+      "conf": "227",
+      "induced_resistance": "Isoniazid"
+    }
+  },
+  "called_genes": {},
+  "virulence_toxins": {}
+}

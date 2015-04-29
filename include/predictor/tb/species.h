@@ -1,16 +1,10 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
  *  species.h
 */
 
-/*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
- * 
- *
- *  species.h
-*/
 #include "dB_graph.h"
 #include "base_species.h"
 

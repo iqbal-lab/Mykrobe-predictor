@@ -250,7 +250,8 @@ int get_best_hit(CovgInfo* covg_info,boolean* mask)
   int i;
   int best_perc_cov_so_far=0;
   int best_median_cov_so_far=0;
-  int curr=-1;
+  Species unknown_enum = unknown;
+  int curr=(int) unknown_enum;
 
   for (i=0; i<covg_info->NUM_PANELS; i++)
   {

@@ -589,6 +589,10 @@ int main(int argc, char **argv)
 		     &is_ccrcc_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
+  print_chp_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_chp_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
   print_eta_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_eta_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
@@ -605,14 +609,6 @@ int main(int argc, char **argv)
 		     &is_luk_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
-  print_lukpvf_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_lukpvf_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
-  print_lukpvs_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_lukpvs_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
   print_lukm_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_lukm_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
@@ -621,8 +617,24 @@ int main(int argc, char **argv)
 		     &is_lukmf_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
+  print_lukpvf_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_lukpvf_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_lukpvs_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_lukpvs_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_sak_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_sak_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
   print_sasx_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_sasx_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
+  print_scn_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_scn_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
   print_sea_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
@@ -661,10 +673,6 @@ int main(int argc, char **argv)
 		     &is_sej_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
-  print_seu_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_seu_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
   print_selr_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_selr_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
@@ -673,20 +681,12 @@ int main(int argc, char **argv)
 		     &is_sep_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
+  print_seu_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_seu_positive, 
+		     cmd_line->install_dir, cmd_line->format); 
+  
   print_tsst1_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
 		     &is_tsst1_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
-  print_chp_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_chp_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
-  print_sak_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_sak_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
-  print_scn_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_scn_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
   print_json_virulence_end();

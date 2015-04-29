@@ -1,0 +1,40 @@
+{
+  "expected_depth": "25",
+  "mean_read_length": "99",
+  "phylogenetics": {
+    "phylo_group": {
+      "MTBC": "24",
+      "NTM": "6"
+    },
+    "species": {
+      "M. tuberculosis": "17",
+      "M. avium": "6"
+    },
+    "lineage": {
+      "European/American": "18"
+    }
+  },
+  "susceptibility": {
+    "Isoniazid": "R",
+    "Rifampicin": "S",
+    "Ethambutol": "S",
+    "Pyrazinamide": "S",
+    "Quinolones": "S",
+    "Streptomycin": "S",
+    "Amikacin": "S",
+    "Capreomycin": "S",
+    "Kanamycin": "S"
+  },
+  "called_variants": {
+    "katG_S315X": {
+      "R_per_cov": "100",
+      "S_per_cov": "0",
+      "R_median_cov": "22",
+      "S_median_cov": "0",
+      "conf": "237",
+      "induced_resistance": "Isoniazid"
+    }
+  },
+  "called_genes": {},
+  "virulence_toxins": {}
+}

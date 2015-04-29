@@ -1,12 +1,12 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
  *  species.h
 */
 
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
  *  base_species.h
@@ -28,7 +28,8 @@ typedef enum
 Saureus=0,
 Sepidermidis = 1,
 Shaemolyticus = 2,
-Sother=3
+Sother=3,
+unknown=4
 } Species ;
 
 #define NUM_SPECIES 4
@@ -90,7 +91,8 @@ typedef enum
   tusciae = 39,
   ulcerans = 40,
   vaccae = 41,
-  xenopi = 42
+  xenopi = 42,
+  unknown = 43
   } Species ;
 
 #define NUM_SPECIES 43

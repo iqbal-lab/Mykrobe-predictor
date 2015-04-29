@@ -137,10 +137,10 @@ var MykrobeApp = Class.extend({
 	    // that.model.loadFileWithPath('./model/output.json');
 	    // that.error('Test');
 	    	if ( kTargetSpeciesTB === MykrobeTarget.species ) {
-			    that.model.loadFileWithPath('./model/tb-2.json');
+			    that.model.loadFileWithPath('../spec/fixtures/tb/MTBC_NTM_mixed.json');
 		   	}
 		   	else {
-		   		that.model.loadFileWithPath('./model/staph-6.json');
+		   		that.model.loadFileWithPath('../spec/fixtures/staph/mixed_staph.json');
 		   	}
 	    }
 	},

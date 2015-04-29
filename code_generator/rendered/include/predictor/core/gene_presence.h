@@ -133,55 +133,55 @@ typedef enum
     
     ccrCc=55,
     
-    eta=56,
+    chp=56,
     
-    etb=57,
+    eta=57,
     
-    etd=58,
+    etb=58,
     
-    luk=59,
+    etd=59,
     
-    lukPVF=60,
+    luk=60,
     
-    lukPVS=61,
+    lukM=61,
     
-    lukM=62,
+    lukMF=62,
     
-    lukMF=63,
+    lukPVF=63,
     
-    sasX=64,
+    lukPVS=64,
     
-    sea=65,
+    sak=65,
     
-    seb=66,
+    sasX=66,
     
-    sec=67,
+    scn=67,
     
-    sed=68,
+    sea=68,
     
-    see=69,
+    seb=69,
     
-    seg=70,
+    sec=70,
     
-    seh=71,
+    sed=71,
     
-    sei=72,
+    see=72,
     
-    sej=73,
+    seg=73,
     
-    seu=74,
+    seh=74,
     
-    selR=75,
+    sei=75,
     
-    sep=76,
+    sej=76,
     
-    tsst1=77,
+    selR=77,
     
-    chp=78,
+    sep=78,
     
-    sak=79,
+    seu=79,
     
-    scn=80,
+    tsst1=80,
     
     unspecified_gpg = 81
   } GenePresenceGene;

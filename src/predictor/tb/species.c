@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
  *  species.c
@@ -41,7 +41,12 @@ void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf)
 
 void map_species_enum_to_str(Species sp, StrBuf* sbuf)
 {
-  if (sp==abscessus)
+  if (sp==unknown)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"Unknown Species");
+    }  
+  else if (sp==abscessus)
     {
       strbuf_reset(sbuf);
       strbuf_append_str(sbuf,"M. abscessus");

@@ -1,0 +1,9 @@
+[submodule "libs/htslib"]
+	path = libs/htslib
+	url = https://github.com/Phelimb/htslib.git
+[submodule "libs/string_buffer"]
+	path = libs/string_buffer
+	url = https://github.com/Phelimb/string_buffer.git
+[submodule "libs/seq_file"]
+	path = libs/seq_file
+	url = https://github.com/Phelimb/seq_file.git

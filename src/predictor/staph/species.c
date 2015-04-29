@@ -1,27 +1,6 @@
 /*
- * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
- *
- * **********************************************************************
- *
- * This file is part of Mykrobe.
- *
- * Mykrobe is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Mykrobe is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Mykrobe.  If not, see <http://www.gnu.org/licenses/>.
- *
- * **********************************************************************
- */
-/*
   species.c
 */
 
@@ -61,7 +40,12 @@ void map_phylo_group_enum_to_str(PhyloGroup sp, StrBuf* sbuf)
 
 void map_species_enum_to_str(Species staph_species, StrBuf* sbuf)
 {
-  if (staph_species==Saureus)
+  if (staph_species==unknown)
+    {
+      strbuf_reset(sbuf);
+      strbuf_append_str(sbuf,"Unknown Species");
+    }
+  else if (staph_species==Saureus)
     {
       strbuf_reset(sbuf);
       strbuf_append_str(sbuf,"S. aureus");
