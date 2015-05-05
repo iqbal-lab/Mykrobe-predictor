@@ -549,6 +549,8 @@ boolean* create_NTM_mask()
 Species get_best_MTBC_species(SpeciesInfo* species_info ){
   boolean* mask = create_MTBC_mask();
   int species_enum = get_best_hit(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
   Species species = species_enum;
   return (species);
 }
@@ -556,6 +558,8 @@ Species get_best_MTBC_species(SpeciesInfo* species_info ){
 Species get_best_NTM_species(SpeciesInfo* species_info ){
   boolean* mask = create_NTM_mask();
   int species_enum  = get_best_hit(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
   Species species = species_enum;
   return (species);
 }
@@ -563,6 +567,8 @@ Species get_best_NTM_species(SpeciesInfo* species_info ){
 Lineage get_best_lineage(SpeciesInfo* species_info ){
   boolean* mask= create_mask(true);
   int lineage_enum  = get_best_hit(species_info->lineage_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
   Lineage lineage = lineage_enum;
   return (lineage);
 }
@@ -570,11 +576,15 @@ Lineage get_best_lineage(SpeciesInfo* species_info ){
 boolean MTBC_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_MTBC_mask();
   boolean MTBC_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
   return (MTBC_species_panels_are_present);
 }
 boolean NTM_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_NTM_mask();
   boolean NTM_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
   return (NTM_species_panels_are_present);  
 }
 
