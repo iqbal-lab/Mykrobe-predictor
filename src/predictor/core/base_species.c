@@ -120,6 +120,7 @@ void get_coverage_on_panels(int* percentage_coverage,int* median_coverage,
     } 
   fclose(fp);
   }
+  free(ai);
 }
 
 int get_ith_coverage_panel(CovgInfo* covg_info, int i)
