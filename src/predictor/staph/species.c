@@ -126,6 +126,8 @@ boolean* create_non_aureus_mask()
 boolean non_aureus_panels_are_present(SpeciesInfo* species_info){
   boolean* mask = create_non_aureus_mask();
   boolean non_aureus_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);
   return (non_aureus_species_panels_are_present);
 }
 
@@ -136,6 +138,8 @@ boolean no_non_aureus_panels_are_present(SpeciesInfo* species_info){
 boolean staphylococcus_is_present(SpeciesInfo* species_info){
   boolean* mask = create_staph_mask();
   boolean staph_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);  
   return (staph_species_panels_are_present);
 }
 
@@ -143,6 +147,8 @@ Species get_best_staph_species(SpeciesInfo* species_info ){
   boolean* mask = create_staph_mask();
   int species_enum = get_best_hit(species_info->species_covg_info,mask);
   Species species = species_enum;
+  // Finished with the mask so we need to free it. 
+  free(mask);  
   return (species);
 }
 
@@ -150,6 +156,8 @@ Species get_best_non_aureus_species(SpeciesInfo* species_info ){
   boolean* mask = create_non_aureus_mask();
   int species_enum  = get_best_hit(species_info->species_covg_info,mask);
   Species species = species_enum;
+  // Finished with the mask so we need to free it. 
+  free(mask);  
   return (species);
 }
 
