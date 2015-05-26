@@ -33,7 +33,7 @@ IDIR_PREDICTOR_CORE = include/predictor/core
 # Test code includes
 IDIR_BASIC_TESTS = libs/cortex/include/test/basic
 IDIR_HASH_TABLE_TESTS = libs/cortex/include/test/hash_table
-IDIR_PREDICTOR_TESTS = include/test/myKrobe/predictor
+IDIR_PREDICTOR_TESTS = include/test/Mykrobe/predictor
 
 
 IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
@@ -202,7 +202,7 @@ src/obj/test/hash_table/hash_key/bob_jenkins/%.o : libs/cortex/src/hash_table/ha
 src/obj/test/hash_table/%.o : libs/cortex/src/test/hash_table/%.c libs/cortex/include/test/hash_table/%.h
 	mkdir -p src/obj/test/hash_table; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
 
-src/obj/test/predictor/%.o : src/test/myKrobe/predictor/%.c include/test/myKrobe/predictor/%.h
+src/obj/test/predictor/%.o : src/test/Mykrobe/predictor/%.c include/test/Mykrobe/predictor/%.h
 	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -c $< -o $@
 
 src/obj/test/predictor/%.o : src/predictor/core/%.c include/predictor/core/%.h
