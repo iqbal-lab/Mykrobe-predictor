@@ -40,18 +40,30 @@ void test_get_next_gene_info()
   uint64_t* kmer_covg_array = calloc(150, sizeof(uint64_t));
   uint64_t* readlen_array = calloc(max_gene_len, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/gene_presence/sample1.fa.list");
-  unsigned long long  num_bases = build_unclean_graph(db_graph, 
-						      list, true,
-						      kmer_size,
-						      readlen_array, max_gene_len,
-						      kmer_covg_array, 150,
-						      false, 0);
+  StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/gene_presence/sample1.fa.list");
+  uint64_t dummy=0;
+  boolean is_rem=true;
+  build_unclean_graph(db_graph, 
+          list,
+          true,
+          kmer_size,
+          readlen_array,
+          max_gene_len,
+          kmer_covg_array,
+          150, // Len kmer coverage array
+          false, // Only load preexisting kmers
+           0, // Into colout
+          NULL, // (*subsample_function)(),
+          false, //  print_progress_info,
+          &dummy, //  count_so_far,
+           0,  //  total_reads_in_dataset,
+            &is_rem ); //  is_a_remainder)
 
-  FILE* fp = fopen("../data/test/myKrobe/predictor/gene_presence/panel1.fasta", "r");
+
+  FILE* fp = fopen("../data/test/Mykrobe/predictor/gene_presence/panel1.fasta", "r");
   if (fp==NULL)
     {
-      die("Cannot open this file: ../data/test/myKrobe/predictor/gene_presence/panel1.fasta");
+      die("Cannot open this file: ../data/test/Mykrobe/predictor/gene_presence/panel1.fasta");
     }
   
   GeneInfo* gi = alloc_and_init_gene_info();

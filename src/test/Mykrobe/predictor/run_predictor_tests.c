@@ -34,7 +34,7 @@ int  main()
 
   if (NULL == CU_add_test(pPopGraphSuite, 
 			  "Test getting coverage info on resistance/susceptibility alleles", 
-			  test_get_next_mutation_allele_info)) {
+			  test_get_next_var_on_background)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
@@ -62,10 +62,10 @@ int  main()
   }
   // run to get comments before test
   // test_get_species_info();
-  if (NULL == CU_add_test(pPopGraphSuite, "Test assigning a species to a sample", test_get_species_info)) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
+  // if (NULL == CU_add_test(pPopGraphSuite, "Test assigning a species to a sample", test_get_species_info)) {
+  //   CU_cleanup_registry();
+  //   return CU_get_error();
+  // }
 
   /* Run all tests using the CUnit Basic interface */
   CU_basic_set_mode(CU_BRM_VERBOSE);

@@ -25,7 +25,7 @@
 #include "genotyping_known.h"
 #include "mut_models.h"
 
-void test_get_next_mutation_allele_info()
+void test_get_next_var_on_background()
 {
   
   uint16_t kmer_size = 31;
@@ -67,7 +67,7 @@ void test_get_next_mutation_allele_info()
       die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps1.fa");
     }
   
-  VarOnBackground* rvi = alloc_and_init_var_on_background();
+  VarOnBackground* vob = alloc_and_init_var_on_background();
 
 
   //----------------------------------
@@ -122,62 +122,64 @@ void test_get_next_mutation_allele_info()
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
   int expected_covg = 9;
-  get_next_mutation_allele_info(fp, db_graph, rvi,
+  Var** vars;
+  vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);
+  get_next_var_on_background(fp, db_graph, vob,vars,
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg);
+				ignore, ignore, expected_covg, 0);
 
-  CU_ASSERT(rvi->susceptible_allele.median_covg==9);
-  CU_ASSERT(rvi->susceptible_allele.min_covg==9);
-  CU_ASSERT(rvi->susceptible_allele.percent_nonzero==100);
+  CU_ASSERT(vob->susceptible_allele.median_covg==9);
+  CU_ASSERT(vob->susceptible_allele.min_covg==9);
+  CU_ASSERT(vob->susceptible_allele.percent_nonzero==100);
 
-  CU_ASSERT(rvi->resistant_alleles[0].median_covg==0);
-  CU_ASSERT(rvi->resistant_alleles[0].min_covg==0);
-  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==0);
+  CU_ASSERT(vob->resistant_alleles[0].median_covg==0);
+  CU_ASSERT(vob->resistant_alleles[0].min_covg==0);
+  CU_ASSERT(vob->resistant_alleles[0].percent_nonzero==0);
 
 
 
-  get_next_mutation_allele_info(fp, db_graph, rvi,
+  get_next_var_on_background(fp, db_graph, vob, vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg);
+				ignore, ignore, expected_covg, 0);
 
 
-  CU_ASSERT(rvi->susceptible_allele.median_covg==0);
-  CU_ASSERT(rvi->susceptible_allele.min_covg==0);
-  CU_ASSERT(rvi->susceptible_allele.percent_nonzero==0);
+  CU_ASSERT(vob->susceptible_allele.median_covg==0);
+  CU_ASSERT(vob->susceptible_allele.min_covg==0);
+  CU_ASSERT(vob->susceptible_allele.percent_nonzero==0);
 
-  CU_ASSERT(rvi->resistant_alleles[0].median_covg==2);
-  CU_ASSERT(rvi->resistant_alleles[0].min_covg==2);
-  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==100);
+  CU_ASSERT(vob->resistant_alleles[0].median_covg==2);
+  CU_ASSERT(vob->resistant_alleles[0].min_covg==2);
+  CU_ASSERT(vob->resistant_alleles[0].percent_nonzero==100);
 
 
-  get_next_mutation_allele_info(fp, db_graph, rvi,
+  get_next_var_on_background(fp, db_graph, vob, vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg);
+				ignore, ignore, expected_covg, 0);
 
 
-  CU_ASSERT(rvi->susceptible_allele.median_covg==0);
-  CU_ASSERT(rvi->susceptible_allele.min_covg==0);
-  CU_ASSERT(rvi->susceptible_allele.percent_nonzero==0);
+  CU_ASSERT(vob->susceptible_allele.median_covg==0);
+  CU_ASSERT(vob->susceptible_allele.min_covg==0);
+  CU_ASSERT(vob->susceptible_allele.percent_nonzero==0);
 
-  CU_ASSERT(rvi->resistant_alleles[0].median_covg==0);
-  CU_ASSERT(rvi->resistant_alleles[0].min_covg==0);
-  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==0);
+  CU_ASSERT(vob->resistant_alleles[0].median_covg==0);
+  CU_ASSERT(vob->resistant_alleles[0].min_covg==0);
+  CU_ASSERT(vob->resistant_alleles[0].percent_nonzero==0);
 
 
 
   strbuf_free(temp_rid);
   strbuf_free(temp_mut);
   strbuf_free(temp_gene);
-  free_res_var_info(rvi);
+  free(vob);
   free(array_nodes);
   free(array_or);
   free_covg_array(working_ca);
@@ -209,12 +211,23 @@ void test_mutation_model_log_likelihoods_1()
   uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
 
   StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample2.fa.list");
+  uint64_t dummy=0;
+  boolean is_rem=true;
   build_unclean_graph(db_graph, 
-		      list, true,
-		      kmer_size,
-		      readlen_array, max_read_length,
-		      kmer_covg_array, 100,
-		      false, 0);
+          list,
+          true,
+          kmer_size,
+          readlen_array,
+          max_read_length,
+          kmer_covg_array,
+          100, // Len kmer coverage array
+          false, // Only load preexisting kmers
+           0, // Into colout
+          NULL, // (*subsample_function)(),
+          false, //  print_progress_info,
+          &dummy, //  count_so_far,
+           0,  //  total_reads_in_dataset,
+            &is_rem ); //  is_a_remainder)
   
   FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps2.fa", "r");
   if (fp==NULL)
@@ -222,7 +235,7 @@ void test_mutation_model_log_likelihoods_1()
       die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps2.fa");
     }
   
-  ResVarInfo* rvi = alloc_and_init_res_var_info();
+  VarOnBackground* vob = alloc_and_init_var_on_background();
 
 
   //----------------------------------
@@ -277,20 +290,22 @@ void test_mutation_model_log_likelihoods_1()
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
   int expected_covg = 100;
-  get_next_mutation_allele_info(fp, db_graph, rvi,
+  Var** vars;
+  vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);  
+  get_next_var_on_background(fp, db_graph, vob, vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg);
+				ignore, ignore, expected_covg, 0);
 
-  CU_ASSERT(rvi->susceptible_allele.median_covg==100);
-  CU_ASSERT(rvi->susceptible_allele.min_covg==100);
-  CU_ASSERT(rvi->susceptible_allele.percent_nonzero==100);
+  CU_ASSERT(vob->susceptible_allele.median_covg==100);
+  CU_ASSERT(vob->susceptible_allele.min_covg==100);
+  CU_ASSERT(vob->susceptible_allele.percent_nonzero==100);
 
-  CU_ASSERT(rvi->resistant_alleles[0].median_covg==1);
-  CU_ASSERT(rvi->resistant_alleles[0].min_covg==1);
-  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==100);
+  CU_ASSERT(vob->resistant_alleles[0].median_covg==1);
+  CU_ASSERT(vob->resistant_alleles[0].min_covg==1);
+  CU_ASSERT(vob->resistant_alleles[0].percent_nonzero==100);
 
 
   double error_rate = 0.01;
@@ -300,18 +315,21 @@ void test_mutation_model_log_likelihoods_1()
   double lambda = (double) expected_covg/(double) mean_read_len;
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
   double lambda_e = error_rate*(1-error_rate, kmer_size-1)*lambda;
-  double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi,
+  double llk_R = get_log_lik_minor_pop_resistant(vars[0],
 									  lambda_g,
 									  lambda_e,
-									  kmer_size);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi,
+									  kmer_size,
+                    error_rate,
+                    0.75);
+  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(vars[0],
 									       lambda_g,
 									       lambda_e,
 									       kmer_size);
-  double llk_M = get_log_lik_of_mixed_infection(rvi,
+  double llk_M = get_log_lik_minor_pop_resistant(vars[0],
 						lambda_g,
 						error_rate,
-						kmer_size);
+						kmer_size,error_rate,
+                    0.1);
 
   CU_ASSERT(llk_S > llk_R);
   CU_ASSERT(llk_S > llk_M);
@@ -319,16 +337,16 @@ void test_mutation_model_log_likelihoods_1()
 
   double confidence = 0;
   Model m;
-  choose_best_model(llk_R, llk_S, llk_M, &confidence, &m);
+  choose_ml_model(llk_R, llk_S, llk_M, &m);
   CU_ASSERT(m.type==Susceptible);
   
-  InfectionType t = best_model(rvi, error_rate, kmer_size, lambda_g, lambda_e, &confidence);
+  InfectionType t = resistotype(vars[0], error_rate, kmer_size, lambda_g, lambda_e, epsilon, &m, MaxLikelihood, 0.1);
   CU_ASSERT(t==Susceptible);
 
   strbuf_free(temp_rid);
   strbuf_free(temp_mut);
   strbuf_free(temp_gene);
-  free_res_var_info(rvi);
+  free(vob);
   free(array_nodes);
   free(array_or);
   free_covg_array(working_ca);
@@ -361,12 +379,23 @@ void test_mutation_model_log_likelihoods_2()
   uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
 
   StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample3.fa.list");
+  uint64_t dummy=0;
+  boolean is_rem=true;
   build_unclean_graph(db_graph, 
-		      list, true,
-		      kmer_size,
-		      readlen_array, max_read_length,
-		      kmer_covg_array, 100,
-		      false, 0);
+          list,
+          true,
+          kmer_size,
+          readlen_array,
+          max_read_length,
+          kmer_covg_array,
+          100, // Len kmer coverage array
+          false, // Only load preexisting kmers
+           0, // Into colout
+          NULL, // (*subsample_function)(),
+          false, //  print_progress_info,
+          &dummy, //  count_so_far,
+           0,  //  total_reads_in_dataset,
+            &is_rem ); //  is_a_remainder)
   
   FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps2.fa", "r");
   if (fp==NULL)
@@ -374,7 +403,7 @@ void test_mutation_model_log_likelihoods_2()
       die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps2.fa");
     }
   
-  ResVarInfo* rvi = alloc_and_init_res_var_info();
+  VarOnBackground* vob = alloc_and_init_var_on_background();
 
 
   //----------------------------------
@@ -429,20 +458,22 @@ void test_mutation_model_log_likelihoods_2()
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
   int expected_covg = 50;
-  get_next_mutation_allele_info(fp, db_graph, rvi,
+  Var** vars;
+  vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);  
+  get_next_var_on_background(fp, db_graph, vob, vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg);
+				ignore, ignore, expected_covg, 0);
 
-  CU_ASSERT(rvi->susceptible_allele.median_covg==1);
-  CU_ASSERT(rvi->susceptible_allele.min_covg==1);
-  CU_ASSERT(rvi->susceptible_allele.percent_nonzero==100);
+  CU_ASSERT(vob->susceptible_allele.median_covg==1);
+  CU_ASSERT(vob->susceptible_allele.min_covg==1);
+  CU_ASSERT(vob->susceptible_allele.percent_nonzero==100);
 
-  CU_ASSERT(rvi->resistant_alleles[0].median_covg==60);
-  CU_ASSERT(rvi->resistant_alleles[0].min_covg==60);
-  CU_ASSERT(rvi->resistant_alleles[0].percent_nonzero==100);
+  CU_ASSERT(vob->resistant_alleles[0].median_covg==60);
+  CU_ASSERT(vob->resistant_alleles[0].min_covg==60);
+  CU_ASSERT(vob->resistant_alleles[0].percent_nonzero==100);
 
 
   double error_rate = 0.01;
@@ -453,18 +484,21 @@ void test_mutation_model_log_likelihoods_2()
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
   double lambda_e = error_rate*(1-error_rate, kmer_size-1)*lambda;
 
-  double llk_R = get_log_lik_truly_resistant_plus_errors_on_suscep_allele(rvi,
-									  lambda_g,
-									  lambda_e,
-									  kmer_size);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(rvi,
-									       lambda_g,
-									       lambda_e,
-									       kmer_size);
-  double llk_M = get_log_lik_of_mixed_infection(rvi,
-						lambda_g,
-						error_rate,
-						kmer_size);
+  double llk_R = get_log_lik_minor_pop_resistant(vars[0],
+                    lambda_g,
+                    lambda_e,
+                    kmer_size,
+                    error_rate,
+                    0.75);
+  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(vars[0],
+                         lambda_g,
+                         lambda_e,
+                         kmer_size);
+  double llk_M = get_log_lik_minor_pop_resistant(vars[0],
+            lambda_g,
+            error_rate,
+            kmer_size,error_rate,
+                    0.1);
 
   CU_ASSERT(llk_S < llk_R);
   CU_ASSERT(llk_S > llk_M);
@@ -472,16 +506,16 @@ void test_mutation_model_log_likelihoods_2()
 
   double confidence = 0;
   Model m;
-  choose_best_model(llk_R, llk_S, llk_M, &confidence, &m);
+  choose_ml_model(llk_R, llk_S, llk_M, &m);
   CU_ASSERT(m.type==Resistant);
   
-  InfectionType t = best_model(rvi, error_rate, kmer_size, lambda_g, lambda_e, &confidence);
+  InfectionType t = resistotype(vars[0], error_rate, kmer_size, lambda_g, lambda_e, epsilon, &m, MaxLikelihood, 0.1);
   CU_ASSERT(t==Resistant);
 
   strbuf_free(temp_rid);
   strbuf_free(temp_mut);
   strbuf_free(temp_gene);
-  free_res_var_info(rvi);
+  free(vob);
   free(array_nodes);
   free(array_or);
   free_covg_array(working_ca);
