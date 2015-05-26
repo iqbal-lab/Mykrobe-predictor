@@ -41,18 +41,30 @@ void test_get_next_mutation_allele_info()
   int max_read_length = 120;
   uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/mutations/sample1.fa.list");
+  StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample1.fa.list");
+  uint64_t dummy=0;
+  boolean is_rem=true;
   build_unclean_graph(db_graph, 
-		      list, true,
+		      list,
+          true,
 		      kmer_size,
-		      readlen_array, max_read_length,
-		      kmer_covg_array, 100,
-		      false, 0);
+		      readlen_array,
+          max_read_length,
+		      kmer_covg_array,
+          100, // Len kmer coverage array
+		      false, // Only load preexisting kmers
+           0, // Into colout
+          NULL, // (*subsample_function)(),
+          false, //  print_progress_info,
+          &dummy, //  count_so_far,
+           0,  //  total_reads_in_dataset,
+            &is_rem ); //  is_a_remainder)
+           
   
-  FILE* fp = fopen("../data/test/myKrobe/predictor/mutations/some_snps1.fa", "r");
+  FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps1.fa", "r");
   if (fp==NULL)
     {
-      die("Cannot open this file: ../data/test/myKrobe/predictor/mutations/some_snps1.fa");
+      die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps1.fa");
     }
   
   ResVarInfo* rvi = alloc_and_init_res_var_info();
@@ -196,7 +208,7 @@ void test_mutation_model_log_likelihoods_1()
   int max_read_length = 120;
   uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/mutations/sample2.fa.list");
+  StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample2.fa.list");
   build_unclean_graph(db_graph, 
 		      list, true,
 		      kmer_size,
@@ -204,10 +216,10 @@ void test_mutation_model_log_likelihoods_1()
 		      kmer_covg_array, 100,
 		      false, 0);
   
-  FILE* fp = fopen("../data/test/myKrobe/predictor/mutations/some_snps2.fa", "r");
+  FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps2.fa", "r");
   if (fp==NULL)
     {
-      die("Cannot open this file: ../data/test/myKrobe/predictor/mutations/some_snps2.fa");
+      die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps2.fa");
     }
   
   ResVarInfo* rvi = alloc_and_init_res_var_info();
@@ -348,7 +360,7 @@ void test_mutation_model_log_likelihoods_2()
   int max_read_length = 120;
   uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/myKrobe/predictor/mutations/sample3.fa.list");
+  StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample3.fa.list");
   build_unclean_graph(db_graph, 
 		      list, true,
 		      kmer_size,
@@ -356,10 +368,10 @@ void test_mutation_model_log_likelihoods_2()
 		      kmer_covg_array, 100,
 		      false, 0);
   
-  FILE* fp = fopen("../data/test/myKrobe/predictor/mutations/some_snps2.fa", "r");
+  FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps2.fa", "r");
   if (fp==NULL)
     {
-      die("Cannot open this file: ../data/test/myKrobe/predictor/mutations/some_snps2.fa");
+      die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps2.fa");
     }
   
   ResVarInfo* rvi = alloc_and_init_res_var_info();
