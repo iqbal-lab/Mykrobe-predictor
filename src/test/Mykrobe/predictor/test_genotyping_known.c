@@ -67,7 +67,7 @@ void test_get_next_mutation_allele_info()
       die("Cannot open this file: ../data/test/Mykrobe/predictor/mutations/some_snps1.fa");
     }
   
-  ResVarInfo* rvi = alloc_and_init_res_var_info();
+  VarOnBackground* rvi = alloc_and_init_var_on_background();
 
 
   //----------------------------------
