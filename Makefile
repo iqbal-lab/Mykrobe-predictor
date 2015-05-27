@@ -135,7 +135,9 @@ endif
 
 CFLAGS_BASIC_TESTS      = -I$(IDIR_BASIC_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(TEST_LIBINCS)
 CFLAGS_HASH_TABLE_TESTS = -I$(IDIR_HASH) -I$(IDIR_HASH_TABLE_TESTS) -I$(IDIR_CUNIT) -I$(IDIR_BASIC) $(TEST_LIBINCS) -I$(IDIR_BASE_ENCODING) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_PREDICTOR)
-CFLAGS_PREDICTOR_TESTS = -I$(IDIR_CORE) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_PREDICTOR_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR) -I$(IDIR_PREDICTOR_CORE) $(TEST_LIBINCS)
+
+
+CFLAGS_PREDICTOR_TESTS =  -I$(IDIR_PREDICTOR_STAPH) -I$(IDIR_CORE) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_PREDICTOR_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR) -I$(IDIR_PREDICTOR_CORE) $(TEST_LIBINCS)
 
 PREDICTOR_OBJ = src/obj/predictor/global.o src/obj/predictor/main.o src/obj/predictor/antibiotics.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o src/obj/predictor/graph_info.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/cmd_line.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/genotyping_known.o src/obj/predictor/known_mutations.o src/obj/predictor/gene_presence.o src/obj/predictor/species.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/mut_models.o src/obj/predictor/gene_presence_models.o  src/obj/predictor/json.o src/obj/predictor/base_species.o
 
