@@ -41,12 +41,12 @@ void test_get_next_var_on_background()
   int max_read_length = 120;
   uint64_t* readlen_array = calloc(max_read_length, sizeof(uint64_t));
 
-  StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample1.fa.list");
+  StrBuf* list = strbuf_create("../data/test/Mykrobe/predictor/mutations/sample1.fa");
   uint64_t dummy=0;
   boolean is_rem=true;
   build_unclean_graph(db_graph, 
 		      list,
-          true,
+          false, 
 		      kmer_size,
 		      readlen_array,
           max_read_length,
@@ -54,7 +54,7 @@ void test_get_next_var_on_background()
           100, // Len kmer coverage array
 		      false, // Only load preexisting kmers
            0, // Into colout
-          NULL, // (*subsample_function)(),
+          &subsample_null, // (*subsample_function)(),
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,
