@@ -123,7 +123,7 @@ double get_log_lik_resistant(GeneInfo* gi,
 {
   double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, lambda_g * freq, kmer);
   // double log_lk_number_of_gaps_in_gene_coverage = log_prob_gaps(gi, expected_covg, freq);
-  printf("freq : %f coverage lk %f gaps lk %f\n", freq , log_lk_coverage_on_gene, log_lk_number_of_gaps_in_gene_coverage);
+  printf("freq : %f coverage lk %f\n", freq , log_lk_coverage_on_gene);
   double ret =  log_lk_coverage_on_gene; // + log_lk_number_of_gaps_in_gene_coverage;
   return ret;
 
