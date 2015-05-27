@@ -53,7 +53,7 @@ void test_get_next_gene_info()
           150, // Len kmer coverage array
           false, // Only load preexisting kmers
            0, // Into colout
-          NULL, // (*subsample_function)(),
+          &subsample_null, // (*subsample_function)(),
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,

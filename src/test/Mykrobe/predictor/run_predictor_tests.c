@@ -33,29 +33,30 @@ int  main()
     return CU_get_error();
     }*/
 
-  // if (NULL == CU_add_test(pPopGraphSuite, 
-		// 	  "Test getting coverage info on resistance/susceptibility alleles", 
-		// 	  test_get_next_var_on_background)) {
-  //   CU_cleanup_registry();
-  //   return CU_get_error();
-  // }
-
-  // if (NULL == CU_add_test(pPopGraphSuite, 
-		// 	  "Test log likelihoods/models for clonal susceptible infection", 
-		// 	  test_mutation_model_log_likelihoods_1)) {
-  //   CU_cleanup_registry();
-  //   return CU_get_error();
-  // }
-
-  // if (NULL == CU_add_test(pPopGraphSuite, 
-		// 	  "Test log likelihoods/models for clonal resistant infection", 
-		// 	  test_mutation_model_log_likelihoods_2)) {
-  //   CU_cleanup_registry();
-  //   return CU_get_error();
-  // }
   if (NULL == CU_add_test(pPopGraphSuite, 
-       "Test gene presence models ", 
-       test_resistotype_gene)) {
+		 	  "Test getting coverage info on resistance/susceptibility alleles", 
+		 	  test_get_next_var_on_background)) 
+    {
+      CU_cleanup_registry();
+      return CU_get_error();
+    }
+
+   if (NULL == CU_add_test(pPopGraphSuite, 
+		 	  "Test log likelihoods/models for clonal susceptible infection", 
+		 	  test_mutation_model_log_likelihoods_1)) {
+     CU_cleanup_registry();
+     return CU_get_error();
+   }
+
+   if (NULL == CU_add_test(pPopGraphSuite, 
+		 	  "Test log likelihoods/models for clonal resistant infection", 
+		 	  test_mutation_model_log_likelihoods_2)) {
+     CU_cleanup_registry();
+     return CU_get_error();
+   }
+  if (NULL == CU_add_test(pPopGraphSuite, 
+			  "Test gene presence models ", 
+			  test_resistotype_gene)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
