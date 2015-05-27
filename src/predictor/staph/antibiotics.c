@@ -841,39 +841,35 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
   boolean any_allele_non_null=false;
   for (i=first_cip_mut; i<=last_cip_mut; i++)
     {
-      if (both_alleles_null(abi->vars[i])==true)
-	{
-	  continue;
-	}
-      any_allele_non_null=true;
-      Model best_model;
-      InfectionType I=
-	resistotype(abi->vars[i],
-		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-		    &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+        if (both_alleles_null(abi->vars[i])==true)
+    	{
+    	  continue;
+    	}
+          any_allele_non_null=true;
+          Model best_model;
+          InfectionType I=
+    	resistotype(abi->vars[i],
+    		   err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+    		    &best_model, MaxAPosteriori,
+            cmd_line->min_frac_to_detect_minor_pops);
+      
       if (max_sus_conf<best_model.conf)
-	{
-	  max_sus_conf=best_model.conf;
-	}
+    	{
+    	  max_sus_conf=best_model.conf;
+    	}
       if (best_model.conf<min_conf)
-	{
-	  min_conf = best_model.conf;
-	}
+    	{
+    	  min_conf = best_model.conf;
+    	}
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
-	{
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-	  return I;
-	}
+      	{
+          update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      	  return I;
+      	}
     }
 
-  if (
-      (any_allele_non_null==false)
-      //      ||
-      //(min_conf<MIN_CONFIDENCE_S) //at one site, you're not sure
-      )
-
+  if ((any_allele_non_null==false))
     {
       return Unsure;
     }

@@ -278,24 +278,35 @@ void choose_map_model(Var* var,
   worst_model->likelihood = arr[0].likelihood;
   worst_model->lp = arr[0].lp;
 
+   printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
 
 }
 
 
 InfectionType resistotype(Var* var, 
-                          double err_rate, int kmer,
-			  double lambda_g, 
-			  double lambda_e, 
-			  double epsilon,
-			  Model* best_model,
-			  ModelChoiceMethod choice,
-			  float min_frac_to_detect_minor_pops)
+                          double err_rate,
+                          int kmer,
+                  			  double lambda_g, 
+                  			  double lambda_e, 
+                  			  double epsilon,
+                  			  Model* best_model,
+                  			  ModelChoiceMethod choice,
+                  			  float min_frac_to_detect_minor_pops)
 {
+                          
+                          printf("kmer %d\n", kmer);
+                          printf("err_rate %f\n", err_rate );
+                          printf("lambda_g %f\n", lambda_g );
+                          printf("lambda_e %f\n", lambda_e );
+                          printf(" epsilon %f\n",  epsilon );
+                          printf("min_frac_to_detect_minor_pops %f\n ", min_frac_to_detect_minor_pops );
+
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
 									       lambda_g, lambda_e,
 									       kmer);
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
   double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
+
 
    printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
 

@@ -103,6 +103,13 @@ int  main()
     return CU_get_error();
   }
 
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test mutation custom case ", 
+       test_mutation_custom_1)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+
 
 
   // if (NULL == CU_add_test(pPopGraphSuite, 
