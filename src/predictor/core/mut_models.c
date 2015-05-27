@@ -20,9 +20,6 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 {
   // prior probability that sample is resistant - look at covg gaps in resistant allele
-  int p = max_perc_covg_on_res_allele;
-
-
   if (max_perc_covg_on_res_allele==100)
     {
       return log(1)+llk;
@@ -77,7 +74,6 @@ double get_log_lik_major_pop_resistant(Var* var,
 				       int kmer)
 {
   Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
-  //printf("Test res model, R covg=%d and S covg=%d\n", c, var->susceptible_allele.median_covg);
   return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
 			       0.9*lambda_g, 0.1*lambda_g, kmer);
 
@@ -278,7 +274,7 @@ void choose_map_model(Var* var,
   worst_model->likelihood = arr[0].likelihood;
   worst_model->lp = arr[0].lp;
 
-   printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
+   // printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
 
 }
 
@@ -294,12 +290,12 @@ InfectionType resistotype(Var* var,
                   			  float min_frac_to_detect_minor_pops)
 {
                           
-                          printf("kmer %d\n", kmer);
-                          printf("err_rate %f\n", err_rate );
-                          printf("lambda_g %f\n", lambda_g );
-                          printf("lambda_e %f\n", lambda_e );
-                          printf(" epsilon %f\n",  epsilon );
-                          printf("min_frac_to_detect_minor_pops %f\n ", min_frac_to_detect_minor_pops );
+                          // printf("kmer %d\n", kmer);
+                          // printf("err_rate %f\n", err_rate );
+                          // printf("lambda_g %f\n", lambda_g );
+                          // printf("lambda_e %f\n", lambda_e );
+                          // printf(" epsilon %f\n",  epsilon );
+                          // printf("min_frac_to_detect_minor_pops %f\n ", min_frac_to_detect_minor_pops );
 
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
 									       lambda_g, lambda_e,
@@ -308,7 +304,7 @@ InfectionType resistotype(Var* var,
   double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
 
 
-   printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
+   // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
 
   best_model->conf=0;
   Model worst_model;
@@ -332,8 +328,8 @@ InfectionType resistotype(Var* var,
 		       epsilon);
     }
 
-    printf("mid_model.conf %f best_model->conf %f \n", mid_model.conf , best_model->conf);
-    printf("best_model->type %i MIN_CONFIDENCE_r %i \n", best_model->type , MIN_CONFIDENCE_r);
+    // printf("mid_model.conf %f best_model->conf %f \n", mid_model.conf , best_model->conf);
+    // printf("best_model->type %i MIN_CONFIDENCE_r %i \n", best_model->type , MIN_CONFIDENCE_r);
 
   if (best_model->type==Susceptible)
     {

@@ -293,10 +293,10 @@ void test_mutation_custom_1()
 	double genome_size = 280000;
 	double mean_read_length = 100;
 	double bp_loaded = 28000000;
-	// double lambda_g =expected_covg;
-	// double lambda_e = expected_covg*err_rate / 3;
-	double lambda_g = 3.406567;
-	double lambda_e = 0.011470;
+	double lambda_g =expected_covg;
+	double lambda_e = expected_covg*err_rate / 3;
+	// double lambda_g = 3.406567;
+	// double lambda_e = 0.011470;
 	double epsilon = pow(1-err_rate, kmer);	
 
     AlleleInfo*	resistant_allele = alloc_allele_info();
