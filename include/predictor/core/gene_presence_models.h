@@ -13,23 +13,21 @@
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,
-					 double recovery_given_sample_and_errors,
+					 int expected_covg,					 
 					 double err_rate,
 					 int min_expected);//given known diversity of genes
 
 double get_log_posterior_minor_resistant(double llk,
 					 GeneInfo* gi,
-					 double recovery_given_sample_and_errors,
 					 int expected_covg,
 					 double err_rate,
 					 int min_expected);//given known diversity of genes
 
 double get_log_posterior_truly_susceptible(double llk,
 					   GeneInfo* gi,
-					   double epsilon,
 					   int min_expected);
 
-
+double calculate_expected_gene_coverage_based_on_coverage(int coverage);
 // lambda_g = expected_covg/mean_read_len on real allele
 /*double get_log_lik_truly_resistant(GeneInfo* gi,
 				   double lambda_g,
@@ -46,7 +44,7 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer);
 
-double log_prob_gaps(GeneInfo* gi, int expected_covg);
+double log_prob_gaps(GeneInfo* gi, int expected_covg,  double freq);
 
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len

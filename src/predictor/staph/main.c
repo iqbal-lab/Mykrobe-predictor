@@ -265,6 +265,7 @@ int main(int argc, char **argv)
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
 
+  // printf("lambda_g_err_free %f \n", lambda_g_err_free);
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
 	      * (mean_read_length-cmd_line->kmer_size+1)
