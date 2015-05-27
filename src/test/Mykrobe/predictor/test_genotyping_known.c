@@ -230,7 +230,7 @@ void test_mutation_model_log_likelihoods_1()
           100, // Len kmer coverage array
           false, // Only load preexisting kmers
            0, // Into colout
-          NULL, // (*subsample_function)(),
+          &subsample_null, // (*subsample_function)(),
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,
@@ -297,14 +297,19 @@ void test_mutation_model_log_likelihoods_1()
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
   int expected_covg = 100;
-  Var** vars;
-  vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);  
-  get_next_var_on_background(fp, db_graph, vob, vars, 
+  AntibioticInfo* abi = alloc_antibiotic_info();
+  if (abi==NULL)
+    {
+      die("Cannot even allocate abi\n");
+    }
+
+  KnownMutation km = (KnownMutation) 0;
+  get_next_var_on_background(fp, db_graph, vob, abi->vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, 0);
+				ignore, ignore, expected_covg, &km);
 
   CU_ASSERT(vob->susceptible_allele.median_covg==100);
   CU_ASSERT(vob->susceptible_allele.min_covg==100);
@@ -322,32 +327,32 @@ void test_mutation_model_log_likelihoods_1()
   double lambda = (double) expected_covg/(double) mean_read_len;
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
   double lambda_e = error_rate*pow(1-error_rate, kmer_size-1)*lambda;
-  double llk_R = get_log_lik_minor_pop_resistant(vars[0],
-									  lambda_g,
-									  lambda_e,
-									  kmer_size,
-                    error_rate,
-                    0.75);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(vars[0],
+  double llk_R = get_log_lik_minor_pop_resistant(abi->vars[4],
+						 lambda_g,
+						 lambda_e,
+						 kmer_size,
+						 error_rate,
+						 0.75);
+  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(abi->vars[4],
 									       lambda_g,
 									       lambda_e,
 									       kmer_size);
-  double llk_M = get_log_lik_minor_pop_resistant(vars[0],
+  double llk_M = get_log_lik_minor_pop_resistant(abi->vars[4],
 						lambda_g,
 						error_rate,
 						kmer_size,error_rate,
-                    0.1);
+						 0.1);
 
   CU_ASSERT(llk_S > llk_R);
   CU_ASSERT(llk_S > llk_M);
-  CU_ASSERT(llk_M < llk_R);//we veto mixed infection unless resistant frequency more than double error_rate
+  CU_ASSERT(llk_R < llk_M);
 
   double confidence = 0;
-  Model m;
-  choose_ml_model(llk_R, llk_S, llk_M, &m);
+  Model m, m_mid, m_worst;
+  choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon);
   CU_ASSERT(m.type==Susceptible);
   
-  InfectionType t = resistotype(vars[0], error_rate, kmer_size, lambda_g, lambda_e, epsilon, &m, MaxLikelihood, 0.1);
+  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, &m, MaxAPosteriori, 0.1);
   CU_ASSERT(t==Susceptible);
 
   strbuf_free(temp_rid);
@@ -398,7 +403,7 @@ void test_mutation_model_log_likelihoods_2()
           100, // Len kmer coverage array
           false, // Only load preexisting kmers
            0, // Into colout
-          NULL, // (*subsample_function)(),
+          &subsample_null, // (*subsample_function)(),
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,
@@ -465,14 +470,20 @@ void test_mutation_model_log_likelihoods_2()
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
   int expected_covg = 50;
-  Var** vars;
-  vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);  
-  get_next_var_on_background(fp, db_graph, vob, vars, 
+  AntibioticInfo* abi = alloc_antibiotic_info();
+  if (abi==NULL)
+    {
+      die("Cannot even allocate abi\n");
+    }
+
+  KnownMutation km = (KnownMutation) 0;
+
+  get_next_var_on_background(fp, db_graph, vob, abi->vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, 0);
+				ignore, ignore, expected_covg, &km);
 
   CU_ASSERT(vob->susceptible_allele.median_covg==1);
   CU_ASSERT(vob->susceptible_allele.min_covg==1);
@@ -491,32 +502,32 @@ void test_mutation_model_log_likelihoods_2()
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
   double lambda_e = error_rate*pow(1-error_rate, kmer_size-1)*lambda;
 
-  double llk_R = get_log_lik_minor_pop_resistant(vars[0],
-                    lambda_g,
-                    lambda_e,
-                    kmer_size,
-                    error_rate,
-                    0.75);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(vars[0],
-                         lambda_g,
-                         lambda_e,
-                         kmer_size);
-  double llk_M = get_log_lik_minor_pop_resistant(vars[0],
-            lambda_g,
-            error_rate,
-            kmer_size,error_rate,
-                    0.1);
-
+  double llk_R = get_log_lik_minor_pop_resistant(abi->vars[4],
+						 lambda_g,
+						 lambda_e,
+						 kmer_size,
+						 error_rate,
+						 0.75);
+  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(abi->vars[4],
+									       lambda_g,
+									       lambda_e,
+									       kmer_size);
+  double llk_M = get_log_lik_minor_pop_resistant(abi->vars[4],
+						 lambda_g,
+						 error_rate,
+						 kmer_size,error_rate,
+						 0.1);
+  
   CU_ASSERT(llk_S < llk_R);
-  CU_ASSERT(llk_S > llk_M);
+  CU_ASSERT(llk_M > llk_S);
   CU_ASSERT(llk_M < llk_R);
 
   double confidence = 0;
-  Model m;
-  choose_ml_model(llk_R, llk_S, llk_M, &m);
+  Model m, m_mid, m_worst;
+  choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon);
   CU_ASSERT(m.type==Resistant);
   
-  InfectionType t = resistotype(vars[0], error_rate, kmer_size, lambda_g, lambda_e, epsilon, &m, MaxLikelihood, 0.1);
+  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, &m, MaxAPosteriori, 0.1);
   CU_ASSERT(t==Resistant);
 
   strbuf_free(temp_rid);
