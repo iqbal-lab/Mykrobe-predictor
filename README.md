@@ -50,7 +50,7 @@ Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, w
 
 FIrstly, ensure the Docker daemon is installed. See https://docs.docker.com/installation/#installation for installation guides fo Linux, Mac OS and Windows.
 
-The simplest method to use the Dockerised CLI Mykrobe-predictor is to use the [ready-made image hosted at Docker Hub](http://registry.hub.docker.com). 
+The simplest method to use the Dockerised CLI Mykrobe-predictor is to use the [ready-made image hosted at Docker Hub](https://registry.hub.docker.com/u/jetstack/mykrobe-predictor/). 
 Using ```docker run```, the latest image will be automatically downloaded and run in an separate, isolated container and will only
 live for the duration of the computation.
 
