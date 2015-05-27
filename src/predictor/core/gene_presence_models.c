@@ -121,8 +121,10 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer)
 {
-  double ret = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, lambda_g * freq, kmer) //+  
-    // log_prob_gaps(gi, expected_covg);
+  double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, lambda_g * freq, kmer);
+  // double log_lk_number_of_gaps_in_gene_coverage = log_prob_gaps(gi, expected_covg, freq);
+  printf("freq : %f coverage lk %f gaps lk %f\n", freq , log_lk_coverage_on_gene, log_lk_number_of_gaps_in_gene_coverage);
+  double ret =  log_lk_coverage_on_gene; // + log_lk_number_of_gaps_in_gene_coverage;
   return ret;
 
 }
@@ -146,11 +148,10 @@ double get_gene_log_lik(Covg covg,//median covg on parts of gene that are presen
   return log_lik_true_allele;
 }
 
-double log_prob_gaps(GeneInfo* gi, int expected_covg)
-{
-  //  printf("Num gaps is %d\n", gi->num_gaps);
-  return -expected_covg*gi->num_gaps;
-}
+// double log_prob_gaps(GeneInfo* gi, int expected_covg, double freq)
+// {
+//   return -expected_covg * gi->num_gaps;
+// }
 
 
 
