@@ -46,20 +46,20 @@ void test_get_next_var_on_background()
   boolean is_rem=true;
   build_unclean_graph(db_graph, 
 		      list,
-          true,
+		      true,
 		      kmer_size,
 		      readlen_array,
-          max_read_length,
+		      max_read_length,
 		      kmer_covg_array,
-          100, // Len kmer coverage array
+		      100, // Len kmer coverage array
 		      false, // Only load preexisting kmers
-           0, // Into colout
-          NULL, // (*subsample_function)(),
-          false, //  print_progress_info,
-          &dummy, //  count_so_far,
-           0,  //  total_reads_in_dataset,
-            &is_rem ); //  is_a_remainder)
-           
+		      0, // Into colout
+		      &subsample_null, // (*subsample_function)(),
+		      false, //  print_progress_info,
+		      &dummy, //  count_so_far,
+		      0,  //  total_reads_in_dataset,
+		      &is_rem ); //  is_a_remainder)
+  
   
   FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps1.fa", "r");
   if (fp==NULL)
