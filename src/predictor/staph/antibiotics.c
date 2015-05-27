@@ -768,19 +768,6 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 	install_dir);
 
   Model best_model;
-  
-  printf("epsilon %f \n", epsilon);  
-  printf("lambda_g %f \n", lambda_g);   
-  printf("lambda_e %f \n", lambda_e);   
-  printf("err_rate %f \n", err_rate);   
-  
-  printf("expected_covg %d \n", expected_covg);   
-  printf("kmer_size %d \n", db_graph->kmer_size);   
-  printf("median %d \n", abi->genes[mecA]->median_covg);   
-  printf("median_covg_on_nonzero_nodes %d \n", abi->genes[mecA]->median_covg_on_nonzero_nodes);   
-  printf("percent_nonzero %d \n", abi->genes[mecA]->percent_nonzero);   
-  printf("num_gaps %d \n", abi->genes[mecA]->num_gaps);   
-  printf("len %d \n", abi->genes[mecA]->len);   
 
   InfectionType I =
     resistotype_gene(abi->genes[mecA], 
