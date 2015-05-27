@@ -24,6 +24,7 @@
 #include "open_hash/hash_table.h"
 #include "genotyping_known.h"
 #include "mut_models.h"
+#include "antibiotics.h"
 
 void test_get_next_var_on_background()
 {
@@ -122,14 +123,20 @@ void test_get_next_var_on_background()
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
   int expected_covg = 9;
-  Var** vars;
-  vars = (Var**) malloc(sizeof(Var*)*NUM_KNOWN_MUTATIONS);
-  get_next_var_on_background(fp, db_graph, vob,vars,
-				seq, kmer_window,
-				&file_reader_fasta,
-				array_nodes, array_or, working_ca, max_read_length,
-				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, 0);
+  AntibioticInfo* abi = alloc_antibiotic_info();
+  if (abi==NULL)
+    {
+      die("Cannot even allocate abi\n");
+    }
+  KnownMutation km = (KnownMutation) 0;
+
+
+  get_next_var_on_background(fp, db_graph, vob,abi->vars,
+			     seq, kmer_window,
+			     &file_reader_fasta,
+			     array_nodes, array_or, working_ca, max_read_length,
+			     temp_rid, temp_mut, temp_gene,
+			     ignore, ignore, expected_covg, &km);
 
   CU_ASSERT(vob->susceptible_allele.median_covg==9);
   CU_ASSERT(vob->susceptible_allele.min_covg==9);
@@ -141,12 +148,12 @@ void test_get_next_var_on_background()
 
 
 
-  get_next_var_on_background(fp, db_graph, vob, vars, 
+  get_next_var_on_background(fp, db_graph, vob, abi->vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, 0);
+			     ignore, ignore, expected_covg, &km);
 
 
   CU_ASSERT(vob->susceptible_allele.median_covg==0);
@@ -158,12 +165,12 @@ void test_get_next_var_on_background()
   CU_ASSERT(vob->resistant_alleles[0].percent_nonzero==100);
 
 
-  get_next_var_on_background(fp, db_graph, vob, vars, 
+  get_next_var_on_background(fp, db_graph, vob, abi->vars, 
 				seq, kmer_window,
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, 0);
+			     ignore, ignore, expected_covg, &km);
 
 
   CU_ASSERT(vob->susceptible_allele.median_covg==0);
@@ -314,7 +321,7 @@ void test_mutation_model_log_likelihoods_1()
   int mean_read_len = 61;
   double lambda = (double) expected_covg/(double) mean_read_len;
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
-  double lambda_e = error_rate*(1-error_rate, kmer_size-1)*lambda;
+  double lambda_e = error_rate*pow(1-error_rate, kmer_size-1)*lambda;
   double llk_R = get_log_lik_minor_pop_resistant(vars[0],
 									  lambda_g,
 									  lambda_e,
@@ -482,7 +489,7 @@ void test_mutation_model_log_likelihoods_2()
   int mean_read_len = 61;
   double lambda = (double)expected_covg/(double) mean_read_len;
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
-  double lambda_e = error_rate*(1-error_rate, kmer_size-1)*lambda;
+  double lambda_e = error_rate*pow(1-error_rate, kmer_size-1)*lambda;
 
   double llk_R = get_log_lik_minor_pop_resistant(vars[0],
                     lambda_g,
