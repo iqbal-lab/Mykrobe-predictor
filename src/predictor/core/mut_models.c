@@ -297,6 +297,8 @@ InfectionType resistotype(Var* var,
   double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
   double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
 
+   printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
+
   best_model->conf=0;
   Model worst_model;
   worst_model.type=Unsure;

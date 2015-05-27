@@ -5,6 +5,7 @@
 #include "test_gene_presence.h"
 #include "test_species_prediction.h"
 #include "test_gene_presence_models.h"
+#include "test_mut_models.h"
 #include <CUnit.h>
 #include <Basic.h>
 
@@ -33,27 +34,27 @@ int  main()
     return CU_get_error();
     }*/
 
-  if (NULL == CU_add_test(pPopGraphSuite, 
-		 	  "Test getting coverage info on resistance/susceptibility alleles", 
-		 	  test_get_next_var_on_background)) 
-    {
-      CU_cleanup_registry();
-      return CU_get_error();
-    }
+  // if (NULL == CU_add_test(pPopGraphSuite, 
+		//  	  "Test getting coverage info on resistance/susceptibility alleles", 
+		//  	  test_get_next_var_on_background)) 
+  //   {
+  //     CU_cleanup_registry();
+  //     return CU_get_error();
+  //   }
 
-   if (NULL == CU_add_test(pPopGraphSuite, 
-		 	  "Test log likelihoods/models for clonal susceptible infection", 
-		 	  test_mutation_model_log_likelihoods_1)) {
-     CU_cleanup_registry();
-     return CU_get_error();
-   }
+  //  if (NULL == CU_add_test(pPopGraphSuite, 
+		//  	  "Test log likelihoods/models for clonal susceptible infection", 
+		//  	  test_mutation_model_log_likelihoods_1)) {
+  //    CU_cleanup_registry();
+  //    return CU_get_error();
+  //  }
 
-   if (NULL == CU_add_test(pPopGraphSuite, 
-		 	  "Test log likelihoods/models for clonal resistant infection", 
-		 	  test_mutation_model_log_likelihoods_2)) {
-     CU_cleanup_registry();
-     return CU_get_error();
-   }
+  //  if (NULL == CU_add_test(pPopGraphSuite, 
+		//  	  "Test log likelihoods/models for clonal resistant infection", 
+		//  	  test_mutation_model_log_likelihoods_2)) {
+  //    CU_cleanup_registry();
+  //    return CU_get_error();
+  //  }
   if (NULL == CU_add_test(pPopGraphSuite, 
 			  "Test gene presence models ", 
 			  test_resistotype_gene)) {
@@ -77,6 +78,27 @@ int  main()
   if (NULL == CU_add_test(pPopGraphSuite, 
        "Test gene not present models ", 
        test_resistotype_gene_S)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+
+
+ // Mutation Models
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test mutation not present models ", 
+       test_mutation_S)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test mutation R models ", 
+       test_mutation_R)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }  
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test mutation minor models ", 
+       test_mutation_r)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
