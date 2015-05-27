@@ -329,8 +329,7 @@ void test_mutation_custom_1()
 	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
 
-     InfectionType I=
-	resistotype(vars[0], err_rate, kmer, 
+     InfectionType I= resistotype(vars[0], err_rate, kmer, 
 		    lambda_g, lambda_e, epsilon,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops);
