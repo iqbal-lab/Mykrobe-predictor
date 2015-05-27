@@ -40,17 +40,17 @@ void test_resistotype_gene()
 
 	double epsilon = pow(1-err_rate, kmer);
 
-	  printf("epsilon %f \n", epsilon);  
-	  printf("lambda_g %f \n", lambda_g);   
-	  printf("lambda_e %f \n", lambda_e);   
-	  printf("err_rate %f \n", err_rate);   
+	  // printf("epsilon %f \n", epsilon);  
+	  // printf("lambda_g %f \n", lambda_g);   
+	  // printf("lambda_e %f \n", lambda_e);   
+	  // printf("err_rate %f \n", err_rate);   
 	  
-	  printf("expected_covg %d \n", expected_covg);   
-	  printf("kmer_size %d \n", kmer);   
-	  printf("median %d \n", gi->median_covg);   
-	  printf("percent_nonzero %d \n", gi->percent_nonzero);   
-	  printf("len %d \n", gi->len);   
-	  printf("num_gaps %d \n", gi->num_gaps);   
+	  // printf("expected_covg %d \n", expected_covg);   
+	  // printf("kmer_size %d \n", kmer);   
+	  // printf("median %d \n", gi->median_covg);   
+	  // printf("percent_nonzero %d \n", gi->percent_nonzero);   
+	  // printf("len %d \n", gi->len);   
+	  // printf("num_gaps %d \n", gi->num_gaps);   
 
 
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
@@ -108,17 +108,17 @@ void test_resistotype_minor_gene()
 
 	double epsilon = pow(1-err_rate, kmer);
 
-	  printf("epsilon %f \n", epsilon);  
-	  printf("lambda_g %f \n", lambda_g);   
-	  printf("lambda_e %f \n", lambda_e);   
-	  printf("err_rate %f \n", err_rate);   
+	  // printf("epsilon %f \n", epsilon);  
+	  // printf("lambda_g %f \n", lambda_g);   
+	  // printf("lambda_e %f \n", lambda_e);   
+	  // printf("err_rate %f \n", err_rate);   
 	  
-	  printf("expected_covg %d \n", expected_covg);   
-	  printf("kmer_size %d \n", kmer);   
-	  printf("median %d \n", gi->median_covg);   
-	  printf("percent_nonzero %d \n", gi->percent_nonzero);   
-	  printf("len %d \n", gi->len);   
-	  printf("num_gaps %d \n", gi->num_gaps);   
+	  // printf("expected_covg %d \n", expected_covg);   
+	  // printf("kmer_size %d \n", kmer);   
+	  // printf("median %d \n", gi->median_covg);   
+	  // printf("percent_nonzero %d \n", gi->percent_nonzero);   
+	  // printf("len %d \n", gi->len);   
+	  // printf("num_gaps %d \n", gi->num_gaps);   
 	 // epsilon 0.860058
 	  // lambda_g 0.860058
 	// lambda_e 0.002491
@@ -137,21 +137,84 @@ void test_resistotype_minor_gene()
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene);
     
-    if (I==Susceptible)
-	{
-	  printf("S\n");
-	}
-      else if (I==MixedInfection)
-	{
-	  printf("r\n");
-	}
-      else if (I==Resistant)
-	{
-	  printf("R\n");
-	}	
 
-	CU_ASSERT(I != Resistant);
+	CU_ASSERT(I == MixedInfection);
 
 
+
+}
+
+void test_resistotype_gene_at_high_CN()
+{
+	GeneInfo* gi = alloc_and_init_gene_info();
+	gi->median_covg = 100;
+	gi->median_covg_on_nonzero_nodes = 100;
+	gi->percent_nonzero = 98;
+	gi->num_gaps = 3;
+	gi->len = 1993;
+	double err_rate = 0.01;
+	int kmer = 15;
+	int expected_covg = 10;
+	Model best_model;
+	ModelChoiceMethod choice = MaxAPosteriori;
+	int min_expected_kmer_recovery_for_this_gene = 80;
+
+	double genome_size = 280000;
+	double mean_read_length = 100;
+	double bp_loaded = 28000000;
+	// double lambda_g = ((bp_loaded/genome_size) / mean_read_length) * pow(1-err_rate, kmer); 
+	double lambda_g = 0.572547;
+
+	// double lambda_e = lambda_g * err_rate/3 * pow(1-err_rate, kmer-1);
+	double lambda_e = 0.001928;
+
+	double epsilon = pow(1-err_rate, kmer);
+
+	InfectionType I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene);
+    
+
+	CU_ASSERT(I == Resistant);
+
+}
+
+void test_resistotype_gene_S()
+{
+	// How it might look with repeat kmers
+	GeneInfo* gi = alloc_and_init_gene_info();
+	gi->median_covg = 0;
+	gi->median_covg_on_nonzero_nodes = 250;
+	gi->percent_nonzero = 12;
+	gi->num_gaps = 500;
+	gi->len = 1993;
+	double err_rate = 0.01;
+	int kmer = 15;
+	int expected_covg = 100;
+	Model best_model;
+	ModelChoiceMethod choice = MaxAPosteriori;
+	int min_expected_kmer_recovery_for_this_gene = 80;
+
+	double genome_size = 280000;
+	double mean_read_length = 100;
+	double bp_loaded = 28000000;
+	// double lambda_g = ((bp_loaded/genome_size) / mean_read_length) * pow(1-err_rate, kmer); 
+	double lambda_g = 0.572547;
+
+	// double lambda_e = lambda_g * err_rate/3 * pow(1-err_rate, kmer-1);
+	double lambda_e = 0.001928;
+
+	double epsilon = pow(1-err_rate, kmer);
+
+	InfectionType I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene);
+    
+
+	CU_ASSERT(I == Susceptible);
 
 }

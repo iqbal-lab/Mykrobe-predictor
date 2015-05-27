@@ -65,6 +65,19 @@ int  main()
        test_resistotype_minor_gene)) {
     CU_cleanup_registry();
     return CU_get_error();
+  }  
+
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test gene presence high CN models ", 
+       test_resistotype_gene_at_high_CN)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test gene not present models ", 
+       test_resistotype_gene_S)) {
+    CU_cleanup_registry();
+    return CU_get_error();
   }
 
 

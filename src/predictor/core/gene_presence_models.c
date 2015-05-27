@@ -74,9 +74,12 @@ double get_log_posterior_minor_resistant(double llk,
   if (freq > 1){
     return -99999999;
   }
+  // If the coverage is much higher than expected than the gene probably exists at multi copy number 
 
   double expected_percentage_coverage = calculate_expected_gene_coverage_based_on_coverage(expected_covg*freq);
   double minimum_percentage_coverage_required =  expected_percentage_coverage * min_expected ;
+
+
   //double step function. Coverage gap as might expect for this low frequency
   if ( (p>=minimum_percentage_coverage_required))
     {
@@ -121,9 +124,9 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer)
 {
-  double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, lambda_g * freq, kmer);
+  double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, expected_covg * freq, kmer);
   // double log_lk_number_of_gaps_in_gene_coverage = log_prob_gaps(gi, expected_covg, freq);
-  printf("freq : %f coverage lk %f\n", freq , log_lk_coverage_on_gene);
+  // printf("freq : %f coverage lk %f\n", freq , log_lk_coverage_on_gene);
   double ret =  log_lk_coverage_on_gene; // + log_lk_number_of_gaps_in_gene_coverage;
   return ret;
 
@@ -132,19 +135,21 @@ double get_log_lik_resistant(GeneInfo* gi,
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len
 double get_gene_log_lik(Covg covg,//median covg on parts of gene that are present
-			double lambda_g, 
+			double expected_covg, 
 			int kmer)
 {
-  //Under this model, covg on th true allele is Poisson distributed
-  //with rate at true allele   r_t = (1-e)^k  *  depth/read-length =: lambda_g
-  double r_t = lambda_g;
-  
-  // P(covg) = exp(-r_t) * (r_t)^covg /covg!
+  // What is the likely hood that the coverage seen is explained by a gene existing a this frequency. 
+  // We're assuming here that the gene exists a CN = 1
+
+  // We can assume that the expected coverage on the gene is the expected coverage of the sample
+
+  // expected_coverage = NL/G = lambda
+  // Pr(covg; expected_coverage)= expected_coverage^(covg) e^{-expected_coverage}}{covg!},
+  // log(P(covg)) = -expected_coverage + covg * log(expected_coverage) - log(covg !)
   double log_lik_true_allele  
-    = -r_t 
-    + covg*log(r_t) 
-    - log_factorial(covg);
-    
+    = -expected_covg 
+    + covg*log(expected_covg) 
+    - log_factorial(covg);    
   return log_lik_true_allele;
 }
 
@@ -271,7 +276,7 @@ void choose_map_gene_model(GeneInfo* gi,
   best_model->likelihood = arr[2].likelihood;
   best_model->lp = arr[2].lp;
 
-   printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
+   // printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
 }
 
 
@@ -290,7 +295,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 					       lambda_e, 
 					       kmer);
 
-   printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
+
+   // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
   best_model->conf=0;
   if (choice==MaxLikelihood)
     {
