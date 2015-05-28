@@ -44,13 +44,12 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer);
 
-double log_prob_gaps(GeneInfo* gi, int expected_covg,  double freq);
-
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len
 double get_gene_log_lik(Covg covg,//median covg on parts of gene that are present
-			double lambda_g, 
-			int kmer);
+			double lambda_g);
+
+double log_poission_prob(double lambda, double k);
 
 double get_log_lik_covg_due_to_errors(Covg covg,
 				      int percent_nonzero,

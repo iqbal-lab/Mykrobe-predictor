@@ -124,41 +124,34 @@ double get_log_lik_resistant(GeneInfo* gi,
 			     int expected_covg,
 			     int kmer)
 {
-  double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, expected_covg * freq, kmer);
-  // double log_lk_number_of_gaps_in_gene_coverage = log_prob_gaps(gi, expected_covg, freq);
+  double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, expected_covg * freq);
   // printf("freq : %f coverage lk %f\n", freq , log_lk_coverage_on_gene);
   double ret =  log_lk_coverage_on_gene; // + log_lk_number_of_gaps_in_gene_coverage;
   return ret;
 
 }
 
+double log_poission_prob(double lambda, double k){
+    double log_lik  
+    = -lambda 
+    + k*log(lambda) 
+    - log_factorial(k); 
+    return (log_lik);
+}
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len
 double get_gene_log_lik(Covg covg,//median covg on parts of gene that are present
-			double expected_covg, 
-			int kmer)
+			double expected_covg)
 {
   // What is the likely hood that the coverage seen is explained by a gene existing a this frequency. 
   // We're assuming here that the gene exists a CN = 1
-
   // We can assume that the expected coverage on the gene is the expected coverage of the sample
-
   // expected_coverage = NL/G = lambda
   // Pr(covg; expected_coverage)= expected_coverage^(covg) e^{-expected_coverage}}{covg!},
   // log(P(covg)) = -expected_coverage + covg * log(expected_coverage) - log(covg !)
-  double log_lik_true_allele  
-    = -expected_covg 
-    + covg*log(expected_covg) 
-    - log_factorial(covg);    
-  return log_lik_true_allele;
+  double log_lik_true_allele  = log_poission_prob(expected_covg, covg);
+  return (log_lik_true_allele);
 }
-
-// double log_prob_gaps(GeneInfo* gi, int expected_covg, double freq)
-// {
-//   return -expected_covg * gi->num_gaps;
-// }
-
-
 
 double get_log_lik_covg_due_to_errors(Covg covg,
 				      int percent_nonzero,
