@@ -379,7 +379,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  int ignore_first, int ignore_last, int expected_covg,
 					  double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line,
 					  boolean output_last,
-					  boolean* any_erm_present,
+					  boolean* any_erm_present, InfectionType* erythromycin_resistotype, 
 					  CalledVariant* called_variants,CalledGene* called_genes
 					  );
 
@@ -409,7 +409,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 							 CalledVariant* called_variants,CalledGene* called_genes,
 							 CmdLine* cmd_line),
 					 StrBuf* tmpbuf,
-					 boolean any_erm_present,
+					 boolean any_erm_present, InfectionType erythromycin_resistotype, 
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
 					 double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line,

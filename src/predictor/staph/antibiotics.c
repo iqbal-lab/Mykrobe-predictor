@@ -1633,7 +1633,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  StrBuf* install_dir,
 					  int ignore_first, int ignore_last, int expected_covg,
 					  double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,//for JSON 
-					  boolean* any_erm_present,
+					  boolean* any_erm_present, InfectionType* erythromycin_resistotype, 
             CalledVariant* called_variants,CalledGene* called_genes
 					 )
 {
@@ -1656,6 +1656,7 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
          cmd_line);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
+  *erythromycin_resistotype = suc;
 
   if (cmd_line->format==Stdout)
     {
@@ -1726,7 +1727,7 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
                CalledVariant* called_variants,CalledGene* called_genes,
                CmdLine* cmd_line),
 					 StrBuf* tmpbuf,
-					 boolean any_erm_present,
+					 boolean any_erm_present, InfectionType erythromycin_resistotype, 
 					 StrBuf* install_dir,
 					 int ignore_first, int ignore_last, int expected_covg,
 					 double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,
@@ -1767,7 +1768,13 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 	}
       else if ( (suc==Susceptible) && (any_erm_present==true) )
 	{
-	  printf("R(inducible)\n");
+    if (erythromycin_resistotype == Resistant){
+      printf("R(inducible)\n");
+    }
+    else if (erythromycin_resistotype == MixedInfection){
+      printf("r(inducible)\n");
+    }
+	  
 	}
       else if (suc==Susceptible)
 	{
@@ -1791,7 +1798,13 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 	}
       else if ( (suc==Susceptible) && (any_erm_present==true) )
 	{
-	  print_json_item(tmpbuf->buff, "R(inducible)", output_last);
+    if (erythromycin_resistotype == Resistant){
+      print_json_item(tmpbuf->buff, "R(inducible)", output_last);
+    }
+    else if (erythromycin_resistotype == MixedInfection){
+      print_json_item(tmpbuf->buff, "r(inducible)", output_last);
+    }
+
 	}
       else if (suc==Susceptible)
 	{

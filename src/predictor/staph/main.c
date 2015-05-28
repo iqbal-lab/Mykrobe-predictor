@@ -344,10 +344,11 @@ int main(int argc, char **argv)
 				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
                       called_variants,called_genes); 
   boolean any_erm_present=false;
+  InfectionType erythromycin_resistotype;  
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				    &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
 				    ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
-				    &any_erm_present,
+				    &any_erm_present,&erythromycin_resistotype, 
             called_variants,called_genes);
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_fusidic_acid_susceptible, tmp_name, cmd_line->install_dir,
@@ -376,7 +377,7 @@ int main(int argc, char **argv)
   output_last=true;
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				   &is_clindamycin_susceptible, tmp_name, 
-				   any_erm_present,cmd_line->install_dir,
+				   any_erm_present, erythromycin_resistotype, cmd_line->install_dir,
 				   ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
            called_variants,called_genes);
 
