@@ -38,7 +38,7 @@ double calculate_expected_gene_coverage_based_on_coverage(int coverage);
 				     double lambda_e,
 				     int kmer); 
 
-double get_log_lik_resistant(GeneInfo* gi,
+double get_log_lik_observed_coverage_on_gene(GeneInfo* gi,
 			     double lambda_g,
 			     double freq,//between 0 and 1
 			     int expected_covg,

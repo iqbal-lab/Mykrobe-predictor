@@ -118,7 +118,7 @@ double get_log_lik_truly_susceptible(GeneInfo* gi,
 
 
 //use number of gaps (to see if contiguous), plus median covg
-double get_log_lik_resistant(GeneInfo* gi,
+double get_log_lik_observed_coverage_on_gene(GeneInfo* gi,
 			     double lambda_g,
 			     double freq,//between 0 and 1
 			     int expected_covg,
@@ -282,14 +282,12 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   //depending on err rate, set freq
   double freq = calculate_minmum_detectable_freq_given_error_rate(err_rate);
 
-  double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
-  double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
-  double llk_S = get_log_lik_truly_susceptible(gi, 
-					       lambda_e, 
-					       kmer);
+  double llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
+  double llk_M = get_log_lik_observed_coverage_on_gene(gi, lambda_g, freq, expected_covg, kmer);
+  double llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);
 
 
-   // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
+   printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
   best_model->conf=0;
   if (choice==MaxLikelihood)
     {
