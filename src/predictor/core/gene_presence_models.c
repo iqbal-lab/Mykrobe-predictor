@@ -287,7 +287,7 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   double llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);
 
 
-   printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
+   // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
   best_model->conf=0;
   if (choice==MaxLikelihood)
     {

@@ -466,7 +466,8 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
          cmd_line);
 
   map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-
+  *erythromycin_resistotype = suc;
+  
   if (cmd_line->format==Stdout)
     {
       printf("%s\t", tmpbuf->buff);
