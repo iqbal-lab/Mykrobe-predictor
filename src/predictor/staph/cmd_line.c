@@ -46,7 +46,7 @@
 
 
 const char* usage=
-"myKrobe predictorper\n"\
+"Mykrobe predictor\n"\
 "   [--help] \t\t\t\t\t\t\t=\t This help screen.\n\n" \
 "   [--list FILENAME] \t\t\t\t\t=\t List of fastq or bam. Cannot use --list and --file\n" \
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
@@ -54,7 +54,8 @@ const char* usage=
 "   [--method STRING] \t\t\t\t\t=\t Default is WGAssemblyThenGenotyping. Or can have InSilicoOligos\n" \
 "   [--format STRING] \t\t\t\t\t=\t Options are Stdout and JSON\n" \
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
-"   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
+"   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" 
+"   [--verbose] \t\t\t\t\t=\t Print out coverage information on all variables and genes rather than only the ones called \n\n" ;
 
 int default_opts(CmdLine * c)
 {
@@ -77,6 +78,7 @@ int default_opts(CmdLine * c)
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
   c->progress=false;
+  c->verbose=false;
   c->min_frac_to_detect_minor_pops = (float) 0.0;
   return 1;
 }
@@ -146,6 +148,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"subsample", required_argument, NULL, 'd'},
     {"format", required_argument, NULL, 'e'},
     {"progress", no_argument, NULL, 'g'},
+    {"verbose", no_argument, NULL, 'v'},
     {"minor_pop_frac", required_argument, NULL, 'p'},
     {0,0,0,0}	
   };
@@ -304,7 +307,12 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       }
     case 'g'://progress
       {
-	cmdline_ptr->progress=true;
+  cmdline_ptr->progress=true;
+  break;
+      }    
+    case 'v'://verbose
+      {
+	cmdline_ptr->verbose=true;
 	break;
       }
   case 'p'://minor_pop_frac

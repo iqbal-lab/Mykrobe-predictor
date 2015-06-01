@@ -21,4 +21,8 @@
 	{
 	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	}
+  else if (cmd_line->verbose)
+  {
+	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }  	
   update_infection_type(&I,&I_permenant);

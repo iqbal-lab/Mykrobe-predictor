@@ -676,6 +676,9 @@ for (i=0; i<7; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -774,6 +777,9 @@ for (i=0; i<7; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -872,6 +878,9 @@ for (i=0; i<7; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -962,6 +971,9 @@ for (i=0; i<3; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1050,6 +1062,9 @@ for (i=0; i<2; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1136,6 +1151,10 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 	{
 	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	}
+  else if (cmd_line->verbose)
+  {
+	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }  	
   update_infection_type(&I,&I_permenant);
 
 
@@ -1146,6 +1165,9 @@ I= resistotype_gene(abi->genes[cfr], err_rate, db_graph->kmer_size,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, cfr, abi->genes[cfr], best_model.conf );
   }
+ else if (cmd_line->verbose){
+    update_called_genes(called_genes, cfr, abi->genes[cfr], best_model.conf ); 	
+ }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1232,6 +1254,9 @@ I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
+ else if (cmd_line->verbose){
+    update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf ); 	
+ }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1319,6 +1344,9 @@ for (i=0; i<2; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1390,6 +1418,9 @@ I= resistotype_gene(abi->genes[ant9Ib], err_rate, db_graph->kmer_size,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, ant9Ib, abi->genes[ant9Ib], best_model.conf );
   }
+ else if (cmd_line->verbose){
+    update_called_genes(called_genes, ant9Ib, abi->genes[ant9Ib], best_model.conf ); 	
+ }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1491,6 +1522,10 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
     	{
     	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     	}
+      else if (cmd_line->verbose)
+      {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }  
       update_infection_type(&I,&I_permenant);
     }
 
@@ -1517,6 +1552,9 @@ for (i=0; i<5; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1621,6 +1659,9 @@ for (i=0; i<2; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1713,6 +1754,9 @@ for (i=0; i<4; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1784,6 +1828,9 @@ I= resistotype_gene(abi->genes[sat4], err_rate, db_graph->kmer_size,
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, sat4, abi->genes[sat4], best_model.conf );
   }
+ else if (cmd_line->verbose){
+    update_called_genes(called_genes, sat4, abi->genes[sat4], best_model.conf ); 	
+ }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1873,6 +1920,9 @@ for (i=0; i<3; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1969,6 +2019,10 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
     	{
     	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     	}
+      else if (cmd_line->verbose)
+      {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }  
       update_infection_type(&I,&I_permenant);
     }
 
@@ -1995,6 +2049,9 @@ for (i=0; i<2; i++)
         
           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
         }
+         else if (cmd_line->verbose){
+           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
+         }        
         update_infection_type(&I,&I_permenant);
     }
   
@@ -2016,6 +2073,11 @@ if (I_f652s==Resistant && I_y654n==Resistant)
     update_called_variants(called_variants,i,abi->vars[fusA_F652S], best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_Y654N], best_model.conf);
     update_infection_type(Resistant,&I_permenant);  
+  }
+  else if (cmd_line->verbose)
+  {
+    update_called_variants(called_variants,i,abi->vars[fusA_F652S], best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[fusA_Y654N], best_model.conf);    
   }
 
 
@@ -2040,6 +2102,12 @@ if (I_t326i==Resistant && I_e468v==Resistant)
     update_called_variants(called_variants,i,abi->vars[fusA_E468V],best_model.conf);
     update_infection_type(Resistant,&I_permenant);  
   }
+  else if (cmd_line->verbose)
+  {
+    update_called_variants(called_variants,i,abi->vars[fusA_T326I],best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[fusA_E468V],best_model.conf);
+  }
+
   
 
 
@@ -2083,6 +2151,13 @@ if ( (I_l461f==Resistant)
     update_called_variants(called_variants,i,abi->vars[fusA_D463G],best_model.conf);            
     update_infection_type(Resistant,&I_permenant);  
   }
+  else if (cmd_line->verbose)
+  {
+    update_called_variants(called_variants,i,abi->vars[fusA_L461F],best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[fusA_A376V],best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[fusA_A655P],best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[fusA_D463G],best_model.conf);
+  }
 
 InfectionType I_e444v=Susceptible;
 resistotype(abi->vars[fusA_E444V],
@@ -2097,6 +2172,11 @@ if ((I_l461f==Resistant)
     update_called_variants(called_variants,i,abi->vars[fusA_E444V],best_model.conf); 
     update_infection_type(Resistant,&I_permenant);     
   }
+  else if (cmd_line->verbose)
+  {
+    update_called_variants(called_variants,i,abi->vars[fusA_L461F],best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[fusA_E444V],best_model.conf); 
+  }  
 
 
 
@@ -2203,6 +2283,10 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
     	{
     	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     	}
+      else if (cmd_line->verbose)
+      {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }  
       update_infection_type(&I,&I_permenant);
     }
 
@@ -2245,6 +2329,12 @@ if (I_m470t==Resistant && I_d471g==Resistant)
     update_called_variants(called_variants,i,abi->vars[rpoB_M470T], best_model.conf);
     update_infection_type(Resistant,&I_permenant);   //ignoring mixed infections for epistatic case
   }
+  else if (cmd_line->verbose)
+  {
+    update_called_variants(called_variants,i,abi->vars[rpoB_D471G], best_model.conf);
+    update_called_variants(called_variants,i,abi->vars[rpoB_M470T], best_model.conf);
+  }    
+  
 
 
 
@@ -2351,6 +2441,10 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
     	{
     	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     	}
+      else if (cmd_line->verbose)
+      {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }  
       update_infection_type(&I,&I_permenant);
     }
 
