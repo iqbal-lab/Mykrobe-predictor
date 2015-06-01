@@ -234,7 +234,7 @@ void update_called_genes(CalledGene* called_genes,GenePresenceGene gene, GeneInf
 {
     called_genes[gene].gene = gene;
     called_genes[gene].max_res_allele_present = gene_info->percent_nonzero;
-    called_genes[gene].res_median_covg = gene_info->median_covg;
+    called_genes[gene].res_median_covg = gene_info->median_covg_on_nonzero_nodes;
     called_genes[gene].confidence=conf;
 }
 
