@@ -82,8 +82,6 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case msrA : return "Erythromycin";
     
-    case mphC : return "Erythromycin";
-    
     case sat4 : return "Streptothricin";
     
     case cat : return "Chloramphenicol";
@@ -618,9 +616,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
   
     abi->which_genes[5]=msrA;
   
-    abi->which_genes[6]=mphC;
-  
-  abi->num_genes=7;
+  abi->num_genes=6;
   abi->num_mutations = 0;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
@@ -640,7 +636,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 
 
 
-for (i=0; i<7; i++)
+for (i=0; i<6; i++)
     {
       boolean genotyped_present = false;
       InfectionType I =

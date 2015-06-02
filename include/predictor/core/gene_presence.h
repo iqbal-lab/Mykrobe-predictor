@@ -85,98 +85,96 @@ typedef enum
     
     msrA=31,
     
-    mphC=32,
+    sat4=32,
     
-    sat4=33,
+    cat=33,
     
-    cat=34,
+    vanA=34,
     
-    vanA=35,
+    vanC=35,
     
-    vanC=36,
+    vanB=36,
     
-    vanB=37,
+    fusB=37,
     
-    fusB=38,
+    fusC=38,
     
-    fusC=39,
+    str=39,
     
-    str=40,
+    qacCsmr=40,
     
-    qacCsmr=41,
+    arcA=41,
     
-    arcA=42,
+    arcB=42,
     
-    arcB=43,
+    arcC=43,
     
-    arcC=44,
+    arcD=44,
     
-    arcD=45,
+    ccrA=45,
     
-    ccrA=46,
+    ccrB=46,
     
-    ccrB=47,
+    ccrCa=47,
     
-    ccrCa=48,
+    ccrCb=48,
     
-    ccrCb=49,
+    ccrCc=49,
     
-    ccrCc=50,
+    chp=50,
     
-    chp=51,
+    eta=51,
     
-    eta=52,
+    etb=52,
     
-    etb=53,
+    etd=53,
     
-    etd=54,
+    luk=54,
     
-    luk=55,
+    lukM=55,
     
-    lukM=56,
+    lukMF=56,
     
-    lukMF=57,
+    lukPVF=57,
     
-    lukPVF=58,
+    lukPVS=58,
     
-    lukPVS=59,
+    sak=59,
     
-    sak=60,
+    sasX=60,
     
-    sasX=61,
+    scn=61,
     
-    scn=62,
+    sea=62,
     
-    sea=63,
+    seb=63,
     
-    seb=64,
+    sec=64,
     
-    sec=65,
+    sed=65,
     
-    sed=66,
+    see=66,
     
-    see=67,
+    seg=67,
     
-    seg=68,
+    seh=68,
     
-    seh=69,
+    sei=69,
     
-    sei=70,
+    sej=70,
     
-    sej=71,
+    selR=71,
     
-    selR=72,
+    sep=72,
     
-    sep=73,
+    seu=73,
     
-    seu=74,
+    tsst1=74,
     
-    tsst1=75,
-    
-    unspecified_gpg = 76
+    unspecified_gpg = 75
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 76    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES 75    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);

@@ -176,11 +176,6 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return msrA;
     }
   
-  else if(strcmp(sbuf->buff, "mphC")==0)
-    {
-      return mphC;
-    }
-  
   else if(strcmp(sbuf->buff, "sat4")==0)
     {
       return sat4;
@@ -569,11 +564,6 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "msrA.fa");
     }
   
-  else if(gene==mphC)
-    {
-      strbuf_append_str(fa, "mphC.fa");
-    }
-  
   else if(gene==sat4)
     {
       strbuf_append_str(fa, "sat4.fa");
@@ -865,8 +855,6 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     case tetO : return "tetO";
     
     case msrA : return "msrA";
-    
-    case mphC : return "mphC";
     
     case sat4 : return "sat4";
     
