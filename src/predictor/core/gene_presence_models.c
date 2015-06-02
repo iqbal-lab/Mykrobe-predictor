@@ -307,9 +307,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     }
 
 
-  if (best_model->conf > MIN_CONFIDENCE_GENE)
-    {
-      if (best_model->type != Susceptible){
+
+    if (best_model->type != Susceptible){
         *genotyped_present = true;
       }
       if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
@@ -317,12 +316,7 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
       }else{
         return best_model->type;
       }
-      
     }
-  else
-    {
-      // If confidence is very low call S
-      return Susceptible;
-    }
+
 }
 
