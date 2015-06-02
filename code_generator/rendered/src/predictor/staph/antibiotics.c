@@ -24,8 +24,6 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case IsaB : return "Clindamycin";
     
-    case aadDaph4Ia : return "Gentamicin";
-    
     case qacB : return "Biocides";
     
     case qacA : return "Biocides";
@@ -827,11 +825,9 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   
     abi->which_genes[0]=aacAaphD;
   
-    abi->which_genes[1]=aadDaph4Ia;
+    abi->which_genes[1]=str;
   
-    abi->which_genes[2]=str;
-  
-  abi->num_genes=3;
+  abi->num_genes=2;
   abi->num_mutations = 0;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
@@ -851,7 +847,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 
 
 
-for (i=0; i<3; i++)
+for (i=0; i<2; i++)
     {
       boolean genotyped_present = false;
       InfectionType I =

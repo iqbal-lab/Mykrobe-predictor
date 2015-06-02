@@ -31,11 +31,6 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return IsaB;
     }
   
-  else if(strcmp(sbuf->buff, "aadDaph4Ia")==0)
-    {
-      return aadDaph4Ia;
-    }
-  
   else if(strcmp(sbuf->buff, "qacB")==0)
     {
       return qacB;
@@ -429,11 +424,6 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "IsaB.fa");
     }
   
-  else if(gene==aadDaph4Ia)
-    {
-      strbuf_append_str(fa, "aadDaph4Ia.fa");
-    }
-  
   else if(gene==qacB)
     {
       strbuf_append_str(fa, "qacB.fa");
@@ -817,8 +807,6 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     case aacAaphD : return "aacAaphD";
     
     case IsaB : return "IsaB";
-    
-    case aadDaph4Ia : return "aadDaph4Ia";
     
     case qacB : return "qacB";
     
