@@ -657,7 +657,7 @@ for (i=0; i<7; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -763,7 +763,7 @@ for (i=0; i<7; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -864,7 +864,7 @@ for (i=0; i<7; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -957,7 +957,7 @@ for (i=0; i<3; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -1048,7 +1048,7 @@ for (i=0; i<2; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -1161,7 +1161,7 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 I= resistotype_gene(abi->genes[cfr], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
-         MIN_PERC_COVG_BLAZ);
+          MIN_PERC_COVG_STANDARD );
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, cfr, abi->genes[cfr], best_model.conf );
   }
@@ -1250,7 +1250,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
-         MIN_PERC_COVG_BLAZ);
+          MIN_PERC_COVG_BLAZ );
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
@@ -1330,7 +1330,7 @@ for (i=0; i<2; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -1414,7 +1414,7 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
 I= resistotype_gene(abi->genes[ant9Ib], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
-         MIN_PERC_COVG_BLAZ);
+          MIN_PERC_COVG_STANDARD );
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, ant9Ib, abi->genes[ant9Ib], best_model.conf );
   }
@@ -1538,7 +1538,7 @@ for (i=0; i<5; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_DFRK  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -1645,7 +1645,7 @@ for (i=0; i<2; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -1740,7 +1740,7 @@ for (i=0; i<4; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -1824,7 +1824,7 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
 I= resistotype_gene(abi->genes[sat4], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
-         MIN_PERC_COVG_BLAZ);
+          MIN_PERC_COVG_STANDARD );
   if ( (I==Resistant) || (I==MixedInfection) ) {
     update_called_genes(called_genes, sat4, abi->genes[sat4], best_model.conf );
   }
@@ -1906,7 +1906,7 @@ for (i=0; i<3; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
@@ -2035,7 +2035,7 @@ for (i=0; i<2; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			  MIN_PERC_COVG_STANDARD  );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;

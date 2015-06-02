@@ -6,7 +6,7 @@ for (i=0; i<{{drug.num_genes}}; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 MIN_PERC_COVG_STANDARD);
+			 {% if drug.name =="Trimethoprim" %} MIN_PERC_COVG_DFRK {% else %} MIN_PERC_COVG_STANDARD {% endif %} );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;
