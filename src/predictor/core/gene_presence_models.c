@@ -309,14 +309,15 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 
 
     if (best_model->type != Susceptible){
-        *genotyped_present = true;
-      }
-      if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
-        return Susceptible;
-      }else{
-        return best_model->type;
-      }
+      *genotyped_present = true;
     }
+    if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
+      return Susceptible;
+    }else{
+      return best_model->type;
+    }
+      
+    
 
 }
 
