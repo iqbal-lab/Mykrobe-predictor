@@ -644,6 +644,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 
 for (i=0; i<7; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -652,7 +653,7 @@ for (i=0; i<7; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN_ERY 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -671,11 +672,10 @@ for (i=0; i<7; i++)
             *any_erm_present=true;
           }
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -755,6 +755,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 
 for (i=0; i<7; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -763,7 +764,7 @@ for (i=0; i<7; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -777,11 +778,10 @@ for (i=0; i<7; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -853,6 +853,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 
 for (i=0; i<3; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -861,7 +862,7 @@ for (i=0; i<3; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN_GEN 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -875,11 +876,10 @@ for (i=0; i<3; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -951,6 +951,7 @@ InfectionType is_biocides_susceptible(dBGraph* db_graph,
 
 for (i=0; i<3; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -959,7 +960,7 @@ for (i=0; i<3; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -973,11 +974,10 @@ for (i=0; i<3; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1047,6 +1047,7 @@ InfectionType is_chloramphenicol_susceptible(dBGraph* db_graph,
 
 for (i=0; i<2; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -1055,7 +1056,7 @@ for (i=0; i<2; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -1069,11 +1070,10 @@ for (i=0; i<2; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1167,20 +1167,18 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
   update_infection_type(&I,&I_permenant);
 
 
+boolean genotyped_present = false;
 I= resistotype_gene(abi->genes[cfr], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
           MIN_PERC_COVG_STANDARD ,
 
           MIN_GENE_CN 
-		
+		,&genotyped_present
          );
-  if ( (I==Resistant) || (I==MixedInfection) ) {
+  if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, cfr, abi->genes[cfr], best_model.conf );
   }
- else if (cmd_line->verbose){
-    update_called_genes(called_genes, cfr, abi->genes[cfr], best_model.conf ); 	
- }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1260,20 +1258,18 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
   InfectionType I;
 
 
+boolean genotyped_present = false;
 I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
           MIN_PERC_COVG_BLAZ ,
 
           MIN_GENE_CN_PEN
-		
+		,&genotyped_present
          );
-  if ( (I==Resistant) || (I==MixedInfection) ) {
+  if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
- else if (cmd_line->verbose){
-    update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf ); 	
- }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1342,6 +1338,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 
 for (i=0; i<2; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -1350,7 +1347,7 @@ for (i=0; i<2; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN_MUP 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -1364,11 +1361,10 @@ for (i=0; i<2; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1433,20 +1429,18 @@ InfectionType is_spectinomycin_susceptible(dBGraph* db_graph,
   InfectionType I;
 
 
+boolean genotyped_present = false;
 I= resistotype_gene(abi->genes[ant9Ib], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
           MIN_PERC_COVG_STANDARD ,
 
           MIN_GENE_CN 
-		
+		,&genotyped_present
          );
-  if ( (I==Resistant) || (I==MixedInfection) ) {
+  if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, ant9Ib, abi->genes[ant9Ib], best_model.conf );
   }
- else if (cmd_line->verbose){
-    update_called_genes(called_genes, ant9Ib, abi->genes[ant9Ib], best_model.conf ); 	
- }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1559,6 +1553,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 
 for (i=0; i<5; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -1567,7 +1562,7 @@ for (i=0; i<5; i++)
 			  MIN_PERC_COVG_DFRK ,
     
      MIN_GENE_CN_PEN 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -1581,11 +1576,10 @@ for (i=0; i<5; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1671,6 +1665,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 
 for (i=0; i<2; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -1679,7 +1674,7 @@ for (i=0; i<2; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN_MEC 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -1693,11 +1688,10 @@ for (i=0; i<2; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1771,6 +1765,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 
 for (i=0; i<4; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -1779,7 +1774,7 @@ for (i=0; i<4; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN_TET 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -1793,11 +1788,10 @@ for (i=0; i<4; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -1862,20 +1856,18 @@ InfectionType is_streptothricin_susceptible(dBGraph* db_graph,
   InfectionType I;
 
 
+boolean genotyped_present = false;
 I= resistotype_gene(abi->genes[sat4], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
           MIN_PERC_COVG_STANDARD ,
 
           MIN_GENE_CN 
-		
+		,&genotyped_present
          );
-  if ( (I==Resistant) || (I==MixedInfection) ) {
+  if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, sat4, abi->genes[sat4], best_model.conf );
   }
- else if (cmd_line->verbose){
-    update_called_genes(called_genes, sat4, abi->genes[sat4], best_model.conf ); 	
- }
   update_infection_type(&I,&I_permenant);
   
 
@@ -1946,6 +1938,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 
 for (i=0; i<3; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -1954,7 +1947,7 @@ for (i=0; i<3; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -1968,11 +1961,10 @@ for (i=0; i<3; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   
@@ -2080,6 +2072,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
 
 for (i=0; i<2; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -2088,7 +2081,7 @@ for (i=0; i<2; i++)
 			  MIN_PERC_COVG_STANDARD ,
     
      MIN_GENE_CN_FUS 
-    
+    ,&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -2102,11 +2095,10 @@ for (i=0; i<2; i++)
       if ( (I==Resistant) || (I==MixedInfection) ) 
         {
         
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }
   

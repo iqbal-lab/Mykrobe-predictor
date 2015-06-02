@@ -1,6 +1,7 @@
 
 for (i=0; i<{{drug.num_genes}}; i++)
     {
+      boolean genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
@@ -17,7 +18,7 @@ for (i=0; i<{{drug.num_genes}}; i++)
     {% elif drug.name == "Tetracycline" %} MIN_GENE_CN_TET 
     {% elif drug.name == "Trimethoprim" %} MIN_GENE_CN_PEN 
     {% else %} MIN_GENE_CN 
-    {% endif %}
+    {% endif %},&genotyped_present
 
         );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
@@ -36,10 +37,9 @@ for (i=0; i<{{drug.num_genes}}; i++)
             *any_erm_present=true;
           }
         {% endif %}
-          update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-        }
-         else if (cmd_line->verbose){
-           update_called_genes(called_genes,  abi->which_genes[i] , abi->genes[abi->which_genes[i]],best_model.conf );
-         }        
+      }
+        if ( genotyped_present ||  cmd_line->verbose) {
+          update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
+        }      
         update_infection_type(&I,&I_permenant);
     }

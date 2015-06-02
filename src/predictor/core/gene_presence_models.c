@@ -284,7 +284,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene,
-             double min_gene_cn)
+             double min_gene_cn,
+             boolean* genotyped_present)
 {
   //depending on err rate, set freq
   double freq = calculate_minmum_detectable_freq_given_error_rate(err_rate);
@@ -310,6 +311,9 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 
   if (best_model->conf > MIN_CONFIDENCE_GENE)
     {
+      if (best_model->type != Susceptible){
+        *genotyped_present = true;
+      }
       if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
         return Susceptible;
       }else{

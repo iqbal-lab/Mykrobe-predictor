@@ -50,11 +50,13 @@ void test_resistotype_gene()
 	  // printf("num_gaps %d \n", gi->num_gaps);   
 
 
+	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene,0.03);
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
     
 
 	CU_ASSERT(I == Resistant);
@@ -86,14 +88,17 @@ void test_resistotype_unsure_gene()
 
 	double epsilon = pow(1-err_rate, kmer);
 
+	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene,0.03);
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
     
 	printf("%i\n",I );
 	CU_ASSERT(I == Susceptible);
+	CU_ASSERT(genotyped_present == true);
 }
 
 
@@ -122,14 +127,18 @@ void test_resistotype_unsure_gene_2()
 
 	double epsilon = pow(1-err_rate, kmer);
 
+	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene,0.03);
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
     
 	printf("%i\n",I );
 	CU_ASSERT(I == MixedInfection);
+	CU_ASSERT(genotyped_present == true);
+
 }
 
 
@@ -158,11 +167,13 @@ void test_resistotype_minor_gene()
 
 	double epsilon = pow(1-err_rate, kmer);
 
+	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene,0.03);
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
     
 
 	CU_ASSERT(I == MixedInfection);
@@ -194,11 +205,13 @@ void test_resistotype_gene_at_high_CN()
 
 	double epsilon = pow(1-err_rate, kmer);
 
+	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene,0.03);
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
     
 
 	CU_ASSERT(I == Resistant);
@@ -229,13 +242,17 @@ void test_resistotype_gene_S()
 
 	double epsilon = pow(1-err_rate, kmer);
 
+	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene,0.03);
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
     
 
 	CU_ASSERT(I == Susceptible);
+	CU_ASSERT(genotyped_present == false);
+
 
 }

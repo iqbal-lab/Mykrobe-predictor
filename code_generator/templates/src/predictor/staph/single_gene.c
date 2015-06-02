@@ -1,3 +1,4 @@
+boolean genotyped_present = false;
 I= resistotype_gene(abi->genes[{{drug.genes_resistance_induced_by[0]}}], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
@@ -12,12 +13,9 @@ I= resistotype_gene(abi->genes[{{drug.genes_resistance_induced_by[0]}}], err_rat
 		{% elif drug.name == "Tetracycline" %} MIN_GENE_CN_TET 
 		{% elif drug.name == "Trimethoprim" %} MIN_GENE_CN_PEN 
 		{% else %} MIN_GENE_CN 
-		{% endif %}
+		{% endif %},&genotyped_present
          );
-  if ( (I==Resistant) || (I==MixedInfection) ) {
+  if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, {{drug.genes_resistance_induced_by[0]}}, abi->genes[{{drug.genes_resistance_induced_by[0]}}], best_model.conf );
   }
- else if (cmd_line->verbose){
-    update_called_genes(called_genes, {{drug.genes_resistance_induced_by[0]}}, abi->genes[{{drug.genes_resistance_induced_by[0]}}], best_model.conf ); 	
- }
   update_infection_type(&I,&I_permenant);

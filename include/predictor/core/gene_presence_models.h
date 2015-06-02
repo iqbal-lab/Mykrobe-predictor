@@ -80,5 +80,6 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene,
-             double min_gene_cn);
+             double min_gene_cn,
+             boolean* genotyped_present);
 
