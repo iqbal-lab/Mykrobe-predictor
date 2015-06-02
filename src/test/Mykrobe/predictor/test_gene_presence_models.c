@@ -256,3 +256,55 @@ void test_resistotype_gene_S()
 
 
 }
+
+
+void test_low_coverage_genes()
+{
+	// How it might look with repeat kmers
+	GeneInfo* gi = alloc_and_init_gene_info();
+	gi->median_covg = 16;
+	gi->median_covg_on_nonzero_nodes = 16;
+	gi->percent_nonzero = 2;
+	gi->len = 1993;
+	double err_rate = 0.01;
+	int kmer = 15;
+	int expected_covg = 10;
+	Model best_model;
+	ModelChoiceMethod choice = MaxAPosteriori;
+	int min_expected_kmer_recovery_for_this_gene = 80;
+
+	double genome_size = 280000;
+	double mean_read_length = 100;
+	double bp_loaded = 28000000;
+	double lambda_g =expected_covg;
+	double lambda_e = expected_covg*err_rate;
+
+	double epsilon = pow(1-err_rate, kmer);
+
+	boolean genotyped_present = false;
+	InfectionType I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
+	CU_ASSERT(I == Susceptible);
+	CU_ASSERT(genotyped_present == false);
+
+	gi->median_covg = 16;
+	gi->median_covg_on_nonzero_nodes = 16;
+	gi->percent_nonzero = 80;
+	gi->len = 1993;
+
+	genotyped_present = false;
+	I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
+	CU_ASSERT(I == Resistant);
+	CU_ASSERT(genotyped_present == true);
+
+}
+

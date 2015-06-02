@@ -55,10 +55,10 @@ double calculate_minmum_detectable_freq_given_error_rate(double err_rate){
     return (freq);
 }
 
-double calculate_expected_gene_coverage_based_on_coverage(int coverage ){
+double calculate_expected_gene_coverage_based_on_coverage(double coverage ){
   // Lander Waterman 
   //total length of gaps = length of gene * exp(-expected_covg)
-  // so percentage of kmers present = 1-exp(-expected_covg);  
+  // so percentage of kmers present = 1- (length of gene *) exp(-expected_covg);  
   return (1-exp(-coverage));
 }
 double get_log_posterior_minor_resistant(double llk,
@@ -77,9 +77,7 @@ double get_log_posterior_minor_resistant(double llk,
   // If the coverage is much higher than expected than the gene probably exists at multi copy number 
 
   double expected_percentage_coverage = calculate_expected_gene_coverage_based_on_coverage(expected_covg*freq);
-  double minimum_percentage_coverage_required =  expected_percentage_coverage * min_expected ;
-
-
+  double minimum_percentage_coverage_required =  expected_percentage_coverage * (double) min_expected ;
   //double step function. Coverage gap as might expect for this low frequency
   if ( (p>=minimum_percentage_coverage_required))
     {
@@ -323,7 +321,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     }
   else
     {
-      return Unsure;
+      // If confidence is very low call S
+      return Susceptible;
     }
 }
 

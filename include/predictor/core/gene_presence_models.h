@@ -35,7 +35,7 @@ double get_log_posterior_truly_susceptible(double llk,
 					   GeneInfo* gi,
 					   int min_expected);
 
-double calculate_expected_gene_coverage_based_on_coverage(int coverage);
+double calculate_expected_gene_coverage_based_on_coverage(double coverage);
 // lambda_g = expected_covg/mean_read_len on real allele
 /*double get_log_lik_truly_resistant(GeneInfo* gi,
 				   double lambda_g,
