@@ -6,7 +6,20 @@ for (i=0; i<{{drug.num_genes}}; i++)
 			 err_rate, db_graph->kmer_size, 
 			 lambda_g, lambda_e, epsilon, expected_covg,
 			 &best_model, MaxAPosteriori,
-			 {% if drug.name =="Trimethoprim" %} MIN_PERC_COVG_DFRK {% else %} MIN_PERC_COVG_STANDARD {% endif %} );
+			 {% if drug.name =="Trimethoprim" %} MIN_PERC_COVG_DFRK {% else %} MIN_PERC_COVG_STANDARD {% endif %},
+    
+    {% if drug.name =="Penicillin" %} MIN_GENE_CN_PEN
+    {% elif drug.name == "Gentamicin" %} MIN_GENE_CN_GEN 
+    {% elif drug.name == "Methicillin" %} MIN_GENE_CN_MEC 
+    {% elif drug.name == "FusidicAcid" %} MIN_GENE_CN_FUS 
+    {% elif drug.name == "Erythromycin" %} MIN_GENE_CN_ERY 
+    {% elif drug.name == "Mupirocin" %} MIN_GENE_CN_MUP 
+    {% elif drug.name == "Tetracycline" %} MIN_GENE_CN_TET 
+    {% elif drug.name == "Trimethoprim" %} MIN_GENE_CN_PEN 
+    {% else %} MIN_GENE_CN 
+    {% endif %}
+
+        );
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) ) 
         {
           max_sus_conf = best_model.conf;

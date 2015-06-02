@@ -76,6 +76,14 @@ int  main()
   }  
 
   if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test gene presence unsure models 2 ", 
+       test_resistotype_unsure_gene_2)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }  
+
+
+  if (NULL == CU_add_test(pPopGraphSuite, 
        "Test gene presence high CN models ", 
        test_resistotype_gene_at_high_CN)) {
     CU_cleanup_registry();

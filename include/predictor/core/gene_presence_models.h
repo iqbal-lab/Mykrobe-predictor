@@ -10,7 +10,14 @@
 #include "gene_presence.h"
 #include "mut_models.h"
 
-#define MIN_GENE_CN 0.12 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN 0.03 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_ERY 0.17 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_FUS 0.03 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_GEN 0.04 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_MEC 0.06 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_MUP 0.21 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_PEN 0.04 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_TET 0.12 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,
@@ -72,5 +79,6 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       double lambda_g, double lambda_e, double epsilon, int expected_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
-			       int min_expected_kmer_recovery_for_this_gene);
+			       int min_expected_kmer_recovery_for_this_gene,
+             double min_gene_cn);
 

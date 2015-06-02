@@ -54,7 +54,7 @@ void test_resistotype_gene()
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene);
+			       min_expected_kmer_recovery_for_this_gene,0.03);
     
 
 	CU_ASSERT(I == Resistant);
@@ -90,13 +90,46 @@ void test_resistotype_unsure_gene()
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene);
+			       min_expected_kmer_recovery_for_this_gene,0.03);
     
+	printf("%i\n",I );
+	CU_ASSERT(I == Susceptible);
+}
 
-	CU_ASSERT(I == Unsure);
+
+void test_resistotype_unsure_gene_2()
+{
 
 
+	GeneInfo* gi = alloc_and_init_gene_info();
+	gi->median_covg = 4;
+	gi->median_covg_on_nonzero_nodes = 4;
+	gi->percent_nonzero = 82;
+	gi->num_gaps = 25;
+	gi->len = 1993;
+	double err_rate = 0.01;
+	int kmer = 15;
+	int expected_covg = 100;
+	Model best_model;
+	ModelChoiceMethod choice = MaxAPosteriori;
+	int min_expected_kmer_recovery_for_this_gene = 80;
 
+	double genome_size = 280000;
+	double mean_read_length = 100;
+	double bp_loaded = 28000000;
+	double lambda_g =expected_covg;
+	double lambda_e = expected_covg*err_rate;
+
+	double epsilon = pow(1-err_rate, kmer);
+
+	InfectionType I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene,0.03);
+    
+	printf("%i\n",I );
+	CU_ASSERT(I == MixedInfection);
 }
 
 
@@ -129,7 +162,7 @@ void test_resistotype_minor_gene()
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene);
+			       min_expected_kmer_recovery_for_this_gene,0.03);
     
 
 	CU_ASSERT(I == MixedInfection);
@@ -165,7 +198,7 @@ void test_resistotype_gene_at_high_CN()
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene);
+			       min_expected_kmer_recovery_for_this_gene,0.03);
     
 
 	CU_ASSERT(I == Resistant);
@@ -200,7 +233,7 @@ void test_resistotype_gene_S()
 			       lambda_g,  lambda_e, epsilon, expected_covg,
 			       &best_model,
 			       choice,
-			       min_expected_kmer_recovery_for_this_gene);
+			       min_expected_kmer_recovery_for_this_gene,0.03);
     
 
 	CU_ASSERT(I == Susceptible);
