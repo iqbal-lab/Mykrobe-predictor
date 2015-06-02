@@ -268,6 +268,8 @@ void test_mutation_r()
 	CU_ASSERT(I == MixedInfection)
 }
 
+
+
                 // "gyrA_S84L" :{
                 //         "R_per_cov": "100",
                 //         "S_per_cov": "62",
@@ -337,7 +339,7 @@ void test_mutation_custom_1()
 // err_rate 0.010000
 // lambda_g 3.406567
 // lambda_e 0.011470
-//  epsilon 0.860058
+//  epsilon 0.9560058
 // min_frac_to_detect_minor_pops 0.100000
 //  LLks of S, M, R are -16.855595, -6.881425 and -3.398583
 // LP of S, M, R are -33.711189, -10000005.881425 and -6.797167/////

@@ -272,6 +272,12 @@ void choose_map_gene_model(GeneInfo* gi,
    // printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
 }
 
+double CN_of_gene(GeneInfo* gi, int expected_covg){
+  double CN = (double) gi->median_covg_on_nonzero_nodes / expected_covg;
+  return CN;
+
+
+}
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       double lambda_g,  double lambda_e, double epsilon, int expected_covg,
@@ -300,9 +306,15 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			    min_expected_kmer_recovery_for_this_gene);
     }
 
+
   if (best_model->conf > MIN_CONFIDENCE_GENE)
     {
-      return best_model->type;
+      if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < 0.12){
+        return Unsure;
+      }else{
+        return best_model->type;
+      }
+      
     }
   else
     {

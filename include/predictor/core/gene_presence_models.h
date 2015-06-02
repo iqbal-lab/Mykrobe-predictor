@@ -10,6 +10,7 @@
 #include "gene_presence.h"
 #include "mut_models.h"
 
+#define MIN_GENE_CN 0.12 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,
