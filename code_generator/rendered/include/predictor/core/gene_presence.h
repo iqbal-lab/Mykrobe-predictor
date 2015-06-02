@@ -27,166 +27,158 @@ typedef enum
     
     IsaB=2,
     
-    aadEant6Ia=3,
+    aadDaph4Ia=3,
     
-    aadDaph4Ia=4,
+    qacB=4,
     
-    qacB=5,
+    qacA=5,
     
-    qacA=6,
+    cfr=6,
     
-    cfr=7,
+    blaZ=7,
     
-    blaZ=8,
+    lnuA=8,
     
-    lnuA=9,
+    lnuB=9,
     
-    lnuB=10,
+    ermB=10,
     
-    ermB=11,
+    ermC=11,
     
-    ermC=12,
+    ermA=12,
     
-    ermA=13,
+    ermY=13,
     
-    ermY=14,
+    mupB=14,
     
-    mupB=15,
+    mupA=15,
     
-    mupA=16,
+    ermT=16,
     
-    aph2Ic=17,
+    ant9Ib=17,
     
-    ant9Ia=18,
+    dfrA=18,
     
-    ermT=19,
+    vgaALC=19,
     
-    ant9Ib=20,
+    dfrC=20,
     
-    aphA3aph3III=21,
+    dfrD=21,
     
-    dfrA=22,
+    dfrG=22,
     
-    vgaALC=23,
+    mecC=23,
     
-    dfrC=24,
+    mecA=24,
     
-    dfrD=25,
+    dfrK=25,
     
-    dfrG=26,
+    vgaB=26,
     
-    mecC=27,
+    vgaA=27,
     
-    mecA=28,
+    tetK=28,
     
-    dfrK=29,
+    tetM=29,
     
-    vgaB=30,
+    tetL=30,
     
-    vgaA=31,
+    tetO=31,
     
-    tetK=32,
+    msrA=32,
     
-    tetM=33,
+    mphC=33,
     
-    tetL=34,
+    sat4=34,
     
-    tetO=35,
+    cat=35,
     
-    msrA=36,
+    vanA=36,
     
-    mphC=37,
+    vanC=37,
     
-    sat4=38,
+    vanB=38,
     
-    cat=39,
+    fusB=39,
     
-    vanA=40,
+    fusC=40,
     
-    vanC=41,
+    str=41,
     
-    vanB=42,
+    qacCsmr=42,
     
-    fusB=43,
+    arcA=43,
     
-    fusC=44,
+    arcB=44,
     
-    str=45,
+    arcC=45,
     
-    qacCsmr=46,
+    arcD=46,
     
-    arcA=47,
+    ccrA=47,
     
-    arcB=48,
+    ccrB=48,
     
-    arcC=49,
+    ccrCa=49,
     
-    arcD=50,
+    ccrCb=50,
     
-    ccrA=51,
+    ccrCc=51,
     
-    ccrB=52,
+    chp=52,
     
-    ccrCa=53,
+    eta=53,
     
-    ccrCb=54,
+    etb=54,
     
-    ccrCc=55,
+    etd=55,
     
-    chp=56,
+    luk=56,
     
-    eta=57,
+    lukM=57,
     
-    etb=58,
+    lukMF=58,
     
-    etd=59,
+    lukPVF=59,
     
-    luk=60,
+    lukPVS=60,
     
-    lukM=61,
+    sak=61,
     
-    lukMF=62,
+    sasX=62,
     
-    lukPVF=63,
+    scn=63,
     
-    lukPVS=64,
+    sea=64,
     
-    sak=65,
+    seb=65,
     
-    sasX=66,
+    sec=66,
     
-    scn=67,
+    sed=67,
     
-    sea=68,
+    see=68,
     
-    seb=69,
+    seg=69,
     
-    sec=70,
+    seh=70,
     
-    sed=71,
+    sei=71,
     
-    see=72,
+    sej=72,
     
-    seg=73,
+    selR=73,
     
-    seh=74,
+    sep=74,
     
-    sei=75,
+    seu=75,
     
-    sej=76,
+    tsst1=76,
     
-    selR=77,
-    
-    sep=78,
-    
-    seu=79,
-    
-    tsst1=80,
-    
-    unspecified_gpg = 81
+    unspecified_gpg = 77
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 81    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES 77    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);

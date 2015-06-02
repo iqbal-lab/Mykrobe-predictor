@@ -31,11 +31,6 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return IsaB;
     }
   
-  else if(strcmp(sbuf->buff, "aadEant6Ia")==0)
-    {
-      return aadEant6Ia;
-    }
-  
   else if(strcmp(sbuf->buff, "aadDaph4Ia")==0)
     {
       return aadDaph4Ia;
@@ -101,16 +96,6 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
       return mupA;
     }
   
-  else if(strcmp(sbuf->buff, "aph2Ic")==0)
-    {
-      return aph2Ic;
-    }
-  
-  else if(strcmp(sbuf->buff, "ant9Ia")==0)
-    {
-      return ant9Ia;
-    }
-  
   else if(strcmp(sbuf->buff, "ermT")==0)
     {
       return ermT;
@@ -119,11 +104,6 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
   else if(strcmp(sbuf->buff, "ant9Ib")==0)
     {
       return ant9Ib;
-    }
-  
-  else if(strcmp(sbuf->buff, "aphA3aph3III")==0)
-    {
-      return aphA3aph3III;
     }
   
   else if(strcmp(sbuf->buff, "dfrA")==0)
@@ -449,11 +429,6 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "IsaB.fa");
     }
   
-  else if(gene==aadEant6Ia)
-    {
-      strbuf_append_str(fa, "aadEant6Ia.fa");
-    }
-  
   else if(gene==aadDaph4Ia)
     {
       strbuf_append_str(fa, "aadDaph4Ia.fa");
@@ -519,16 +494,6 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
       strbuf_append_str(fa, "mupA.fa");
     }
   
-  else if(gene==aph2Ic)
-    {
-      strbuf_append_str(fa, "aph2Ic.fa");
-    }
-  
-  else if(gene==ant9Ia)
-    {
-      strbuf_append_str(fa, "ant9Ia.fa");
-    }
-  
   else if(gene==ermT)
     {
       strbuf_append_str(fa, "ermT.fa");
@@ -537,11 +502,6 @@ boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir
   else if(gene==ant9Ib)
     {
       strbuf_append_str(fa, "ant9Ib.fa");
-    }
-  
-  else if(gene==aphA3aph3III)
-    {
-      strbuf_append_str(fa, "aphA3aph3III.fa");
     }
   
   else if(gene==dfrA)
@@ -858,8 +818,6 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     
     case IsaB : return "IsaB";
     
-    case aadEant6Ia : return "aadEant6Ia";
-    
     case aadDaph4Ia : return "aadDaph4Ia";
     
     case qacB : return "qacB";
@@ -886,15 +844,9 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
     
     case mupA : return "mupA";
     
-    case aph2Ic : return "aph2Ic";
-    
-    case ant9Ia : return "ant9Ia";
-    
     case ermT : return "ermT";
     
     case ant9Ib : return "ant9Ib";
-    
-    case aphA3aph3III : return "aphA3aph3III";
     
     case dfrA : return "dfrA";
     

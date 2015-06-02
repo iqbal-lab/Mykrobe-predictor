@@ -24,8 +24,6 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case IsaB : return "Clindamycin";
     
-    case aadEant6Ia : return "Gentamicin";
-    
     case aadDaph4Ia : return "Gentamicin";
     
     case qacB : return "Biocides";
@@ -52,15 +50,9 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case mupA : return "Mupirocin";
     
-    case aph2Ic : return "Gentamicin";
-    
-    case ant9Ia : return "Gentamicin";
-    
     case ermT : return "Erythromycin";
     
     case ant9Ib : return "Spectinomycin";
-    
-    case aphA3aph3III : return "Gentamicin";
     
     case dfrA : return "Trimethoprim";
     
@@ -835,19 +827,11 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   
     abi->which_genes[0]=aacAaphD;
   
-    abi->which_genes[1]=aadEant6Ia;
+    abi->which_genes[1]=aadDaph4Ia;
   
-    abi->which_genes[2]=aadDaph4Ia;
+    abi->which_genes[2]=str;
   
-    abi->which_genes[3]=aph2Ic;
-  
-    abi->which_genes[4]=ant9Ia;
-  
-    abi->which_genes[5]=aphA3aph3III;
-  
-    abi->which_genes[6]=str;
-  
-  abi->num_genes=7;
+  abi->num_genes=3;
   abi->num_mutations = 0;
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
@@ -867,7 +851,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 
 
 
-for (i=0; i<7; i++)
+for (i=0; i<3; i++)
     {
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
