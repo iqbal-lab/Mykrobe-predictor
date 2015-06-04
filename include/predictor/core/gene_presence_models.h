@@ -11,13 +11,13 @@
 #include "mut_models.h"
 
 #define MIN_GENE_CN 0.03 // Minimum copy number required to call r as r (this is based on agreement with consensus)
-#define MIN_GENE_CN_ERY 0.17 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_ERY 0.19 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 #define MIN_GENE_CN_FUS 0.03 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 #define MIN_GENE_CN_GEN 0.04 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 #define MIN_GENE_CN_MEC 0.06 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 #define MIN_GENE_CN_MUP 0.21 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 #define MIN_GENE_CN_PEN 0.04 // Minimum copy number required to call r as r (this is based on agreement with consensus)
-#define MIN_GENE_CN_TET 0.12 // Minimum copy number required to call r as r (this is based on agreement with consensus)
+#define MIN_GENE_CN_TET 0.13 // Minimum copy number required to call r as r (this is based on agreement with consensus)
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,

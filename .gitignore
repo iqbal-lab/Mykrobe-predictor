@@ -43,6 +43,7 @@ libs/string_buffer/strbuf_test
 *.fuse_hidden*
 *.tmp2
 *.tmp
+*.pyc
 
 ## scripts
 make.sh

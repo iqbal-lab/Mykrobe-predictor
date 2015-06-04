@@ -1,5 +1,5 @@
 cd code_generator
-python main.py
+python staph.py
 cd ..
 cp code_generator/rendered/include/predictor/core/* include/predictor/core/
 cp code_generator/rendered/include/predictor/staph/* include/predictor/staph/

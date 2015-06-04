@@ -177,6 +177,7 @@ int get_ith_present_panel(CovgInfo* covg_info, int i){
 
 boolean is_percentage_coverage_above_threshold(int per_cov,int threshold)
 {
+  // printf("%i, %i\n", per_cov, threshold);
   if (per_cov >= threshold)
   {
     return (true);

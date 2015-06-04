@@ -95,7 +95,7 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 }
 
 void phylo_group_threshold(int* thresholds){
-  thresholds[CoagPos] = 90;
+  thresholds[CoagPos] = 30;
   thresholds[CoagNeg] = 25;
 
 }
@@ -104,7 +104,7 @@ void cat_threshold(int* thresholds){
   thresholds[0] = 20;
 }
 void load_all_species_thresholds(int* thresholds){
-  thresholds[Saureus] = 90;
+  thresholds[Saureus] = 30;
   thresholds[Sepidermidis] = 30;
   thresholds[Shaemolyticus] = 30;
   thresholds[Sother] = 10;
