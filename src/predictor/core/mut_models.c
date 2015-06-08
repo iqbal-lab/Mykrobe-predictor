@@ -285,6 +285,7 @@ InfectionType resistotype(Var* var,
                   			  double lambda_g, 
                   			  double lambda_e, 
                   			  double epsilon,
+                          int expected_covg,
                   			  Model* best_model,
                   			  ModelChoiceMethod choice,
                   			  float min_frac_to_detect_minor_pops)
@@ -297,11 +298,15 @@ InfectionType resistotype(Var* var,
                           // printf(" epsilon %f\n",  epsilon );
                           // printf("min_frac_to_detect_minor_pops %f\n ", min_frac_to_detect_minor_pops );
 
+  if (expected_covg == 0 ){
+    //covg must be >0
+    expected_covg = 1;
+  }
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
-									       lambda_g, lambda_e,
+									       expected_covg, expected_covg * err_rate / 3,
 									       kmer);
-  double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
-  double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
+  double llk_M = get_log_lik_minor_pop_resistant(var,expected_covg, expected_covg * err_rate / 3, kmer, err_rate,min_frac_to_detect_minor_pops);
+  double llk_R = get_log_lik_minor_pop_resistant(var,expected_covg, expected_covg * err_rate / 3, kmer, err_rate,0.75);
 
 
    // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);

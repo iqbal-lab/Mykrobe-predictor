@@ -99,7 +99,7 @@ void test_mutation_S()
 
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops);
 
@@ -169,7 +169,7 @@ void test_mutation_R()
 
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops);
 
@@ -243,7 +243,7 @@ void test_mutation_r()
 
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops);
 
@@ -332,7 +332,7 @@ void test_mutation_custom_1()
     Model best_model;
 
      InfectionType I= resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops);
 	printf("conf %f\n", best_model.conf);
@@ -360,5 +360,78 @@ void test_mutation_custom_1()
 	  printf("N\n");
 	}	
 
-	CU_ASSERT(I == Unsure)
+	CU_ASSERT(I == Resistant)
+}
+
+void test_low_coverage_ont_mut()
+{
+	double err_rate = 0.10;
+	int kmer = 15;
+	int expected_covg = 0;
+	
+	float min_frac_to_detect_minor_pops = 0.1;
+	double genome_size = 280000;
+	double mean_read_length = 10000;
+	double bp_loaded = 28000000;
+	double lambda_g =expected_covg;
+	double lambda_e = expected_covg*err_rate / 3;
+	// double lambda_g = 3.406567;
+	// double lambda_e = 0.011470;
+	double epsilon = pow(1-err_rate, kmer);	
+
+    AlleleInfo*	resistant_allele = alloc_allele_info();
+	resistant_allele->median_covg= 4;
+	resistant_allele->median_covg_on_nonzero_nodes= 4;
+	resistant_allele->min_covg= 4;
+	resistant_allele->percent_nonzero = 100;
+
+	AlleleInfo* susceptible_allele = alloc_allele_info();	
+	susceptible_allele->median_covg= 0;
+	susceptible_allele->median_covg_on_nonzero_nodes= 0;
+	susceptible_allele->min_covg= 0;
+	susceptible_allele->percent_nonzero = 0;
+
+
+	VarOnBackground*  vob_best = alloc_and_init_var_on_background();
+	vob_best->susceptible_allele = *susceptible_allele;
+	vob_best->resistant_alleles[0] = *resistant_allele;
+	vob_best->num_resistant_alleles = 1;
+	vob_best->some_resistant_allele_present = true;
+	vob_best->working_current_max_res_allele_present = 3;
+
+	Var* var = alloc_var();
+	var->vob_best_res = vob_best;
+	var->vob_best_sus = vob_best;
+
+	Var** vars =  malloc(sizeof(Var*)*1);
+	vars[0] = var;
+
+	ModelChoiceMethod choice = MaxAPosteriori;
+    Model best_model;
+
+     InfectionType I= resistotype(vars[0], err_rate, kmer, 
+		    lambda_g, lambda_e, epsilon,expected_covg,
+		    &best_model, MaxAPosteriori,
+		    min_frac_to_detect_minor_pops);
+	printf("conf %f\n", best_model.conf);
+
+      if (I==Susceptible)
+	{
+	  printf("S\n");
+	}
+      else if (I==MixedInfection)
+	{
+	  printf("r\n");
+	}
+      else if (I==Resistant)
+	{
+	  printf("R\n");
+	}
+      else
+	{
+	  printf("N\n");
+	}	
+
+
+	CU_ASSERT(I == Resistant)
 }

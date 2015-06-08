@@ -1137,7 +1137,7 @@ InfectionType is_linezolid_susceptible(dBGraph* db_graph,
 	  any_allele_non_null=true;
 	}
   I=resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-    lambda_g, lambda_e, epsilon,
+    lambda_g, lambda_e, epsilon,expected_covg,
     &best_model, MaxAPosteriori,
     cmd_line->min_frac_to_detect_minor_pops);
   if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
@@ -1519,7 +1519,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
       any_allele_non_null=true;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops);
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
@@ -2038,7 +2038,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
       any_allele_non_null=true;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops);
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
@@ -2098,13 +2098,13 @@ for (i=0; i<2; i++)
 
   InfectionType I_f652s=
   resistotype(abi->vars[fusA_F652S],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_y654n=
     resistotype(abi->vars[fusA_Y654N],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops);
 if (I_f652s==Resistant && I_y654n==Resistant)
@@ -2124,13 +2124,13 @@ if (I_f652s==Resistant && I_y654n==Resistant)
 
   InfectionType I_t326i=
   resistotype(abi->vars[fusA_T326I],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_e468v=
     resistotype(abi->vars[fusA_E468V],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops);
 
@@ -2153,25 +2153,25 @@ if (I_t326i==Resistant && I_e468v==Resistant)
 
   InfectionType I_l461f=
   resistotype(abi->vars[fusA_L461F],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_a376v=
     resistotype(abi->vars[fusA_A376V],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_a655p=
     resistotype(abi->vars[fusA_A655P],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops);
 
   InfectionType I_d463g=
     resistotype(abi->vars[fusA_D463G],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops);
   
@@ -2200,7 +2200,7 @@ if ( (I_l461f==Resistant)
 
 InfectionType I_e444v=Susceptible;
 resistotype(abi->vars[fusA_E444V],
-	    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+	    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 	    &best_model, MaxAPosteriori,
 	    cmd_line->min_frac_to_detect_minor_pops);
 if ((I_l461f==Resistant)
@@ -2307,7 +2307,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
       any_allele_non_null=true;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops);
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
@@ -2334,7 +2334,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 
   InfectionType I_m470t=
   resistotype(abi->vars[rpoB_M470T],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops);
 
@@ -2349,7 +2349,7 @@ if (best_model.conf<min_conf)
 
   InfectionType I_d471g=
   resistotype(abi->vars[rpoB_D471G],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops);
 
@@ -2465,7 +2465,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
       any_allele_non_null=true;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,
+		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops);
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )

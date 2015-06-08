@@ -427,6 +427,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 		    lambda_g, 
 		    lambda_e, 
 		    epsilon,
+        expected_covg,
 		    &best_model, 
 		    MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops);
@@ -530,6 +531,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
         &best_model, MaxAPosteriori,
         cmd_line->min_frac_to_detect_minor_pops);
 
@@ -634,6 +636,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
               lambda_g, 
               lambda_e, 
               epsilon,
+              expected_covg,
               &best_model,
               MaxAPosteriori,
               cmd_line->min_frac_to_detect_minor_pops);
@@ -735,6 +738,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
         &best_model, MaxAPosteriori,
         cmd_line->min_frac_to_detect_minor_pops);
 
@@ -835,6 +839,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
         &best_model, MaxAPosteriori,
         cmd_line->min_frac_to_detect_minor_pops);
 
@@ -935,6 +940,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
         &best_model, MaxAPosteriori,
         cmd_line->min_frac_to_detect_minor_pops);
 
@@ -1035,6 +1041,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
         &best_model, MaxAPosteriori,
         cmd_line->min_frac_to_detect_minor_pops);
 
@@ -1135,6 +1142,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       InfectionType I=
 	resistotype(abi->vars[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops);
       
@@ -1237,6 +1245,7 @@ boolean any_unsure_mixed_call=false;
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+        expected_covg,
         &best_model, MaxAPosteriori,
         cmd_line->min_frac_to_detect_minor_pops);
 

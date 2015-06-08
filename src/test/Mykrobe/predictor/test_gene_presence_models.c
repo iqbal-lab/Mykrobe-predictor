@@ -322,7 +322,7 @@ void test_low_coverage_ont_genes()
 	int expected_covg = 0;
 	Model best_model;
 	ModelChoiceMethod choice = MaxAPosteriori;
-	int min_expected_kmer_recovery_for_this_gene = 80;
+	int min_expected_kmer_recovery_for_this_gene = 30;
 
 	double genome_size = 280000;
 	double mean_read_length = 100;
@@ -341,5 +341,38 @@ void test_low_coverage_ont_genes()
 			       &genotyped_present);
 	CU_ASSERT(I == Susceptible);
 	CU_ASSERT(genotyped_present == false);
+
+	gi->median_covg = 2;
+	gi->median_covg_on_nonzero_nodes = 2;
+	gi->percent_nonzero = 50;
+	gi->len = 1993;
+
+	genotyped_present = false;
+	I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
+	CU_ASSERT(I == Resistant);
+	CU_ASSERT(genotyped_present == true);
+
+	min_expected_kmer_recovery_for_this_gene = 60;
+
+	gi->median_covg = 1;
+	gi->median_covg_on_nonzero_nodes = 1;
+	gi->percent_nonzero = 44;
+	gi->len = 1600;
+
+	genotyped_present = false;
+	I = resistotype_gene(gi, err_rate, kmer,
+			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       &best_model,
+			       choice,
+			       min_expected_kmer_recovery_for_this_gene,0.03,
+			       &genotyped_present);
+	CU_ASSERT(I == Resistant);
+	CU_ASSERT(genotyped_present == true);
+
 
 }

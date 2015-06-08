@@ -138,6 +138,14 @@ int  main()
   }
 
 
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test mutation test_low_coverage_ont_mut case ", 
+       test_low_coverage_ont_mut)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+
+
 
   // if (NULL == CU_add_test(pPopGraphSuite, 
 		// 	  "Test getting coverage info on a gene (for gene presence testing)", 
