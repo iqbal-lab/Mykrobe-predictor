@@ -20,8 +20,8 @@ double get_log_posterior_major_resistant(double llk,
 {
   int p = gi->percent_nonzero;
 
-  double expected_percentage_coverage = calculate_expected_gene_coverage_based_on_coverage(expected_covg);
-  double minimum_percentage_coverage_required =  expected_percentage_coverage * min_expected ;
+  double minimum_expected_percentage_coverage = calculate_expected_gene_coverage_based_on_coverage(expected_covg);
+  double minimum_percentage_coverage_required =  minimum_expected_percentage_coverage * min_expected ;
   if ( p >= minimum_percentage_coverage_required) 
     {
       return log(1)+llk;
@@ -123,8 +123,9 @@ double get_log_lik_observed_coverage_on_gene(GeneInfo* gi,
 			     int kmer)
 {
   double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, expected_covg * freq);
+  // double log_lk_number_of_gaps_in_gene_coverage = gene_num_gaps_probability(gi->num_gaps, expected_num_gaps);
   // printf("freq : %f coverage lk %f\n", freq , log_lk_coverage_on_gene);
-  double ret =  log_lk_coverage_on_gene; // + log_lk_number_of_gaps_in_gene_coverage;
+  double ret =  log_lk_coverage_on_gene;// + log_lk_number_of_gaps_in_gene_coverage;
   return ret;
 
 }

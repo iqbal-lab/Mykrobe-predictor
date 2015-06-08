@@ -173,7 +173,9 @@ int main(int argc, char **argv)
             false,
             into_colour,
             &subsample_null,
-            false, &dummy, 0, &is_rem);
+            false, &dummy, 0,
+             &is_rem, 
+             0);
 
     if (WINDOWS==0)
       {
@@ -203,7 +205,6 @@ int main(int argc, char **argv)
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
 
-
   //only need this for progress
   uint64_t total_reads = 0;
   uint64_t count_so_far=0;
@@ -215,6 +216,14 @@ int main(int argc, char **argv)
     }
   boolean progressbar_remainder=true;
 
+  int qual_thresh;
+  if (cmd_line->ont){
+    // ONT data
+    qual_thresh = 0;
+  }
+  else{
+    qual_thresh = 10;
+  }
 
   bp_loaded = build_unclean_graph(db_graph, 
           cmd_line->seq_path,
@@ -227,7 +236,8 @@ int main(int argc, char **argv)
           only_load_pre_existing_kmers,
           into_colour, subsample_function,
           cmd_line->progress, &count_so_far, total_reads,
-          &progressbar_remainder);
+          &progressbar_remainder,
+          qual_thresh);
   if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
     {
       printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
@@ -237,14 +247,12 @@ int main(int argc, char **argv)
     {
       printf("No data\n");
       return 1;
-
     }
-  
+
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
                  cmd_line->readlen_distrib_size);
 
-  // double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
-  double err_rate = 0.1;
+  double err_rate = estimate_err_rate(cmd_line->seq_path, cmd_line->input_list);
   if (err_rate<0.01)
     {
       err_rate=0.01;

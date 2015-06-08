@@ -64,7 +64,8 @@ unsigned long long build_unclean_graph(dBGraph* db_graph, StrBuf* path, boolean 
 				       boolean print_progress_info,
 				       uint64_t* count_so_far,
 				       uint64_t total_reads_in_dataset,
-				       boolean* is_a_remainder);
+				       boolean* is_a_remainder,
+				       int qual_thresh);
 
 
 

@@ -319,7 +319,7 @@ void test_low_coverage_ont_genes()
 	gi->len = 1993;
 	double err_rate = 0.1;
 	int kmer = 15;
-	int expected_covg = 0;
+	int expected_covg = 2;
 	Model best_model;
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 30;
@@ -357,7 +357,7 @@ void test_low_coverage_ont_genes()
 	CU_ASSERT(I == Resistant);
 	CU_ASSERT(genotyped_present == true);
 
-	min_expected_kmer_recovery_for_this_gene = 60;
+	min_expected_kmer_recovery_for_this_gene = 50;
 
 	gi->median_covg = 1;
 	gi->median_covg_on_nonzero_nodes = 1;
