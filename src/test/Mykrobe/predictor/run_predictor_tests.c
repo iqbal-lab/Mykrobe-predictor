@@ -102,6 +102,12 @@ int  main()
     CU_cleanup_registry();
     return CU_get_error();
   }
+  if (NULL == CU_add_test(pPopGraphSuite, 
+       "Test gene low coverage ont", 
+       test_low_coverage_ont_genes)) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
 
 
  // Mutation Models

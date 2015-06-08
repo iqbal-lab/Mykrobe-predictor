@@ -285,6 +285,10 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
              double min_gene_cn,
              boolean* genotyped_present)
 {
+  if (expected_covg == 0 ){
+    //covg must be >0
+    expected_covg = 1;
+  }
   //depending on err rate, set freq
   double freq = calculate_minmum_detectable_freq_given_error_rate(err_rate);
 
