@@ -56,6 +56,8 @@ typedef struct
   boolean output_supernodes;
   boolean subsample;
   boolean progress;
+  boolean verbose;
+  boolean ont;  
   float subsample_propn;
   Sequencer machine;
   OutputFormat format;

@@ -154,17 +154,18 @@ int main(int argc, char **argv)
 			    "data/skeleton_binary/tb/list_speciesbranches_genes_and_muts");
 	  uint64_t dummy=0;
 	  boolean is_rem=true;
-	  build_unclean_graph(db_graph, 
-			      skeleton_flist,
-			      true,
-			      cmd_line->kmer_size,
-			      NULL, 0,
-			      NULL, 0,
-			      false,
-			      into_colour,
-			      &subsample_null,
-			      false, &dummy, 0, &is_rem);
-	  
+    build_unclean_graph(db_graph, 
+            skeleton_flist,
+            true,
+            cmd_line->kmer_size,
+            NULL, 0,
+            NULL, 0,
+            false,
+            into_colour,
+            &subsample_null,
+            false, &dummy, 0,
+             &is_rem, 
+             0);
 	  if (WINDOWS==0)
 	    {
 	      //dump binary so can reuse
@@ -206,6 +207,14 @@ int main(int argc, char **argv)
     }
   //  printf("Total reads is %" PRIu64 "\n", total_reads);
   boolean progressbar_remainder=true;
+  int qual_thresh;
+  if (cmd_line->ont){
+    // ONT data
+    qual_thresh = 0;
+  }
+  else{
+    qual_thresh = 10;
+  }  
   bp_loaded = build_unclean_graph(db_graph, 
           cmd_line->seq_path,
           cmd_line->input_list,
@@ -217,7 +226,8 @@ int main(int argc, char **argv)
           only_load_pre_existing_kmers,
           into_colour, subsample_function,
           cmd_line->progress, &count_so_far, total_reads,
-          &progressbar_remainder);
+          &progressbar_remainder,
+          qual_thresh);
   if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
     {
       printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
@@ -318,40 +328,40 @@ int main(int argc, char **argv)
   boolean output_last=false;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes);   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, 
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, 
 				  cmd_line, output_last,called_variants,called_genes); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes);   
   /*  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); */
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
   output_last=true;
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
 				  &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+				  ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
 				  called_variants,called_genes); 
 
   print_json_susceptibility_end();

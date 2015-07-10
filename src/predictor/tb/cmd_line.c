@@ -54,7 +54,8 @@ const char* usage=
 "   [--method STRING] \t\t\t\t\t=\t Default is InSilicoOligos. Or can have  WGAssemblyThenGenotyping\n" \
 "   [--format STRING] \t\t\t\t\t=\t Options are Stdout and JSON\n" \
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
-"   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" ;
+"   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" \
+"   [--ont] \t\t\t\t\t=\t Data is from Oxford nanopore \n\n" ;
 
 int default_opts(CmdLine * c)
 {
@@ -77,6 +78,8 @@ int default_opts(CmdLine * c)
   c->subsample_propn = (float) 1.0;
   c->subsample=false;
   c->progress=false;
+  c->verbose=false;  
+  c->ont=false;
   c->min_frac_to_detect_minor_pops = (float) 0.0;
   return 1;
 }
@@ -146,6 +149,8 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"subsample", required_argument, NULL, 'd'},
     {"format", required_argument, NULL, 'e'},
     {"progress", no_argument, NULL, 'g'},
+    {"verbose", no_argument, NULL, 'v'},
+    {"ont", no_argument, NULL, 'n'},    
     {"minor_pop_frac", required_argument, NULL, 'p'},
     {0,0,0,0}	
   };
@@ -306,7 +311,17 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
       {
   cmdline_ptr->progress=true;
   break;
+      }    
+    case 'v'://verbose
+      {
+  cmdline_ptr->verbose=true;
+  break;
       }
+case 'n'://ont
+      {
+  cmdline_ptr->ont=true;
+  break;
+      } 
   case 'p'://minor_pop_frac
       {
   if (optarg==NULL)
