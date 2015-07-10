@@ -340,7 +340,7 @@ InfectionType resistotype(Var* var,
     {
       return best_model->type;
     }
-  else if (best_model->conf > MIN_CONFIDENCE_r)
+  else if ( (best_model->type==MixedInfection) && (best_model->conf > MIN_CONFIDENCE_r) )
     {
       return best_model->type;
     }
