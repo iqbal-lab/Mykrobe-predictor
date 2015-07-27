@@ -336,7 +336,7 @@ InfectionType resistotype(Var* var,
     // printf("mid_model.conf %f best_model->conf %f \n", mid_model.conf , best_model->conf);
     // printf("best_model->type %i MIN_CONFIDENCE_r %i \n", best_model->type , MIN_CONFIDENCE_r);
 
-  if (best_model->type==Susceptible)
+  if (best_model->type==Susceptible || best_model->type==Resistant )
     {
       return best_model->type;
     }
