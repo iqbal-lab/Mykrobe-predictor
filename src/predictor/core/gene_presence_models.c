@@ -274,8 +274,6 @@ void choose_map_gene_model(GeneInfo* gi,
 double CN_of_gene(GeneInfo* gi, int expected_covg){
   double CN = (double) gi->median_covg_on_nonzero_nodes / expected_covg;
   return CN;
-
-
 }
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,

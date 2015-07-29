@@ -420,8 +420,9 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
-	resistotype(abi->vars[i],
+  resistotype(abi->vars[i],
 		    err_rate, 
 		    db_graph->kmer_size, 
 		    lambda_g, 
@@ -430,7 +431,12 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
         expected_covg,
 		    &best_model, 
 		    MaxAPosteriori,
-		    cmd_line->min_frac_to_detect_minor_pops);
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
+ 
       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
 	{
@@ -445,13 +451,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 	{  
 	  // Save the variant being called 
 	  // add_called_variant_info_to_array(i, called_variants, best_model, I)
-	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
 	  return I;
 	}
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -528,12 +532,17 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         expected_covg,
         &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+        cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -546,13 +555,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -629,6 +636,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
   resistotype(abi->vars[i],
               err_rate, 
@@ -639,7 +647,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
               expected_covg,
               &best_model,
               MaxAPosteriori,
-              cmd_line->min_frac_to_detect_minor_pops);
+              cmd_line->min_frac_to_detect_minor_pops,
+              &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -652,13 +664,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -735,12 +745,17 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         expected_covg,
         &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+        cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -753,13 +768,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -836,12 +849,17 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         expected_covg,
         &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+        cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -854,13 +872,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -933,52 +949,52 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     {
 
       if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
+      {
+        continue;
+      }
       any_allele_non_null=true;
+      boolean genotyped_present = false;  
       InfectionType I=
-  resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
-        &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
 
+  
+      resistotype(abi->vars[i],
+            err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
+            expected_covg,
+            &best_model, MaxAPosteriori,
+            cmd_line->min_frac_to_detect_minor_pops,
+            &genotyped_present);
+        if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }   
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
+      {
+        max_sus_conf = best_model.conf;
+      }
       if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
+      {
+        min_conf = best_model.conf;
+      }
       if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }
+      {  
+        return I;
+      }
+      if (I == Unsure && best_model.type == MixedInfection)
+      {
+        any_unsure_mixed_call = true;
+      }
     }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
+    if ( (any_allele_non_null==false) || (any_unsure_mixed_call) )
+      {
+        return Susceptible;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }
 
 }
     InfectionType is_quinolones_susceptible(dBGraph* db_graph,
@@ -1038,12 +1054,17 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         expected_covg,
         &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+        cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -1056,13 +1077,11 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
@@ -1139,12 +1158,17 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 	  continue;
 	}
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
-	resistotype(abi->vars[i],
+  resistotype(abi->vars[i],
 		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         expected_covg,
 		    &best_model, MaxAPosteriori,
-		    cmd_line->min_frac_to_detect_minor_pops);
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+    if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
 	{
@@ -1157,13 +1181,14 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       
       if ( (I==Resistant) || (I==MixedInfection) ) 
 	{  
-	  update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+	  if ( genotyped_present ||  cmd_line->verbose) {
+      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+    }
 	  return I;
 	}
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
 
   }
@@ -1242,12 +1267,17 @@ boolean any_unsure_mixed_call=false;
     continue;
   }
       any_allele_non_null=true;
+      boolean genotyped_present = false;      
       InfectionType I=
   resistotype(abi->vars[i],
         err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
         expected_covg,
         &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops);
+        cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+  if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  }   
 
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
   {
@@ -1260,13 +1290,11 @@ boolean any_unsure_mixed_call=false;
 
       if ( (I==Resistant) || (I==MixedInfection) ) 
   {  
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
     return I;
   }
     if (I == Unsure && best_model.type == MixedInfection)
   {
     any_unsure_mixed_call = true;
-     update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
   }
     }
   if (
