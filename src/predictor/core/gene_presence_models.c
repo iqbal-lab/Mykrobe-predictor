@@ -13,41 +13,19 @@
 //epsilon =  pow(1-err_rate, cmd_line->kmer_size)
 double get_log_posterior_major_resistant(double llk,
 					 GeneInfo* gi,
-					 double recovery_given_sample_and_errors,
+           int expected_covg,
 					 double err_rate,
 					 int min_expected)//given known diversity of genes
 
 {
-
   int p = gi->percent_nonzero;
 
-
-  /*  double freq;
-
-
-  //depending on err rate, set freq
-  if (err_rate<0.02)
-    {
-      freq=0.05;
-    }
-  else if (err_rate<0.1)
-    {
-      freq=0.25;
-    }
-  else
-    {
-      freq=0.5;
-    }
-  */
-
-  if (p>=recovery_given_sample_and_errors* min_expected)
+  double minimum_expected_percentage_coverage = calculate_expected_gene_coverage_based_on_coverage(expected_covg);
+  double minimum_percentage_coverage_required =  minimum_expected_percentage_coverage * min_expected ;
+  if ( p >= minimum_percentage_coverage_required) 
     {
       return log(1)+llk;
     }
-  /*  else if (p>((0.75-freq)/2)*recovery_given_sample_and_errors* min_expected)
-    {
-      return log(0.5)+llk;
-      } */
   else
     {
       return -99999999;
@@ -55,20 +33,8 @@ double get_log_posterior_major_resistant(double llk,
 }
 
 
-
-double get_log_posterior_minor_resistant(double llk,
-					 GeneInfo* gi,
-					 double recovery_given_sample_and_errors,
-					 int expected_covg,
-					 double err_rate,
-					 int min_expected)//given known diversity of genes
-
-{
-
-  int p = gi->percent_nonzero;
-
+double calculate_minmum_detectable_freq_given_error_rate(double err_rate){
   double freq;
-
   if (err_rate<0.01)
     {
       //i don't believe the error rate is that low, so fix
@@ -83,21 +49,37 @@ double get_log_posterior_minor_resistant(double llk,
     {
       freq=0.25;
     }
-  else
-    {
-      return -99999999;
+    else{
+      freq = 100;
     }
+    return (freq);
+}
 
-  //what % of the gene do you expect to see at this frequency?
-  double exp_rec = 1-exp(-expected_covg*freq);
+double calculate_expected_gene_coverage_based_on_coverage(double coverage ){
+  // Lander Waterman 
+  //total length of gaps = length of gene * exp(-expected_covg)
+  // so percentage of kmers present = 1- (length of gene *) exp(-expected_covg);  
+  return (1-exp(-coverage));
+}
+double get_log_posterior_minor_resistant(double llk,
+					 GeneInfo* gi,
+					 int expected_covg,
+					 double err_rate,
+					 int min_expected)//given known diversity of genes
 
+{
+  int p = gi->percent_nonzero;
+  double freq = calculate_minmum_detectable_freq_given_error_rate(err_rate);
+  // I the error rate is too high never call the minor model
+  if (freq > 1){
+    return -99999999;
+  }
+  // If the coverage is much higher than expected than the gene probably exists at multi copy number 
 
+  double expected_percentage_coverage = calculate_expected_gene_coverage_based_on_coverage(expected_covg*freq);
+  double minimum_percentage_coverage_required =  expected_percentage_coverage * (double) min_expected ;
   //double step function. Coverage gap as might expect for this low frequency
-  if ( (p>=exp_rec*100)//need to see enough of the gene
-    &&
-       (p>=min_expected) )
-    //&&
-       //       (gi->median_covg_on_nonzero_nodes<freq*expected_covg) )//but it needs not to be repeats
+  if ( (p>=minimum_percentage_coverage_required))
     {
       return log(1)+llk;
     }
@@ -111,67 +93,12 @@ double get_log_posterior_minor_resistant(double llk,
 
 double get_log_posterior_truly_susceptible(double llk,
 					   GeneInfo* gi,
-					   double recovery_given_sample_and_errors,
 					   int min_expected)
 {
-
-  //  int p = gi->percent_nonzero;
-  
-  /*  if (p>=recovery_given_sample_and_errors*min_expected)
-    {
-      return -99999999;
-    }
-  else
-  {*/
       return log(1)+llk;;
-      //   }
 }
 
 
-
-// lambda_g = expected_covg/mean_read_len on real allele
-/*
-double get_log_lik_minor_resistant(GeneInfo* gi,
-				   double lambda_g,
-				   double err_rate,
-				   int kmer)
-{
-
-  double p;
-  if (err_rate<0.02)
-    {
-      p = 5*err_rate;
-    }
-  else if (err_rate<0.1)
-    {
-      p=0.25
-    }
-  else
-    {
-      return -9999999;
-    }
-  return get_gene_log_lik(gi->median_covg_on_nonzero_nodes, 
-			  p*lambda_g, 
-			  kmer);
-
-}
-*/
-
-
-// lambda_g = expected_covg/mean_read_len on real allele
- /*
-double get_log_lik_major_resistant(GeneInfo* gi,
-				   double lambda_g,
-				   int kmer)
-{
-  //resistant pop is 75% freq
-
-  return get_gene_log_lik(gi->median_covg_on_nonzero_nodes, 
-			  0.75*lambda_g, 
-			  kmer);
-
-}
- */
 
 // epsilon = (1-e)^k
 // delta = e(1-e)^(k-1)
@@ -189,47 +116,40 @@ double get_log_lik_truly_susceptible(GeneInfo* gi,
 
 
 //use number of gaps (to see if contiguous), plus median covg
-double get_log_lik_resistant(GeneInfo* gi,
+double get_log_lik_observed_coverage_on_gene(GeneInfo* gi,
 			     double lambda_g,
 			     double freq,//between 0 and 1
 			     int expected_covg,
 			     int kmer)
 {
-  double ret =get_gene_log_lik(gi->median_covg,
-			       lambda_g*freq, kmer) +  
-    log_prob_gaps(gi, expected_covg);
+  double log_lk_coverage_on_gene = get_gene_log_lik(gi->median_covg_on_nonzero_nodes, expected_covg * freq);
+  // double log_lk_number_of_gaps_in_gene_coverage = gene_num_gaps_probability(gi->num_gaps, expected_num_gaps);
+  // printf("freq : %f coverage lk %f\n", freq , log_lk_coverage_on_gene);
+  double ret =  log_lk_coverage_on_gene;// + log_lk_number_of_gaps_in_gene_coverage;
   return ret;
 
 }
 
-double log_prob_gaps(GeneInfo* gi, int expected_covg)
-{
-  //  printf("Num gaps is %d\n", gi->num_gaps);
-  return -expected_covg*gi->num_gaps;
+double log_poission_prob(double lambda, double k){
+    double log_lik  
+    = -lambda 
+    + k*log(lambda) 
+    - log_factorial(k); 
+    return (log_lik);
 }
-
-
-
-
 // epsilon = (1-e)^k
 // lambda = expected_covg/mean_read_len
 double get_gene_log_lik(Covg covg,//median covg on parts of gene that are present
-			double lambda_g, 
-			int kmer)
+			double expected_covg)
 {
-  //Under this model, covg on th true allele is Poisson distributed
-  //with rate at true allele   r_t = (1-e)^k  *  depth/read-length =: lambda_g
-  double r_t = lambda_g;
-  
-  // P(covg) = exp(-r_t) * (r_t)^covg /covg!
-  
-  double log_lik_true_allele  
-    = -r_t 
-    + covg*log(r_t) 
-    - log_factorial(covg);
-    
-  return log_lik_true_allele;
-
+  // What is the likely hood that the coverage seen is explained by a gene existing a this frequency. 
+  // We're assuming here that the gene exists a CN = 1
+  // We can assume that the expected coverage on the gene is the expected coverage of the sample
+  // expected_coverage = NL/G = lambda
+  // Pr(covg; expected_coverage)= expected_coverage^(covg) e^{-expected_coverage}}{covg!},
+  // log(P(covg)) = -expected_coverage + covg * log(expected_coverage) - log(covg !)
+  double log_lik_true_allele  = log_poission_prob(expected_covg, covg);
+  return (log_lik_true_allele);
 }
 
 double get_log_lik_covg_due_to_errors(Covg covg,
@@ -303,9 +223,7 @@ void choose_map_gene_model(GeneInfo* gi,
 			   int min_expected_kmer_recovery_for_this_gene)
 {
 
-  //total length of gaps = length of gene * exp(-expected_covg)
-  // so percentage of kmers present = 1-exp(-expected_covg);
-  double loss = 1-exp(-expected_covg);
+
 
   Model mR;
   mR.type=Resistant;
@@ -326,14 +244,13 @@ void choose_map_gene_model(GeneInfo* gi,
   mR.lp 
     = get_log_posterior_major_resistant(llk_R, 
 					gi,
-					loss,
+          expected_covg,
 					err_rate,
 					min_expected_kmer_recovery_for_this_gene);
 
   mM.lp 
     = get_log_posterior_minor_resistant(llk_M, 
 					gi,
-					loss,
 					expected_covg,
 					err_rate,
 					min_expected_kmer_recovery_for_this_gene);
@@ -342,7 +259,6 @@ void choose_map_gene_model(GeneInfo* gi,
   mS.lp 
     = get_log_posterior_truly_susceptible(llk_S, 
 					  gi,
-					  loss,
 					  min_expected_kmer_recovery_for_this_gene);
 
   Model arr[3]={mR, mS, mM};
@@ -351,48 +267,36 @@ void choose_map_gene_model(GeneInfo* gi,
   best_model->type = arr[2].type;
   best_model->likelihood = arr[2].likelihood;
   best_model->lp = arr[2].lp;
+
+   // printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
 }
 
+double CN_of_gene(GeneInfo* gi, int expected_covg){
+  double CN = (double) gi->median_covg_on_nonzero_nodes / expected_covg;
+  return CN;
+}
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			       double lambda_g,  double lambda_e, double epsilon, int expected_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
-			       int min_expected_kmer_recovery_for_this_gene)
+			       int min_expected_kmer_recovery_for_this_gene,
+             double min_gene_cn,
+             boolean* genotyped_present)
 {
-
-
-  //prevent having too small err rate
-  if (err_rate<0.001)
-    {
-      //i don't believe the error rate is that low, so fix
-      err_rate=0.005;
-    }
-
-
+  if (expected_covg == 0 ){
+    //covg must be >0
+    expected_covg = 1;
+  }
   //depending on err rate, set freq
-  double freq;
-  if (err_rate<0.02)
-    {
-      freq=0.05;
-    }
-  else if (err_rate<0.1)
-    {
-      freq=0.25;
-    }
-  else
-    {
-      freq=0.5;
-    }
+  double freq = calculate_minmum_detectable_freq_given_error_rate(err_rate);
+
+  double llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
+  double llk_M = get_log_lik_observed_coverage_on_gene(gi, lambda_g, freq, expected_covg, kmer);
+  double llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);
 
 
-  double llk_R = get_log_lik_resistant(gi, lambda_g, 1, expected_covg, kmer);
-  double llk_M = get_log_lik_resistant(gi, lambda_g, freq, expected_covg, kmer);
-  double llk_S = get_log_lik_truly_susceptible(gi, 
-					       lambda_e, 
-					       kmer);
-
-  //  printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
+   // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
   best_model->conf=0;
   if (choice==MaxLikelihood)
     {
@@ -405,13 +309,18 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
 			    min_expected_kmer_recovery_for_this_gene);
     }
 
-  if (best_model->conf > MIN_CONFIDENCE_GENE)
-    {
+
+
+    if (best_model->type != Susceptible){
+      *genotyped_present = true;
+    }
+    if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
+      return Susceptible;
+    }else{
       return best_model->type;
     }
-  else
-    {
-      return Unsure;
-    }
+      
+    
+
 }
 

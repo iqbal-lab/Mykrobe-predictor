@@ -20,9 +20,6 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 {
   // prior probability that sample is resistant - look at covg gaps in resistant allele
-  int p = max_perc_covg_on_res_allele;
-
-
   if (max_perc_covg_on_res_allele==100)
     {
       return log(1)+llk;
@@ -66,22 +63,6 @@ double get_log_posterior_of_mixed_infection(double llk,
     }
 }
 
-
-
-//major population of resistant, assume poisson at 0.75 * expected. ideally dispersed poisson
-// epsilon = (1-e)^k
-// delta = e(1-e)^(k-1)
-// lambda = expected_covg/mean_read_len
-double get_log_lik_major_pop_resistant(Var* var,
-				       double lambda_g, double lambda_e,
-				       int kmer)
-{
-  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
-  //printf("Test res model, R covg=%d and S covg=%d\n", c, var->susceptible_allele.median_covg);
-  return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
-			       0.9*lambda_g, 0.1*lambda_g, kmer);
-
-}
 
 
 
@@ -278,24 +259,49 @@ void choose_map_model(Var* var,
   worst_model->likelihood = arr[0].likelihood;
   worst_model->lp = arr[0].lp;
 
+   // printf("LP of S, M, R are %f, %f and %f\n", mS.lp , mM.lp, mR.lp );
 
 }
 
 
+double freq_of_var(Var* var, int expected_covg){
+  Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
+  double freq = (double) c / expected_covg;
+  return freq;
+}
+
 InfectionType resistotype(Var* var, 
-                          double err_rate, int kmer,
-			  double lambda_g, 
-			  double lambda_e, 
-			  double epsilon,
-			  Model* best_model,
-			  ModelChoiceMethod choice,
-			  float min_frac_to_detect_minor_pops)
+                          double err_rate,
+                          int kmer,
+                  			  double lambda_g, 
+                  			  double lambda_e, 
+                  			  double epsilon,
+                          int expected_covg,
+                  			  Model* best_model,
+                  			  ModelChoiceMethod choice,
+                  			  float min_frac_to_detect_minor_pops,
+                          boolean* genotyped_present)
 {
+                          
+                          // printf("kmer %d\n", kmer);
+                          // printf("err_rate %f\n", err_rate );
+                          // printf("lambda_g %f\n", lambda_g );
+                          // printf("lambda_e %f\n", lambda_e );
+                          // printf(" epsilon %f\n",  epsilon );
+                          // printf("min_frac_to_detect_minor_pops %f\n ", min_frac_to_detect_minor_pops );
+
+  if (expected_covg == 0 ){
+    //covg must be >0
+    expected_covg = 1;
+  }
   double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
-									       lambda_g, lambda_e,
+									       expected_covg, expected_covg * err_rate / 3,
 									       kmer);
-  double llk_M = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,min_frac_to_detect_minor_pops);
-  double llk_R = get_log_lik_minor_pop_resistant(var,lambda_g, lambda_e, kmer, err_rate,0.75);
+  double llk_M = get_log_lik_minor_pop_resistant(var,expected_covg, expected_covg * err_rate / 3, kmer, err_rate, 0.1 );
+  double llk_R = get_log_lik_minor_pop_resistant(var,expected_covg, expected_covg * err_rate / 3, kmer, err_rate,0.75);
+
+
+   // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
 
   best_model->conf=0;
   Model worst_model;
@@ -319,20 +325,40 @@ InfectionType resistotype(Var* var,
 		       epsilon);
     }
 
+    // printf("mid_model.conf %f best_model->conf %f \n", mid_model.conf , best_model->conf);
+    // printf("best_model->type %i MIN_CONFIDENCE_r %i \n", best_model->type , MIN_CONFIDENCE_r);
 
-  if (best_model->type==Susceptible)
+  if (best_model->type != Susceptible){
+    *genotyped_present = true;
+  }
+
+  if (best_model->type==Susceptible || best_model->type==Resistant)
     {
       return best_model->type;
     }
-  else if (best_model->conf > MIN_CONFIDENCE_r)
+  //If the model is deciding between R and r return best model 
+   else if ( worst_model.type ==Susceptible )
     {
       return best_model->type;
-    }
-  //so now the winning model is M or R. If S is the bottom of the 3 by MIN_CONFIDENCE, call r.
-  else if ( (worst_model.type ==Susceptible) && (mid_model.conf>MIN_CONFIDENCE_r) )
+    }    
+  // If the model is between r and S
+  else if ( worst_model.type==Resistant )
     {
-      return best_model->type;
-    }
+      // If the CONF is below the threshold return inconclusive 
+      if (best_model->conf <= MIN_CONFIDENCE_r)
+      {
+        return Unsure;
+      }
+      else{
+        // If the frequency is below the minimum threshold
+        if (freq_of_var(var, expected_covg) < min_frac_to_detect_minor_pops ) {
+          return Susceptible;
+        }
+        else{
+          return best_model->type;
+        }      
+      }
+  }
   else
     {
       return Unsure;

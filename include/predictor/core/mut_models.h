@@ -11,16 +11,9 @@
 
 #include "genotyping_known.h"
 
-#ifdef STAPH
-  #define MIN_CONFIDENCE_S 1
-  #define MIN_CONFIDENCE_r 1
-  #define MIN_CONFIDENCE_GENE 1
-#endif
-#ifdef TB
-	#define MIN_CONFIDENCE_S 1
-  	#define MIN_CONFIDENCE_r 30
-  	#define MIN_CONFIDENCE_GENE 1
-#endif  
+#define MIN_CONFIDENCE_S 1
+#define MIN_CONFIDENCE_r 1
+#define MIN_CONFIDENCE_GENE 1
 
 
 typedef enum
@@ -98,9 +91,11 @@ InfectionType resistotype(Var* var,
 						  double lambda_g, 
 						  double lambda_e, 
 						  double epsilon,
+						  int expected_covg,
 						  Model* best_model,
 						  ModelChoiceMethod choice,
-						  float min_frac_to_detect_minor_pops);
+						  float min_frac_to_detect_minor_pops,
+						  boolean* genotyped_present);
 
 
 

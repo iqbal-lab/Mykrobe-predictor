@@ -33,7 +33,7 @@ IDIR_PREDICTOR_CORE = include/predictor/core
 # Test code includes
 IDIR_BASIC_TESTS = libs/cortex/include/test/basic
 IDIR_HASH_TABLE_TESTS = libs/cortex/include/test/hash_table
-IDIR_PREDICTOR_TESTS = include/test/myKrobe/predictor
+IDIR_PREDICTOR_TESTS = include/test/Mykrobe/predictor
 
 
 IDIR_CUNIT = /home/zam/dev/hg/CUnit/CUnit-2.1-0/CUnit/Headers
@@ -119,7 +119,8 @@ TEST_LIBLIST = -lcunit -lncurses $(LIBLIST)
 # Add -L/usr/local/lib/ to satisfy some systems that struggle to link libz
 LIBINCS = -L/usr/local/lib  -I$(IDIR_BAM) \
           -I$(IDIR_SEQ) -I$(IDIR_STRS) \
-          -L$(IDIR_BAM) -L$(IDIR_SEQ) -L$(IDIR_STRS)
+          -L$(IDIR_BAM) -L$(IDIR_SEQ) \
+          -L$(IDIR_STRS) -L$(IDIR_CORTEX)
 
 TEST_LIBINCS = -I$(IDIR_CUNIT) -L$(LDIR_CUNIT) $(LIBINCS)
 
@@ -134,7 +135,9 @@ endif
 
 CFLAGS_BASIC_TESTS      = -I$(IDIR_BASIC_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) $(TEST_LIBINCS)
 CFLAGS_HASH_TABLE_TESTS = -I$(IDIR_HASH) -I$(IDIR_HASH_TABLE_TESTS) -I$(IDIR_CUNIT) -I$(IDIR_BASIC) $(TEST_LIBINCS) -I$(IDIR_BASE_ENCODING) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_PREDICTOR)
-CFLAGS_PREDICTOR_TESTS = -I$(IDIR_PREDICTOR_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR) -I$(IDIR_PREDICTOR_CORE) $(TEST_LIBINCS)
+
+
+CFLAGS_PREDICTOR_TESTS =  -I$(IDIR_PREDICTOR_STAPH) -I$(IDIR_CORE) -I$(IDIR_PREDICTOR_CORE) -I$(IDIR_PREDICTOR_TESTS) -I$(IDIR_BASIC) -I$(IDIR_BASE_ENCODING) -I$(IDIR_HASH) -I$(IDIR_PREDICTOR) -I$(IDIR_PREDICTOR_CORE) $(TEST_LIBINCS)
 
 PREDICTOR_OBJ = src/obj/predictor/global.o src/obj/predictor/main.o src/obj/predictor/antibiotics.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o src/obj/predictor/graph_info.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/cmd_line.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/genotyping_known.o src/obj/predictor/known_mutations.o src/obj/predictor/gene_presence.o src/obj/predictor/species.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/mut_models.o src/obj/predictor/gene_presence_models.o  src/obj/predictor/json.o src/obj/predictor/base_species.o
 
@@ -142,7 +145,7 @@ BASIC_TESTS_OBJ = src/obj/basic/binary_kmer.o src/obj/basic/global.o src/obj/bas
 
 HASH_TABLE_TESTS_OBJ = src/obj/basic/global.o src/obj/test/hash_table/run_hash_table_tests.o src/obj/predictor/element.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/test/hash_table/test_hash.o src/obj/basic/binary_kmer.o  src/obj/basic/seq.o src/obj/basic/event_encoding.o
 
-PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o src/obj/test/predictor/test_build.o src/obj/test/predictor/test_genotyping_known.o src/obj/test/predictor/test_gene_presence.o src/obj/test/predictor/test_species_prediction.o src/obj/predictor/global.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/genotyping_known.o src/obj/predictor/known_mutations.o src/obj/predictor/gene_presence.o src/obj/predictor/species.o src/obj/predictor/antibiotics.o src/obj/predictor/graph_info.o src/obj/predictor/mut_models.o src/obj/predictor/gene_presence_models.o  src/obj/predictor/json.o
+PREDICTOR_TESTS_OBJ = src/obj/test/predictor/run_predictor_tests.o  src/obj/test/predictor/test_mut_models.o src/obj/test/predictor/test_gene_presence_models.o src/obj/test/predictor/test_genotyping_known.o src/obj/test/predictor/test_gene_presence.o src/obj/test/predictor/test_species_prediction.o src/obj/predictor/global.o src/obj/predictor/binary_kmer.o src/obj/predictor/element.o src/obj/predictor/seq.o src/obj/predictor/hash_value.o src/obj/predictor/hash_table.o src/obj/predictor/build.o src/obj/predictor/dB_graph_supernode.o  src/obj/predictor/dB_graph.o src/obj/predictor/db_variants.o src/obj/predictor/event_encoding.o src/obj/predictor/db_differentiation.o src/obj/predictor/maths.o src/obj/predictor/file_reader.o src/obj/predictor/genotyping_known.o src/obj/predictor/known_mutations.o src/obj/predictor/gene_presence.o src/obj/predictor/base_species.o src/obj/predictor/species.o src/obj/predictor/antibiotics.o src/obj/predictor/graph_info.o src/obj/predictor/mut_models.o src/obj/predictor/gene_presence_models.o  src/obj/predictor/json.o
 
 
 predictor : remove_objects $(PREDICTOR_OBJ)
@@ -155,7 +158,7 @@ run_hash_table_tests : remove_objects $(HASH_TABLE_TESTS_OBJ)
 	mkdir -p $(BIN);  $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -o $(BIN)/run_hash_table_tests $(HASH_TABLE_TESTS_OBJ) $(TEST_LIBLIST)
 
 run_predictor_tests : remove_objects $(PREDICTOR_TESTS_OBJ)
-	mkdir -p $(BIN);  $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -o $(BIN)/run_predictor_tests $(PREDICTOR_TESTS_OBJ) $(TEST_LIBLIST)
+	mkdir -p $(BIN);  $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) $(OPT_COLS) -o $(BIN)/run_predictor_tests $(PREDICTOR_TESTS_OBJ) $(TEST_LIBLIST)
 
 
 .PHONY : clean
@@ -201,8 +204,14 @@ src/obj/test/hash_table/hash_key/bob_jenkins/%.o : libs/cortex/src/hash_table/ha
 src/obj/test/hash_table/%.o : libs/cortex/src/test/hash_table/%.c libs/cortex/include/test/hash_table/%.h
 	mkdir -p src/obj/test/hash_table; $(CC) $(CFLAGS_HASH_TABLE_TESTS) $(OPT) -c $< -o $@
 
-src/obj/test/predictor/%.o : src/test/myKrobe/predictor/%.c include/test/myKrobe/predictor/%.h
+src/obj/test/predictor/%.o : src/test/Mykrobe/predictor/%.c include/test/Mykrobe/predictor/%.h
 	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(OPT) -c $< -o $@
+
+src/obj/test/predictor/%.o : src/predictor/core/%.c include/predictor/core/%.h
+	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
+src/obj/test/predictor/%.o : libs/cortex/src/core/%.c libs/cortex/include/core/%.h
+	mkdir -p src/obj/test/predictor; $(CC) $(CFLAGS_PREDICTOR_TESTS) $(CFLAGS_PREDICTOR) $(OPT) -c $< -o $@
+
 
 
 src/obj/predictor/%.o : libs/cortex/src/basic/event_encoding/base_encoding/%.c libs/cortex/include/basic/event_encoding/base_encoding/%.h

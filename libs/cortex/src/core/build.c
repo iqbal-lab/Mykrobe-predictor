@@ -206,12 +206,12 @@ unsigned long long build_unclean_graph(dBGraph* db_graph,
 				       boolean print_progress_info,
 				       uint64_t* count_so_far,
 				       uint64_t total_reads_in_dataset,
-				       boolean* is_a_remainder)
+				       boolean* is_a_remainder,
+               int qual_thresh)
 {
 
 
   int ascii_fq_offset = 33;
-  int qual_thresh = 10;
   int homopolymer_cutoff=0;
 
   unsigned int num_files_loaded=0;
