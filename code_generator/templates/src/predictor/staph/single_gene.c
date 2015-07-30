@@ -1,4 +1,4 @@
-boolean genotyped_present = false;
+genotyped_present = false;
 I= resistotype_gene(abi->genes[{{drug.genes_resistance_induced_by[0]}}], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,

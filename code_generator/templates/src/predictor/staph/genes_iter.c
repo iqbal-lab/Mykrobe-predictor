@@ -1,7 +1,7 @@
 
 for (i=0; i<{{drug.num_genes}}; i++)
     {
-      boolean genotyped_present = false;
+      genotyped_present = false;
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 

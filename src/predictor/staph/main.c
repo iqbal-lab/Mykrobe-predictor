@@ -173,9 +173,8 @@ int main(int argc, char **argv)
             false,
             into_colour,
             &subsample_null,
-            false, &dummy, 0,
-             &is_rem, 
-             0);
+            false, &dummy, 0, &is_rem,
+            0);
 
     if (WINDOWS==0)
       {
@@ -204,6 +203,7 @@ int main(int argc, char **argv)
     {
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
+
 
   //only need this for progress
   uint64_t total_reads = 0;
@@ -247,8 +247,9 @@ int main(int argc, char **argv)
     {
       printf("No data\n");
       return 1;
-    }
 
+    }
+  
   unsigned long mean_read_length = calculate_mean_uint64_t(cmd_line->readlen_distrib,
                  cmd_line->readlen_distrib_size);
 
@@ -305,26 +306,26 @@ int main(int argc, char **argv)
   print_json_called_variant_item("expected_depth",expected_depth,false);
   print_json_called_variant_item("mean_read_length",mean_read_length,false);   
   print_json_phylogenetics(species_info);
-  // if (!is_aureus_present(species_info))
-  // {
-  //   print_json_susceptibility_start(); 
-  //   print_json_susceptibility_end();
-  //   print_json_called_variants_start();
-  //   boolean last = true;
-  //   print_json_called_variants_end(last);
-  //   print_json_end();
+  if (!is_aureus_present(species_info))
+  {
+    print_json_susceptibility_start(); 
+    print_json_susceptibility_end();
+    print_json_called_variants_start();
+    boolean last = true;
+    print_json_called_variants_end(last);
+    print_json_end();
 
-  //   //cleanup
-  //   strbuf_free(tmp_name);
-  //   free_antibiotic_info(abi);
-  //   free_var_on_background(tmp_vob);
-  //   free_gene_info(tmp_gi);
-  //   free_reading_utils(ru);
+    //cleanup
+    strbuf_free(tmp_name);
+    free_antibiotic_info(abi);
+    free_var_on_background(tmp_vob);
+    free_gene_info(tmp_gi);
+    free_reading_utils(ru);
     
-  //   cmd_line_free(cmd_line);
-  //   hash_table_free(&db_graph);
-  //   return 0;
-  // }  
+    cmd_line_free(cmd_line);
+    hash_table_free(&db_graph);
+    return 0;
+  }  
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
   //if k=29, we want to ignore 3 kmers at start and end.. etc

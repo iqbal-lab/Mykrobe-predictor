@@ -1258,7 +1258,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                             return rpoB_R448X;
                           }
                         
-                        
   
                         else if ( (strcmp(sbuf->buff, "S450X")==0) && (gene==rpoB) )
                           {

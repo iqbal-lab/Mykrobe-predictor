@@ -278,9 +278,9 @@ typedef enum
     gyrA_I92X = 61,
     gyrA_Y93X = 62,
     gyrA_D94X = 63,
-    NotSpecified = 64
+    NotSpecified = 64,
   } KnownMutation;
-  #define NUM_KNOWN_MUTATIONS 64
+  #define NUM_KNOWN_MUTATIONS 64 
 
 #endif
 

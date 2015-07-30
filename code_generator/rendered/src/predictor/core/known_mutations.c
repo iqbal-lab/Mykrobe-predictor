@@ -991,7 +991,6 @@ const char* map_enum_to_mutation_name(KnownMutation km)
       case rpoB_K446X : return "rpoB_K446X";
       case rpoB_R447X : return "rpoB_R447X";
       case rpoB_R448X : return "rpoB_R448X";
-      case rpoB_L449X : return "rpoB_L449X";
       case rpoB_S450X : return "rpoB_S450X";
       case rpoB_A451X : return "rpoB_A451X";
       case rpoB_L452X : return "rpoB_L452X";
@@ -1066,7 +1065,6 @@ char* map_var_id_to_drug_resistance(KnownMutation km)
       case rpoB_K446X : return "Rifampicin";
       case rpoB_R447X : return "Rifampicin";
       case rpoB_R448X : return "Rifampicin";
-      case rpoB_L449X : return "Rifampicin";
       case rpoB_S450X : return "Rifampicin";
       case rpoB_A451X : return "Rifampicin";
       case rpoB_L452X : return "Rifampicin";
@@ -1258,12 +1256,6 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
                         else if ( (strcmp(sbuf->buff, "R448X")==0) && (gene==rpoB) )
                           {
                             return rpoB_R448X;
-                          }
-                        
-  
-                        else if ( (strcmp(sbuf->buff, "L449X")==0) && (gene==rpoB) )
-                          {
-                            return rpoB_L449X;
                           }
                         
   
