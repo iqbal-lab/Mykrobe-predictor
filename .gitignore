@@ -46,7 +46,6 @@ libs/string_buffer/strbuf_test
 *.pyc
 
 ## scripts
-make.sh
 data/staph/antibiotics/getallMuts.py
 
 ## OLD
