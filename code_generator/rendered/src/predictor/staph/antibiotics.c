@@ -90,6 +90,7 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case lukPVF : return "";
     
+    case unspecified_gpg : return "unknown";
    }
    return "unknown";
 }
