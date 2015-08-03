@@ -41,5 +41,5 @@ for (i=0; i<{{drug.num_genes}}; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }

@@ -19,7 +19,7 @@ if (I_f652s==Resistant && I_y654n==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[fusA_F652S], best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_Y654N], best_model.conf);
-    update_infection_type(Resistant,&I_permenant);  
+    update_infection_type(Resistant,&I_permanent);  
   }
   else if (cmd_line->verbose)
   {
@@ -51,7 +51,7 @@ if (I_t326i==Resistant && I_e468v==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[fusA_T326I],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_E468V],best_model.conf);
-    update_infection_type(Resistant,&I_permenant);  
+    update_infection_type(Resistant,&I_permanent);  
   }
   else if (cmd_line->verbose)
   {
@@ -108,7 +108,7 @@ if ( (I_l461f==Resistant)
     update_called_variants(called_variants,i,abi->vars[fusA_A376V],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_A655P],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_D463G],best_model.conf);            
-    update_infection_type(Resistant,&I_permenant);  
+    update_infection_type(Resistant,&I_permanent);  
   }
   else if (cmd_line->verbose)
   {
@@ -131,7 +131,7 @@ if ((I_l461f==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[fusA_L461F],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_E444V],best_model.conf); 
-    update_infection_type(Resistant,&I_permenant);     
+    update_infection_type(Resistant,&I_permanent);     
   }
   else if (cmd_line->verbose)
   {
@@ -177,7 +177,7 @@ if (I_m470t==Resistant && I_d471g==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[rpoB_D471G], best_model.conf);
     update_called_variants(called_variants,i,abi->vars[rpoB_M470T], best_model.conf);
-    update_infection_type(Resistant,&I_permenant);   //ignoring mixed infections for epistatic case
+    update_infection_type(Resistant,&I_permanent);   //ignoring mixed infections for epistatic case
   }
   else if (cmd_line->verbose)
   {

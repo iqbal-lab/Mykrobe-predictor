@@ -17,7 +17,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   {% if drug.name =="Erythromycin" %} *any_erm_present=false;{% endif %}
 
@@ -64,8 +64,8 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
   
   
   {% if drug.num_mutations > 0 %}
-  if( (I_permenant==Resistant) || (I_permenant==MixedInfection) ) {
-    return I_permenant;
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
   }
   else{
     if (any_allele_non_null==false)
@@ -82,7 +82,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
       }   
   }
   {% else %} 
-  return I_permenant;
+  return I_permanent;
   {% endif %}
 
 }

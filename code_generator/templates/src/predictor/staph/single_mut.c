@@ -23,4 +23,4 @@
 	{
 	  min_conf = best_model.conf;
 	}
-  update_infection_type(&I,&I_permenant);
+  update_infection_type(&I,&I_permanent);

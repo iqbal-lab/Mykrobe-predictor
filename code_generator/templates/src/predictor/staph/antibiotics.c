@@ -297,9 +297,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
-  if ( (*I_permenant==Unsure) || (*I_permenant==Susceptible) ){
-    *I_permenant = *I_new;
+void update_infection_type(InfectionType* I_new, InfectionType* I_permanent){
+  if ( (*I_permanent==Unsure) || (*I_permanent==Susceptible) ){
+    *I_permanent = *I_new;
   }
 }
 

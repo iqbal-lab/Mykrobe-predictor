@@ -460,9 +460,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
-  if ( (*I_permenant==Unsure) || (*I_permenant==Susceptible) ){
-    *I_permenant = *I_new;
+void update_infection_type(InfectionType* I_new, InfectionType* I_permanent){
+  if ( (*I_permanent==Unsure) || (*I_permanent==Susceptible) ){
+    *I_permanent = *I_new;
   }
 }
 
@@ -486,7 +486,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
    *any_erm_present=false;
 
@@ -563,7 +563,7 @@ for (i=0; i<6; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -571,7 +571,7 @@ for (i=0; i<6; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -596,7 +596,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -670,7 +670,7 @@ for (i=0; i<7; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -678,7 +678,7 @@ for (i=0; i<7; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -703,7 +703,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -747,14 +747,14 @@ I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size,
   if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
-  update_infection_type(&I,&I_permenant);
+  update_infection_type(&I,&I_permanent);
   
 
 
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -779,7 +779,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -843,7 +843,7 @@ for (i=0; i<2; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -851,7 +851,7 @@ for (i=0; i<2; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -876,7 +876,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -947,7 +947,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
     	{
     	  min_conf = best_model.conf;
     	}
-      update_infection_type(&I,&I_permenant);
+      update_infection_type(&I,&I_permanent);
     }
 
 
@@ -981,7 +981,7 @@ for (i=0; i<5; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -989,8 +989,8 @@ for (i=0; i<5; i++)
   
   
   
-  if( (I_permenant==Resistant) || (I_permenant==MixedInfection) ) {
-    return I_permenant;
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
   }
   else{
     if (any_allele_non_null==false)
@@ -1030,7 +1030,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1094,7 +1094,7 @@ for (i=0; i<2; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -1102,7 +1102,7 @@ for (i=0; i<2; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -1127,7 +1127,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1195,7 +1195,7 @@ for (i=0; i<4; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -1203,7 +1203,7 @@ for (i=0; i<4; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -1228,7 +1228,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1294,7 +1294,7 @@ for (i=0; i<3; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -1302,7 +1302,7 @@ for (i=0; i<3; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -1327,7 +1327,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1392,7 +1392,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
     	{
     	  min_conf = best_model.conf;
     	}
-      update_infection_type(&I,&I_permenant);
+      update_infection_type(&I,&I_permanent);
     }
 
 
@@ -1426,7 +1426,7 @@ for (i=0; i<2; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -1451,7 +1451,7 @@ if (I_f652s==Resistant && I_y654n==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[fusA_F652S], best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_Y654N], best_model.conf);
-    update_infection_type(Resistant,&I_permenant);  
+    update_infection_type(Resistant,&I_permanent);  
   }
   else if (cmd_line->verbose)
   {
@@ -1483,7 +1483,7 @@ if (I_t326i==Resistant && I_e468v==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[fusA_T326I],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_E468V],best_model.conf);
-    update_infection_type(Resistant,&I_permenant);  
+    update_infection_type(Resistant,&I_permanent);  
   }
   else if (cmd_line->verbose)
   {
@@ -1540,7 +1540,7 @@ if ( (I_l461f==Resistant)
     update_called_variants(called_variants,i,abi->vars[fusA_A376V],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_A655P],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_D463G],best_model.conf);            
-    update_infection_type(Resistant,&I_permenant);  
+    update_infection_type(Resistant,&I_permanent);  
   }
   else if (cmd_line->verbose)
   {
@@ -1563,7 +1563,7 @@ if ((I_l461f==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[fusA_L461F],best_model.conf);
     update_called_variants(called_variants,i,abi->vars[fusA_E444V],best_model.conf); 
-    update_infection_type(Resistant,&I_permenant);     
+    update_infection_type(Resistant,&I_permanent);     
   }
   else if (cmd_line->verbose)
   {
@@ -1576,8 +1576,8 @@ if ((I_l461f==Resistant)
   
   
   
-  if( (I_permenant==Resistant) || (I_permenant==MixedInfection) ) {
-    return I_permenant;
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
   }
   else{
     if (any_allele_non_null==false)
@@ -1617,7 +1617,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1681,7 +1681,7 @@ for (i=0; i<2; i++)
         if ( genotyped_present ||  cmd_line->verbose) {
           update_called_genes(called_genes, abi->which_genes[i], abi->genes[abi->which_genes[i]], best_model.conf );
         }      
-        update_infection_type(&I,&I_permenant);
+        update_infection_type(&I,&I_permanent);
     }
   
 
@@ -1689,7 +1689,7 @@ for (i=0; i<2; i++)
   
   
    
-  return I_permenant;
+  return I_permanent;
   
 
 }
@@ -1714,7 +1714,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1775,7 +1775,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
     	{
     	  min_conf = best_model.conf;
     	}
-      update_infection_type(&I,&I_permenant);
+      update_infection_type(&I,&I_permanent);
     }
 
   
@@ -1819,7 +1819,7 @@ if (I_m470t==Resistant && I_d471g==Resistant)
   {
     update_called_variants(called_variants,i,abi->vars[rpoB_D471G], best_model.conf);
     update_called_variants(called_variants,i,abi->vars[rpoB_M470T], best_model.conf);
-    update_infection_type(Resistant,&I_permenant);   //ignoring mixed infections for epistatic case
+    update_infection_type(Resistant,&I_permanent);   //ignoring mixed infections for epistatic case
   }
   else if (cmd_line->verbose)
   {
@@ -1833,8 +1833,8 @@ if (I_m470t==Resistant && I_d471g==Resistant)
   
   
   
-  if( (I_permenant==Resistant) || (I_permenant==MixedInfection) ) {
-    return I_permenant;
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
   }
   else{
     if (any_allele_non_null==false)
@@ -1874,7 +1874,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
 				    )
 
 {
-  InfectionType I_permenant = Unsure;
+  InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
 
@@ -1935,7 +1935,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
     	{
     	  min_conf = best_model.conf;
     	}
-      update_infection_type(&I,&I_permenant);
+      update_infection_type(&I,&I_permanent);
     }
 
   
@@ -1944,8 +1944,8 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
   
   
   
-  if( (I_permenant==Resistant) || (I_permenant==MixedInfection) ) {
-    return I_permenant;
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
   }
   else{
     if (any_allele_non_null==false)
