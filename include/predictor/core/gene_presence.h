@@ -23,158 +23,80 @@ typedef enum
     
     vgbA=0,
     
-    aacAaphD=1,
+    IsaB=1,
     
-    IsaB=2,
+    blaZ=2,
     
-    qacB=3,
+    lnuA=3,
     
-    qacA=4,
+    lnuB=4,
     
-    cfr=5,
+    ermB=5,
     
-    blaZ=6,
+    ermC=6,
     
-    lnuA=7,
+    ermA=7,
     
-    lnuB=8,
+    ermY=8,
     
-    ermB=9,
+    mupB=9,
     
-    ermC=10,
+    mupA=10,
     
-    ermA=11,
+    ermT=11,
     
-    ermY=12,
+    dfrA=12,
     
-    mupB=13,
+    vgaALC=13,
     
-    mupA=14,
+    dfrC=14,
     
-    ermT=15,
+    dfrD=15,
     
-    ant9Ib=16,
+    dfrG=16,
     
-    dfrA=17,
+    mecC=17,
     
-    vgaALC=18,
+    mecA=18,
     
-    dfrC=19,
+    dfrK=19,
     
-    dfrD=20,
+    vgaB=20,
     
-    dfrG=21,
+    vgaA=21,
     
-    mecC=22,
+    tetK=22,
     
-    mecA=23,
+    tetM=23,
     
-    dfrK=24,
+    tetL=24,
     
-    vgaB=25,
+    tetO=25,
     
-    vgaA=26,
+    msrA=26,
     
-    tetK=27,
+    vanA=27,
     
-    tetM=28,
+    vanC=28,
     
-    tetL=29,
+    vanB=29,
     
-    tetO=30,
+    fusB=30,
     
-    msrA=31,
+    fusC=31,
     
-    sat4=32,
+    str=32,
     
-    cat=33,
+    aacAaphD=33,
     
-    vanA=34,
+    tsst1=34,
     
-    vanC=35,
+    lukPVF=35,
     
-    vanB=36,
-    
-    fusB=37,
-    
-    fusC=38,
-    
-    str=39,
-    
-    qacCsmr=40,
-    
-    arcA=41,
-    
-    arcB=42,
-    
-    arcC=43,
-    
-    arcD=44,
-    
-    ccrA=45,
-    
-    ccrB=46,
-    
-    ccrCa=47,
-    
-    ccrCb=48,
-    
-    ccrCc=49,
-    
-    chp=50,
-    
-    eta=51,
-    
-    etb=52,
-    
-    etd=53,
-    
-    luk=54,
-    
-    lukM=55,
-    
-    lukMF=56,
-    
-    lukPVF=57,
-    
-    lukPVS=58,
-    
-    sak=59,
-    
-    sasX=60,
-    
-    scn=61,
-    
-    sea=62,
-    
-    seb=63,
-    
-    sec=64,
-    
-    sed=65,
-    
-    see=66,
-    
-    seg=67,
-    
-    seh=68,
-    
-    sei=69,
-    
-    sej=70,
-    
-    selR=71,
-    
-    sep=72,
-    
-    seu=73,
-    
-    tsst1=74,
-    
-    unspecified_gpg = 75
+    unspecified_gpg = 36
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 75    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES 36    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3110
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);

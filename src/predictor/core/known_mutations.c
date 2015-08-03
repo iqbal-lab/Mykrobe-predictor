@@ -12,12 +12,7 @@
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name)
 {
   
-  if(strcmp(name->buff, "twentythreeS")==0)
-    {
-      return twentythreeS;
-    }
-  
-  else if(strcmp(name->buff, "dfrB")==0)
+  if(strcmp(name->buff, "dfrB")==0)
     {
       return dfrB;
     }
@@ -54,13 +49,7 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
 {
   
   
-  if ( (strcmp(sbuf->buff, "G2576T")==0) && (gene==twentythreeS) )
-    {
-      return twentythreeS_G2576T;
-    } 
-  
-  
-  else if ( (strcmp(sbuf->buff, "F99I")==0) && (gene==dfrB) )
+  if ( (strcmp(sbuf->buff, "F99I")==0) && (gene==dfrB) )
     {
       return dfrB_F99I;
     } 
@@ -533,8 +522,6 @@ const char* map_enum_to_mutation_name(KnownMutation km)
    switch (km) 
    {
     
-     case twentythreeS_G2576T  : return "twentythreeS_G2576T";
-     
      case dfrB_F99I  : return "dfrB_F99I";
      
      case dfrB_F99S  : return "dfrB_F99S";
@@ -708,18 +695,6 @@ char* map_var_id_to_drug_resistance(KnownMutation km)
         
     
         
-    
-        
-        case twentythreeS_G2576T  : return "Linezolid";
-        
-    
-        
-    
-        
-    
-        
-    
-        
         case dfrB_F99I  : return "Trimethoprim";
         
         case dfrB_F99S  : return "Trimethoprim";
@@ -735,8 +710,6 @@ char* map_var_id_to_drug_resistance(KnownMutation km)
         case dfrB_L41F  : return "Trimethoprim";
         
         case dfrB_N60I  : return "Trimethoprim";
-        
-    
         
     
         
@@ -831,6 +804,8 @@ char* map_var_id_to_drug_resistance(KnownMutation km)
         case fusA_T326I  : return "FusidicAcid";
         
         case fusA_E468V  : return "FusidicAcid";
+        
+    
         
     
         
