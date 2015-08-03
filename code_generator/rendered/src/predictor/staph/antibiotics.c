@@ -525,7 +525,6 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -637,7 +636,6 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -732,12 +730,11 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
 genotyped_present = false;
-I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
+InfectionType I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size, 
          lambda_g, lambda_e, epsilon,expected_covg,
          &best_model, MaxAPosteriori,
           MIN_PERC_COVG_BLAZ ,
@@ -748,6 +745,14 @@ I= resistotype_gene(abi->genes[blaZ], err_rate, db_graph->kmer_size,
   if ( genotyped_present ||  cmd_line->verbose) {
     update_called_genes(called_genes, blaZ, abi->genes[blaZ], best_model.conf );
   }
+  if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+	{
+	  max_sus_conf = best_model.conf;
+	}
+  if (best_model.conf<min_conf)
+	{
+	  min_conf = best_model.conf;
+	}  
   update_infection_type(&I,&I_permanent);
   
 
@@ -810,7 +815,6 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -913,7 +917,6 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
   int first_mut = dfrB_F99I;
@@ -1061,7 +1064,6 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -1162,7 +1164,6 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -1261,7 +1262,6 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -1358,7 +1358,6 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
   int first_mut = fusA_A655P;
@@ -1648,7 +1647,6 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
 
@@ -1741,7 +1739,6 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
   int first_mut = rpoB_A477D;
@@ -1901,7 +1898,6 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 
   int first_mut = gyrA_E88K;

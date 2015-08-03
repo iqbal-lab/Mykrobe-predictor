@@ -6,7 +6,7 @@
 	  any_allele_non_null=true;
 	}
   genotyped_present = false;
-  I=resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+  InfectionType I=resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
     lambda_g, lambda_e, epsilon, expected_covg, 
     &best_model, MaxAPosteriori,
     cmd_line->min_frac_to_detect_minor_pops,
