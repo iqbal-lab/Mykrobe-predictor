@@ -57,7 +57,8 @@ void test_get_next_gene_info()
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,
-            &is_rem ); //  is_a_remainder)
+            &is_rem,
+            0 ); //  is_a_remainder)
 
 
   FILE* fp = fopen("../data/test/Mykrobe/predictor/gene_presence/panel1.fasta", "r");

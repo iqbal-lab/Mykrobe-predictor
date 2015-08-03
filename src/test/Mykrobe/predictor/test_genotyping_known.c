@@ -59,8 +59,8 @@ void test_get_next_var_on_background()
 		      false, //  print_progress_info,
 		      &dummy, //  count_so_far,
 		      0,  //  total_reads_in_dataset,
-		      &is_rem ); //  is_a_remainder)
-  
+		      &is_rem ,//  is_a_remainder)
+          0); // Qual thresh
  
   FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps1.fa", "r");
   if (fp==NULL)
@@ -234,7 +234,8 @@ void test_mutation_model_log_likelihoods_1()
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,
-            &is_rem ); //  is_a_remainder)
+            &is_rem ,
+            0); //  is_a_remainder)
   
   FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps2.fa", "r");
   if (fp==NULL)
@@ -351,8 +352,9 @@ void test_mutation_model_log_likelihoods_1()
   Model m, m_mid, m_worst;
   choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon);
   CU_ASSERT(m.type==Susceptible);
-  
-  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, &m, MaxAPosteriori, 0.1);
+
+  boolean genotyped_present = false;
+  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, &m, MaxAPosteriori, 0.1, &genotyped_present);
   CU_ASSERT(t==Susceptible);
 
   strbuf_free(temp_rid);
@@ -407,7 +409,8 @@ void test_mutation_model_log_likelihoods_2()
           false, //  print_progress_info,
           &dummy, //  count_so_far,
            0,  //  total_reads_in_dataset,
-            &is_rem ); //  is_a_remainder)
+            &is_rem ,
+            0); //  is_a_remainder)
   
   FILE* fp = fopen("../data/test/Mykrobe/predictor/mutations/some_snps2.fa", "r");
   if (fp==NULL)
@@ -527,7 +530,8 @@ void test_mutation_model_log_likelihoods_2()
   choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon);
   CU_ASSERT(m.type==Resistant);
   
-  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, &m, MaxAPosteriori, 0.1);
+  boolean genotyped_present = false;
+  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, &m, MaxAPosteriori, 0.1, &genotyped_present);
   CU_ASSERT(t==Resistant);
 
   strbuf_free(temp_rid);

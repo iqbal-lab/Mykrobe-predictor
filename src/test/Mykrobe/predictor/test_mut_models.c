@@ -97,11 +97,13 @@ void test_mutation_S()
 	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
 
+    boolean genotyped_present = false;
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
 		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops);
+		    min_frac_to_detect_minor_pops,
+		    &genotyped_present);
 
 
       if (I==Susceptible)
@@ -167,11 +169,13 @@ void test_mutation_R()
 	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
 
+    boolean genotyped_present = false;
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
 		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops);
+		    min_frac_to_detect_minor_pops,
+		    &genotyped_present);
 
 
       if (I==Susceptible)
@@ -241,11 +245,13 @@ void test_mutation_r()
 	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
 
+    boolean genotyped_present = false;
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
 		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops);
+		    min_frac_to_detect_minor_pops,
+		    &genotyped_present);
 
 
       if (I==Susceptible)
@@ -330,11 +336,13 @@ void test_mutation_custom_1()
 
 	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
+    boolean genotyped_present = false;
 
      InfectionType I= resistotype(vars[0], err_rate, kmer, 
 		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops);
+		    min_frac_to_detect_minor_pops,
+		    &genotyped_present);
 	printf("conf %f\n", best_model.conf);
 // err_rate 0.010000
 // lambda_g 3.406567
@@ -408,11 +416,13 @@ void test_low_coverage_ont_mut()
 
 	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
+    boolean genotyped_present = false;
 
      InfectionType I= resistotype(vars[0], err_rate, kmer, 
 		    lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops);
+		    min_frac_to_detect_minor_pops,
+		    &genotyped_present);
 	printf("conf %f\n", best_model.conf);
 
       if (I==Susceptible)
