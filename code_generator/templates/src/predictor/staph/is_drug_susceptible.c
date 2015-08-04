@@ -45,7 +45,6 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
   double min_conf=9999999;  
   int i;
   Model best_model;
-  InfectionType I;
   boolean genotyped_present = false;
 {% if drug.num_mutations > 1 %}
 {% include 'src/predictor/staph/mutations_iter.c' %}
