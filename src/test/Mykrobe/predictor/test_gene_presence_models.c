@@ -60,7 +60,7 @@ void test_resistotype_gene()
     
 
 	CU_ASSERT(I == Resistant);
-
+	free_gene_info(gi);
 }
 
 void test_resistotype_unsure_gene()
@@ -99,6 +99,7 @@ void test_resistotype_unsure_gene()
 	printf("%i\n",I );
 	CU_ASSERT(I == Susceptible);
 	CU_ASSERT(genotyped_present == true);
+	free_gene_info(gi);
 }
 
 
@@ -138,7 +139,7 @@ void test_resistotype_unsure_gene_2()
 	printf("%i\n",I );
 	CU_ASSERT(I == MixedInfection);
 	CU_ASSERT(genotyped_present == true);
-
+	free_gene_info(gi);
 }
 
 
@@ -177,7 +178,7 @@ void test_resistotype_minor_gene()
     
 
 	CU_ASSERT(I == MixedInfection);
-
+	free_gene_info(gi);
 
 
 }
@@ -215,7 +216,7 @@ void test_resistotype_gene_at_high_CN()
     
 
 	CU_ASSERT(I == Resistant);
-
+	free_gene_info(gi);
 }
 
 void test_resistotype_gene_S()
@@ -253,7 +254,7 @@ void test_resistotype_gene_S()
 
 	CU_ASSERT(I == Susceptible);
 	CU_ASSERT(genotyped_present == false);
-
+	free_gene_info(gi);
 
 }
 
@@ -305,7 +306,7 @@ void test_low_coverage_genes()
 			       &genotyped_present);
 	CU_ASSERT(I == Resistant);
 	CU_ASSERT(genotyped_present == true);
-
+	free_gene_info(gi);
 }
 
 
@@ -373,6 +374,6 @@ void test_low_coverage_ont_genes()
 			       &genotyped_present);
 	CU_ASSERT(I == Resistant);
 	CU_ASSERT(genotyped_present == true);
-
+	free_gene_info(gi);
 
 }

@@ -273,13 +273,13 @@ double freq_of_var(Var* var, int expected_covg){
 InfectionType resistotype(Var* var, 
                           double err_rate,
                           int kmer,
-                  			  double lambda_g, 
-                  			  double lambda_e, 
-                  			  double epsilon,
+			  double lambda_g, 
+			  double lambda_e, 
+			  double epsilon,
                           int expected_covg,
-                  			  Model* best_model,
-                  			  ModelChoiceMethod choice,
-                  			  float min_frac_to_detect_minor_pops,
+			  Model* best_model,
+			  ModelChoiceMethod choice,
+			  float min_frac_to_detect_minor_pops,
                           boolean* genotyped_present)
 {
                           

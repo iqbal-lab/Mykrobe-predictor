@@ -67,7 +67,7 @@ void test_mutation_S()
 	double lambda_e = expected_covg*err_rate;
 	double epsilon = pow(1-err_rate, kmer);	
 
-    AlleleInfo*	susceptible_allele = alloc_allele_info();
+	AlleleInfo*	susceptible_allele = alloc_allele_info();
 	susceptible_allele->median_covg= expected_covg;
 	susceptible_allele->median_covg_on_nonzero_nodes= expected_covg;
 	susceptible_allele->min_covg= expected_covg;
@@ -81,49 +81,55 @@ void test_mutation_S()
 
 
 	VarOnBackground*  vob_best = alloc_and_init_var_on_background();
-	vob_best->susceptible_allele = *susceptible_allele;
-	vob_best->resistant_alleles[0] = *resistant_allele;
+	copy_allele_info(&(vob_best->susceptible_allele), susceptible_allele);
+	copy_allele_info(&(vob_best->resistant_alleles[0]), resistant_allele);
 	vob_best->num_resistant_alleles = 1;
 	vob_best->some_resistant_allele_present = false;
 	vob_best->working_current_max_res_allele_present = 0;
 
 	Var* var = alloc_var();
-	var->vob_best_res = vob_best;
-	var->vob_best_sus = vob_best;
+	copy_var_on_background(vob_best, var->vob_best_res);
+	copy_var_on_background(vob_best, var->vob_best_sus);
+
 
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
 	ModelChoiceMethod choice = MaxAPosteriori;
-    Model best_model;
-
-    boolean genotyped_present = false;
-     InfectionType I=
-	resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,expected_covg,
-		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops,
-		    &genotyped_present);
-
-
-      if (I==Susceptible)
-	{
-	  printf("S\n");
-	}
-      else if (I==MixedInfection)
-	{
-	  printf("r\n");
-	}
-      else if (I==Resistant)
-	{
-	  printf("R\n");
-	}
-      else
+	Model best_model;
+	
+	boolean genotyped_present = false;
+	InfectionType I=
+	  resistotype(vars[0], err_rate, kmer, 
+		      lambda_g, lambda_e, epsilon,expected_covg,
+		      &best_model, MaxAPosteriori,
+		      min_frac_to_detect_minor_pops,
+		      &genotyped_present);
+	
+	
+	if (I==Susceptible)
+	  {
+	    printf("S\n");
+	  }
+	else if (I==MixedInfection)
+	  {
+	    printf("r\n");
+	  }
+	else if (I==Resistant)
+	  {
+	    printf("R\n");
+	  }
+	else
 	{
 	  printf("N\n");
 	}	
-
-	CU_ASSERT(I == Susceptible)
+	
+	CU_ASSERT(I == Susceptible);
+	free_allele_info(susceptible_allele);
+	free_allele_info(resistant_allele);
+	free_var_on_background(vob_best);
+	free_var(var);
+	free(vars);
 }
 void test_mutation_R()
 {
@@ -139,7 +145,7 @@ void test_mutation_R()
 	double lambda_e = expected_covg*err_rate;
 	double epsilon = pow(1-err_rate, kmer);	
 
-    AlleleInfo*	resistant_allele = alloc_allele_info();
+	AlleleInfo*	resistant_allele = alloc_allele_info();
 	resistant_allele->median_covg= expected_covg;
 	resistant_allele->median_covg_on_nonzero_nodes= expected_covg;
 	resistant_allele->min_covg= expected_covg;
@@ -150,18 +156,18 @@ void test_mutation_R()
 	susceptible_allele->median_covg_on_nonzero_nodes = 0;
 	susceptible_allele->min_covg = 0;
 	susceptible_allele->percent_nonzero = 0;
-
+	
 
 	VarOnBackground*  vob_best = alloc_and_init_var_on_background();
-	vob_best->susceptible_allele = *susceptible_allele;
-	vob_best->resistant_alleles[0] = *resistant_allele;
+	copy_allele_info(&(vob_best->susceptible_allele), susceptible_allele);
+	copy_allele_info(&(vob_best->resistant_alleles[0]), resistant_allele);
 	vob_best->num_resistant_alleles = 1;
 	vob_best->some_resistant_allele_present = false;
 	vob_best->working_current_max_res_allele_present = 0;
 
 	Var* var = alloc_var();
-	var->vob_best_res = vob_best;
-	var->vob_best_sus = vob_best;
+	copy_var_on_background(vob_best, var->vob_best_res);
+	copy_var_on_background(vob_best, var->vob_best_sus);
 
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
@@ -195,7 +201,14 @@ void test_mutation_R()
 	  printf("N\n");
 	}	
 
-	CU_ASSERT(I == Resistant)}
+      CU_ASSERT(I == Resistant);
+      free_allele_info(susceptible_allele);
+      free_allele_info(resistant_allele);
+      free_var_on_background(vob_best);
+      free_var(var);
+      free(vars);
+
+}
 
 void test_mutation_r()
 {
@@ -236,24 +249,25 @@ void test_mutation_r()
 	vob_best->working_current_max_res_allele_present = expected_covg/2;
 
 	Var* var = alloc_var();
-	var->vob_best_res = vob_best;
-	var->vob_best_sus = vob_best;
+	copy_var_on_background(vob_best, var->vob_best_res);
+	copy_var_on_background(vob_best, var->vob_best_sus);
+
 
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
 	ModelChoiceMethod choice = MaxAPosteriori;
-    Model best_model;
+	Model best_model;
+	
+	boolean genotyped_present = false;
+	InfectionType I=
+	  resistotype(vars[0], err_rate, kmer, 
+		      lambda_g, lambda_e, epsilon,expected_covg,
+		      &best_model, MaxAPosteriori,
+		      min_frac_to_detect_minor_pops,
+		      &genotyped_present);
 
-    boolean genotyped_present = false;
-     InfectionType I=
-	resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,expected_covg,
-		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops,
-		    &genotyped_present);
-
-
+	
       if (I==Susceptible)
 	{
 	  printf("S\n");
@@ -271,7 +285,13 @@ void test_mutation_r()
 	  printf("N\n");
 	}	
 
-	CU_ASSERT(I == MixedInfection)
+      CU_ASSERT(I == MixedInfection);
+      free_allele_info(susceptible_allele);
+      free_allele_info(resistant_allele);
+      free_var_on_background(vob_best);
+      free_var(var);
+      free(vars);
+      
 }
 
 
@@ -307,7 +327,7 @@ void test_mutation_custom_1()
 	// double lambda_e = 0.011470;
 	double epsilon = pow(1-err_rate, kmer);	
 
-    AlleleInfo*	resistant_allele = alloc_allele_info();
+	AlleleInfo*	resistant_allele = alloc_allele_info();
 	resistant_allele->median_covg= 3;
 	resistant_allele->median_covg_on_nonzero_nodes= 0;
 	resistant_allele->min_covg= 2;
@@ -328,47 +348,54 @@ void test_mutation_custom_1()
 	vob_best->working_current_max_res_allele_present = 3;
 
 	Var* var = alloc_var();
-	var->vob_best_res = vob_best;
-	var->vob_best_sus = vob_best;
+	copy_var_on_background(vob_best, var->vob_best_res);
+	copy_var_on_background(vob_best, var->vob_best_sus);
+
 
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
 	ModelChoiceMethod choice = MaxAPosteriori;
-    Model best_model;
-    boolean genotyped_present = false;
-
-     InfectionType I= resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,expected_covg,
+	Model best_model;
+	boolean genotyped_present = false;
+	
+	InfectionType I= resistotype(vars[0], err_rate, kmer, 
+				     lambda_g, lambda_e, epsilon,expected_covg,
 		    &best_model, MaxAPosteriori,
-		    min_frac_to_detect_minor_pops,
+				     min_frac_to_detect_minor_pops,
 		    &genotyped_present);
 	printf("conf %f\n", best_model.conf);
-// err_rate 0.010000
-// lambda_g 3.406567
-// lambda_e 0.011470
-//  epsilon 0.9560058
-// min_frac_to_detect_minor_pops 0.100000
-//  LLks of S, M, R are -16.855595, -6.881425 and -3.398583
-// LP of S, M, R are -33.711189, -10000005.881425 and -6.797167/////
-      if (I==Susceptible)
-	{
-	  printf("S\n");
+	// err_rate 0.010000
+	// lambda_g 3.406567
+	// lambda_e 0.011470
+	//  epsilon 0.9560058
+	// min_frac_to_detect_minor_pops 0.100000
+	//  LLks of S, M, R are -16.855595, -6.881425 and -3.398583
+	// LP of S, M, R are -33.711189, -10000005.881425 and -6.797167/////
+	if (I==Susceptible)
+	  {
+	    printf("S\n");
+	  }
+	else if (I==MixedInfection)
+	  {
+	    printf("r\n");
+	  }
+	else if (I==Resistant)
+	  {
+	    printf("R\n");
 	}
-      else if (I==MixedInfection)
-	{
-	  printf("r\n");
-	}
-      else if (I==Resistant)
-	{
-	  printf("R\n");
-	}
-      else
-	{
-	  printf("N\n");
-	}	
+	else
+	  {
+	    printf("N\n");
+	  }	
+	
+	CU_ASSERT(I == Resistant);
+	free_allele_info(susceptible_allele);
+	free_allele_info(resistant_allele);
+	free_var_on_background(vob_best);
+	free_var(var);
+	free(vars);
 
-	CU_ASSERT(I == Resistant)
 }
 
 void test_low_coverage_ont_mut()
@@ -408,8 +435,10 @@ void test_low_coverage_ont_mut()
 	vob_best->working_current_max_res_allele_present = 3;
 
 	Var* var = alloc_var();
-	var->vob_best_res = vob_best;
-	var->vob_best_sus = vob_best;
+	copy_var_on_background(vob_best, var->vob_best_res);
+	copy_var_on_background(vob_best, var->vob_best_sus);
+
+
 
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
@@ -443,5 +472,11 @@ void test_low_coverage_ont_mut()
 	}	
 
 
-	CU_ASSERT(I == Resistant)
+      CU_ASSERT(I == Resistant);
+      free_allele_info(susceptible_allele);
+      free_allele_info(resistant_allele);
+      free_var_on_background(vob_best);
+      free_var(var);
+      free(vars);
+
 }

@@ -36,6 +36,7 @@ typedef struct
 
 AlleleInfo* alloc_allele_info();
 void free_allele_info(AlleleInfo* ai);
+void copy_allele_info(AlleleInfo* to, AlleleInfo* from);
 
 int get_next_single_allele_info(FILE* fp, dBGraph* db_graph, AlleleInfo* ainfo,
 				boolean get_median_on_nonzero,

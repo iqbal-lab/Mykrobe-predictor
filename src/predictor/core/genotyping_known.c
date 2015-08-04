@@ -28,6 +28,13 @@ void free_allele_info(AlleleInfo* ai)
   free(ai);
 }
 
+void copy_allele_info(AlleleInfo* to, AlleleInfo* from)
+{
+  to->median_covg = from->median_covg;
+  to->median_covg_on_nonzero_nodes = from->median_covg_on_nonzero_nodes;
+  to->min_covg = from->min_covg;
+  to->percent_nonzero= from->percent_nonzero;
+}
 
 
 //we want to use the same FASTA files irrespective of k.
