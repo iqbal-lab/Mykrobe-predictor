@@ -50,7 +50,8 @@ $(info ************ WIN **********)
 endif
 
 ifdef MAC
-	MACFLAG = -fnested-functions
+#	MACFLAG = -fnested-functions
+	CC = gcc-4.9
 endif
 
 ARCH = -m64
