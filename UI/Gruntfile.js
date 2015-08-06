@@ -40,7 +40,7 @@ module.exports = function(grunt) {
             options: {
                 build_dir: './build', // Where the build version of my node-webkit app is saved
                 // credits: './public/credits.html',
-                // version: '0.9.2',
+                version: '0.12.0',
                 mac_icns: './resources/icon/<%= pkg.targetName %>/icon.icns',
                 platforms: ['osx32','win32']
             },

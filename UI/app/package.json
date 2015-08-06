@@ -1,12 +1,12 @@
 {
-  "name": "Mykrobe Predictor S.Aureus",
+  "name": "Mykrobe Predictor TB",
   "main": "index.html",
-  "version": "0.1.1",
-  "displayVersion": "0.1.1 (beta)",
+  "version": "0.1.2",
+  "displayVersion": "0.1.2 (beta)",
   "single-instance": true,
   "private": true,
   "window": {
-    "title": "Mykrobe Predictor S.Aureus",
+    "title": "Mykrobe Predictor TB",
     "toolbar": true,
     "width": 1000,
     "height": 640,
@@ -14,5 +14,5 @@
     "min_height": 640
   },
   "chromium-args": "--child-clean-exit",
-  "targetName": "predictor-s-aureus"
+  "targetName": "predictor-tb"
 }
