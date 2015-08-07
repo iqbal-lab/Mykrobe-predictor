@@ -49,7 +49,7 @@ int main(int argc, char **argv)
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
 
   if (cmd_line->format==Stdout){
-    printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
+    printf("myKrobe.predictor for staph, version %d.%d.%d.%d"VERSION_STR"\n",
            VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);  
   }
 
@@ -306,33 +306,33 @@ int main(int argc, char **argv)
   print_json_called_variant_item("expected_depth",expected_depth,false);
   print_json_called_variant_item("mean_read_length",mean_read_length,false);   
   print_json_phylogenetics(species_info);
-  if (!is_aureus_present(species_info))
-  {
-    print_json_susceptibility_start(); 
-    print_json_susceptibility_end();
-    print_json_called_variants_start();
-    boolean last = true;
-    print_json_called_variants_end(last);
-    print_json_end();
+  // if (!is_aureus_present(species_info))
+  // {
+  //   print_json_susceptibility_start(); 
+  //   print_json_susceptibility_end();
+  //   print_json_called_variants_start();
+  //   boolean last = true;
+  //   print_json_called_variants_end(last);
+  //   print_json_end();
 
-    //cleanup
-    strbuf_free(tmp_name);
-    free_antibiotic_info(abi);
-    free_var_on_background(tmp_vob);
-    free_gene_info(tmp_gi);
-    free_reading_utils(ru);
+  //   //cleanup
+  //   strbuf_free(tmp_name);
+  //   free_antibiotic_info(abi);
+  //   free_var_on_background(tmp_vob);
+  //   free_gene_info(tmp_gi);
+  //   free_reading_utils(ru);
     
-    cmd_line_free(cmd_line);
-    hash_table_free(&db_graph);
-    return 0;
-  }  
+  //   cmd_line_free(cmd_line);
+  //   hash_table_free(&db_graph);
+  //   return 0;
+  // }  
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
 
-  //if we get here, is s. aureus
-
+  //if we get here, is target species
+  
   if (cmd_line->format==JSON)
     {
       print_json_susceptibility_start();

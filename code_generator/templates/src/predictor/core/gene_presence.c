@@ -15,36 +15,44 @@
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
 {
-  {% for gene in selfer.genes %}
-  {% if loop.first %}if{% else %}else if{% endif %}(strcmp(sbuf->buff, "{{gene}}")==0)
-    {
-      return {{gene}};
-    }
-  {% endfor %}
-  else 
-    {
-      die("Unknown gene %s\n", sbuf->buff);
-    }
+  {% if selfer.genes %}
+    {% for gene in selfer.genes %}
+    {% if loop.first %}if{% else %}else if{% endif %}(strcmp(sbuf->buff, "{{gene}}")==0)
+      {
+        return {{gene}};
+      }
+    {% endfor %}
+    else 
+      {
+        die("Unknown gene %s\n", sbuf->buff);
+      }
+  {% else %}
+    die("Unknown gene %s\n", sbuf->buff);
+  {% endif %}
 
 }
 
 
 boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir)
 {
-  strbuf_append_str(fa, install_dir->buff);
-  strbuf_append_str(fa, "data/staph/antibiotics/");
-  {% for gene in selfer.genes %}
-  {% if loop.first %}if{% else %}else if{% endif %}(gene=={{gene}})
-    {
-      strbuf_append_str(fa, "{{gene}}.fa");
-    }
-  {% endfor %}
-  else if (gene==unspecified_gpg)
-    {
-      strbuf_reset(fa);
-      return false;
-    }
-  return true;
+  {% if selfer.genes %}
+    strbuf_append_str(fa, install_dir->buff);
+    strbuf_append_str(fa, "data/{{selfer.species}}/antibiotics/");
+    {% for gene in selfer.genes %}
+    {% if loop.first %}if{% else %}else if{% endif %}(gene=={{gene}})
+      {
+        strbuf_append_str(fa, "{{gene}}.fa");
+      }
+    {% endfor %}
+    else if (gene==unspecified_gpg)
+      {
+        strbuf_reset(fa);
+        return false;
+      }
+    return true;
+  {% else %}
+    return false;  
+  {% endif %}  
 }
 
 const char* map_enum_to_gene_name(GenePresenceGene gene)
@@ -188,10 +196,18 @@ int get_next_gene_info(FILE* fp,
 					  &too_short,
 					  ignore_first, ignore_last);
 
-
+  gene_info->fasta_id = seq->name;
+  char gene_family[LINE_MAX];
+  int i = 0;
+  while(i<LINE_MAX && ! (seq->name[i] == '\n' || seq->name[i] == ' ' || seq->name[i] == '\t' || seq->name[i] == '\r')){
+    gene_family[i] = seq->name[i];
+    i++;
+  }
+  // printf("%s\n", gene_family);
   strbuf_reset(gene_info->strbuf);
   strbuf_append_str(gene_info->strbuf,
-		    seq->name);
+		    gene_family);
+  memset( gene_family, 0, sizeof(gene_family) );
   gene_info->name 
     = map_string_to_gene_presence_gene(gene_info->strbuf);
 

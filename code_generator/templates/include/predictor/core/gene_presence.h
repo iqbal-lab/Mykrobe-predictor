@@ -27,7 +27,7 @@ typedef enum
   } GenePresenceGene;
 
 #define NUM_GENE_PRESENCE_GENES {{selfer.genes | length}}    //ignore unspecified_gpg
-#define MAX_LEN_GENE 3110
+#define MAX_LEN_GENE 3155
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
 boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir);
@@ -42,6 +42,7 @@ typedef struct
   int  percent_nonzero;
   StrBuf* strbuf;
   GenePresenceGene name;
+  char* fasta_id;  
 } GeneInfo;
 
 GeneInfo* alloc_and_init_gene_info();

@@ -11,8 +11,13 @@
 #include "string_buffer.h"
 
 #ifdef STAPH
-{% include 'include/predictor/staph/gene_mutation_gene.h' %}
-{% include 'include/predictor/staph/known_mutation.h' %}
+{% include 'include/predictor/common/gene_mutation_gene.h' %}
+{% include 'include/predictor/common/known_mutation.h' %}
+#endif
+
+#ifdef GN
+{% include 'include/predictor/common/gene_mutation_gene.h' %}
+{% include 'include/predictor/common/known_mutation.h' %}
 #endif
 
 #ifdef TB

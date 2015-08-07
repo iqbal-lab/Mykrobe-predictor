@@ -216,14 +216,6 @@ int main(int argc, char **argv)
     }
   boolean progressbar_remainder=true;
 
-  int qual_thresh;
-  if (cmd_line->ont){
-    // ONT data
-    qual_thresh = 0;
-  }
-  else{
-    qual_thresh = 10;
-  }
 
   bp_loaded = build_unclean_graph(db_graph, 
           cmd_line->seq_path,
@@ -237,7 +229,7 @@ int main(int argc, char **argv)
           into_colour, subsample_function,
           cmd_line->progress, &count_so_far, total_reads,
           &progressbar_remainder,
-          qual_thresh);
+          0);
   if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
     {
       printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
@@ -298,7 +290,7 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
+  SpeciesInfo* species_info = get_species_info(db_graph, 50000, cmd_line->install_dir,
                                   expected_depth,1,1);
 
   fflush(stdout);
@@ -306,33 +298,33 @@ int main(int argc, char **argv)
   print_json_called_variant_item("expected_depth",expected_depth,false);
   print_json_called_variant_item("mean_read_length",mean_read_length,false);   
   print_json_phylogenetics(species_info);
-  // if (!is_aureus_present(species_info))
-  // {
-  //   print_json_susceptibility_start(); 
-  //   print_json_susceptibility_end();
-  //   print_json_called_variants_start();
-  //   boolean last = true;
-  //   print_json_called_variants_end(last);
-  //   print_json_end();
+  if (false)
+  {
+    print_json_susceptibility_start(); 
+    print_json_susceptibility_end();
+    print_json_called_variants_start();
+    boolean last = true;
+    print_json_called_variants_end(last);
+    print_json_end();
 
-  //   //cleanup
-  //   strbuf_free(tmp_name);
-  //   free_antibiotic_info(abi);
-  //   free_var_on_background(tmp_vob);
-  //   free_gene_info(tmp_gi);
-  //   free_reading_utils(ru);
+    //cleanup
+    strbuf_free(tmp_name);
+    free_antibiotic_info(abi);
+    free_var_on_background(tmp_vob);
+    free_gene_info(tmp_gi);
+    free_reading_utils(ru);
     
-  //   cmd_line_free(cmd_line);
-  //   hash_table_free(&db_graph);
-  //   return 0;
-  // }  
+    cmd_line_free(cmd_line);
+    hash_table_free(&db_graph);
+    return 0;
+  }  
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
 
   //if we get here, is target species
-  
+
   if (cmd_line->format==JSON)
     {
       print_json_susceptibility_start();
@@ -340,27 +332,17 @@ int main(int argc, char **argv)
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
   {% for drug in selfer.drugs %}
-  {% if drug.name == "Erythromycin" %}
-  boolean any_erm_present=false;
-  InfectionType erythromycin_resistotype;  
-  print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-            &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
-            ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
-            &any_erm_present,&erythromycin_resistotype,
-            called_variants,called_genes);
-  {% elif not drug.name == "Clindamycin" %}
+    {% if loop.last %} 
+    output_last=true;
+    {% endif %} 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_{{drug | lower }}_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
-  {% endif %}
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
   {% endfor %}
-  output_last=true;
-  print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-           &is_clindamycin_susceptible, tmp_name, 
-           any_erm_present, erythromycin_resistotype,cmd_line->install_dir,
-           ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-           called_variants,called_genes);
+  
 
    
   if (cmd_line->format==JSON)

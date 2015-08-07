@@ -8,12 +8,22 @@
 #include <string.h>
 #include "global.h"
 
+{% if selfer.species == "staph" %}
 #ifdef STAPH
-{% include 'src/predictor/staph/map_gene_name_str_to_genename.c' %}
-{% include 'src/predictor/staph/map_mutation_name_to_enum.c' %}
-{% include 'src/predictor/staph/map_enum_to_mutation_name.c' %}
-{% include 'src/predictor/staph/map_var_id_to_drug_resistance.c' %}
+{% include 'src/predictor/common/map_gene_name_str_to_genename.c' %}
+{% include 'src/predictor/common/map_mutation_name_to_enum.c' %}
+{% include 'src/predictor/common/map_enum_to_mutation_name.c' %}
+{% include 'src/predictor/common/map_var_id_to_drug_resistance.c' %}
 #endif
+
+{% elif selfer.species == "gramneg" %}
+#ifdef GN
+{% include 'src/predictor/common/map_gene_name_str_to_genename.c' %}
+{% include 'src/predictor/common/map_mutation_name_to_enum.c' %}
+{% include 'src/predictor/common/map_enum_to_mutation_name.c' %}
+{% include 'src/predictor/common/map_var_id_to_drug_resistance.c' %}
+#endif
+{% endif %}
 
 #ifdef TB
 GeneMutationGene map_gene_name_str_to_genename(StrBuf* name)

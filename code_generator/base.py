@@ -2,17 +2,30 @@ import os
 import jinja2
 import json
 import csv
-from utils import unique,flatten
+import string
+import glob
+import logging
+from jinja2.exceptions import TemplateNotFound
+
+
 
 from mutations import MutationFasta
 
+def make_safe_string(s):
+    valid_chars = "%s%s" % (string.ascii_letters, string.digits)
+    return ''.join(c for c in s if c in valid_chars)
+
+def unique(seq):
+    seen = set()
+    seen_add = seen.add
+    return [ x for x in seq if x not in seen and not seen_add(x)]
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+    
 class CodeGenerator(object):
 
     def __init__(self):
-        self.template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-        self.jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(self.template_dir),
-                               autoescape = False,
-                               extensions=['jinja2.ext.with_'])  
         self.gene_enum_to_drug_name = self.load_gene_enum_to_drug_name()
         self.virulence_genes = unique(self.load_virulence_genes())
         self.template_dir = os.path.join(os.path.dirname(__file__), 'templates/' )
@@ -32,7 +45,7 @@ class CodeGenerator(object):
 
     @property 
     def mutation_induced_drug_names(self):
-        raise NotImplementedError("Implemented in child")
+        return []   
 
     @property 
     def drug_names(self):
@@ -63,19 +76,33 @@ class CodeGenerator(object):
         return row
 
     def render_antibiotics_src(self):
-        return self.render_str('src/predictor/%s/antibiotics.c' % self.species)        
+        try:
+            return self.render_str('src/predictor/%s/antibiotics.c' % self.species)        
+        except TemplateNotFound:
+            logging.warning("Using default antibiotics.c template")
+            return self.render_str('src/predictor/common/antibiotics.c')        
+
 
     def render_antibiotics_include(self):
-        return self.render_str('include/predictor/%s/antibiotics.h' % self.species)   
+        try:
+            return self.render_str('include/predictor/%s/antibiotics.h' % self.species)
+        except TemplateNotFound:
+            logging.warning("Using default antibiotics.h template")    
+            return self.render_str('include/predictor/common/antibiotics.h')        
+                    
 
+    def write_to_file(self, st, filepath):
+        dir_out = os.path.join(self.render_dir,os.path.dirname(filepath))
+        if not os.path.exists(dir_out):
+            os.makedirs(dir_out)
+        with open(os.path.join(self.render_dir, filepath) ,'w') as outfile:
+            outfile.write(st)                
 
     def render_and_write_antibiotics(self):
         st = self.render_antibiotics_src()
-        with open(os.path.join(self.render_dir,'src/predictor/%s/antibiotics.c' % self.species),'w') as outfile:
-            outfile.write(st)
+        self.write_to_file(st, 'src/predictor/%s/antibiotics.c' % self.species)
         st = self.render_antibiotics_include()
-        with open(os.path.join(self.render_dir,'include/predictor/%s/antibiotics.h' % self.species),'w') as outfile:
-            outfile.write(st)         
+        self.write_to_file(st, 'include/predictor/%s/antibiotics.h' % self.species)      
 
     def render_known_mutations_src(self):
         return self.render_str('src/predictor/core/known_mutations.c')
@@ -85,12 +112,9 @@ class CodeGenerator(object):
 
     def render_and_write_known_mutations(self):
         st = self.render_known_mutations_src()
-        with open(os.path.join(self.render_dir,'src/predictor/core/known_mutations.c'),'w') as outfile:
-            outfile.write(st)
+        self.write_to_file(st, 'src/predictor/core/known_mutations.c')            
         st = self.render_known_mutations_include()
-        with open(os.path.join(self.render_dir,'include/predictor/core/known_mutations.h'),'w') as outfile:
-            outfile.write(st) 
-
+        self.write_to_file(st, 'include/predictor/core/known_mutations.h')
 
     def render_gene_presence_src(self):
         return self.render_str('src/predictor/core/gene_presence.c')
@@ -100,21 +124,21 @@ class CodeGenerator(object):
 
     def render_and_write_gene_presence(self):
         st = self.render_gene_presence_src()
-        with open(os.path.join(self.render_dir,'src/predictor/core/gene_presence.c'),'w') as outfile:
-            outfile.write(st)
+        self.write_to_file(st, 'src/predictor/core/gene_presence.c')            
         st = self.render_gene_presence_include()
-        with open(os.path.join(self.render_dir,'include/predictor/core/gene_presence.h'),'w') as outfile:
-            outfile.write(st) 
-
+        self.write_to_file(st, 'include/predictor/core/gene_presence.h')            
 
     def render_main_src(self):
-        return self.render_str('src/predictor/%s/main.c' % self.species )
+        try:
+            return self.render_str('src/predictor/%s/main.c' % self.species )
+        except TemplateNotFound:
+            logging.warning("Using default main.c template")
+            return self.render_str('src/predictor/common/main.c' )
+
 
     def render_and_write_main(self):
         st = self.render_main_src()
-        with open(os.path.join(self.render_dir,'src/predictor/%s/main.c' % self.species),'w') as outfile:
-            outfile.write(st)   
-
+        self.write_to_file(st, 'src/predictor/%s/main.c' % self.species)            
 
     def render_and_write_all(self):
         self.render_and_write_antibiotics() 
@@ -149,11 +173,15 @@ class DrugCodeGenerator(CodeGenerator):
 
     @property
     def genes_resistance_induced_by(self):
-        raise NotImplementedError("Implemented in child")          
+        genes = []
+        for gene,drugs in self.gene_enum_to_drug_name.iteritems():
+            if self.name in drugs:
+                genes.append(Gene(gene, self.species))
+        return genes             
 
     @property 
     def has_epistatic_muts(self):
-        raise NotImplementedError("Implemented in child")          
+        return False
 
     @property 
     def epistaic_file_path(self):
@@ -191,4 +219,68 @@ class GeneCodeGenerator(CodeGenerator):
         self.gene_enum_to_drug_name = self.load_gene_enum_to_drug_name()
 
     def __str__(self):
-        return self.name                                                              
+        return self.name   
+
+class Gene(GeneCodeGenerator):
+    
+    def __init__(self,name, species):
+        self.species = species
+        super(Gene, self).__init__(name=name) 
+
+
+class SpeciesCodeGenerator(CodeGenerator):
+
+    def __init__(self, species):
+        self.species = species
+        super(SpeciesCodeGenerator, self).__init__()
+        self.taxon_coverage_threshold_dict = self._load_taxon_coverage_thresholds()
+
+    def render_species_src(self):
+        return self.render_str('src/predictor/common/phylo/species.c')     
+
+    def render_species_include(self):
+        return self.render_str('include/predictor/common/phylo/species.h')     
+                                                
+    def render_and_write_phylo(self):
+        st = self.render_species_src()
+        with open(os.path.join(self.render_dir,'src/predictor/%s/species.c' % self.species),'w') as outfile:
+            outfile.write(st)
+        st = self.render_species_include()
+        with open(os.path.join(self.render_dir,'include/predictor/%s/species.h' % self.species),'w') as outfile:
+            outfile.write(st) 
+
+    @property
+    def phylo_groups(self):
+        phylo_groups = glob.glob('../data/%s/phylo/*'  %  (self.species))
+        return [PhyloGroup(self.species, os.path.basename(f), self.taxon_coverage_threshold_dict) for f in phylo_groups]
+
+    def _load_taxon_coverage_thresholds(self):
+        try:
+            with open('data/%s/taxon_coverage_threshold.json'  % self.species ,'r') as infile:
+                d =  json.load(infile) 
+        except IOError:
+            d = {}
+        return d  
+
+class PhyloGroup(object):
+
+    def __init__(self, species,  name, taxon_coverage_threshold_dict):
+        self.name = name
+        self.species = species
+        self.enum = name.title()
+        self.taxon_coverage_threshold_dict = taxon_coverage_threshold_dict
+
+    @property 
+    def taxons(self):
+        fasta_list = glob.glob('../data/%s/phylo/%s/*fasta'  %  (self.species, self.name))
+        fasta_list.extend(glob.glob('../data/%s/phylo/%s/*.fa'  %  (self.species, self.name)))  
+        return  [Taxon(os.path.basename(f), self.taxon_coverage_threshold_dict) for f in fasta_list]
+
+
+class Taxon(object):
+
+    def __init__(self, filename, taxon_coverage_threshold_dict = {}):
+        self.filename = filename
+        self.name = make_safe_string(filename.split('.')[0])
+        self.enum = self.name.title() 
+        self.threshold = taxon_coverage_threshold_dict.get(self.enum, 50)
