@@ -1,3 +1,4 @@
+*.pyc
 code_generator/rendered
 ._*
 *tmp*
