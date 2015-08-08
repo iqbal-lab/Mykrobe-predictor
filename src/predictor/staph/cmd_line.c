@@ -17,6 +17,7 @@
   #include <err.h>
 #endif
 #include <errno.h>
+#include "myk_pred_global.h"
 
 #ifdef __mingw__
   #define __override_realpath(N,R) _fullpath((R),(N),_MAX_PATH)
@@ -186,9 +187,9 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 
     case 'z':
       {
-      printf("0.1.3\n");
-  exit(0);
-  break;
+	printf("Mykrobe predictor for S. aureus Version %d.%d.%d\n", MYK_VERSION,MYK_SUBVERSION,MYK_SUBSUBVERSION);
+	exit(0);
+	break;
       }      
 
     case 'i':

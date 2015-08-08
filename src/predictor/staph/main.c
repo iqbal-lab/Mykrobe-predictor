@@ -44,14 +44,9 @@ int main(int argc, char **argv)
     {
       return -1;
     }
-    // VERSION_STR is passed from the makefile -- usually last commit hash
 
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
 
-  if (cmd_line->format==Stdout){
-    printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
-           VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);  
-  }
 
   dBGraph * db_graph = NULL;
 
@@ -496,3 +491,4 @@ void timestamp(){
  printf("%s",asctime(localtime(&ltime)));
  fflush(stdout);
 }
+
