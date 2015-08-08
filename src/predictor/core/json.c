@@ -21,36 +21,39 @@ void print_json_end()
   fflush(stdout);
 }
 
-void print_json_species_start()
-{
-  printf("\t\t\"species\": {\n");
-}
-void print_json_phylo_group_start()
-{
-  printf("\t\t\"phylo_group\": {\n");
-}
-void print_json_phylogenetics_start()
-{
-  printf("\t\"phylogenetics\": {\n");
-}
-void print_json_lineage_start()
-{
-  printf("\t\t\"lineage\": {\n");
-}
+// void print_json_species_start()
+// {
+//   printf("\t\t\"species\": {\n");
+// }
+// void print_json_phylo_group_start()
+// {
+//   printf("\t\t\"phylo_group\": {\n");
+// }
+
+// void print_json_lineage_start()
+// {
+//   printf("\t\t\"lineage\": {\n");
+// }
 
 
-void print_json_species_end()
-{
-  printf("\t\t},\n");
-}
+// void print_json_species_end()
+// {
+//   printf("\t\t},\n");
+// }
 void print_json_phylo_group_end()
 {
   printf("\t\t},\n");
 }
-void print_json_lineage_end()
+// void print_json_lineage_end()
+// {
+//   printf("\t\t}\n");
+// }
+
+void print_json_phylogenetics_start()
 {
-  printf("\t\t}\n");
+  printf("\t\"phylogenetics\": {\n");
 }
+
 void print_json_phylogenetics_end()
 {
   printf("\t},\n");
@@ -126,9 +129,9 @@ void print_json_called_genes_end()
 }
 
 
-void print_json_called_gene_start(const char* str1)
+void print_json_called_gene_start(StrBuf* sbuf)
 {
-  printf("\t\t\"%s\" :{\n",str1);
+  printf("\t\t\"%s\" :{\n",sbuf->buff);
 }
 void print_json_called_gene_item(char* str1, int val, boolean last)
 {
