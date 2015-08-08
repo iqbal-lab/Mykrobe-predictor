@@ -1,6 +1,6 @@
 ## Extending Mykrobe
 
-To make extending a little easier than editing the optimised C code we offer a code generator (in python) to allow you to extend Mykrobe a higher level. 
+To make extending a little easier than editing the optimised C code we offer a code generator (in python) to allow you to extend Mykrobe a higher level. Please see our extending branch for development of this code.  
 
 Below is a quick tutorial of how to use the code generator to extend Mykrobe to new species or to use it with different panels
 
