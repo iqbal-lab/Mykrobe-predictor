@@ -1,8 +1,8 @@
 {
   "name": "Mykrobe Predictor TB",
   "main": "index.html",
-  "version": "0.1.2",
-  "displayVersion": "0.1.2 (beta)",
+  "version": "0.1.3",
+  "displayVersion": "0.1.3 (beta)",
   "single-instance": true,
   "private": true,
   "window": {

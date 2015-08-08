@@ -96,7 +96,7 @@ void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir
 
 void phylo_group_threshold(int* thresholds){
   thresholds[CoagPos] = 30;
-  thresholds[CoagNeg] = 25;
+  thresholds[CoagNeg] = 30;
 
 }
 
