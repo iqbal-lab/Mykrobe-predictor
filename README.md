@@ -48,7 +48,7 @@ We have a preprint of the paper describing Mykrobe predictor here:
 http://biorxiv.org/content/early/2015/04/26/018564
 Please cite us if you use Mykrobe predictor in a publication
 
-### Extending Mykrobe ### 
+### Extending Mykrobe (modifying panel or supporting a new species) ### 
 Please see [README_EXTENDING_MYKROBE](https://github.com/iqbal-lab/Mykrobe-predictor/blob/extending/README_EXTENDING_MYKROBE.md).
 
 
