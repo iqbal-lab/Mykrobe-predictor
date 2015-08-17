@@ -1,7 +1,7 @@
-from variants import Variant 
-from variants import Call 
-from variants import CallSet 
-from references import Reference
+from models import Variant 
+from models import Call 
+from models import CallSet 
+from models import Reference
 from mongoengine import connect
 connect('atlas-test')
 
