@@ -39,29 +39,20 @@ from mongoengine import FloatField
 #   map<array<string>> info = {};
 # }
 
-"""
-`Variant` and `CallSet` both belong to a `VariantSet`.
-`VariantSet` belongs to a `Dataset`.
-The variant set is equivalent to a VCF file.
-"""
-# record VariantSet {
-#   /** The variant set ID. */
-#   string id;
+class VariantSet(Document):
+    """
+    `Variant` and `CallSet` both belong to a `VariantSet`.
+    `VariantSet` belongs to a `Dataset`.
+    The variant set is equivalent to a VCF file.
+    """
+    name = StringField(required = True, unique = True)
+    dataset_id = ReferenceField('Dataset')
+    reference_set_id = ReferenceField('ReferenceSetId')
 
-#   /** The ID of the dataset this variant set belongs to. */
-#   string datasetId;
-
-#   /**
-#   The reference set the variants in this variant set are using.
-#   */
-#   string referenceSetId;
-
-#   /**
-#   The metadata associated with this variant set. This is equivalent to
-#   the VCF header information not already presented in first class fields.
-#   */
-#   array<VariantSetMetadata> metadata = [];
-# }
+    @classmethod
+    def create(cls, name, dataset_id = None, reference_set_id= None):
+        c = cls(name = name)
+        return c.save()   
 
 
 class CallSet(Document):
@@ -69,7 +60,7 @@ class CallSet(Document):
          A `CallSet` is a collection of variant calls for a particular sample.
          It belongs to a `VariantSet`. This is equivalent to one column in VCF.
     """
-    name = StringField(required = True)
+    name = StringField(required = True, unique = True)
     sample_id = StringField()
     created_at = DateTimeField(default = datetime.datetime.now)
     updated_at = DateTimeField(required = True, default=datetime.datetime.now)
@@ -123,19 +114,20 @@ class Call(Document):
 class Variant(Document):
     """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.
       Variants belong to a `VariantSet`.This is equivalent to a row in VCF."""
-    var_id = ReferenceField('VariantSet')
+    variant_set = ReferenceField('VariantSet', required = True, unique_with = ["start", "reference"])
+    name = ListField(StringField())
     created_at = DateTimeField(required = True, default=datetime.datetime.now)
     updated_at = DateTimeField(required = True, default=datetime.datetime.now)
     reference = ReferenceField('Reference', required = True)
     start = IntField(required = True) #(0-based)
-    end = IntField(required = True) #  The end position (exclusive), resulting in [start, end) closed-open interval.
+    end = IntField(required = False) #  The end position (exclusive), resulting in [start, end) closed-open interval.
     reference_bases = StringField(required = True)
     alternate_bases = ListField(StringField(), required = True)
    
 
     @classmethod
-    def create(cls, start, end, reference_bases, alternate_bases, reference):
-        v = cls(start = start, end = end, reference_bases = reference_bases,
+    def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None,):
+        v = cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
                 alternate_bases = alternate_bases, reference = reference)
         return v.save()
 
