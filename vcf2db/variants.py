@@ -63,39 +63,27 @@ The variant set is equivalent to a VCF file.
 #   array<VariantSetMetadata> metadata = [];
 # }
 
-# /**
-# A `CallSet` is a collection of variant calls for a particular sample.
-# It belongs to a `VariantSet`. This is equivalent to one column in VCF.
-# */
-# record CallSet {
 
-#   /** The call set ID. */
-#   string id;
-
-#   /** The call set name. */
-#   union { null, string } name = null;
-
-#   /** The sample this call set's data was generated from. */
-#   union { null, string } sampleId;
+class CallSet(Document):
+    """
+         A `CallSet` is a collection of variant calls for a particular sample.
+         It belongs to a `VariantSet`. This is equivalent to one column in VCF.
+    """
+    name = StringField(required = True)
+    sample_id = StringField()
+    created_at = DateTimeField(default = datetime.datetime.now)
+    updated_at = DateTimeField(required = True, default=datetime.datetime.now)
 
 #   /** The IDs of the variant sets this call set has calls in. */
 #   array<string> variantSetIds = [];
 
-#   /** The date this call set was created in milliseconds from the epoch. */
-#   union { null, long } created = null;
-
-#   /**
-#   The time at which this call set was last updated in
-#   milliseconds from the epoch.
-#   */
-#   union { null, long } updated = null;
-
-#   /**
-#   A map of additional call set information.
-#   */
 #   map<array<string>> info = {};
 # }
 
+    @classmethod
+    def create(cls, name, sample_id = None):
+        c = cls(name = name, sample_id = sample_id)
+        return c.save() 
 
 class Call(Document):
 
@@ -114,18 +102,22 @@ class Call(Document):
     the ordering of the calls on this `Variant`.
     The number of results will also be the same.
     """
-    call_set_name = StringField()
+    call_set = ReferenceField('CallSet', required = True)
     genotype = ListField(IntField())
     genotype_likelihood = FloatField()
     variant = ReferenceField('Variant')
 
     @classmethod
-    def create(cls, variant, call_set_name, genotype, genotype_likelihood ):
+    def create(cls, variant, call_set, genotype, genotype_likelihood ):
         if type(genotype) is str:
             genotype = [int(g) for g in genotype.split('/')]
-        c = cls(variant = variant, call_set_name = call_set_name, genotype = genotype,
+        c = cls(variant = variant, call_set = call_set, genotype = genotype,
                  genotype_likelihood = genotype_likelihood )
         return c.save()    
+
+    @property 
+    def call_set_name(self):
+        return self.call_set.name
 
 
 class Variant(Document):
