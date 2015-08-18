@@ -31,7 +31,7 @@ from mongoengine import FloatField
 #   metadata.
 #   */
 #   string number;
-
+ 
 #   /** A textual description of this metadata. */
 #   string description;
 
@@ -114,8 +114,8 @@ class Call(Document):
 class Variant(Document):
     """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.
       Variants belong to a `VariantSet`.This is equivalent to a row in VCF."""
-    variant_set = ReferenceField('VariantSet', required = True, unique_with = ["start", "reference"])
-    name = ListField(StringField())
+    variant_set = ReferenceField('VariantSet', required = True, unique_with = ["name", "reference"])
+    name = StringField()
     created_at = DateTimeField(required = True, default=datetime.datetime.now)
     updated_at = DateTimeField(required = True, default=datetime.datetime.now)
     reference = ReferenceField('Reference', required = True)
@@ -126,10 +126,10 @@ class Variant(Document):
    
 
     @classmethod
-    def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None,):
-        v = cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
-                alternate_bases = alternate_bases, reference = reference)
-        return v.save()
+    def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
+        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
+        return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
+            alternate_bases = alternate_bases, reference = reference, name = name).save()
 
     @property 
     def alt(self):

@@ -1,18 +1,20 @@
 #! /usr/bin/env python
 from mongoengine import connect
 from mongoengine import NotUniqueError
+from mongoengine import OperationError
+
 from models import CallSet
 from models import Reference
 from models import Variant
 from models import VariantSet
 from models import Call
 connect('atlas')
-
 import vcf
 import os
 import csv
-
 import argparse
+
+
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
 parser.add_argument('vcf', metavar='vcf', type=str, help='a vcf file')
 args = parser.parse_args()
@@ -42,10 +44,13 @@ except NotUniqueError:
 	reference = Reference.objects.get(name = "R00000022")
 
 for record in vcf_reader:
-	if not record.FILTER and is_record_valid(record):
+	if not record.FILTER and record.is_snp and is_record_valid(record):
 		for sample in record.samples:
-			v = Variant.create(variant_set = variant_set, start = record.POS, reference_bases = record.REF,
-							 	alternate_bases = [str(a) for a in record.ALT],
-							 	reference = reference)
-			Call.create(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = 1)
+			try:
+				v = Variant.create(variant_set = variant_set, start = record.POS, reference_bases = record.REF,
+								 	alternate_bases = [str(a) for a in record.ALT],
+								 	reference = reference)
+				Call.create(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = 1)
+			except OperationError:
+				pass
 
