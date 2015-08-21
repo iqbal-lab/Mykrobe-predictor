@@ -48,3 +48,8 @@ class VariantFreq(Document):
                    alternate_bases = alternate_bases
                    ).save()
 
+    def __str__(self):
+        return "".join([self.reference_bases, str(self.start), "/".join(self.alternate_bases)])
+
+    def __repr__(self):
+        return "".join([self.reference_bases, str(self.start), "/".join(self.alternate_bases)])

@@ -21,6 +21,8 @@ class Variant(object):
 
 	def __repr__(self):
 		return "".join([self.ref, str(self.pos), self.alt])
+
+		
 class AlleleGenerator(object):
 	"""docstring for PanelGenerator"""
 	def __init__(self, reference_filepath, kmer = 31):
@@ -49,6 +51,7 @@ class AlleleGenerator(object):
 		alternates = []
 		for background in backgrounds:
 			alternate = copy(background)
+			assert alternate[i] == v.ref	
 			alternate[i] = v.alt
 			alternates.append(alternate)
 		return alternates
@@ -69,6 +72,7 @@ class AlleleGenerator(object):
 					new_background = copy(wild_type_reference)
 					for variant in variants:
 						j = i + variant.pos - v.pos
+						assert new_background[j] == variant.ref						
 						new_background[j] = variant.alt
 					backgrounds.append(new_background)
 		return backgrounds
