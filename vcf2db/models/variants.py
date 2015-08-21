@@ -112,6 +112,15 @@ class Call(Document):
 
 
 class Variant(Document):
+    meta = {'indexes': [
+                {
+                    'fields' : ['start']
+                },
+                {
+                    'fields' : ['name']
+                }                                                   
+                ]
+            }    
     """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.
       Variants belong to a `VariantSet`.This is equivalent to a row in VCF."""
     variant_set = ReferenceField('VariantSet', required = True, unique_with = ["name", "reference"])

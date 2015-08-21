@@ -4,4 +4,5 @@ from variants import Call
 from variants import CallSet 
 from references import Reference
 from calculated import UniqueVariants
+from calculated import VariantFreq
 
