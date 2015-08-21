@@ -82,18 +82,44 @@ class TestSNPAlleleGenerator(BaseTest):
         v3 = Variant("C", 30, "G")
         v4 = Variant("C", 30, "T")
         v5 = Variant("C", 30, "A")
+        panel = self.pg.create(v, context = [v2, v3, v4, v5])
+        # for context in self.pg._create_multiple_contexts([v2, v3, v4, v5]):
+        #     print [ "".join([v.ref, str(v.pos), v.alt]) for v in context]
+        assert panel.ref ==                   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
+        assert sorted(panel.alts) == sorted([ "CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGGTATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGGTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGTTATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGTTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGATATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGATTTCAAATTTCATAACATCACCATGAGTTTGAT"])
+
+    def test_simple_variant_with_multiple_nearby_snps(self):
+        v = Variant("A", 31, "T")
+        v2 = Variant("A", 32, "T")
+        v5 = Variant("A", 32, "G")                        
+        v3 = Variant("C", 30, "G")
+        v4 = Variant("C", 30, "T")
 
         panel = self.pg.create(v, context = [v2, v3, v4, v5])
-        print panel.alts
-        assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGGTATCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGGTTTCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGTTATCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGTTTTCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGATATCAAATTTCATAACATCACCATGAGTTTGAT",
-                              "CGATTAAAGATAGAAATACACGATGCGAGATTTCAAATTTCATAACATCACCATGAGTTTGAT"])
+        # print sorted([v for v in self.pg._create_multiple_contexts([v2, v3, v4, v5])])
+        assert sorted([v for v in self.pg._create_multiple_contexts([v2, v3, v4, v5])]) == sorted([[v4, v5],
+                                                                                                  [v3, v5],
+                                                                                                  [v4, v2],
+                                                                                                  [v3, v2]])
+        assert panel.ref ==                   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
+        assert sorted(panel.alts) == sorted([ "CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGGTATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGGTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGTTATCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGTTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGCTGTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGGTGTCAAATTTCATAACATCACCATGAGTTTGAT",
+                                              "CGATTAAAGATAGAAATACACGATGCGAGTTGTCAAATTTCATAACATCACCATGAGTTTGAT"
+                                              ])
+     
 
 
 

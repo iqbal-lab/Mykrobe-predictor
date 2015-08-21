@@ -16,6 +16,11 @@ class Variant(object):
 		self.pos = pos
 		self.alt = alt
 
+	def __str__(self):
+		return "".join([self.ref, str(self.pos), self.alt])
+
+	def __repr__(self):
+		return "".join([self.ref, str(self.pos), self.alt])
 class AlleleGenerator(object):
 	"""docstring for PanelGenerator"""
 	def __init__(self, reference_filepath, kmer = 31):
@@ -73,22 +78,32 @@ class AlleleGenerator(object):
 		return new_contexts
 
 	def _recursive_context_creator(self, contexts):
+		valid = True
 		for i,context in enumerate(contexts):
 			position_counts = Counter([v.pos for v in context])
 			if not all([c == 1 for c in position_counts.values()]):
-				position = position_counts.most_common(1)[0][0]
-				repeated_vars = []
-				common_vars = []
-				for var in context:
-					if var.pos == position:
-						repeated_vars.append(var)
-					else:
-						common_vars.append(var)
-				new_contexts = []
-				for var in repeated_vars:
-					context = [var] + common_vars
-					new_contexts.append(context)
-				self._recursive_context_creator(new_contexts)				
+				valid = False
+		if valid:
+			return contexts
+		else:
+			for i,context in enumerate(contexts):
+				position_counts = Counter([v.pos for v in context])
+				if not all([c == 1 for c in position_counts.values()]):
+					position = position_counts.most_common(1)[0][0]
+					repeated_vars = []
+					common_vars = []
+					for var in context:
+						if var.pos == position:
+							repeated_vars.append(var)
+						else:
+							common_vars.append(var)
+					new_contexts = []
+					for var in repeated_vars:
+						context = [var] + common_vars
+						new_contexts.append(context)
+					contexts.pop(i)
+					contexts += new_contexts
+					self._recursive_context_creator(contexts)
 		return contexts
 
 	def _get_combinations_of_backgrounds(self, context):
