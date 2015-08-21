@@ -17,29 +17,34 @@ class AlleleGenerator(object):
 
 	def create(self, ref, pos, alt):
 		## Position should be 1 based
+		if pos < 1:
+			pos = self.ref_length + pos
 		assert pos > 0
 		index = pos - 1
 		if self.ref[index] != ref:
-			raise ValueError("Cannot create alleles as ref at pos %i is not %s (it's %s )" % (pos, ref, self.ref[index]))
-		start_index, end_index = self._get_start_end(pos)
-		print self._get_start_end(index)
+			raise ValueError("Cannot create alleles as ref at pos %i is not %s (it's %s) are you sure you're using one-based co-ordinates?" % (pos, ref, self.ref[index]))
+		i, start_index, end_index = self._get_start_end(pos)
 		reference = self.ref[start_index:end_index]
 		alternate = copy(reference)
-		alternate[index] = alt
-		if pos > 1:
-			print "".join(reference)
-			print "".join(alternate)
+		alternate[i] = alt
 		return Panel(reference, pos, alternate)	
 
 
 	def _get_start_end(self, pos):
 		start_index = pos - self.kmer
 		end_index =  pos + self.kmer +1
+		i = self.kmer - 1
 		if start_index < 0:
 			diff = abs(start_index)
 			start_index = 0 
 			end_index += diff
-		return (start_index, end_index)
+			i -= diff
+		elif end_index > self.ref_length:
+			diff = abs(end_index - self.ref_length)
+			end_index = self.ref_length
+			start_index -= diff
+			i += diff
+		return (i, start_index, end_index)
 
 
 class Panel(object):

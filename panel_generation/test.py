@@ -14,11 +14,9 @@ class TestReference(BaseTest):
     def setUp(self):
     	self.pg = AlleleGenerator(reference_filepath = "/home/phelimb/git/atlas/data/R00000022.fasta")
 
-
     def test_panel_generator(self):
     	pg = AlleleGenerator(reference_filepath = "/home/phelimb/git/atlas/data/R00000022.fasta")
     	assert pg.ref is not None
-    	assert len(pg.ref) > 100
 
     def test_simple_variant(self):
     	panel = self.pg.create("A", 31, "T")
@@ -32,5 +30,12 @@ class TestReference(BaseTest):
     def test_simple_variant_start(self):
     	panel = self.pg.create("C", 1, "T")
     	assert str(panel.ref) == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-    	assert str(panel.alt) == "TGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"    		
+    	assert str(panel.alt) == "TGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"    
 
+    def test_simple_variant_end(self):
+    	panel = self.pg.create("A", 2902618, "T")
+    	assert str(panel.ref) == "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
+    	assert str(panel.alt) == "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTTT"        			
+        panel = self.pg.create("A", -1, "T")
+        assert str(panel.ref) == "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
+        assert str(panel.alt) == "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTTT" 
