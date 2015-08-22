@@ -23,6 +23,8 @@ def is_record_valid(record):
 	for sample in record.samples:
 		if sample["GT"] is None:
 			valid = False
+        if sample["GT_CONF"] < 1:
+            valid = False
 	return valid
 
 vcf_reader = vcf.Reader(open(args.vcf, 'r'))
@@ -43,14 +45,17 @@ try:
 except NotUniqueError:
 	reference = Reference.objects.get(name = "R00000022")
 
+variants = []
+calls = []
 for record in vcf_reader:
 	if not record.FILTER and record.is_snp and is_record_valid(record):
 		for sample in record.samples:
 			try:
-				v = Variant.create(variant_set = variant_set, start = record.POS, reference_bases = record.REF,
-								 	alternate_bases = [str(a) for a in record.ALT],
+				v = Variant.create_object(variant_set = variant_set, start = record.POS, reference_bases = record.REF,
+								 	alternate_bases = [str(a) for a in record.ALT], 
 								 	reference = reference)
-				Call.create(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = 1)
+				v.save()
+				c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = sample['GT_CONF'])
+				c.save()
 			except OperationError:
 				pass
-

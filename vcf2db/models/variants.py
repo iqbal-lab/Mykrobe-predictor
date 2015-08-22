@@ -7,6 +7,39 @@ from mongoengine import ReferenceField
 from mongoengine import ListField
 from mongoengine import FloatField
 
+class GenotypedVariant(Document):
+    meta = {'indexes': [
+                {
+                    'fields' : ['start']
+                },
+                {
+                    'fields' : ['name']
+                },
+                {
+                    'fields' : ['call_set']
+                }                                                  
+                ]
+            }    
+    name = StringField()
+    coverage = IntField()
+    created_at = DateTimeField(required = True, default=datetime.datetime.now)
+    
+    start = IntField()
+    reference_bases = StringField()
+    alternate_bases = StringField()
+    call_set = ReferenceField('CallSet')
+
+    @classmethod
+    def create_object(cls, name, call_set, coverage):
+        reference_bases = name[0]
+        start = int(name[1:-1])
+        alternate_bases = name[-1]
+        return cls( name = name, 
+                    reference_bases = reference_bases, 
+                    start = start, 
+                    alternate_bases = alternate_bases,
+                    call_set = call_set,
+                    coverage = int(coverage))   
 
 # class VariantSetMetadata(Document)
 #  {
@@ -77,7 +110,15 @@ class CallSet(Document):
         return c.save() 
 
 class Call(Document):
-
+    meta = {'indexes': [
+                {
+                    'fields' : ['call_set']
+                },
+                {
+                    'fields' : ['variant']
+                }                                                  
+                ]
+            }  
     """
     A `Call` represents the determination of genotype with respect to a
     particular `Variant`.
@@ -99,12 +140,12 @@ class Call(Document):
     variant = ReferenceField('Variant')
 
     @classmethod
-    def create(cls, variant, call_set, genotype, genotype_likelihood ):
+    def create_object(cls, variant, call_set, genotype, genotype_likelihood ):
         if type(genotype) is str:
             genotype = [int(g) for g in genotype.split('/')]
         c = cls(variant = variant, call_set = call_set, genotype = genotype,
                  genotype_likelihood = genotype_likelihood )
-        return c.save()    
+        return c
 
     @property 
     def call_set_name(self):
@@ -135,10 +176,10 @@ class Variant(Document):
    
 
     @classmethod
-    def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
+    def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
         return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
-            alternate_bases = alternate_bases, reference = reference, name = name).save()
+            alternate_bases = alternate_bases, reference = reference, name = name)
 
     @property 
     def alt(self):
@@ -150,6 +191,12 @@ class Variant(Document):
     @property 
     def call(self):
         return Call.objects.get(variant = self)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name        
 
 
 
