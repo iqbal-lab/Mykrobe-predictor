@@ -22,7 +22,6 @@ class Variant(object):
 	def __repr__(self):
 		return "".join([self.ref, str(self.pos), self.alt])
 
-		
 class AlleleGenerator(object):
 	"""docstring for PanelGenerator"""
 	def __init__(self, reference_filepath, kmer = 31):

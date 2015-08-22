@@ -1,3 +1,9 @@
+*.ct
+*.fasta.colour_covgs
+*.jf
+*.fasta
+*.tmp
+.nfs*
 *~
 venv
 *.pyc
