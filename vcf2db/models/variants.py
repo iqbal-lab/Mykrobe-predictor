@@ -137,15 +137,18 @@ class Call(Document):
     call_set = ReferenceField('CallSet', required = True)
     genotype = ListField(IntField())
     genotype_likelihood = FloatField()
-    variant = ReferenceField('Variant')
+    variant = ReferenceField('Variant', required = True)
 
     @classmethod
     def create_object(cls, variant, call_set, genotype, genotype_likelihood ):
         if type(genotype) is str:
             genotype = [int(g) for g in genotype.split('/')]
-        c = cls(variant = variant, call_set = call_set, genotype = genotype,
-                 genotype_likelihood = genotype_likelihood )
-        return c
+        return {"call_set" : call_set.id,
+        "genotype" : genotype,
+        "genotype_likelihood" : genotype_likelihood}
+        # c = cls(variant = variant, call_set = call_set, genotype = genotype,
+        #          genotype_likelihood = genotype_likelihood )
+        # return c
 
     @property 
     def call_set_name(self):
@@ -166,8 +169,8 @@ class Variant(Document):
       Variants belong to a `VariantSet`.This is equivalent to a row in VCF."""
     variant_set = ReferenceField('VariantSet', required = True, unique_with = ["name", "reference"])
     name = StringField()
-    created_at = DateTimeField(required = True, default=datetime.datetime.now)
-    updated_at = DateTimeField(required = True, default=datetime.datetime.now)
+    # created_at = DateTimeField(required = True, default=datetime.datetime.now)
+    # updated_at = DateTimeField(required = True, default=datetime.datetime.now)
     reference = ReferenceField('Reference', required = True)
     start = IntField(required = True) #(0-based)
     end = IntField(required = False) #  The end position (exclusive), resulting in [start, end) closed-open interval.
@@ -178,8 +181,15 @@ class Variant(Document):
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
-            alternate_bases = alternate_bases, reference = reference, name = name)
+        return {"variant_set" : variant_set.id,
+        "name": name,
+        "reference" : reference.id  ,
+        "start" : start, 
+        "reference_bases" : reference_bases ,
+        "alternate_bases" : alternate_bases
+        }
+        # return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
+        #     alternate_bases = alternate_bases, reference = reference, name = name)
 
     @property 
     def alt(self):

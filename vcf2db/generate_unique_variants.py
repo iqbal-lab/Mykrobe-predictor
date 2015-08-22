@@ -2,12 +2,8 @@
 from mongoengine import connect
 connect('atlas')
 from models import Variant
-from models import UniqueVariants
 from models import VariantFreq
 from models import VariantSet
-
-# data = Variant.objects().distinct('name')
-# UniqueVariants.create(names = data)
 
 total_samples = VariantSet.objects.count()
 results = Variant.objects().aggregate({ "$group" : { "_id": { "name": "$name"}, "count": {"$sum": 1} }},

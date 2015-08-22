@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+
+
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
@@ -8,7 +10,11 @@ from models import Reference
 from models import Variant
 from models import VariantSet
 from models import Call
+from pymongo import MongoClient
+client = MongoClient()
+db = client.atlas
 connect('atlas')
+
 import vcf
 import os
 import csv
@@ -54,8 +60,19 @@ for record in vcf_reader:
 				v = Variant.create_object(variant_set = variant_set, start = record.POS, reference_bases = record.REF,
 								 	alternate_bases = [str(a) for a in record.ALT], 
 								 	reference = reference)
-				v.save()
+				variants.append(v)
 				c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = sample['GT_CONF'])
-				c.save()
+				calls.append(c)
 			except OperationError:
 				pass
+
+
+variant_ids =  db.variant.insert(variants)
+for i,_id in enumerate(variant_ids):
+	calls[i]["variant"] = _id
+db.call.insert(calls)	
+
+# import time
+# time.sleep(20)
+# Variant.ensure_indexes()
+# Call.objects.insert(calls)			

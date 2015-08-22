@@ -13,6 +13,7 @@ from mongoengine import DateTimeField
 from mongoengine import ListField
 from mongoengine import IntField
 from mongoengine import ReferenceField
+from mongoengine import DoesNotExist
 from vcf2db import CallSet
 from vcf2db import GenotypedVariant
 connect('atlas')
@@ -24,9 +25,6 @@ for line in sys.stdin:
     line = line.rstrip('\n')
     row = line.split(' ')
     kmer_counts[row[0]] = int(row[1])
-
-
-
 
 # Read fasta
 def process_panel(filepath):
@@ -45,13 +43,17 @@ def process_panel(filepath):
             coverage[record.name] = np.median(coverage_record)
     return coverage
 
-
-
 def create_gvs(i):
     name, covg = i
     return 
-call_set = CallSet.objects.get(name = "C00012831")
-covg = process_panel("prelim_panel_k15.fasta")
+try:
+    call_set = CallSet.objects.get(name = "C00001075")
+except DoesNotExist:
+    call_set = CallSet.create(name = "C00001075")
+## Clear any genotyped calls so far
+GenotypedVariant.objects(call_set = call_set).delete()
+
+covg = process_panel("panel_k15.fasta")
 gvs = []
 for name, covg in covg.iteritems():
     gvs.append(GenotypedVariant.create_object(name = name, call_set = call_set, coverage = covg))

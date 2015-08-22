@@ -39,14 +39,24 @@ class VariantFreq(Document):
     @classmethod
     def create(cls, name, count, total_samples, reference_bases, start, alternate_bases):
         freq = float(count) / float(total_samples)
-        return cls(name = name,
-                   count = count,
-                   total_samples = total_samples,
-                   freq = freq, 
-                   start = int(start),
-                   reference_bases = reference_bases, 
-                   alternate_bases = alternate_bases
-                   ).save()
+        return {
+        "name" : name,
+        "count" : count,
+        "total_samples" : total_samples,
+        "freq" : freq,
+        "start" : int(start),
+        "reference_bases" : reference_bases,
+        "alternate_bases" : alternate_bases
+        }
+
+        # return cls(name = name,
+        #            count = count,
+        #            total_samples = total_samples,
+        #            freq = freq, 
+        #            start = int(start),
+        #            reference_bases = reference_bases, 
+        #            alternate_bases = alternate_bases
+        #            ).save()
 
     def __str__(self):
         return "".join([self.reference_bases, str(self.start), "/".join(self.alternate_bases)])
