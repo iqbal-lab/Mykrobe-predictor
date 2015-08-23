@@ -20,12 +20,13 @@ from vcf2db import GenotypedVariant
 import argparse
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
+parser.add_argument('kmer', metavar='kmer', type=int, help='kmer size')
 args = parser.parse_args()
 
-connect('atlas')
+connect('atlas-%i' % args.kmer)
 
 kmer_counts = {}
-kmer = 15
+kmer = args.kmer
 
 for line in sys.stdin:
     line = line.rstrip('\n')
@@ -49,9 +50,6 @@ def process_panel(filepath):
             coverage[record.name] = np.median(coverage_record)
     return coverage
 
-def create_gvs(i):
-    name, covg = i
-    return 
 try:
     call_set = CallSet.objects.get(name = args.sample)
 except DoesNotExist:
@@ -59,7 +57,7 @@ except DoesNotExist:
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
 
-covg = process_panel("panel_k15.fasta")
+covg = process_panel("panel_k%s.fasta" % args.kmer)
 gvs = []
 for name, covg in covg.iteritems():
     gvs.append(GenotypedVariant.create_object(name = name, call_set = call_set, coverage = covg))

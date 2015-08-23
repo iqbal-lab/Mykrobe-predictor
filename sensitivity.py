@@ -5,14 +5,20 @@ import pymongo
 import mongoengine
 import argparse
 from mongoengine import connect
-connect('atlas')
+
 from pymongo import MongoClient
 client = MongoClient()
-db = client.atlas
+
+
+
 
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
+parser.add_argument('kmer', metavar='kmer', type=int, help='kmer size')
 args = parser.parse_args()
+
+db = client['atlas-%i' % args.kmer]
+connect('atlas-%i' % args.kmer)
 
 call_set = CallSet.objects.get(name = args.sample)
 ## Get all discovered variants

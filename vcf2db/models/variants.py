@@ -162,7 +162,10 @@ class Variant(Document):
                 },
                 {
                     'fields' : ['name']
-                }                                                   
+                },
+                {
+                    'fields' : ['variant_set']
+                }                                                               
                 ]
             }    
     """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.

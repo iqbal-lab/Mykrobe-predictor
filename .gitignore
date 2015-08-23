@@ -1,3 +1,4 @@
+*.count
 *.ct
 *.fasta.colour_covgs
 *.jf

@@ -10,8 +10,7 @@ from vcf2db import VariantSet
 from vcf2db import Call
 from pymongo import MongoClient
 client = MongoClient()
-db = client.atlas
-connect('atlas')
+
 
 import vcf
 import os
@@ -20,7 +19,11 @@ import csv
 import argparse
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
 parser.add_argument('vcf', metavar='vcf', type=str, help='a vcf file')
+parser.add_argument('kmer', metavar='kmer', type=int, help='kmer length')
 args = parser.parse_args()
+
+db = client['atlas-%i' % args.kmer]
+connect('atlas-%i' % args.kmer)
 
 def is_record_valid(record):
 	valid = True
@@ -68,9 +71,4 @@ for record in vcf_reader:
 variant_ids =  db.variant.insert(variants)
 for i,_id in enumerate(variant_ids):
 	calls[i]["variant"] = _id
-db.call.insert(calls)	
-
-# import time
-# time.sleep(20)
-# Variant.ensure_indexes()
-# Call.objects.insert(calls)			
+db.call.insert(calls)			
