@@ -71,20 +71,19 @@ if vfs:
 	## Make panels for all new variants and panels needing updating
 	pool = multiprocessing.Pool(20)	
 	variant_panels = pool.map(make_panel,  VariantFreq.objects(name__in = new_names + update_names ))
-	db.variant_panel.insert(variant_panels)
+	new_panels = db.variant_panel.insert(variant_panels)
 
 	logging.info("Writing panel " + str(datetime.datetime.now() ) )
 
-	kmers = set()
-	with open("panel_k15.fasta",'w') as panel_file:
-		for variant_panel in VariantPanel.objects():
+	with open("panel_k15.fasta",'a') as panel_file:
+		for variant_panel in VariantPanel.objects(id__in = new_panels):
 			for a in variant_panel.alts:
 				panel_file.write(">%s\n" % variant_panel.variant.name)
 				panel_file.write("%s\n" % a)
-				kmers.add([a[i:i+kmer] for i in xrange(len(a)-kmer+1)])
 	i = 0
-	with open("panel_k15.kmers",'w') as panel_kmer_file:
-		for a in VariantPanel.objects().distinct('alts'):
+	kmers = set()
+	with open("panel_k15.kmers",'a') as panel_kmer_file:
+		for a in VariantPanel.objects(id__in = new_panels).distinct('alts'):
 			for i in xrange(len(a)-kmer+1):
 				seq = a[i:i+kmer]
 				if not seq in kmers:

@@ -16,8 +16,8 @@ args = parser.parse_args()
 
 call_set = CallSet.objects.get(name = args.sample)
 ## Get all discovered variants
-variant_list = [v.id for v in Call.objects(call_set = call_set).distinct('variant')]
-variants = Variant.objects(id__in = variant_list)#.order_by('start')
+variant_set = VariantSet.objects.get(name__startswith = args.sample)
+variants = Variant.objects(variant_set = variant_set)#.order_by('start')
 ## All genotyped
 genotyped = GenotypedVariant.objects(call_set = call_set)#.order_by('start')
 
