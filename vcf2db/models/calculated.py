@@ -5,6 +5,7 @@ from mongoengine import DateTimeField
 from mongoengine import ListField
 from mongoengine import IntField
 from mongoengine import FloatField
+from mongoengine import ReferenceField
 
 class UniqueVariants(Document):
     names = ListField(StringField(), required = True)
@@ -14,6 +15,30 @@ class UniqueVariants(Document):
     def create(cls, names, reference = None):
         c = cls(names = names)
         return c.save()
+        
+class VariantPanel(Document):
+
+    variant = ReferenceField('VariantFreq', unique = True)
+    alts = ListField(StringField())
+    _name = StringField(default = None)
+
+    @classmethod
+    def create_doc(cls, variant, alts):
+        return {
+        "variant" : variant.id, 
+        "alts" : alts,
+        "_name" : variant.name
+        }
+
+    def __repr__(self):
+        return "PANAL %s" % self._name
+
+    @property
+    def name(self):
+        if not self._name:
+            return self._name
+        else:
+            return self.variant.name
 
 class VariantFreq(Document):
     meta = {'indexes': [
@@ -37,13 +62,13 @@ class VariantFreq(Document):
 
 
     @classmethod
-    def create(cls, name, count, total_samples, reference_bases, start, alternate_bases):
-        freq = float(count) / float(total_samples)
+    def create(cls, name, reference_bases, start, alternate_bases, total_samples= None):
+        # freq = float(count) / float(total_samples)
         return {
         "name" : name,
-        "count" : count,
-        "total_samples" : total_samples,
-        "freq" : freq,
+        # "count" : count,
+        # "total_samples" : total_samples,
+        # "freq" : freq,
         "start" : int(start),
         "reference_bases" : reference_bases,
         "alternate_bases" : alternate_bases

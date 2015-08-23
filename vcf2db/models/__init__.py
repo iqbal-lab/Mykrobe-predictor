@@ -7,4 +7,5 @@ from variants import GenotypedVariant
 from references import Reference
 from calculated import UniqueVariants
 from calculated import VariantFreq
+from calculated import VariantPanel
 

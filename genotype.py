@@ -16,6 +16,12 @@ from mongoengine import ReferenceField
 from mongoengine import DoesNotExist
 from vcf2db import CallSet
 from vcf2db import GenotypedVariant
+
+import argparse
+parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
+parser.add_argument('sample', metavar='sample', type=str, help='sample id')
+args = parser.parse_args()
+
 connect('atlas')
 
 kmer_counts = {}
@@ -33,7 +39,7 @@ def process_panel(filepath):
         seq = str(record.seq)
         coverage_record = []
         for i in xrange(kmer+2):
-            kmer_coverage = kmer_counts[seq[i:i+kmer]]
+            kmer_coverage = kmer_counts.get(seq[i:i+kmer],0)
             if kmer_coverage <= 1:
                 coverage_record = []
                 break
@@ -47,9 +53,9 @@ def create_gvs(i):
     name, covg = i
     return 
 try:
-    call_set = CallSet.objects.get(name = "C00001075")
+    call_set = CallSet.objects.get(name = args.sample)
 except DoesNotExist:
-    call_set = CallSet.create(name = "C00001075")
+    call_set = CallSet.create(name = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
 

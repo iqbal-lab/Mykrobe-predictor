@@ -3,11 +3,13 @@ from Bio.Seq import Seq
 from copy import copy 
 import itertools
 from collections import Counter
-
+import logging
+import datetime
 def unique(seq):
     seen = set()
     seen_add = seen.add
     return [ x for x in seq if x not in seen and not seen_add(x)]
+
 
 class Variant(object):
 
@@ -81,6 +83,7 @@ class AlleleGenerator(object):
 		return new_contexts
 
 	def _recursive_context_creator(self, contexts):
+		## This is only run when there are multiple variants at the same position
 		valid = True
 		for i,context in enumerate(contexts):
 			position_counts = Counter([v.pos for v in context])

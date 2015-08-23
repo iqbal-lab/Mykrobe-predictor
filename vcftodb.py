@@ -1,15 +1,13 @@
 #! /usr/bin/env python
-
-
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
 
-from models import CallSet
-from models import Reference
-from models import Variant
-from models import VariantSet
-from models import Call
+from vcf2db import CallSet
+from vcf2db import Reference
+from vcf2db import Variant
+from vcf2db import VariantSet
+from vcf2db import Call
 from pymongo import MongoClient
 client = MongoClient()
 db = client.atlas
@@ -18,12 +16,12 @@ connect('atlas')
 import vcf
 import os
 import csv
+
 import argparse
-
-
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
 parser.add_argument('vcf', metavar='vcf', type=str, help='a vcf file')
 args = parser.parse_args()
+
 def is_record_valid(record):
 	valid = True
 	for sample in record.samples:
