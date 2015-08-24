@@ -1,5 +1,6 @@
 *.fa
 *.kmers
+*.kmer
 *.count
 *.ct
 *.fasta.colour_covgs
