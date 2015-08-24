@@ -16,7 +16,7 @@ from mongoengine import ReferenceField
 from mongoengine import DoesNotExist
 from vcf2db import CallSet
 from vcf2db import GenotypedVariant
-
+import multiprocessing
 import argparse
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
@@ -56,11 +56,16 @@ except DoesNotExist:
     call_set = CallSet.create(name = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
-
-covg = process_panel("panel_k%s.fasta" % args.kmer)
+pool = multiprocessing.Pool(50)
 gvs = []
-for name, covg in covg.iteritems():
-    gvs.append(GenotypedVariant.create_object(name = name, call_set = call_set, coverage = covg))
+covg_list = pool.map(process_panel,  glob.glob("*.fa")) 
+for cc in covg_list:
+    for name, covg in cc.iteritems():
+        gvs.append(GenotypedVariant.create_object(name = name, call_set = call_set, coverage = covg))
 GenotypedVariant.objects.insert(gvs)
+# covg = process_panel("panel_k%s.fasta" % args.kmer)
+
+
+
 
 
