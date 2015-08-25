@@ -56,7 +56,7 @@ except DoesNotExist:
     call_set = CallSet.create(name = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
-pool = multiprocessing.Pool(25)
+pool = multiprocessing.Pool(50)
 gvs = []
 covg_list = pool.map(process_panel,  glob.glob("*.fa")) 
 for cc in covg_list:
