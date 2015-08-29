@@ -27,16 +27,21 @@ class TestNodes(BaseTest):
 		assert root.num_samples == 2
 		assert root.samples == ['C1', 'C2']
 
-	def test_multi_node(self):
-		l1 = Leaf(sample = 'C1') 
-		l2 = Leaf(sample = 'C2') 
-		l3 = Leaf(sample = 'C3') 
-		l4 = Leaf(sample = 'C4') 
-		l5 = Leaf(sample = 'C5') 
-		node1 = Node(children = [l1, l2])
-		node2 = Node(children = [l4, l5])
-		node3 = Node(children = [node2, l3])
-		root = Node(children = [node1, node3])
+class TestMultiNode(TestNodes):
 
-		assert root.num_samples == 5
-		assert sorted(root.samples) == ['C1', 'C2', 'C3', 'C4', 'C5']
+	def __init__(self):
+		self.l1 = Leaf(sample = 'C1') 
+		self.l2 = Leaf(sample = 'C2') 
+		self.l3 = Leaf(sample = 'C3') 
+		self.l4 = Leaf(sample = 'C4') 
+		self.l5 = Leaf(sample = 'C5') 		
+
+		self.node1 = Node(children = [l1, l2])
+		self.node2 = Node(children = [l4, l5])
+		self.node3 = Node(children = [node2, l3])
+		self.root = Node(children = [node1, node3])
+
+
+	def test_multi_node(self):
+		assert self.root.num_samples == 5
+		assert sorted(self.root.samples) == ['C1', 'C2', 'C3', 'C4', 'C5']
