@@ -19,11 +19,12 @@ import csv
 import argparse
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
 parser.add_argument('vcf', metavar='vcf', type=str, help='a vcf file')
+parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="default")
 parser.add_argument('kmer', metavar='kmer', type=int, help='kmer length')
 args = parser.parse_args()
 
-db = client['atlas-%i' % args.kmer]
-connect('atlas-%i' % args.kmer)
+db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
+connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
 def is_record_valid(record):
 	valid = True

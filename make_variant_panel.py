@@ -19,14 +19,16 @@ from utils import unique
 
 import argparse
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
+parser.add_argument('reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath')
+parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="default")
 parser.add_argument('kmer', metavar='kmer', type=int, help='kmer length')
 args = parser.parse_args()
 
-db = client['atlas-%i' % args.kmer]
-connect('atlas-%i' % args.kmer)
+db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
+connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 logging.info("start " + str(datetime.datetime.now() ) )
-
-al = AlleleGenerator(reference_filepath = "/home/phelimb/git/atlas/data/R00000022.fasta", kmer = args.kmer)
+# "/home/phelimb/git/atlas/data/R00000022.fasta"
+al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
 logging.info("Extracting unique variants " + str(datetime.datetime.now() ) )
 ## Get all variant freq names
 current_vars = VariantFreq.objects().distinct('name')
@@ -88,15 +90,19 @@ if vfs:
 	## Remove all panels that need updating
 	VariantPanel.objects(variant__in = affected_variants).delete()
 	## Make panels for all new variants and panels needing updating
-	pool = multiprocessing.Pool(20)	
-	variant_panels = pool.map(make_panel,  VariantFreq.objects(name__in = unique(new_names + update_names) ))
+	# pool = multiprocessing.Pool(20)	
+	# variant_panels = pool.map(make_panel,  VariantFreq.objects(name__in = unique(new_names + update_names) ))
+	variant_panels = []
+	for vf in VariantFreq.objects(name__in = unique(new_names + update_names)):
+		variant_panels.append(make_panel(vf))
 	new_panels = db.variant_panel.insert(variant_panels)
+
 
 	logging.info("Writing panel " + str(datetime.datetime.now() ) )
 
 	kmers = set()
-	with open("panel_k%i.kmers" % args.kmer ,'a') as panel_kmer_file:
-		with open("panel_k%i.fasta" % args.kmer,'a') as panel_file:
+	with open("panel_%s_k%i.kmers" % (args.db_name, args.kmer) ,'a') as panel_kmer_file:
+		with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer),'a') as panel_file:
 			for variant_panel in VariantPanel.objects(id__in = new_panels):
 				for a in variant_panel.alts:
 					panel_file.write(">%s\n" % variant_panel.variant.name)

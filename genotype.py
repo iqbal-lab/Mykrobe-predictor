@@ -20,10 +20,11 @@ import multiprocessing
 import argparse
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
+parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="default")
 parser.add_argument('kmer', metavar='kmer', type=int, help='kmer size')
 args = parser.parse_args()
 
-connect('atlas-%i' % args.kmer)
+connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
 kmer_counts = {}
 kmer = args.kmer
