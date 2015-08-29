@@ -1,5 +1,7 @@
 from .. import Variant
 from .. import VariantSet
+from .. import GenotypedVariant
+from .. import CallSet
 
 class Placer(object):
 
@@ -9,9 +11,9 @@ class Placer(object):
         self.root = root
 
 
-    def place(sample):
-    	gvs = GenotypedVariant.objects(call_set = CallSet.objects.get(name = "C6")).distinct('name')
-    	root.walk(variants = gvs)
+    def place(self, sample):
+    	gvs = GenotypedVariant.objects(call_set = CallSet.objects.get(name = sample)).distinct('name')
+    	return self.root.search(variants = gvs)
 
 class Tree(dict):
     """Tree is defined by a dict of nodes"""
@@ -50,9 +52,15 @@ class Node(object):
     	phylo_snps = Variant.objects(variant_set__in = ingroup, name__nin = non_unique_variant_names ).distinct('name')
         return phylo_snps
 
-    def walk(self):
-    	overlap = (intersection(set(self.children[0].phylo_snps), set(gvs)), intersection(set(self.children[1].phylo_snps), set(gvs)))
-    	print overlap
+    def search(self, variants):
+    	overlap = (len(set(self.children[0].phylo_snps) & set(variants)), len(set(self.children[1].phylo_snps) & set(variants) ))
+    	if overlap[0] > overlap[1]:
+    		return self.children[0].search(variants)
+    	elif overlap[1] > overlap[0]:
+    		return self.children[1].search(variants)
+    	else:
+    		return self.samples
+
 
 
       
@@ -75,7 +83,7 @@ class Leaf(Node):
     def is_node(self):
         return False 
 
-    def walk(self):
+    def search(self, variants):
     	return self.sample
     	
 

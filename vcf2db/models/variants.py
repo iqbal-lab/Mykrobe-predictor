@@ -43,7 +43,7 @@ class GenotypedVariant(Document):
 
     @classmethod
     def create(cls, name, call_set, coverage):
-        return cls.create_object(cls, name, call_set, coverage).save()
+        return cls.create_object(name, call_set, coverage).save()
 
 
 # class VariantSetMetadata(Document)

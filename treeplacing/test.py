@@ -3,6 +3,7 @@ from unittest import TestCase
 from models import Tree 
 from models import Node 
 from models import Leaf 
+from models import Placer 
 from nose.tools import assert_raises
 
 from .. import Reference
@@ -10,6 +11,7 @@ from .. import VariantSet
 from .. import Variant
 from .. import CallSet
 from .. import Call
+from .. import GenotypedVariant
 
 from mongoengine import connect
 from pymongo import MongoClient
@@ -132,7 +134,12 @@ class TestMultiNode(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(name = "C6") 
-        GenotypedVariant.create(name = "A1T", new_call_set, coverage = 30)
-        assert Placer(root = self.root).place("C6") = "C1"
+        GenotypedVariant.create("A1T", new_call_set, 30)
+        assert Placer(root = self.root).place("C6") == "C1"
+
+    def test_abigious_placement(self):
+        new_call_set = CallSet.create(name = "C7") 
+        GenotypedVariant.create("A4T", new_call_set, 30)
+        assert Placer(root = self.root).place("C7") == ["C4", "C5"]
 
 
