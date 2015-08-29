@@ -44,9 +44,9 @@ except NotUniqueError:
 	callset = CallSet.objects.get(name = vcf_reader.samples[0])
 
 try:
-	variant_set = VariantSet.create(name = os.path.basename(args.vcf))
+	variant_set = VariantSet.create(name = vcf_reader.samples[0])
 except NotUniqueError:
-	variant_set = VariantSet.objects.get(name = os.path.basename(args.vcf))
+	variant_set = VariantSet.objects.get(name = vcf_reader.samples[0])
 
 try:
 	reference = Reference.create(name = "R00000022")
