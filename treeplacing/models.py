@@ -69,7 +69,9 @@ class Node(object):
     def search(self, variants):
     	assert self.children[0].parent is not None
     	assert self.children[1].parent is not None
-    	overlap = (len(set(self.children[0].phylo_snps) & set(variants)), len(set(self.children[1].phylo_snps) & set(variants) ))
+    	overlap = []
+    	overlap = (float(len(set(self.children[0].phylo_snps) & set(variants)) )/ len(set(self.children[0].phylo_snps) | set(variants) ),
+    	           float(len(set(self.children[1].phylo_snps) & set(variants))) / len( set(self.children[1].phylo_snps) | set(variants)  ) )
     	print overlap, self.children[0], self.children[1]
     	# print overlap, len(variants), len(self.children[0].phylo_snps)
     	if overlap[0] > overlap[1]:
