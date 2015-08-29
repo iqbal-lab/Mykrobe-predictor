@@ -18,6 +18,15 @@ class Placer(object):
 #     """Tree is defined by a dict of nodes"""
 #     def __init__(self):
 #         super(Tree, self).__init__()
+def lazyprop(fn):
+    attr_name = '_lazy_' + fn.__name__
+    @property
+    def _lazyprop(self):
+        if not hasattr(self, attr_name):
+            setattr(self, attr_name, fn(self))
+        return getattr(self, attr_name)
+    return _lazyprop
+
 
 class Node(object):
     """docstring for Node"""
@@ -27,6 +36,8 @@ class Node(object):
         self.children = children ## List of nodes
         for child in self.children:
         	child.add_parent(self)
+        if self.is_node:
+        	self.phylo_snps
 
     def add_parent(self, parent):
     	self.parent = parent
@@ -55,7 +66,7 @@ class Node(object):
     def is_node(self):
         return True  
 
-    @property
+    @lazyprop
     def phylo_snps(self):
     	ingroup = VariantSet.objects(name__in = self.samples)
     	if self.parent:
@@ -72,8 +83,6 @@ class Node(object):
     	overlap = []
     	overlap = (float(len(set(self.children[0].phylo_snps) & set(variants)) )/ len(set(self.children[0].phylo_snps) | set(variants) ),
     	           float(len(set(self.children[1].phylo_snps) & set(variants))) / len( set(self.children[1].phylo_snps) | set(variants)  ) )
-    	print overlap, self.children[0], self.children[1]
-    	# print overlap, len(variants), len(self.children[0].phylo_snps)
     	if overlap[0] > overlap[1]:
     		return self.children[0].search(variants)
     	elif overlap[1] > overlap[0]:
@@ -87,8 +96,10 @@ class Node(object):
 class Leaf(Node):
 
     def __init__(self, sample):
+
         super(Leaf, self).__init__()
         self.sample = sample 
+        
 
     @property 
     def samples(self):

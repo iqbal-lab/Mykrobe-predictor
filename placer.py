@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import json
+import pickle
 from treeplacing import Node
 from treeplacing import Leaf
 from treeplacing import Placer
@@ -16,19 +17,20 @@ connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 with open ("der_tree.json", 'r') as infile:
     tree = json.load(infile)
 
+print "Finding nearest neighbours on tree"
 
-def walk(node):
-    children = []
-    for child in node['children']:
-        if child["type"] == "node":
-            childrens = walk(child)
-            children.append(Node(children = childrens))
-        else:
-            children.append(Leaf(child["name"]))
-    return children
+# def walk(node):
+#     children = []
+#     for child in node['children']:
+#         if child["type"] == "node":
+#             childrens = walk(child)
+#             children.append(Node(children = childrens))
+#         else:
+#             children.append(Leaf(child["name"]))
+#     return children
 
-root = Node(children = walk(tree))
-print root
-print root.other_child(root.children[0])
+# root = Node(children = walk(tree))
 
-print Placer(root).place(args.sample)
+# pickle.dump( root, open( "root.p", "wb" ) ) 
+root = pickle.load( open( "root.p", "rb" ) )
+print "Nearest Neighbour is %s" % Placer(root).place(args.sample)
