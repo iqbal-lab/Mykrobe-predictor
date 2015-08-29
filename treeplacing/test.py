@@ -130,4 +130,9 @@ class TestMultiNode(TestNodes):
         assert self.l4.phylo_snps == []        
         assert self.l5.phylo_snps == []
 
+    def test_placement(self):
+        new_call_set = CallSet.create(name = "C6") 
+        GenotypedVariant.create(name = "A1T", new_call_set, coverage = 30)
+        assert Placer(root = self.root).place("C6") = "C1"
+
 

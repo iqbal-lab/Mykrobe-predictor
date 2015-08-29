@@ -41,6 +41,11 @@ class GenotypedVariant(Document):
                     call_set = call_set,
                     coverage = int(coverage))   
 
+    @classmethod
+    def create(cls, name, call_set, coverage):
+        return cls.create_object(cls, name, call_set, coverage).save()
+
+
 # class VariantSetMetadata(Document)
 #  {
 #   /** The top-level key. */
