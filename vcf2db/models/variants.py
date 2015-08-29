@@ -146,9 +146,14 @@ class Call(Document):
         return {"call_set" : call_set.id,
         "genotype" : genotype,
         "genotype_likelihood" : genotype_likelihood}
-        # c = cls(variant = variant, call_set = call_set, genotype = genotype,
-        #          genotype_likelihood = genotype_likelihood )
-        # return c
+
+    @classmethod
+    def create(cls, variant, call_set, genotype, genotype_likelihood ):
+        if type(genotype) is str:
+            genotype = [int(g) for g in genotype.split('/')]        
+        c = cls(variant = variant, call_set = call_set, genotype = genotype,
+                 genotype_likelihood = genotype_likelihood ).save()
+        return c
 
     @property 
     def call_set_name(self):
@@ -193,6 +198,12 @@ class Variant(Document):
         }
         # return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
         #     alternate_bases = alternate_bases, reference = reference, name = name)
+
+    @classmethod
+    def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
+        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
+        return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
+            alternate_bases = alternate_bases, reference = reference, name = name).save()
 
     @property 
     def alt(self):
