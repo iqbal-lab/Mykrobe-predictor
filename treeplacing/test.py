@@ -153,6 +153,8 @@ class TestMultiNodeHomoplasy(TestNodes):
         self.l5 = Leaf(sample = 'C5')         
 
         self.node1 = Node(children = [self.l1, self.l2])
+        assert self.l1.parent == self.node1
+        assert self.l2.parent == self.node1
         self.node2 = Node(children = [self.l4, self.l5])
         self.node3 = Node(children = [self.node2, self.l3])
         self.root = Node(children = [self.node1, self.node3])
@@ -217,25 +219,25 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_phylo_snps(self):
         assert self.node1.phylo_snps == [self.v2.name]
-        assert self.node2.phylo_snps == [self.v4.name]
-        assert self.node3.phylo_snps == [self.v3.name, self.v4.name]
-        assert self.root.phylo_snps == [self.v1.name, self.v2.name, self.v3.name, self.v4.name]
+        assert sorted(self.node2.phylo_snps) == sorted([self.v1.name, self.v4.name])
+        assert sorted(self.node3.phylo_snps) == sorted([self.v3.name, self.v4.name])
+        assert sorted(self.root.phylo_snps) == sorted([self.v1.name, self.v2.name, self.v3.name, self.v4.name])
 
         assert self.l1.phylo_snps == [self.v1.name]        
         assert self.l2.phylo_snps == [self.v2.name]        
         assert self.l3.phylo_snps == [self.v3.name]
-        assert self.l4.phylo_snps == []        
-        assert self.l5.phylo_snps == []
+        assert self.l4.phylo_snps == [self.v4.name]        
+        assert self.l5.phylo_snps == [self.v1.name]
 
     def test_placement(self):
-        new_call_set = CallSet.create(name = "C6") 
+        new_call_set = CallSet.create(name = "C8") 
         GenotypedVariant.create("A1T", new_call_set, 30)
-        assert Placer(root = self.root).place("C6") == "C1"
+        assert sorted(Placer(root = self.root).place("C8")) == sorted(['C1', 'C2', 'C3', 'C4', 'C5'])
 
     def test_abigious_placement(self):
-        new_call_set = CallSet.create(name = "C7") 
+        new_call_set = CallSet.create(name = "C9") 
         GenotypedVariant.create("A4T", new_call_set, 30)
-        assert Placer(root = self.root).place("C7") == ["C4", "C5"]
+        assert Placer(root = self.root).place("C9") == "C4"
 
 
 

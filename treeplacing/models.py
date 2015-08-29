@@ -22,9 +22,21 @@ class Tree(dict):
 
 class Node(object):
     """docstring for Node"""
-    def __init__(self, children = []):
+    def __init__(self,  children = []):
         super(Node, self).__init__()
+        self.parent = None         
         self.children = children ## List of nodes
+        for child in self.children:
+        	child.add_parent(self)
+
+    def add_parent(self, parent):
+    	self.parent = parent
+
+    def other_child(self, node):
+    	for child in self.children:
+    		if child != node:
+    			return child
+
 
     @property
     def samples(self):
@@ -48,7 +60,12 @@ class Node(object):
     @property
     def phylo_snps(self):
     	ingroup = VariantSet.objects(name__in = self.samples)
-    	non_unique_variant_names = Variant.objects(variant_set__nin = ingroup ).distinct('name')
+    	if self.parent:
+    		outgroup = VariantSet.objects(name__in = self.parent.other_child(self).samples)
+    	else:
+    		outgroup = []
+
+    	non_unique_variant_names = Variant.objects(variant_set__nin = ingroup , variant_set__in = outgroup).distinct('name')
     	phylo_snps = Variant.objects(variant_set__in = ingroup, name__nin = non_unique_variant_names ).distinct('name')
         return phylo_snps
 
