@@ -34,6 +34,7 @@ with open ("der_tree.json", 'r') as infile:
 
 # pickle.dump( root, open( "root.p", "wb" ) ) 
 root = pickle.load( open( "root.p", "rb" ) )
+print root
 neighbours = Placer(root).place(args.sample)
 if type(neighbours) is list:
 	print "Nearest Neighbours are %s" % ",".join(neighbours)
