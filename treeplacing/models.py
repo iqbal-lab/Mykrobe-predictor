@@ -88,7 +88,7 @@ class Node(object):
         else:
             overlap = (float(len(set(self.children[0].phylo_snps) & set(variants)) ),
                        float(len(set(self.children[1].phylo_snps) & set(variants))) )       
-        print self.children[0], self.children[1], overlap
+        # print self.children[0], self.children[1], overlap
         if overlap[0] > overlap[1]:
             return self.children[0].search(variants)
         elif overlap[1] > overlap[0]:
