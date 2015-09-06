@@ -1,3 +1,6 @@
+*.p
+*.gz
+dump
 *.fa
 *.kmers
 *.kmer
