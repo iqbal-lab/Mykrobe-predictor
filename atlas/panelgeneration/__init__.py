@@ -1,2 +1,2 @@
-from models import AlleleGenerator
-from models import Variant
+from atlas.panelgeneration.models import AlleleGenerator
+from atlas.panelgeneration.models import Variant

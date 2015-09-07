@@ -1,1 +1,1 @@
-from models import *
+from atlas.treeplacing.models import *

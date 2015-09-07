@@ -1,11 +1,11 @@
-from variants import Variant 
-from variants import VariantSet
-from variants import Call 
-from variants import CallSet 
-from variants import GenotypedVariant
+from atlas.vcf2db.models.variants import Variant 
+from atlas.vcf2db.models.variants import VariantSet
+from atlas.vcf2db.models.variants import Call 
+from atlas.vcf2db.models.variants import CallSet 
+from atlas.vcf2db.models.variants import GenotypedVariant
 
-from references import Reference
-from calculated import UniqueVariants
-from calculated import VariantFreq
-from calculated import VariantPanel
+from atlas.vcf2db.models.references import Reference
+from atlas.vcf2db.models.calculated import UniqueVariants
+from atlas.vcf2db.models.calculated import VariantFreq
+from atlas.vcf2db.models.calculated import VariantPanel
 

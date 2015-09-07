@@ -1,8 +1,8 @@
-from models import Variant 
-from models import VariantSet
-from models import Call 
-from models import CallSet 
-from models import Reference
+from atlas.vcf2db import Variant 
+from atlas.vcf2db import VariantSet
+from atlas.vcf2db import Call 
+from atlas.vcf2db import CallSet 
+from atlas.vcf2db import Reference
 from mongoengine import connect
 DB = connect('atlas-test')
 
@@ -17,26 +17,26 @@ class BaseTest():
 class TestReference(BaseTest):
 
     def test_create_SNP_call(self):
-        ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")    	
+        ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")
         assert ref.name == "ref"
 
 class TestVariantSet(BaseTest):
 
     def test_create_variant_set(self):
-        vs = VariantSet.create(name = "C001234")        
+        vs = VariantSet.create(name = "C001234")
         assert vs.name == "C001234"
 
 class TestCallSet(BaseTest):
 
     def test_create_SNP_call(self):
-        cs = CallSet.create(name = "C00123")    	
+        cs = CallSet.create(name = "C00123")
         assert cs.name == "C00123"
 
 class TestVariant(BaseTest):
 
     def setup(self):
-    	self.ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")    	    	
-        self.vs = VariantSet.create(name = "C00123")  
+        self.ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")
+        self.vs = VariantSet.create(name = "C00123")
 
     def test_create_SNP(self):
         v1 = Variant.create(variant_set = self.vs, start = 0, end = 1, reference_bases = "A", alternate_bases = ["T"], reference = self.ref)
@@ -48,9 +48,9 @@ class TestVariant(BaseTest):
 class TestCall(BaseTest):
 
     def setup(self):
-    	self.ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")    	    	
-        self.vs = VariantSet.create(name = "C00123")          
-        self.v1 = Variant.create(variant_set = self.vs, start = 0, end = 1, reference_bases = "A", alternate_bases = ["T"], reference = self.ref)    	
+        self.ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")
+        self.vs = VariantSet.create(name = "C00123")  
+        self.v1 = Variant.create(variant_set = self.vs, start = 0, end = 1, reference_bases = "A", alternate_bases = ["T"], reference = self.ref)
         self.cs = CallSet.create(name = "C00123")  
         
 
@@ -61,6 +61,5 @@ class TestCall(BaseTest):
         assert c1.genotype == [0, 1]
 
 
-        
 
       

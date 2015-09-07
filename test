@@ -1,2 +1,0 @@
-nosetests vcf2db
-nosetests panel_generation

@@ -1,5 +1,5 @@
-from models import AlleleGenerator 
-from models import Variant 
+from atlas.panelgeneration import AlleleGenerator 
+from atlas.panelgeneration import Variant 
 from nose.tools import assert_raises
 
 class BaseTest():
@@ -66,7 +66,7 @@ class TestSNPAlleleGenerator(BaseTest):
         v3 = Variant("C", 30, "G")
 
         panel = self.pg.create(v, context = [v2, v3])
-        print panel.alts
+        # print panel.alts
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
                               "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",

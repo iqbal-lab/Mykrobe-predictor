@@ -2,10 +2,10 @@ import sys
 import os
 from os import path
 sys.path.append(path.abspath("../"))
-from vcf2db import Variant
-from vcf2db import VariantSet
-from vcf2db import GenotypedVariant
-from vcf2db import CallSet
+from atlas.vcf2db import Variant
+from atlas.vcf2db import VariantSet
+from atlas.vcf2db import GenotypedVariant
+from atlas.vcf2db import CallSet
 
 class Placer(object):
 
@@ -112,7 +112,7 @@ class Node(object):
             count1 += self.children[1].phylo_snps[k]
         overlap = (count0, count1)     
         if verbose:
-            print self.children[0], self.children[1], overlap
+            print (self.children[0], self.children[1], overlap)
         if overlap[0] > overlap[1]:
             return self.children[0].search(variants)
         elif overlap[1] > overlap[0]:
