@@ -1,4 +1,6 @@
 #! /usr/bin/env python
+import logging
+logging.basicConfig(level=logging.DEBUG)
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
@@ -19,8 +21,8 @@ import csv
 import argparse
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
 parser.add_argument('vcf', metavar='vcf', type=str, help='a vcf file')
-parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="default")
-parser.add_argument('kmer', metavar='kmer', type=int, help='kmer length')
+parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
+parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
 args = parser.parse_args()
 
 db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
@@ -70,6 +72,8 @@ for record in vcf_reader:
 
 
 variant_ids =  db.variant.insert(variants)
+logging.info("Uploaded %i variants to database" % len(variant_ids))
 for i,_id in enumerate(variant_ids):
 	calls[i]["variant"] = _id
-db.call.insert(calls)			
+db.call.insert(calls)	
+

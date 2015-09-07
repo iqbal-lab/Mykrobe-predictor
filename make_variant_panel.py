@@ -19,17 +19,16 @@ from utils import unique
 
 import argparse
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
-parser.add_argument('reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath')
-parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="default")
-parser.add_argument('kmer', metavar='kmer', type=int, help='kmer length')
+parser.add_argument('--reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath', default="data/NC_000962.2.fasta")
+parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
+parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
 args = parser.parse_args()
 
 db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
-logging.info("start " + str(datetime.datetime.now() ) )
 # "/home/phelimb/git/atlas/data/R00000022.fasta"
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
-logging.info("Extracting unique variants " + str(datetime.datetime.now() ) )
+print("Extracting unique variants " )
 ## Get all variant freq names
 current_vars = VariantFreq.objects().distinct('name')
 # result = VariantFreq._get_collection().aggregate([ 
@@ -48,11 +47,11 @@ new_names = CalledVariant.objects(name__nin = current_vars).distinct('name')
 # for r in result:
 # 	new_names.append(r["_id"])
 
-logging.info("%i new unique variants " % len(new_names) )
+print("%i new unique variants " % len(new_names) )
 
 
 
-logging.info("Storing and sorting unique variants " + str(datetime.datetime.now() ) )
+print("Storing and sorting unique variants " ) 
 vfs = []
 for name in new_names:
 	reference_bases = name[0]
@@ -67,7 +66,7 @@ for name in new_names:
 					   )
 	vfs.append(vf)
 
-logging.info("Inserting documents to DB " + str(datetime.datetime.now() ) )
+print("Inserting documents to DB " ) 
 
 def make_panel(vf):
 	context = [Variant(vft.reference_bases, vft.start , "/".join(vft.alternate_bases)) for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer)]
@@ -76,10 +75,11 @@ def make_panel(vf):
 	return VariantPanel().create_doc(vf, panel.alts)	
 
 if vfs:
+
 	db.variant_freq.insert(vfs)
-	logging.info("Generating new panels " + str(datetime.datetime.now() ) )
 	## Get names of panels that need updating 
 	## Get all the variants that are within K bases of new variants
+	print("Improving panel for genotyping" ) 
 	update_names = []
 	affected_variants = []
 	for new_vf in VariantFreq.objects(name__in = new_names):
@@ -98,7 +98,7 @@ if vfs:
 	new_panels = db.variant_panel.insert(variant_panels)
 
 
-	logging.info("Writing panel " + str(datetime.datetime.now() ) )
+	
 
 	kmers = set()
 	with open("panel_%s_k%i.kmers" % (args.db_name, args.kmer) ,'a') as panel_kmer_file:
@@ -115,7 +115,6 @@ if vfs:
 							panel_kmer_file.write("%s\n" % seq)				
 							i+=1					
 
-logging.info("End " + str(datetime.datetime.now() ) )
 
 
 

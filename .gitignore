@@ -1,4 +1,8 @@
+*.vcf
+*.dat
+*#
 *.p
+
 *.gz
 dump
 *.fa
@@ -15,3 +19,12 @@ dump
 venv
 *.pyc
 ._*
+
+# Files
+der_tree.json
+der_tree.txt
+tb_val_comids.txt
+tb_vcfs.txt
+val_comids.txt
+val_tb_comids.txt
+vcfs.txt
