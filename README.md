@@ -1,2 +1,2 @@
-Simply demo for Atlas - a database of genetic variation in bateria. 
+Simply demo for Atlas - a database of genetic variation in bateria.  
 
