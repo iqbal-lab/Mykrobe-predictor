@@ -1,6 +1,5 @@
 from unittest import TestCase
 
-from models import Tree 
 from models import Node 
 from models import Leaf 
 from models import Placer 
@@ -20,11 +19,13 @@ c = MongoClient()
 DBNAME='atlas-test'
 DB = connect(DBNAME)
 
-class BaseTest():
+class BaseTest(TestCase):
 
     def setUp(self):
-        pass
-        
+        DB.drop_database(DBNAME)
+        c.drop_database(DBNAME)
+        Reference.drop_collection()
+
     def teardown(self):
         DB.drop_database(DBNAME)
         c.drop_database(DBNAME)
@@ -51,6 +52,10 @@ class TestNodes(BaseTest):
 class TestMultiNode(TestNodes):
 
     def setUp(self):
+        DB.drop_database(DBNAME)
+        c.drop_database(DBNAME)
+        Reference.drop_collection()
+
         self.l1 = Leaf(sample = 'C1') 
         self.l2 = Leaf(sample = 'C2') 
         self.l3 = Leaf(sample = 'C3') 
@@ -73,47 +78,46 @@ class TestMultiNode(TestNodes):
         vs5 = VariantSet.create(name = "C5")
         cs5 = CallSet.create(name = "C5")                 
 
-
-        self.v1 = Variant.create(variant_set = vs1,
+        self.v1 = Variant.create(variant_set = vs1.id,
                                  start = 1,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v2 = Variant.create(variant_set = vs2,
+        self.v2 = Variant.create(variant_set = vs2.id,
                                  start = 2,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v3 = Variant.create(variant_set = vs3,
+        self.v3 = Variant.create(variant_set = vs3.id,
                                  start = 3,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v4 = Variant.create(variant_set = vs4,
+        self.v4 = Variant.create(variant_set = vs4.id,
                                  start = 4,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v5 = Variant.create(variant_set = vs5,
+        self.v5 = Variant.create(variant_set = vs5.id,
                                  start = 4,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)                                                                                                           
+                                 reference = self.ref.id)                                                                                                           
 
-        Call.create(variant = self.v1, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v2, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v3, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v4, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v5, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v1.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v2.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v3.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v4.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v5.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
 
 
     def test_multi_node(self):
@@ -121,31 +125,36 @@ class TestMultiNode(TestNodes):
         assert sorted(self.root.samples) == ['C1', 'C2', 'C3', 'C4', 'C5']
 
     def test_phylo_snps(self):
-        assert self.node1.phylo_snps == [self.v1.name, self.v2.name]
-        assert self.node2.phylo_snps == [self.v4.name]
-        assert self.node3.phylo_snps == [self.v3.name, self.v4.name]
-        assert self.root.phylo_snps == [self.v1.name, self.v2.name, self.v3.name, self.v4.name]
+        assert self.node1.phylo_snps == {self.v1.name : 0.5, self.v2.name:0.5}
+        assert self.node2.phylo_snps == {self.v4.name : 1}
+        assert self.node3.phylo_snps == {self.v3.name:0.3333333333333333, self.v4.name : 0.6666666666666666}
+        assert self.root.phylo_snps == {self.v1.name :0.2, self.v2.name : 0.2, self.v3.name : 0.2, self.v4.name:0.4}
 
-        assert self.l1.phylo_snps == [self.v1.name]        
-        assert self.l2.phylo_snps == [self.v2.name]        
-        assert self.l3.phylo_snps == [self.v3.name]
-        assert self.l4.phylo_snps == []        
-        assert self.l5.phylo_snps == []
+        assert self.l1.phylo_snps == {self.v1.name : 1}       
+        assert self.l2.phylo_snps == {self.v2.name : 1}    
+        assert self.l3.phylo_snps == {self.v3.name : 1}
+        assert self.l4.phylo_snps == {self.v4.name : 0}        
+        assert self.l5.phylo_snps == {self.v5.name : 0} 
 
     def test_placement(self):
         new_call_set = CallSet.create(name = "C6") 
-        GenotypedVariant.create("A1T", new_call_set, 30)
+        GenotypedVariant.create("A1T", new_call_set.id, 30)
         assert Placer(root = self.root).place("C6") == "C1"
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(name = "C7") 
-        GenotypedVariant.create("A4T", new_call_set, 30)
+        GenotypedVariant.create("A4T", new_call_set.id, 30)
+        print Placer(root = self.root).place("C7")
         assert Placer(root = self.root).place("C7") == ["C4", "C5"]
 
 
 class TestMultiNodeHomoplasy(TestNodes):
 
     def setUp(self):
+        DB.drop_database(DBNAME)
+        c.drop_database(DBNAME)
+        Reference.drop_collection()
+
         self.l1 = Leaf(sample = 'C1') 
         self.l2 = Leaf(sample = 'C2') 
         self.l3 = Leaf(sample = 'C3') 
@@ -171,46 +180,46 @@ class TestMultiNodeHomoplasy(TestNodes):
         cs5 = CallSet.create(name = "C5")                 
 
 
-        self.v1 = Variant.create(variant_set = vs1,
+        self.v1 = Variant.create(variant_set = vs1.id,
                                  start = 1,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v2 = Variant.create(variant_set = vs2,
+        self.v2 = Variant.create(variant_set = vs2.id,
                                  start = 2,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v3 = Variant.create(variant_set = vs3,
+        self.v3 = Variant.create(variant_set = vs3.id,
                                  start = 3,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v4 = Variant.create(variant_set = vs4,
+        self.v4 = Variant.create(variant_set = vs4.id,
                                  start = 4,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)
+                                 reference = self.ref.id)
 
-        self.v5 = Variant.create(variant_set = vs5,
+        self.v5 = Variant.create(variant_set = vs5.id,
                                  start = 1,
                                  end = 2,
                                  reference_bases = "A",
                                  alternate_bases = ["T"],
-                                 reference = self.ref)                                                                                                           
+                                 reference = self.ref.id)                                                                                                           
 
-        Call.create(variant = self.v1, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v2, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v3, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v4, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
-        Call.create(variant = self.v5, call_set = cs1, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v1.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v2.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v3.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v4.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
+        Call.create(variant = self.v5.id, call_set = cs1.id, genotype = "0/1", genotype_likelihood = 0.91)
 
 
     def test_multi_node(self):
@@ -218,25 +227,28 @@ class TestMultiNodeHomoplasy(TestNodes):
         assert sorted(self.root.samples) == ['C1', 'C2', 'C3', 'C4', 'C5']
 
     def test_phylo_snps(self):
-        assert self.node1.phylo_snps == [self.v2.name]
-        assert sorted(self.node2.phylo_snps) == sorted([self.v1.name, self.v4.name])
-        assert sorted(self.node3.phylo_snps) == sorted([self.v3.name, self.v4.name])
-        assert sorted(self.root.phylo_snps) == sorted([self.v1.name, self.v2.name, self.v3.name, self.v4.name])
+        assert self.node1.phylo_snps == {self.v1.name : 0.5 - 0.3333333333333333, self.v2.name : 0.5}
+        assert self.node2.phylo_snps == {self.v1.name : 0.5, self.v4.name: 0.5}
+        assert self.node3.phylo_snps == {self.v1.name : 0.3333333333333333 - 0.5,
+                                        self.v3.name : 0.3333333333333333,
+                                        self.v4.name :0.3333333333333333 }
+        assert self.root.phylo_snps == {self.v1.name : 0.4, self.v2.name : 0.2, self.v3.name : 0.2, self.v4.name:0.2}
 
-        assert self.l1.phylo_snps == [self.v1.name]        
-        assert self.l2.phylo_snps == [self.v2.name]        
-        assert self.l3.phylo_snps == [self.v3.name]
-        assert self.l4.phylo_snps == [self.v4.name]        
-        assert self.l5.phylo_snps == [self.v1.name]
+        assert self.l1.phylo_snps == {self.v1.name : 1}
+        assert self.l2.phylo_snps == {self.v2.name : 1}
+        assert self.l3.phylo_snps == {self.v3.name : 1}
+        assert self.l4.phylo_snps == {self.v4.name : 1}
+        assert self.l5.phylo_snps == {self.v1.name : 1}
 
     def test_placement(self):
         new_call_set = CallSet.create(name = "C8") 
-        GenotypedVariant.create("A1T", new_call_set, 30)
+        GenotypedVariant.create("A1T", new_call_set.id, 30)
+        print Placer(root = self.root).place("C8", verbose=True)
         assert sorted(Placer(root = self.root).place("C8")) == sorted(['C1', 'C2', 'C3', 'C4', 'C5'])
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(name = "C9") 
-        GenotypedVariant.create("A4T", new_call_set, 30)
+        GenotypedVariant.create("A4T", new_call_set.id, 30)
         assert Placer(root = self.root).place("C9") == "C4"
 
 

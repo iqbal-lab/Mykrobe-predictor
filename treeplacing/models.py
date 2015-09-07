@@ -1,3 +1,7 @@
+import sys
+import os
+from os import path
+sys.path.append(path.abspath("../"))
 from vcf2db import Variant
 from vcf2db import VariantSet
 from vcf2db import GenotypedVariant
@@ -10,9 +14,9 @@ class Placer(object):
         super(Placer, self).__init__()
         self.root = root
 
-    def place(self, sample):
+    def place(self, sample, verbose = False):
         gvs = GenotypedVariant.objects(call_set = CallSet.objects.get(name = sample)).distinct('name')
-        return self.root.search(variants = gvs)
+        return self.root.search(variants = gvs, verbose = verbose)
 
 # class Tree(dict):
 #     """Tree is defined by a dict of nodes"""
@@ -66,29 +70,49 @@ class Node(object):
     def is_node(self):
         return True  
 
-    @lazyprop
+    @property
     def phylo_snps(self):
+        out_dict = {}
         ingroup = VariantSet.objects(name__in = self.samples)
+        number_of_ingroup_samples = float(ingroup.count())
+
         if self.parent:
             # outgroup = VariantSet.objects(id__nin = [vs.id for vs in ingroup])
             outgroup = VariantSet.objects(name__in = self.parent.other_child(self).samples)
+            number_of_outgroup_samples = float(outgroup.count())
         else:
             outgroup = []
-        non_unique_variant_names = Variant.objects(variant_set__nin = ingroup , variant_set__in = outgroup).distinct('name')
-        phylo_snps = Variant.objects(variant_set__in = ingroup, name__nin = non_unique_variant_names ).distinct('name')
-        return phylo_snps
+            number_of_outgroup_samples = 0
 
-    def search(self, variants):
+        phylo_snp_names = Variant.objects(variant_set__in = ingroup).distinct('name')
+        for name in phylo_snp_names:
+            count_ingroup =  Variant.objects(name = name, variant_set__in = ingroup ).count()
+            ingroup_freq = float(count_ingroup) / number_of_ingroup_samples
+            if number_of_outgroup_samples != 0:
+                count_outgroup =  Variant.objects(name = name, variant_set__in = outgroup ).count()            
+                outgroup_freq = float(count_outgroup) / number_of_outgroup_samples
+            else:
+                outgroup_freq = 0
+            out_dict[name] = ingroup_freq - outgroup_freq
+        return out_dict
+
+    def search(self, variants, verbose = False):
         assert self.children[0].parent is not None
         assert self.children[1].parent is not None
         overlap = []
-        if len(self.children[0].samples) == 1:
-            overlap = (float(len(set(self.children[0].phylo_snps) & set(variants)) )/ len(set(self.children[0].phylo_snps)),
-                   float(len(set(self.children[1].phylo_snps) & set(variants))) / len( set(self.children[1].phylo_snps)))
-        else:
-            overlap = (float(len(set(self.children[0].phylo_snps) & set(variants)) ),
-                       float(len(set(self.children[1].phylo_snps) & set(variants))) )       
-        # print self.children[0], self.children[1], overlap
+        ## Get the overlapping SNPS
+        variant_set = set(variants)
+        l0  = list(set(self.children[0].phylo_snps.keys()) & variant_set)
+        l1 = list(set(self.children[1].phylo_snps.keys()) & variant_set)
+        count0 = 0
+        count1 = 0
+        for k in l0:
+            count0 += self.children[0].phylo_snps[k]
+        for k in l1:
+            count1 += self.children[1].phylo_snps[k]
+        overlap = (count0, count1)     
+        if verbose:
+            print self.children[0], self.children[1], overlap
         if overlap[0] > overlap[1]:
             return self.children[0].search(variants)
         elif overlap[1] > overlap[0]:
