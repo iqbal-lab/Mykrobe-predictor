@@ -1,4 +1,4 @@
 Biopython
 mongoengine
-nosetests
+nose
 pyvcf
