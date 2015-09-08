@@ -291,6 +291,7 @@ int main(int argc, char **argv)
                                   expected_depth,1,1);
   fflush(stdout);
   print_json_start();
+  print_json_version();
   print_json_called_variant_item("expected_depth",expected_depth,false);  
   print_json_called_variant_item("mean_read_length",mean_read_length,false);
   print_json_phylogenetics(species_info);

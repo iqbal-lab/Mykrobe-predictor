@@ -44,9 +44,14 @@ int main(int argc, char **argv)
     {
       return -1;
     }
+    // VERSION_STR is passed from the makefile -- usually last commit hash
 
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
 
+  if (cmd_line->format==Stdout){
+    printf("myKrobe.predictor for Staphylococcus, version %d.%d.%d.%d"VERSION_STR"\n",
+           VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);  
+  }
 
   dBGraph * db_graph = NULL;
 
@@ -298,6 +303,7 @@ int main(int argc, char **argv)
 
   fflush(stdout);
   print_json_start();
+  print_json_version();
   print_json_called_variant_item("expected_depth",expected_depth,false);
   print_json_called_variant_item("mean_read_length",mean_read_length,false);   
   print_json_phylogenetics(species_info);
@@ -491,4 +497,3 @@ void timestamp(){
  printf("%s",asctime(localtime(&ltime)));
  fflush(stdout);
 }
-
