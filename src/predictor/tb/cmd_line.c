@@ -17,6 +17,7 @@
   #include <err.h>
 #endif
 #include <errno.h>
+#include "myk_pred_global.h"
 
 #ifdef __mingw__
   #define __override_realpath(N,R) _fullpath((R),(N),_MAX_PATH)
@@ -34,7 +35,7 @@
   #define __override_realpath(N,R) realpath(N,R)
 #endif
 
-// myKrobe headers
+// Mykrobe headers
 #include "cmd_line.h"
 #include "file_reader.h"
 #include "file_format.h"
@@ -46,15 +47,16 @@
 
 
 const char* usage=
-"myKrobe predictorper\n"\
+"Mykrobe predictor\n"\
 "   [--help] \t\t\t\t\t\t\t=\t This help screen.\n\n" \
+"   [--version] \t\t\t\t\t\t\t=\t Prints the version number and exits\n" \
 "   [--list FILENAME] \t\t\t\t\t=\t List of fastq or bam. Cannot use --list and --file\n" \
 "   [--file FILENAME] \t\t\t\t\t=\t Single fastq or bam. Cannot use --file and --list\n" \
 "   [--sample_id STRING] \t\t\t\t\t=\t Identifier for sample under test\n" \
 "   [--method STRING] \t\t\t\t\t=\t Default is InSilicoOligos. Or can have  WGAssemblyThenGenotyping\n" \
 "   [--format STRING] \t\t\t\t\t=\t Options are Stdout and JSON\n" \
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
-"   [--install_dir PATH] \t\t\t\t\t=\t myKrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n\n" \
+"   [--install_dir PATH] \t\t\t\t\t=\t Mykrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n" \
 "   [--ont] \t\t\t\t\t=\t Data is from Oxford nanopore \n\n" ;
 
 int default_opts(CmdLine * c)
@@ -79,7 +81,7 @@ int default_opts(CmdLine * c)
   c->subsample=false;
   c->progress=false;
   c->verbose=false;  
-  c->ont=false;
+  c->ont=false;  
   c->min_frac_to_detect_minor_pops = (float) 0.0;
   return 1;
 }
@@ -140,6 +142,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   
   static struct option long_options[] = {
     {"help",no_argument,NULL,'h'},
+    {"version",no_argument,NULL,'z'},    
     {"list",required_argument, NULL, 'l'},
     {"file",required_argument, NULL, 'f'},
     {"method", required_argument, NULL, 'm'},
@@ -162,7 +165,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
   optind=1;
   
  
-  opt = getopt_long(argc, argv, "hf:l:m:s:i:c:d:e:g", long_options, &longopt_index);
+  opt = getopt_long(argc, argv, "hf:z:l:m:s:i:c:d:e:g", long_options, &longopt_index);
 
 
   while ((opt) > 0) {
@@ -173,13 +176,19 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     case 'h':
       {
 	printf("***********************\n");
-	printf("myKrobe.predictor for M. tuberculosis\n");
+	printf("Mykrobe.predictor for M. tuberculosis\n");
 	printf("***********************\n");
 
 	printf("%s",usage);
 	exit(0);
 	break;
       }
+    case 'z':
+      {
+	printf("Mykrobe predictor for M. tuberculosis Version %d.%d.%d\n", MYK_VERSION,MYK_SUBVERSION,MYK_SUBSUBVERSION);
+	exit(0);
+	break;
+      }  
 
     case 'i':
       {
@@ -198,7 +207,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
 	strbuf_append_str(tmp, "data/tb/antibiotics/ethambutol.fa");
 	if (access(tmp->buff,F_OK)!=0)
 	  {
-	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of myKrobe.predictor. Cannot find %s\n", tmp->buff);
+	    die("You have specified with --install_dir, a directory which does not seem to be the install directory of Mykrobe.predictor. Cannot find %s\n", tmp->buff);
 	  }
   strbuf_free(tmp);
   break;

@@ -2,15 +2,12 @@
  * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
  *
- *  species.h
-*/
-
-/*
- * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
- * 
- *
  *  base_species.h
 */
+
+#ifndef BASE_SPECIES_H_
+#define BASE_SPECIES_H_
+
 #include "dB_graph.h"
 
 // #ifdef STAPH
@@ -187,6 +184,7 @@ boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask);
 
 void print_json_indiv_phylo(CovgInfo* covg_info,
                            char* (*get_ith_name)(CovgInfo*, int));
+<<<<<<< HEAD
 
 // char* get_char_name_of_species_enum(Species species);
 
@@ -198,3 +196,13 @@ void print_json_indiv_phylo(CovgInfo* covg_info,
 // void print_json_phylo_group(SpeciesInfo* species_info);
 // void print_json_species(SpeciesInfo* species_info);
 // void print_json_lineage(SpeciesInfo* species_info);
+=======
+void print_json_phylogenetics(SpeciesInfo* species_info);
+void print_json_phylo_group(SpeciesInfo* species_info);
+void print_json_species(SpeciesInfo* species_info);
+void print_json_lineage(SpeciesInfo* species_info);
+
+
+
+#endif
+>>>>>>> master

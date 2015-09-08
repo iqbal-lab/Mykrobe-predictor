@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 *.pyc
+=======
+>>>>>>> master
 code_generator/rendered
 ._*
 *tmp*
