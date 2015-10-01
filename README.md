@@ -46,68 +46,68 @@ Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, w
 
 The output of Mykrobe is in JSON format. An exemplar output might looks like this:
 
-{
-	"expected_depth": "77",
-	"mean_read_length": "48",
-	"phylogenetics": {
-		"phylo_group": {
-			"Staphylococcus aureus": "82"
+	{
+		"expected_depth": "77",
+		"mean_read_length": "48",
+		"phylogenetics": {
+			"phylo_group": {
+				"Staphylococcus aureus": "82"
+			},
+			"species": {
+				"S. aureus": "82"
+			},
+			"lineage": {
+				"N/A": "-1"
+			}
 		},
-		"species": {
-			"S. aureus": "82"
+		"susceptibility" :{
+			"Gentamicin": "S",
+			"Penicillin": "R",
+			"Methicillin": "R",
+			"Trimethoprim": "S",
+			"Erythromycin": "R",
+			"FusidicAcid": "S",
+			"Ciprofloxacin": "R",
+			"Rifampicin": "S",
+			"Tetracycline": "S",
+			"Vancomycin": "S",
+			"Mupirocin": "S",
+			"Clindamycin": "R(inducible)"
 		},
-		"lineage": {
-			"N/A": "-1"
+		"called_variants" :{
+			"gyrA_S84L" :{
+				"R_per_cov": "100",
+				"S_per_cov": "0",
+				"R_median_cov": "101",
+				"S_median_cov": "0",
+				"conf": "1092",
+			"induced_resistance": "Ciprofloxacin"
+			}
+		},
+		"called_genes" :{
+			"blaZ" :{
+				"per_cov": "74",
+				"median_cov": "82",
+				"conf": "42298",
+			"induced_resistance": "Penicillin"
+			},
+			"ermC" :{
+				"per_cov": "99",
+				"median_cov": "834",
+				"conf": "2496",
+			"induced_resistance": "Erythromycin"
+			},
+			"mecA" :{
+				"per_cov": "99",
+				"median_cov": "96",
+				"conf": "285",
+			"induced_resistance": "Methicillin"
+			}
+		},
+		"virulence_toxins" :{
+			"PVL": "negative"
 		}
-	},
-	"susceptibility" :{
-		"Gentamicin": "S",
-		"Penicillin": "R",
-		"Methicillin": "R",
-		"Trimethoprim": "S",
-		"Erythromycin": "R",
-		"FusidicAcid": "S",
-		"Ciprofloxacin": "R",
-		"Rifampicin": "S",
-		"Tetracycline": "S",
-		"Vancomycin": "S",
-		"Mupirocin": "S",
-		"Clindamycin": "R(inducible)"
-	},
-	"called_variants" :{
-		"gyrA_S84L" :{
-			"R_per_cov": "100",
-			"S_per_cov": "0",
-			"R_median_cov": "101",
-			"S_median_cov": "0",
-			"conf": "1092",
-		"induced_resistance": "Ciprofloxacin"
-		}
-	},
-	"called_genes" :{
-		"blaZ" :{
-			"per_cov": "74",
-			"median_cov": "82",
-			"conf": "42298",
-		"induced_resistance": "Penicillin"
-		},
-		"ermC" :{
-			"per_cov": "99",
-			"median_cov": "834",
-			"conf": "2496",
-		"induced_resistance": "Erythromycin"
-		},
-		"mecA" :{
-			"per_cov": "99",
-			"median_cov": "96",
-			"conf": "285",
-		"induced_resistance": "Methicillin"
-		}
-	},
-	"virulence_toxins" :{
-		"PVL": "negative"
 	}
-}
 
 The phylogenetics section gives results for the species identification results. In this case we confidently call S. aureus (at ~82x coverage) with no evidence of contamination from other Staphylococcal species. 
 
