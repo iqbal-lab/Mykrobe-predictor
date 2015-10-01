@@ -116,12 +116,18 @@ The "susceptibility" section gives the DST results. The possible options are "S"
 The "called_genes" and "called_variants" provide the evidence (if any) for the susceptibility calls. 
 
 "R_per_cov" - Percentage of kmers for the resistant allele recovered. 
+
 "S_per_cov" - Percentage of kmers for the susceptible (wild-type) allele recovered. 
+
 "R_median_cov" - Median coverage on all the recovered kmers on the resistant allele. 
+
 "S_median_cov" - Median coverage on all the recovered kmers on the susceptible allele. 
 
+
 "per_cov" - Percentage of kmers recovered for the gene. 
+
 "median_cov" - Median coverage on all the recovered kmers for the gene. 
+
 
 "induced_resistance" - shows the drug resistance(s) normally associated with this genetic element. 
 
