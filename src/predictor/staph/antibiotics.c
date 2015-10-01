@@ -15,6 +15,7 @@
 
 char* map_gene_to_drug_resistance(GenePresenceGene gene)
 {
+
    switch (gene) 
    {
     
@@ -90,8 +91,8 @@ char* map_gene_to_drug_resistance(GenePresenceGene gene)
     
     case lukPVF : return "";
     
-    case unspecified_gpg : return "unknown";
    }
+	   
    return "unknown";
 }
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
@@ -283,11 +284,12 @@ void reset_antibiotic_info(AntibioticInfo* abi)
   abi->num_mutations=0;
 
   int i;
-  for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
-    {
-      reset_var_on_background(abi->vars[i]->vob_best_sus);
-      reset_var_on_background(abi->vars[i]->vob_best_res);
-    }
+  // TODO fix issue causing bug here. If we uncomment this with no mutations we get a seg fault
+  // for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
+  //   {
+  //     reset_var_on_background(abi->vars[i]->vob_best_sus);
+  //     reset_var_on_background(abi->vars[i]->vob_best_res);
+  //   }
   for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
     {
       reset_gene_info(abi->genes[i]);
@@ -461,9 +463,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
-void update_infection_type(InfectionType* I_new, InfectionType* I_permanent){
-  if ( (*I_permanent==Unsure) || (*I_permanent==Susceptible) ){
-    *I_permanent = *I_new;
+void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
+  if ( (*I_permenant==Unsure) || (*I_permenant==Susceptible) ){
+    *I_permenant = *I_new;
   }
 }
 
@@ -2070,6 +2072,90 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 }
 
 
+
+void print_clindamycin_susceptibility(dBGraph* db_graph,
+					 int (*file_reader)(FILE * fp, 
+							    Sequence * seq, 
+							    int max_read_length, 
+							    boolean new_entry, 
+							    boolean * full_entry),
+					 ReadingUtils* rutils,
+					 VarOnBackground* tmp_vob,
+					 GeneInfo* tmp_gi,
+					 AntibioticInfo* abi,
+					 InfectionType (*func)(dBGraph* db_graph,
+							 int (*file_reader)(FILE * fp, 
+									    Sequence * seq, 
+									    int max_read_length, 
+									    boolean new_entry, 
+									    boolean * full_entry),
+							 ReadingUtils* rutils,
+							 VarOnBackground* tmp_vob,
+							 GeneInfo* tmp_gi,
+							 AntibioticInfo* abi,
+							 StrBuf* install_dir,
+							 int ignore_first, int ignore_last, int expected_covg,
+							 double lambda_g, double lambda_e, double err_rate,
+               CalledVariant* called_variants,CalledGene* called_genes,
+               CmdLine* cmd_line),
+					 StrBuf* tmpbuf,
+					 boolean any_erm_present, InfectionType erythromycin_resistotype,
+					 StrBuf* install_dir,
+					 int ignore_first, int ignore_last, int expected_covg,
+					 double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,
+           CalledVariant* called_variants,CalledGene* called_genes//for JSON 
+					 )
+{
+  InfectionType suc;
+  
+  suc  = func(db_graph,
+	      file_reader,
+	      rutils,
+	      tmp_vob,
+	      tmp_gi,
+	      abi,
+	      install_dir,
+	      ignore_first, ignore_last, expected_covg,
+	      lambda_g,
+	      lambda_e,
+	      err_rate,
+        called_variants,
+        called_genes,
+        cmd_line);
+
+
+  map_antibiotic_enum_to_str(abi->ab, tmpbuf);
+
+
+    if (suc==Resistant)
+	{
+	  print_json_item(tmpbuf->buff, "R(constitutive)", output_last);
+	}
+      else if (suc==MixedInfection)
+	{
+	  print_json_item(tmpbuf->buff, "r(constitutive)", output_last);
+	}
+      else if ( (suc==Susceptible) && (any_erm_present==true) )
+	{
+	    if (erythromycin_resistotype == Resistant){
+	      print_json_item(tmpbuf->buff, "R(inducible)", output_last);
+	    }
+	    else if (erythromycin_resistotype == MixedInfection){
+	      print_json_item(tmpbuf->buff, "r(inducible)", output_last);
+	    }	
+	}
+      else if (suc==Susceptible)
+	{
+	  print_json_item(tmpbuf->buff, "S", output_last);
+	}
+      else
+	{
+	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);
+	}
+
+}
+
+
 void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  int (*file_reader)(FILE * fp, 
 							     Sequence * seq, 
@@ -2167,88 +2253,6 @@ void print_erythromycin_susceptibility(dBGraph* db_graph,
 
 }
 
-
-void print_clindamycin_susceptibility(dBGraph* db_graph,
-					 int (*file_reader)(FILE * fp, 
-							    Sequence * seq, 
-							    int max_read_length, 
-							    boolean new_entry, 
-							    boolean * full_entry),
-					 ReadingUtils* rutils,
-					 VarOnBackground* tmp_vob,
-					 GeneInfo* tmp_gi,
-					 AntibioticInfo* abi,
-					 InfectionType (*func)(dBGraph* db_graph,
-							 int (*file_reader)(FILE * fp, 
-									    Sequence * seq, 
-									    int max_read_length, 
-									    boolean new_entry, 
-									    boolean * full_entry),
-							 ReadingUtils* rutils,
-							 VarOnBackground* tmp_vob,
-							 GeneInfo* tmp_gi,
-							 AntibioticInfo* abi,
-							 StrBuf* install_dir,
-							 int ignore_first, int ignore_last, int expected_covg,
-							 double lambda_g, double lambda_e, double err_rate,
-               CalledVariant* called_variants,CalledGene* called_genes,
-               CmdLine* cmd_line),
-					 StrBuf* tmpbuf,
-					 boolean any_erm_present, InfectionType erythromycin_resistotype,
-					 StrBuf* install_dir,
-					 int ignore_first, int ignore_last, int expected_covg,
-					 double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,
-           CalledVariant* called_variants,CalledGene* called_genes//for JSON 
-					 )
-{
-  InfectionType suc;
-  
-  suc  = func(db_graph,
-	      file_reader,
-	      rutils,
-	      tmp_vob,
-	      tmp_gi,
-	      abi,
-	      install_dir,
-	      ignore_first, ignore_last, expected_covg,
-	      lambda_g,
-	      lambda_e,
-	      err_rate,
-        called_variants,
-        called_genes,
-        cmd_line);
-
-
-  map_antibiotic_enum_to_str(abi->ab, tmpbuf);
-
-
-    if (suc==Resistant)
-	{
-	  print_json_item(tmpbuf->buff, "R(constitutive)", output_last);
-	}
-      else if (suc==MixedInfection)
-	{
-	  print_json_item(tmpbuf->buff, "r(constitutive)", output_last);
-	}
-      else if ( (suc==Susceptible) && (any_erm_present==true) )
-	{
-	    if (erythromycin_resistotype == Resistant){
-	      print_json_item(tmpbuf->buff, "R(inducible)", output_last);
-	    }
-	    else if (erythromycin_resistotype == MixedInfection){
-	      print_json_item(tmpbuf->buff, "r(inducible)", output_last);
-	    }	
-	}
-      else if (suc==Susceptible)
-	{
-	  print_json_item(tmpbuf->buff, "S", output_last);
-	}
-      else
-	{
-	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);
-	}
-
-}
 
 
 

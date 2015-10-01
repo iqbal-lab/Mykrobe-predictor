@@ -1,9 +1,8 @@
 /*
- * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
+ * Copyright 2014 Zamin Iqbal (zam@well.ox.ac.uk)
  * 
-  antibiotics.c 
+ *  antibiotics.c 
 */
-
 #include "antibiotics.h"
 #include "file_reader.h"
 #include <errno.h>
@@ -13,83 +12,84 @@
 #include "gene_presence_models.h"
 #include "json.h"
 
+
 char* map_gene_to_drug_resistance(GenePresenceGene gene)
 {
+	   
    return "unknown";
 }
-
 void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
 {
-        if (ab==NoDrug)
-        {
-          strbuf_reset(name);
-          strbuf_append_str(name, "NoDrug");
-        }
-        else if (ab==rifampicin)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Rifampicin");
-                }
-        
-  else if (ab==isoniazid)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Isoniazid");
-                }
-        
-  else if (ab==pyrazinamide)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Pyrazinamide");
-                }
-        
-  else if (ab==ethambutol)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Ethambutol");
-                }
-        
-  else if (ab==kanamycin)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Kanamycin");
-                }
-        
-  else if (ab==capreomycin)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Capreomycin");
-                }
-        
+  if (ab==NoDrug)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "NoDrug");
+    }
+  
   else if (ab==amikacin)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Amikacin");
-                }
-        
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "amikacin");
+    }
+  
+  else if (ab==capreomycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "capreomycin");
+    }
+  
+  else if (ab==ethambutol)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "ethambutol");
+    }
+  
+  else if (ab==isoniazid)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "isoniazid");
+    }
+  
   else if (ab==kanamycin)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Kanamycin");
-                }
-        
-  else if (ab==streptomycin)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Streptomycin");
-                }
-        
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "kanamycin");
+    }
+  
+  else if (ab==pyrazinamide)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "pyrazinamide");
+    }
+  
   else if (ab==quinolones)
-                {
-                  strbuf_reset(name);
-                  strbuf_append_str(name, "Quinolones");
-                }
-         
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "quinolones");
+    }
+  
+  else if (ab==rifampicin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "rifampicin");
+    }
+  
+  else if (ab==streptomycin)
+    {
+      strbuf_reset(name);
+      strbuf_append_str(name, "streptomycin");
+    }
+  
   else
-  {
-    die("Impossible - compiler should not allow this");
-  }
+    {
+      die("Impossible - compiler should not allow this\n");
+    }
 }
+
+
+
+
+
 
 AntibioticInfo* alloc_antibiotic_info()
 {
@@ -189,11 +189,12 @@ void reset_antibiotic_info(AntibioticInfo* abi)
   abi->num_mutations=0;
 
   int i;
-  for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
-    {
-      reset_var_on_background(abi->vars[i]->vob_best_sus);
-      reset_var_on_background(abi->vars[i]->vob_best_res);
-    }
+  // TODO fix issue causing bug here. If we uncomment this with no mutations we get a seg fault
+  // for (i=0; i<NUM_KNOWN_MUTATIONS; i++)
+  //   {
+  //     reset_var_on_background(abi->vars[i]->vob_best_sus);
+  //     reset_var_on_background(abi->vars[i]->vob_best_res);
+  //   }
   for (i=0; i<NUM_GENE_PRESENCE_GENES; i++)
     {
       reset_gene_info(abi->genes[i]);
@@ -310,7 +311,9 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       ReadingUtils* rutils,
 				       VarOnBackground* tmp_vob,
 				       GeneInfo* tmp_gi,
-				       int ignore_first, int ignore_last, int expected_covg,
+				       int ignore_first, 
+				       int ignore_last, 
+				       int expected_covg,
 				       StrBuf* install_dir)
 
 {
@@ -365,627 +368,108 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 
 
 
+void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
+  if ( (*I_permenant==Unsure) || (*I_permenant==Susceptible) ){
+    *I_permenant = *I_new;
+  }
+}
+
+
 InfectionType is_amikacin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = amikacin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/amikacin.fa");
-      abi->num_mutations = 4;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
 
 
+  //setup antibiotic info object
+  abi->ab = amikacin;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/amikacin.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 3;
 
-
-      int first_mut = rrs_A1401X;
-      int last_mut = rrs_G1484X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
   double max_sus_conf=0;
-  double min_conf=9999999999;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = rrs_A1401X;
+  int last_mut = rrs_G1484X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
   boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
-
       if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
+    	{
+    	  continue;
+    	}
       any_allele_non_null=true;
-      boolean genotyped_present = false;      
+      genotyped_present = false;
       InfectionType I=
-  resistotype(abi->vars[i],
-		    err_rate, 
-		    db_graph->kmer_size, 
-		    lambda_g, 
-		    lambda_e, 
-		    epsilon,
-        expected_covg,
-		    &best_model, 
-		    MaxAPosteriori,
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
- 
-      
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-	{
-	  max_sus_conf = best_model.conf;
-	}
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
       if (best_model.conf<min_conf)
-	{
-	  min_conf = best_model.conf;
-	}
-      
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-	{  
-	  // Save the variant being called 
-	  // add_called_variant_info_to_array(i, called_variants, best_model, I)
-	  return I;
-	}
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
     }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
-}
-    InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = capreomycin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/capreomycin.fa");
-
-      abi->num_mutations = 4;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = rrs_A1401X;
-      int last_mut = rrs_G1484X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
-  double max_sus_conf=0;
-  double min_conf=9999999999;
-  boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-
-      if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
-      any_allele_non_null=true;
-      boolean genotyped_present = false;      
-      InfectionType I=
-  resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
-        &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops,
-        &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
-      if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
-    }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
-}
-    InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = ethambutol;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/ethambutol.fa");
-
-      abi->num_mutations = 1;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = embB_M306X;
-      int last_mut = embB_M306X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
-  double max_sus_conf=0;
-  double min_conf=9999999999;
-  boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-
-      if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
-      any_allele_non_null=true;
-      boolean genotyped_present = false;      
-      InfectionType I=
-  resistotype(abi->vars[i],
-              err_rate, 
-              db_graph->kmer_size, 
-              lambda_g, 
-              lambda_e, 
-              epsilon,
-              expected_covg,
-              &best_model,
-              MaxAPosteriori,
-              cmd_line->min_frac_to_detect_minor_pops,
-              &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
-      if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
-    }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
-}
-    InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = isoniazid;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/isoniazid.fa");
-
-      abi->num_mutations = 4;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = katG_S315X;
-      int last_mut = fabG1_Gu17X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
-  double max_sus_conf=0;
-  double min_conf=9999999999;
-  boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-
-      if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
-      any_allele_non_null=true;
-      boolean genotyped_present = false;      
-      InfectionType I=
-  resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
-        &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops,
-        &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
-      if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
-    }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
-}
-    InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = kanamycin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/kanamycin.fa");
-
-      abi->num_mutations = 4;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = rrs_A1401X;
-      int last_mut = rrs_G1484X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
-  double max_sus_conf=0;
-  double min_conf=9999999999;
-  boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-
-      if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
-      any_allele_non_null=true;
-      boolean genotyped_present = false;      
-      InfectionType I=
-  resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
-        &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops,
-        &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
-      if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
-    }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
-}
-    InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = pyrazinamide;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/pyrazinamide.fa");
-
-      abi->num_mutations = 70;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = pncA_D49N;
-      int last_mut = pncA_V21G;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
-  double max_sus_conf=0;
-  double min_conf=9999999999;
-  boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-
-      if (both_alleles_null(abi->vars[i])==true)
-      {
-        continue;
-      }
-      any_allele_non_null=true;
-      boolean genotyped_present = false;  
-      InfectionType I=
 
   
-      resistotype(abi->vars[i],
-            err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-            expected_covg,
-            &best_model, MaxAPosteriori,
-            cmd_line->min_frac_to_detect_minor_pops,
-            &genotyped_present);
-        if ( genotyped_present ||  cmd_line->verbose) {
-        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-      }   
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
       {
-        max_sus_conf = best_model.conf;
-      }
-      if (best_model.conf<min_conf)
-      {
-        min_conf = best_model.conf;
-      }
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-      {  
-        return I;
-      }
-      if (I == Unsure && best_model.type == MixedInfection)
-      {
-        any_unsure_mixed_call = true;
-      }
-    }
-    if ( (any_allele_non_null==false) || (any_unsure_mixed_call) )
-      {
-        return Susceptible;
+        return Unsure;
       }
     else if (max_sus_conf>MIN_CONFIDENCE_S)
       {
@@ -994,384 +478,943 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
     else
       {
         return Unsure;
-      }
+      }   
+  }
+  
 
 }
-    InfectionType is_quinolones_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = quinolones;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/quinolones.fa");
-
-      abi->num_mutations = 40;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
 
 
+InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
 
 
-      int first_mut = gyrA_H85X;
-      int last_mut = gyrA_D94X;
+  //setup antibiotic info object
+  abi->ab = capreomycin;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/capreomycin.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 3;
 
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
   double max_sus_conf=0;
-  double min_conf=9999999999;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = rrs_A1401X;
+  int last_mut = rrs_G1484X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
   boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
   for (i=first_mut; i<=last_mut; i++)
     {
-
       if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
+    	{
+    	  continue;
+    	}
       any_allele_non_null=true;
-      boolean genotyped_present = false;      
+      genotyped_present = false;
       InfectionType I=
-  resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
-        &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops,
-        &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-
-      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
-      if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
-    }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
-}
-    InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line)
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = rifampicin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/rifampicin.fa");
-
-      abi->num_mutations = 130;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
-
-
-
-
-      int first_mut = rpoB_F425X;
-      int last_mut = rpoB_L452X;
-
-      int i;
-       //if you have any of these resistance alleles - call resistant
-  Model best_model;
-  double max_sus_conf=0;
-  double min_conf=9999999999;
-  boolean any_allele_non_null=false;
-  boolean any_unsure_mixed_call=false;
-  for (i=first_mut; i<=last_mut; i++)
-    {
-
-      if (both_alleles_null(abi->vars[i])==true)
-	{
-	  continue;
-	}
-      any_allele_non_null=true;
-      boolean genotyped_present = false;      
-      InfectionType I=
-  resistotype(abi->vars[i],
-		    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
-    if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-      
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
+      if (best_model.conf<min_conf)
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
+    }
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
+
+}
+
+
+InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
+
+
+  //setup antibiotic info object
+  abi->ab = ethambutol;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/ethambutol.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 3;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = embB_M306X;
+  int last_mut = embB_G406S;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      if (both_alleles_null(abi->vars[i])==true)
+    	{
+    	  continue;
+    	}
+      any_allele_non_null=true;
+      genotyped_present = false;
+      InfectionType I=
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
+      if (best_model.conf<min_conf)
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
+    }
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
+
+}
+
+
+InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
+
+
+  //setup antibiotic info object
+  abi->ab = isoniazid;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/isoniazid.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 5;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = katG_S315X;
+  int last_mut = fabG1_Gu17X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      if (both_alleles_null(abi->vars[i])==true)
+    	{
+    	  continue;
+    	}
+      any_allele_non_null=true;
+      genotyped_present = false;
+      InfectionType I=
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
+      if (best_model.conf<min_conf)
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
+    }
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
+
+}
+
+
+InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
+
+
+  //setup antibiotic info object
+  abi->ab = kanamycin;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/kanamycin.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 4;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = eis_Cu10T;
+  int last_mut = rrs_G1484X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      if (both_alleles_null(abi->vars[i])==true)
+    	{
+    	  continue;
+    	}
+      any_allele_non_null=true;
+      genotyped_present = false;
+      InfectionType I=
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
+      if (best_model.conf<min_conf)
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
+    }
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
+
+}
+
+
+InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
+
+
+  //setup antibiotic info object
+  abi->ab = pyrazinamide;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/pyrazinamide.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 1;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int mut = pncA_H57D;
+  i = mut;
+  boolean any_allele_non_null=false;
+  if (both_alleles_null(abi->vars[i])==true)
+	{
+	  any_allele_non_null=true;
+	}
+  genotyped_present = false;
+  InfectionType I=resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+    lambda_g, lambda_e, epsilon, expected_covg, 
+    &best_model, MaxAPosteriori,
+    cmd_line->min_frac_to_detect_minor_pops,
+    &genotyped_present);
+  if ( genotyped_present ||  cmd_line->verbose) {
+    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+  } 
+
+  if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
 	{
 	  max_sus_conf = best_model.conf;
 	}
-      if (best_model.conf<min_conf)
+  if (best_model.conf<min_conf)
 	{
 	  min_conf = best_model.conf;
 	}
-      
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-	{  
-	  if ( genotyped_present ||  cmd_line->verbose) {
-      update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-    }
-	  return I;
-	}
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
+  update_infection_type(&I,&I_permanent);
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
   }
-
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
   }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
-    }
-
+  
 
 }
-    InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
-               int (*file_reader)(FILE * fp, 
-                          Sequence * seq, 
-                          int max_read_length, 
-                          boolean new_entry, 
-                          boolean * full_entry),
-                 ReadingUtils* rutils,
-                 VarOnBackground* tmp_vob,
-                 GeneInfo* tmp_gi,
-                 AntibioticInfo* abi,
-                 StrBuf* install_dir,
-                 int ignore_first, int ignore_last, int expected_covg,
-                 double lambda_g, double lambda_e, double err_rate,
-                 CalledVariant* called_variants,CalledGene* called_genes,
-                 CmdLine* cmd_line )
-    {
-      reset_antibiotic_info(abi);
-      
-      //setup antibiotic info object
-      abi->ab = streptomycin;
-      strbuf_append_str(abi->m_fasta, install_dir->buff);
-
-      strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/streptomycin.fa");
-
-      abi->num_mutations = 99;
-      abi->num_genes=0;
-      double epsilon = pow(1-err_rate, db_graph->kmer_size);
-      load_antibiotic_mut_and_gene_info(db_graph,
-                        file_reader,
-                        abi,
-                        rutils,
-                        tmp_vob,
-                        tmp_gi,
-                        ignore_first, ignore_last, expected_covg,
-        install_dir);
 
 
+InfectionType is_quinolones_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
 
 
-      int first_mut = rpsL_K43R;
-      int last_mut = rrs_C517X;
+  //setup antibiotic info object
+  abi->ab = quinolones;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/quinolones.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 10;
 
-      int i;
-       //if you have any of these resistance alleles - call resistant
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
   Model best_model;
-double max_sus_conf=0;
-double min_conf=9999999999;
-boolean any_allele_non_null=false;
-boolean any_unsure_mixed_call=false;
+  boolean genotyped_present = false;
+
+  int first_mut = gyrA_H85X;
+  int last_mut = gyrA_D94X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
   for (i=first_mut; i<=last_mut; i++)
     {
-
       if (both_alleles_null(abi->vars[i])==true)
-  {
-    continue;
-  }
+    	{
+    	  continue;
+    	}
       any_allele_non_null=true;
-      boolean genotyped_present = false;      
+      genotyped_present = false;
       InfectionType I=
-  resistotype(abi->vars[i],
-        err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,
-        expected_covg,
-        &best_model, MaxAPosteriori,
-        cmd_line->min_frac_to_detect_minor_pops,
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
-  if ( genotyped_present ||  cmd_line->verbose) {
-    update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
-  }   
-
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
       if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
-  {
-    max_sus_conf = best_model.conf;
-  }
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
       if (best_model.conf<min_conf)
-  {
-    min_conf = best_model.conf;
-  }
-
-      if ( (I==Resistant) || (I==MixedInfection) ) 
-  {  
-    return I;
-  }
-    if (I == Unsure && best_model.type == MixedInfection)
-  {
-    any_unsure_mixed_call = true;
-  }
-    }
-  if (
-      (any_allele_non_null==false) || (any_unsure_mixed_call)
-      )
-
-    {
-      return Susceptible;
-    }
-  else if (max_sus_conf>MIN_CONFIDENCE_S)
-    {
-      return Susceptible;
-    }
-  else
-    {
-      return Unsure;
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
     }
 
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
 
 }
 
+
+InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
+
+
+  //setup antibiotic info object
+  abi->ab = rifampicin;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/rifampicin.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 27;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = rpoB_F425X;
+  int last_mut = rpoB_L452X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      if (both_alleles_null(abi->vars[i])==true)
+    	{
+    	  continue;
+    	}
+      any_allele_non_null=true;
+      genotyped_present = false;
+      InfectionType I=
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
+      if (best_model.conf<min_conf)
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
+    }
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
+
+}
+
+
+InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
+				    int (*file_reader)(FILE * fp, 
+						       Sequence * seq, 
+						       int max_read_length, 
+						       boolean new_entry, 
+						       boolean * full_entry),
+				    ReadingUtils* rutils,
+				    VarOnBackground* tmp_vob,
+				    GeneInfo* tmp_gi,
+				    AntibioticInfo* abi,
+				    StrBuf* install_dir,
+				    int ignore_first, int ignore_last, int expected_covg,
+				    double lambda_g, double lambda_e, double err_rate,
+            
+             CalledVariant* called_variants,CalledGene* called_genes,
+             CmdLine* cmd_line
+				    )
+
+{
+  InfectionType I_permanent = Unsure;
+  reset_antibiotic_info(abi);
+  
+
+
+  //setup antibiotic info object
+  abi->ab = streptomycin;
+  strbuf_append_str(abi->m_fasta, install_dir->buff);
+  strbuf_append_str(abi->m_fasta, "data/tb/antibiotics/streptomycin.fa");
+  
+  abi->num_genes=0;
+  abi->num_mutations = 7;
+
+  double epsilon = pow(1-err_rate, db_graph->kmer_size);
+  load_antibiotic_mut_and_gene_info(db_graph,
+				    file_reader,
+				    abi,
+				    rutils,
+				    tmp_vob,
+				    tmp_gi,
+				    ignore_first, ignore_last, expected_covg,
+				    install_dir);
+  double max_sus_conf=0;
+  double min_conf=9999999;  
+  int i;
+  Model best_model;
+  boolean genotyped_present = false;
+
+  int first_mut = rpsL_K43R;
+  int last_mut = rrs_C517X;
+  //we are going to iterate through various mutations, each
+  //on different genetic backgrounds.
+  //we will call it susceptible, if the best hit is good enough
+  //if you have any of these resistance alleles - call resistant
+  boolean any_allele_non_null=false;
+  for (i=first_mut; i<=last_mut; i++)
+    {
+      if (both_alleles_null(abi->vars[i])==true)
+    	{
+    	  continue;
+    	}
+      any_allele_non_null=true;
+      genotyped_present = false;
+      InfectionType I=
+	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
+		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    &best_model, MaxAPosteriori,
+		    cmd_line->min_frac_to_detect_minor_pops,
+        &genotyped_present);
+      if ( genotyped_present ||  cmd_line->verbose) {
+        update_called_variants(called_variants,i,abi->vars[i], best_model.conf);
+      }       
+      if ( (I==Susceptible) && (best_model.conf>max_sus_conf) )
+    	{
+    	  max_sus_conf = best_model.conf;
+    	}
+      if (best_model.conf<min_conf)
+    	{
+    	  min_conf = best_model.conf;
+    	}
+      update_infection_type(&I,&I_permanent);
+    }
+
+  
+
+
+  
+  
+  
+  if( (I_permanent==Resistant) || (I_permanent==MixedInfection) ) {
+    return I_permanent;
+  }
+  else{
+    if (any_allele_non_null==false)
+      {
+        return Unsure;
+      }
+    else if (max_sus_conf>MIN_CONFIDENCE_S)
+      {
+        return Susceptible;
+      }
+    else
+      {
+        return Unsure;
+      }   
+  }
+  
+
+}
+
+
+
+
 void print_antibiotic_susceptibility(dBGraph* db_graph,
-          int (*file_reader)(FILE * fp, 
-                 Sequence * seq, 
-                 int max_read_length, 
-                 boolean new_entry, 
-                 boolean * full_entry),
-          ReadingUtils* rutils,
-          VarOnBackground* tmp_vob,
-          GeneInfo* tmp_gi,
-          AntibioticInfo* abi,
-          InfectionType (*func)(dBGraph* db_graph,
-              int (*file_reader)(FILE * fp, 
-                     Sequence * seq, 
-                     int max_read_length, 
-                     boolean new_entry, 
-                     boolean * full_entry),
-                      ReadingUtils* rutils,
-                      VarOnBackground* tmp_vob,
-                      GeneInfo* tmp_gi,
-                      AntibioticInfo* abi,
-                      StrBuf* install_dir,
-                      int ignore_first, 
-                      int ignore_last, 
-                      int expected_covg,
-                      double lambda_g, 
-                      double lambda_e, 
-                      double err_rate,
-                      CalledVariant* called_variants,
-                      CalledGene* called_genes,
-                      CmdLine* cmd_line),
-          StrBuf* tmpbuf,
-          StrBuf* install_dir,
-          int ignore_first, int ignore_last,
-          int expected_covg,
-          double lambda_g, double lambda_e, double err_rate,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					VarOnBackground* tmp_vob,
+					GeneInfo* tmp_gi,
+					AntibioticInfo* abi,
+					InfectionType (*func)(dBGraph* db_graph,
+							int (*file_reader)(FILE * fp, 
+									   Sequence * seq, 
+									   int max_read_length, 
+									   boolean new_entry, 
+									   boolean * full_entry),
+      							ReadingUtils* rutils,
+      							VarOnBackground* tmp_vob,
+      							GeneInfo* tmp_gi,
+      							AntibioticInfo* abi,
+      							StrBuf* install_dir,
+      							int ignore_first,
+                    int ignore_last,
+                    int expected_covg,
+      							double lambda_g,
+                    double lambda_e,
+                    double err_rate,
+                    CalledVariant* called_variants,
+                    CalledGene* called_genes,
+                    CmdLine* cmd_line),
+					StrBuf* tmpbuf,
+					StrBuf* install_dir,
+					int ignore_first, int ignore_last,
+					int expected_covg,
+					double lambda_g, double lambda_e, double err_rate,
           CmdLine* cmd_line,
-          boolean output_last,//for JSON
+					boolean output_last,//for JSON,
           CalledVariant* called_variants,
           CalledGene* called_genes
-          )
+					)
 {
   InfectionType suc;
   
   suc  = func(db_graph,
-        file_reader,
-        rutils,
-        tmp_vob,
-        tmp_gi,
-        abi, 
-        install_dir,
-        ignore_first, 
-        ignore_last, 
-        expected_covg,
-        lambda_g,
-        lambda_e,
-        err_rate,
+	      file_reader,
+	      rutils,
+	      tmp_vob,
+	      tmp_gi,
+	      abi, 
+	      install_dir,
+	      ignore_first, 
+	      ignore_last, 
+	      expected_covg,
+	      lambda_g,
+	      lambda_e,
+	      err_rate,
         called_variants,
         called_genes,
         cmd_line);
@@ -1382,40 +1425,53 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
     {
       printf("%s\t", tmpbuf->buff);
       if (suc==Susceptible)
-  {
-    printf("S\n");
-  }
+	{
+	  printf("S\n");
+	}
       else if (suc==MixedInfection)
-  {
-    printf("r\n");
-  }
+	{
+	  printf("r\n");
+	}
       else if (suc==Resistant)
-  {
-    printf("R\n");
-  }
+	{
+	  printf("R\n");
+	}
       else
-  {
-    printf("N\n");
-  }
+	{
+	  printf("N\n");
+	}
     }
   else
     {
       if (suc==Susceptible)
-  {
-      print_json_item(tmpbuf->buff, "S", output_last);
-  }
-      else if (  suc==Resistant )
-  {
-    print_json_item(tmpbuf->buff, "R", output_last);
-  }
-    else if ( suc==MixedInfection )
+	{
+	    print_json_item(tmpbuf->buff, "S", output_last);
+	}
+      else if ( suc==Resistant )
+	{
+	  print_json_item(tmpbuf->buff, "R", output_last);
+	}
+      else if ( suc==MixedInfection )
   {
     print_json_item(tmpbuf->buff, "r", output_last);
-  }
+  }  
       else
-  {
-    print_json_item(tmpbuf->buff, "Inconclusive", output_last);
-  }
+	{
+	  print_json_item(tmpbuf->buff, "Inconclusive", output_last);
+	}
     }
 
 }
+
+
+
+
+
+///virulence
+
+
+
+
+
+
+

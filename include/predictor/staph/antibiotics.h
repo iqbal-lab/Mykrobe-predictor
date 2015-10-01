@@ -381,6 +381,71 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					CalledVariant* called_variants,CalledGene* called_genes
 					);
 
+
+
+
+
+Troolean is_tsst1_positive(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir);
+
+void print_tsst1_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format);
+
+Troolean is_lukpvf_positive(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			StrBuf* install_dir);
+
+void print_lukpvf_presence(dBGraph* db_graph,
+			int (*file_reader)(FILE * fp, 
+					   Sequence * seq, 
+					   int max_read_length, 
+					   boolean new_entry, 
+					   boolean * full_entry),
+			ReadingUtils* rutils,
+			GeneInfo* tmp_gi,
+			Troolean (*func)(dBGraph* db_graph,
+					int (*file_reader)(FILE * fp, 
+							   Sequence * seq, 
+							   int max_read_length, 
+							   boolean new_entry, 
+							   boolean * full_entry),
+					ReadingUtils* rutils,
+					GeneInfo* tmp_gi,
+					StrBuf* install_dir),
+			StrBuf* install_dir, OutputFormat format);
+
+
+
+
 void print_erythromycin_susceptibility(dBGraph* db_graph,
 					  int (*file_reader)(FILE * fp, 
 							     Sequence * seq, 
@@ -450,65 +515,6 @@ void print_clindamycin_susceptibility(dBGraph* db_graph,
 					 boolean output_last,
 					 CalledVariant* called_variants,CalledGene* called_genes
 					 );
-
-
-Troolean is_tsst1_positive(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir);
-
-void print_tsst1_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format);
-
-Troolean is_lukpvf_positive(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			StrBuf* install_dir);
-
-void print_lukpvf_presence(dBGraph* db_graph,
-			int (*file_reader)(FILE * fp, 
-					   Sequence * seq, 
-					   int max_read_length, 
-					   boolean new_entry, 
-					   boolean * full_entry),
-			ReadingUtils* rutils,
-			GeneInfo* tmp_gi,
-			Troolean (*func)(dBGraph* db_graph,
-					int (*file_reader)(FILE * fp, 
-							   Sequence * seq, 
-							   int max_read_length, 
-							   boolean new_entry, 
-							   boolean * full_entry),
-					ReadingUtils* rutils,
-					GeneInfo* tmp_gi,
-					StrBuf* install_dir),
-			StrBuf* install_dir, OutputFormat format);
 
 
 #endif

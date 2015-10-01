@@ -1,7 +1,6 @@
 /*
  * Copyright 2015 Zamin Iqbal (zam@well.ox.ac.uk)
- */
-/*
+ *
   main.c 
 */
 
@@ -36,20 +35,27 @@ void timestamp();
 int main(int argc, char **argv)
 {
   setvbuf(stdout, NULL, _IOLBF, 0);
-  
+
+
+
+
   CmdLine* cmd_line = cmd_line_alloc();
   if (cmd_line==NULL)
     {
       return -1;
     }
-  
+    // VERSION_STR is passed from the makefile -- usually last commit hash
+
   parse_cmdline(cmd_line, argc,argv,sizeof(Element));
-  dBGraph * db_graph = NULL;
+
   if (cmd_line->format==Stdout){
-  // VERSION_STR is passed from the makefile -- usually last commit hash
-    printf("myKrobe.predictor for M.tuberculosis, version %d.%d.%d.%d"VERSION_STR"\n",
-           VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);
-    }
+    printf("myKrobe.predictor for tb, version %d.%d.%d.%d"VERSION_STR"\n",
+           VERSION, SUBVERSION, SUBSUBVERSION, SUBSUBSUBVERSION);  
+  }
+
+  dBGraph * db_graph = NULL;
+
+
 
   boolean (*subsample_function)();
   
@@ -77,12 +83,14 @@ int main(int argc, char **argv)
 
 
 
-  int lim = cmd_line->max_expected_sup_len;
-    CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
+
+
+  //  int lim = cmd_line->max_expected_sup_len;
+    /* CovgArray* working_ca_for_median=alloc_and_init_covg_array(lim);//will die if fails to alloc
   if (working_ca_for_median==NULL)
     {
       return -1;
-    }
+    }*/
 
   //Create the de Bruijn graph/hash table
   int max_retries=15;
@@ -120,18 +128,19 @@ int main(int argc, char **argv)
       ru->array_nodes[i]=&dummy_node;
     }
 
+
   VarOnBackground* tmp_vob = alloc_and_init_var_on_background();
   GeneInfo* tmp_gi = alloc_and_init_gene_info();
   AntibioticInfo* abi = alloc_antibiotic_info();
   // Alloc an array to store called variants and gene presence
   CalledVariant* called_variants = alloc_and_init_called_variant_array();
   CalledGene* called_genes = alloc_and_init_called_genes_array();
+
   if ( (ru==NULL) || (tmp_vob==NULL) || (abi==NULL) || (tmp_gi==NULL) || (called_variants==NULL) || (called_genes==NULL) )
+
     {
       return -1;
     }
-  
- 
   int into_colour=0;
   boolean only_load_pre_existing_kmers=false;
   uint64_t bp_loaded=0;
@@ -146,14 +155,15 @@ int main(int argc, char **argv)
       strbuf_append_str(sk, cmd_line->install_dir->buff);
       strbuf_append_str(sk, "data/skeleton_binary/tb/skeleton.k15.ctx");
       if ( (access(sk->buff,F_OK)!=0) || (WINDOWS==1) )
-	{
-	  StrBuf* skeleton_flist = strbuf_new();
-	  strbuf_append_str(skeleton_flist, 
-			    cmd_line->install_dir->buff);
-	  strbuf_append_str(skeleton_flist, 
-			    "data/skeleton_binary/tb/list_speciesbranches_genes_and_muts");
-	  uint64_t dummy=0;
-	  boolean is_rem=true;
+  {
+    StrBuf* skeleton_flist = strbuf_new();
+    strbuf_append_str(skeleton_flist, 
+          cmd_line->install_dir->buff);
+    strbuf_append_str(skeleton_flist, 
+          "data/skeleton_binary/tb/list_speciesbranches_genes_and_muts");
+    uint64_t dummy=0;
+    boolean is_rem=true;
+    //timestamp();
     build_unclean_graph(db_graph, 
             skeleton_flist,
             true,
@@ -163,38 +173,37 @@ int main(int argc, char **argv)
             false,
             into_colour,
             &subsample_null,
-            false, &dummy, 0,
-             &is_rem, 
-             0);
-	  if (WINDOWS==0)
-	    {
-	      //dump binary so can reuse
-	      db_graph_dump_binary(sk->buff, 
-				   &db_node_condition_always_true,
-				   db_graph,
-				   NULL,
-				   BINVERSION);
-	    }
-	  strbuf_free(skeleton_flist);
-	  set_all_coverages_to_zero(db_graph, 0);
-	}
+            false, &dummy, 0, &is_rem,
+            0);
+
+    if (WINDOWS==0)
+      {
+        //dump binary so can reuse
+        db_graph_dump_binary(sk->buff, 
+           &db_node_condition_always_true,
+           db_graph,
+           NULL,
+           BINVERSION);
+      }
+    strbuf_free(skeleton_flist);
+    set_all_coverages_to_zero(db_graph, 0);
+  }
       else
-	{
-	  int num=0;
-	  GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
-	  load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
-	  graph_info_free(ginfo);
-	  set_all_coverages_to_zero(db_graph, 0);
-	}
+  {
+    int num=0;
+    GraphInfo* ginfo=graph_info_alloc_and_init();//will exit it fails to alloc.
+    load_multicolour_binary_from_filename_into_graph(sk->buff, db_graph, ginfo,&num);
+    graph_info_free(ginfo);
+    set_all_coverages_to_zero(db_graph, 0);
+  }
       strbuf_free(sk);
-      
       only_load_pre_existing_kmers=true;
     }
   else
     {
       die("For now --method only allowed to take InSilicoOligos or WGAssemblyThenGenotyping\n");
     }
-  
+
 
   //only need this for progress
   uint64_t total_reads = 0;
@@ -205,16 +214,9 @@ int main(int argc, char **argv)
       total_reads=count_all_reads(cmd_line->seq_path, cmd_line->input_list);
       //timestamp();
     }
-  //  printf("Total reads is %" PRIu64 "\n", total_reads);
   boolean progressbar_remainder=true;
-  int qual_thresh;
-  if (cmd_line->ont){
-    // ONT data
-    qual_thresh = 0;
-  }
-  else{
-    qual_thresh = 10;
-  }  
+
+
   bp_loaded = build_unclean_graph(db_graph, 
           cmd_line->seq_path,
           cmd_line->input_list,
@@ -227,7 +229,7 @@ int main(int argc, char **argv)
           into_colour, subsample_function,
           cmd_line->progress, &count_so_far, total_reads,
           &progressbar_remainder,
-          qual_thresh);
+          0);
   if (  (cmd_line->progress==true) && (progressbar_remainder==true) )
     {
       printf("Progress %" PRIu64 "/%" PRIu64 "\n", total_reads, total_reads);
@@ -257,22 +259,23 @@ int main(int argc, char **argv)
     }
   else
     {
-      cmd_line->min_frac_to_detect_minor_pops = 0.2;
+      cmd_line->min_frac_to_detect_minor_pops = 0.25;
     }
   }
 
   //given the error rate and other params, we can estimate expected depth of covg, and read-arrival rate
   // lambda_g = Depth/read_len _g means lambda on the true genome
   double lambda_g_err_free = ((double) bp_loaded/(double)(cmd_line->genome_size)) / (double) mean_read_length ; 
-  
+  // printf("lambda_g_err_free %f \n", lambda_g_err_free);
   int expected_depth 
     = (int) ( pow(1-err_rate, cmd_line->kmer_size)  
         * (mean_read_length-cmd_line->kmer_size+1)
         * lambda_g_err_free );
 
-  
-  // clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
-  //         expected_depth, cmd_line->max_expected_sup_len);
+  // lambda_g_err_free = (double) expected_depth;
+  //printf("Expected depth %d\n", expected_depth);
+  //  clean_graph(db_graph, cmd_line->kmer_covg_array, cmd_line->len_kmer_covg_array,
+  //   expected_depth, cmd_line->max_expected_sup_len); 
   
   
   //calculate expected read-arrival rates on true and error alleles
@@ -287,102 +290,159 @@ int main(int argc, char **argv)
     * pow(1-err_rate, cmd_line->kmer_size-1);
   
   StrBuf* tmp_name = strbuf_new();
-  SpeciesInfo* species_info = get_species_info(db_graph, 10000, cmd_line->install_dir,
+  SpeciesInfo* species_info = get_species_info(db_graph, 50000, cmd_line->install_dir,
                                   expected_depth,1,1);
+
   fflush(stdout);
   print_json_start();
-  print_json_version();
-  print_json_called_variant_item("expected_depth",expected_depth,false);  
-  print_json_called_variant_item("mean_read_length",mean_read_length,false);
+  print_json_called_variant_item("expected_depth",expected_depth,false);
+  print_json_called_variant_item("mean_read_length",mean_read_length,false);   
   print_json_phylogenetics(species_info);
-  if (!is_MTBC_present(species_info))
-	{
-
-	  print_json_susceptibility_start(); 
-	  print_json_susceptibility_end();
+  if (false)
+  {
+    print_json_susceptibility_start(); 
+    print_json_susceptibility_end();
     print_json_called_variants_start();
     boolean last = true;
     print_json_called_variants_end(last);
-	  print_json_end();
+    print_json_end();
 
-	  //cleanup
-	  strbuf_free(tmp_name);
-	  free_antibiotic_info(abi);
-	  free_var_on_background(tmp_vob);
-	  free_gene_info(tmp_gi);
-	  free_reading_utils(ru);
-	  
-	  cmd_line_free(cmd_line);
-	  hash_table_free(&db_graph);
-	  
-	  return 0;
-	}
-  
+    //cleanup
+    strbuf_free(tmp_name);
+    free_antibiotic_info(abi);
+    free_var_on_background(tmp_vob);
+    free_gene_info(tmp_gi);
+    free_reading_utils(ru);
+    
+    cmd_line_free(cmd_line);
+    hash_table_free(&db_graph);
+    return 0;
+  }  
   //assumption is num_bases_around_mut_in_fasta is at least 30, to support all k<=31.
   //if k=31, we want to ignore 1 kmer at start and end
   //if k=29, we want to ignore 3 kmers at start and end.. etc
 
 
-  //if we get here, is MTB
-  print_json_susceptibility_start();
+  //if we get here, is target species
+
+  if (cmd_line->format==JSON)
+    {
+      print_json_susceptibility_start();
+    }
   int ignore = cmd_line->num_bases_around_mut_in_fasta - cmd_line->kmer_size +2;  
   boolean output_last=false;
+  
+     
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes);   
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, 
-				  cmd_line, output_last,called_variants,called_genes); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes);   
-  /*  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); */
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); 
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); 
-  output_last=true;
-  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
-				  &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
-				  ignore, ignore, species_info->phylo_group_covg_info->median_coverage[MTBC], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-				  called_variants,called_genes); 
+          &is_amikacin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
 
-  print_json_susceptibility_end();
-  print_called_variants(called_variants,cmd_line->format,false); // true here means that this is the last element of the JSON output
-  print_json_called_genes_start();
-  print_json_called_genes_end();
-  print_json_virulence_start();
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_capreomycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_ethambutol_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_isoniazid_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_kanamycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_pyrazinamide_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_quinolones_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+     
+    output_last=true;
+     
+  print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
+          &is_streptomycin_susceptible, tmp_name, cmd_line->install_dir,
+          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants,called_genes);  
+
+
+  
+  
+
+   
+  if (cmd_line->format==JSON)
+    {
+      print_json_susceptibility_end();
+    }
+  print_called_variants(called_variants,cmd_line->format,false);// false here means that this is NOT the last element of the JSON output
+  print_called_genes(called_genes,cmd_line->format);
+  if (cmd_line->format==Stdout)
+    {
+      printf("** Virulence markers\n");
+    }
+    print_json_virulence_start();
+  
   print_json_virulence_end();
-  print_json_end();
+
+  if (cmd_line->format==Stdout)
+    {
+      timestamp();
+    }
+  else
+    {
+      print_json_end();
+      printf("\n");
+    }
 
 
   if ( (cmd_line ->output_supernodes==true) && (cmd_line->format==Stdout) )
     {
       printf("Print contigs\n");
       db_graph_print_supernodes_defined_by_func_of_colours(cmd_line->contig_file->buff, "", 
-                 cmd_line->max_expected_sup_len,
-                 db_graph, 
-                 &element_get_colour_union_of_all_colours, 
-                 &element_get_covg_union_of_all_covgs, 
-                 &print_no_extra_supernode_info);
+							   cmd_line->max_expected_sup_len,
+							   db_graph, 
+							   &element_get_colour_union_of_all_colours, 
+							   &element_get_covg_union_of_all_covgs, 
+							   &print_no_extra_supernode_info);
       printf("Completed printing contigs\n");
     }
 
@@ -393,7 +453,7 @@ int main(int argc, char **argv)
   free_var_on_background(tmp_vob);
   free_gene_info(tmp_gi);
   free_reading_utils(ru);
-
+  
   cmd_line_free(cmd_line);
   hash_table_free(&db_graph);
   return 0;

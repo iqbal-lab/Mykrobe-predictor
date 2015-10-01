@@ -9,48 +9,64 @@
 
 
 
-void load_all_catalayse_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
+void print_json_phylo_group_start();
+void print_json_phylo_group_end();
+char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 
-void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
+	typedef enum 
+	 {
+	 	
+	 	Cat = 0,
+	 	
+	 	Coagneg = 1,
+	 	
+    unknownphylo_group=2
+	   	} Phylo_Group ;
+	#define NUM_Phylo_Group 2
+   	
+  void map_phylo_group_enum_to_str(Phylo_Group sp, StrBuf* sbuf);
+  void load_all_phylo_group_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
+  void phylo_group_threshold(int* thresholds);
 
-void load_catalayse_threshold(int* thresholds);
-void load_all_species_thresholds(int* thresholds);
 
-boolean* create_staph_mask();
-boolean* create_non_aureus_mask();
+void print_json_species_start();
+void print_json_species_end();
+char* get_ith_species_name(CovgInfo* covg_info, int i);
 
-boolean staphylococcus_is_present(SpeciesInfo* species_info);
+	typedef enum 
+	 {
+	 	
+	 	Saureus = 0,
+	 	
+	 	Sepidermidis = 1,
+	 	
+	 	Shaemolyticus = 2,
+	 	
+	 	Sother = 3,
+	 	
+    unknownspecies=4
+	   	} Species ;
+	#define NUM_Species 4
+   	
+  void map_species_enum_to_str(Species sp, StrBuf* sbuf);
+  void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
+  void species_threshold(int* thresholds);
 
-Species get_best_staph_species(SpeciesInfo* species_info );
 
-void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_info);
+typedef struct
+{
+
+  CovgInfo* phylo_group_covg_info;
+
+  CovgInfo* species_covg_info;
+
+} SpeciesInfo;
 
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
 
 
-boolean is_aureus_present(SpeciesInfo* species_info);
-boolean is_non_aureus_staph_present(SpeciesInfo* species_info);
-void print_json_aureus(SpeciesInfo* species_info,boolean last);
+  void print_json_phylo_group(SpeciesInfo* species_info);
 
-boolean catalayse_exists_in_sample(SpeciesInfo* species_info);
-int get_coverage_on_catalayse(SpeciesInfo* species_info);
-void load_all_cat_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
-
-Species get_best_non_aureus_species(SpeciesInfo* species_info );
-
-boolean non_aureus_panels_are_present(SpeciesInfo* species_info);
-
-boolean no_non_aureus_panels_are_present(SpeciesInfo* species_info);
-
-
-
-void print_json_best_hit_non_aureus(SpeciesInfo* species_info);
-
-
-void print_json_aureus_and_best_hit_non_aureus(SpeciesInfo* species_info);
-
-void print_json_species(SpeciesInfo* species_info);
-
-void print_json_lineage(SpeciesInfo* species_info);
+  void print_json_species(SpeciesInfo* species_info);
