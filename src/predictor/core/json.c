@@ -8,11 +8,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "global.h"
+#include "myk_pred_global.h"
 
 void print_json_start()
 {
   fflush(stdout);
   printf("{\n");
+}
+
+void print_json_version()
+{
+  printf("\t\"version\":  \"%d.%d.%d\",\n", MYK_VERSION,MYK_SUBVERSION,MYK_SUBSUBVERSION);
 }
 
 void print_json_end()

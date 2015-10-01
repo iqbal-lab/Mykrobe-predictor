@@ -16,6 +16,7 @@ typedef enum
   } OutputFormat;
 
 void print_json_start();
+void print_json_version();
 void print_json_end();
 
 // void print_json_species_start();
