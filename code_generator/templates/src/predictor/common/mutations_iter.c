@@ -15,7 +15,7 @@
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg, 
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);

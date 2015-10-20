@@ -3,7 +3,7 @@
   genotyped_present = false;
   InfectionType I_f652s=
   resistotype(abi->vars[fusA_F652S],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -11,7 +11,7 @@
   genotyped_present = false;
   InfectionType I_y654n=
     resistotype(abi->vars[fusA_Y654N],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -33,7 +33,7 @@ if (I_f652s==Resistant && I_y654n==Resistant)
   genotyped_present = false;
   InfectionType I_t326i=
   resistotype(abi->vars[fusA_T326I],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg,contaminiation_covg, 
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -41,7 +41,7 @@ if (I_f652s==Resistant && I_y654n==Resistant)
   genotyped_present = false;
   InfectionType I_e468v=
     resistotype(abi->vars[fusA_E468V],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -66,7 +66,7 @@ if (I_t326i==Resistant && I_e468v==Resistant)
   genotyped_present = false;
   InfectionType I_l461f=
   resistotype(abi->vars[fusA_L461F],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -74,7 +74,7 @@ if (I_t326i==Resistant && I_e468v==Resistant)
   genotyped_present = false;
   InfectionType I_a376v=
     resistotype(abi->vars[fusA_A376V],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -82,7 +82,7 @@ if (I_t326i==Resistant && I_e468v==Resistant)
   genotyped_present = false;
   InfectionType I_a655p=
     resistotype(abi->vars[fusA_A655P],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -90,7 +90,7 @@ if (I_t326i==Resistant && I_e468v==Resistant)
   genotyped_present = false;
   InfectionType I_d463g=
     resistotype(abi->vars[fusA_D463G],
-		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+		err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		&best_model, MaxAPosteriori,
 		cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -121,7 +121,7 @@ if ( (I_l461f==Resistant)
 genotyped_present = false;
 InfectionType I_e444v=Susceptible;
 resistotype(abi->vars[fusA_E444V],
-	    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+	    err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 	    &best_model, MaxAPosteriori,
 	    cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -142,7 +142,7 @@ if ((I_l461f==Resistant)
   genotyped_present = false;
   InfectionType I_m470t=
   resistotype(abi->vars[rpoB_M470T],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -159,7 +159,7 @@ if (best_model.conf<min_conf)
   genotyped_present = false;
   InfectionType I_d471g=
   resistotype(abi->vars[rpoB_D471G],
-	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, 
+	      err_rate, db_graph->kmer_size, lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 	      &best_model, MaxAPosteriori,
 	      cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);

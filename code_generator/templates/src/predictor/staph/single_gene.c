@@ -1,6 +1,6 @@
 genotyped_present = false;
 InfectionType I= resistotype_gene(abi->genes[{{drug.genes_resistance_induced_by[0]}}], err_rate, db_graph->kmer_size, 
-         lambda_g, lambda_e, epsilon,expected_covg,
+         lambda_g, lambda_e, epsilon, expected_covg, contaminiation_covg,
          &best_model, MaxAPosteriori,
          {% if drug.name =="Penicillin" %} MIN_PERC_COVG_BLAZ {% else %} MIN_PERC_COVG_STANDARD {% endif %},
 

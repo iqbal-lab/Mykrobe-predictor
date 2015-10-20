@@ -17,6 +17,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
 				    )
 
 {
+  int expected_covg = species_info->species_covg_info->median_coverage[Saureus]
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   {% if drug.name =="Erythromycin" %} *any_erm_present=false;{% endif %}
@@ -39,8 +40,8 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
 				    rutils,
 				    tmp_vob,
 				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+				    ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;

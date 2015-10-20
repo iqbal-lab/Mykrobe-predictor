@@ -7,6 +7,7 @@
 #include "dB_graph.h"
 #include "base_species.h"
 
+
 {% for phylogroup in selfer.phylo_groups %}
 
 void print_json_{{phylogroup.name}}_start();
@@ -34,6 +35,9 @@ typedef struct
 {% endfor %}
 } SpeciesInfo;
 
+void print_json_phylogenetics(SpeciesInfo* species_info);
+
+
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
@@ -41,3 +45,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
 {% for phylogroup in selfer.phylo_groups %}
   void print_json_{{phylogroup.name}}(SpeciesInfo* species_info);
 {% endfor %}
+
+
+{% block extra %}
+{% endblock %}

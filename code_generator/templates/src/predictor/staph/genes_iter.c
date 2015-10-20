@@ -5,7 +5,7 @@ for (i=0; i<{{drug.num_genes}}; i++)
       InfectionType I =
 	     resistotype_gene(abi->genes[abi->which_genes[i]], 
 			 err_rate, db_graph->kmer_size, 
-			 lambda_g, lambda_e, epsilon, expected_covg,
+			 lambda_g, lambda_e, epsilon, expected_covg, contaminiation_covg,
 			 &best_model, MaxAPosteriori,
 			 {% if drug.name =="Trimethoprim" %} MIN_PERC_COVG_DFRK {% else %} MIN_PERC_COVG_STANDARD {% endif %},
     

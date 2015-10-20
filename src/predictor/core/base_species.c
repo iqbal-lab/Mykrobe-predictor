@@ -244,33 +244,9 @@ int max(int int1,int int2){
   else{
     return (int2);
   }
-
 }
 
-// int get_best_hit(CovgInfo* covg_info,boolean* mask)
-// {
-//   int i;
-//   int best_perc_cov_so_far=0;
-//   int best_median_cov_so_far=0;
-//   Species unknown_enum = unknown;
-//   int curr=(int) unknown_enum;
 
-//   for (i=0; i<covg_info->NUM_PANELS; i++)
-//   {
-//     if (mask[i]){
-//       if (covg_info->percentage_coverage[i] >= best_perc_cov_so_far)
-//       {
-//          best_perc_cov_so_far = covg_info->percentage_coverage[i];
-//         // Only update if the median coverage has also improved
-//         if (covg_info->median_coverage[i] > best_median_cov_so_far){
-//           best_median_cov_so_far = covg_info->median_coverage[i];
-//           curr=i;
-//         }          
-//       }      
-//     }
-//   }
-//   return  curr;
-// }
 
 boolean* create_mask(boolean default_value)
 {

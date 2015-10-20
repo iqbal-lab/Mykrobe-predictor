@@ -276,7 +276,8 @@ InfectionType resistotype(Var* var,
 			  double lambda_g, 
 			  double lambda_e, 
 			  double epsilon,
-        SpeciesInfo* species_info,
+        int expected_covg,
+        int contamination_covg,
 			  Model* best_model,
 			  ModelChoiceMethod choice,
 			  float min_frac_to_detect_minor_pops,
@@ -294,11 +295,25 @@ InfectionType resistotype(Var* var,
     //covg must be >0
     expected_covg = 1;
   }
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
-									       expected_covg, expected_covg * err_rate / 3,
-									       kmer);
-  double llk_M = get_log_lik_minor_pop_resistant(var,expected_covg, expected_covg * err_rate / 3, kmer, err_rate, 0.1 );
-  double llk_R = get_log_lik_minor_pop_resistant(var,expected_covg, expected_covg * err_rate / 3, kmer, err_rate,0.75);
+  double llk_M;
+  double llk_S;
+  double llk_R;
+
+
+  // If contaminiation is present turn of mixed model and bump up S. 
+  if (contamination_covg > 0 ){
+    llk_M = -9999999999;
+    llk_S = get_log_lik_minor_pop_resistant(var, contamination_covg, contamination_covg * err_rate / 3, kmer, err_rate, 0.75); 
+  }
+  else{
+    llk_M = get_log_lik_minor_pop_resistant(var, expected_covg, expected_covg * err_rate / 3, kmer, err_rate, 0.1 );
+    llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
+                         expected_covg, expected_covg * err_rate / 3,
+                         kmer);     
+  }  
+
+  llk_R = get_log_lik_minor_pop_resistant(var, expected_covg, expected_covg * err_rate / 3, kmer, err_rate,0.75);
+
 
 
    // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);

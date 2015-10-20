@@ -135,9 +135,9 @@ void print_json_called_genes_end()
 }
 
 
-void print_json_called_gene_start(StrBuf* sbuf)
+void print_json_called_gene_start(const char* str1)
 {
-  printf("\t\t\"%s\" :{\n",sbuf->buff);
+  printf("\t\t\"%s\" :{\n",str1);
 }
 void print_json_called_gene_item(char* str1, int val, boolean last)
 {

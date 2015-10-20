@@ -9,6 +9,7 @@
 
 
 
+
 void print_json_phylo_group_start();
 void print_json_phylo_group_end();
 char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
@@ -64,6 +65,9 @@ typedef struct
 
 } SpeciesInfo;
 
+void print_json_phylogenetics(SpeciesInfo* species_info);
+
+
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
@@ -72,3 +76,18 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
   void print_json_phylo_group(SpeciesInfo* species_info);
 
   void print_json_species(SpeciesInfo* species_info);
+
+
+
+
+int get_best_hit(CovgInfo* covg_info, boolean* mask);
+boolean* create_staph_mask();
+boolean* create_non_aureus_mask();
+boolean non_aureus_panels_are_present(SpeciesInfo* species_info);
+boolean no_non_aureus_panels_are_present(SpeciesInfo* species_info);
+boolean staphylococcus_is_present(SpeciesInfo* species_info);
+Species get_best_staph_species(SpeciesInfo* species_info );
+Species get_best_non_aureus_species(SpeciesInfo* species_info );
+boolean is_aureus_present(SpeciesInfo* species_info);
+boolean is_non_aureus_staph_present(SpeciesInfo* species_info);
+int get_contamination_covg(SpeciesInfo* species_info);

@@ -236,10 +236,18 @@ class SpeciesCodeGenerator(CodeGenerator):
         self.taxon_coverage_threshold_dict = self._load_taxon_coverage_thresholds()
 
     def render_species_src(self):
-        return self.render_str('src/predictor/common/phylo/species.c')     
+        try:
+            return self.render_str('src/predictor/%s/phylo/species.c' % self.species )
+        except TemplateNotFound:
+            logging.warning("Using default species.c template")
+            return self.render_str('src/predictor/common/phylo/species.c' )
 
     def render_species_include(self):
-        return self.render_str('include/predictor/common/phylo/species.h')     
+        try:
+            return self.render_str('include/predictor/%s/phylo/species.h' % self.species )
+        except TemplateNotFound:
+            logging.warning("Using default species.h template")
+            return self.render_str('include/predictor/common/phylo/species.h' )
                                                 
     def render_and_write_phylo(self):
         st = self.render_species_src()
