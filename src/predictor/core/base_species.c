@@ -272,11 +272,6 @@ boolean panels_are_present(CovgInfo* covg_info ,  boolean* mask){
   return (panels_are_present);
 }
 
-// char* get_char_name_of_species_enum(Species species){
-//   StrBuf* species_name = strbuf_new(); 
-//   map_species_enum_to_str(species, species_name);
-//   return species_name->buff;
-// }
 
 
 

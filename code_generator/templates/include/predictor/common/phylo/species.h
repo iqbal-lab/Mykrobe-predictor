@@ -33,6 +33,9 @@ typedef struct
 {% for phylogroup in selfer.phylo_groups %}
   CovgInfo* {{phylogroup.name}}_covg_info;
 {% endfor %}
+{% if selfer.species == "staph" %}
+  CovgInfo* other_covg_info;
+{% endif %}  
 } SpeciesInfo;
 
 void print_json_phylogenetics(SpeciesInfo* species_info);
@@ -43,7 +46,9 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                             int ignore_first,int ignore_last);
 
 {% for phylogroup in selfer.phylo_groups %}
-  void print_json_{{phylogroup.name}}(SpeciesInfo* species_info);
+  {% if not (selfer.species == "staph" and phylogroup in ["species","phylo_group"]) %}
+    void print_json_{{phylogroup.name}}(SpeciesInfo* species_info);
+  {% endif %}
 {% endfor %}
 
 

@@ -24,12 +24,15 @@
   {% include 'src/predictor/common/phylo/map_phylo_group_enum_to_str.c' %}
   {% include 'src/predictor/common/phylo/load_all_phylo_group_file_paths.c' %}
   {% include 'src/predictor/common/phylo/phylo_group_threshold.c' %}
-  {% include 'src/predictor/common/phylo/print_json_phylo_group.c' %}
+  {% if selfer.species == "staph" and phylogroup.name in ["species","phylo_group"] %}
+    {% else %}
+    {% include 'src/predictor/common/phylo/print_json_phylo_group.c' %}
+  {% endif %}
   {% include 'src/predictor/common/phylo/get_ith_phylo_group_name.c' %}
 {% endfor %}
 
 
-
+{% if not selfer.species == "staph" %}
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last)
@@ -57,6 +60,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
 
   return species_info;
 }
+{% endif %}
 
 
 {% for phylogroup in selfer.phylo_groups %}

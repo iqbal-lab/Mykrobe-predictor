@@ -2,6 +2,7 @@
 
 
 {% block extra %}
+char* get_char_name_of_species_enum(Species species);
 int get_best_hit(CovgInfo* covg_info, boolean* mask);
 boolean* create_staph_mask();
 boolean* create_non_aureus_mask();

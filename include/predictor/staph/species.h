@@ -17,15 +17,13 @@ char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 	typedef enum 
 	 {
 	 	
-	 	Cat = 0,
+	 	Staphaureus = 0,
 	 	
 	 	Coagneg = 1,
 	 	
-	 	Staphaureus = 2,
-	 	
-    unknownphylo_group=3
+    unknownphylo_group=2
 	   	} Phylo_Group ;
-	#define NUM_Phylo_Group 3
+	#define NUM_Phylo_Group 2
    	
   void map_phylo_group_enum_to_str(Phylo_Group sp, StrBuf* sbuf);
   void load_all_phylo_group_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
@@ -63,6 +61,9 @@ typedef struct
 
   CovgInfo* species_covg_info;
 
+
+  CovgInfo* other_covg_info;
+  
 } SpeciesInfo;
 
 void print_json_phylogenetics(SpeciesInfo* species_info);
@@ -73,13 +74,18 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
                             int ignore_first,int ignore_last);
 
 
-  void print_json_phylo_group(SpeciesInfo* species_info);
+  
+    void print_json_phylo_group(SpeciesInfo* species_info);
+  
 
-  void print_json_species(SpeciesInfo* species_info);
+  
+    void print_json_species(SpeciesInfo* species_info);
+  
 
 
 
 
+char* get_char_name_of_species_enum(Species species);
 int get_best_hit(CovgInfo* covg_info, boolean* mask);
 boolean* create_staph_mask();
 boolean* create_non_aureus_mask();

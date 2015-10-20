@@ -186,7 +186,6 @@ void print_json_indiv_phylo(CovgInfo* covg_info,
                            char* (*get_ith_name)(CovgInfo*, int));
 
 
-// char* get_char_name_of_species_enum(Species species);
 
 // char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 // char* get_ith_species_name(CovgInfo* covg_info, int i);

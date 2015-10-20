@@ -30,31 +30,29 @@ typedef enum
     Unsure = 3,
   } InfectionType;
 
-double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
+double get_log_posterior_truly_resistant(double llk,
 								      int max_perc_covg_on_res_allele,
 								      double epsilon);
 
-double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
+double get_log_posterior_truly_susceptible_mut(double llk,
 									   int max_perc_covg_on_res_allele,
 									   double epsilon);
 
 double get_log_posterior_of_mixed_infection(double llk,
 					    Var* var,
-					    int max_perc_covg_on_res_allele);
+					    int max_perc_covg_on_res_allele,
+					    int contamination_covg);
 
 
-double get_log_lik_truly_resistant_plus_errors_on_suscep_allele(Var* var,
+double get_log_lik_truly_resistant(Var* var,
 								double lambda_g, double lambda_e,
 								int kmer);
 
-double get_log_lik_minor_pop_resistant(Var* var,
+double get_log_lik_R_S_coverage(Var* var,
 				       double lambda_g, double lambda_e,
-				       int kmer, double err_rate,
-				       float min_frac_to_detect_minor_pops);
+				       int kmer);
 
-double get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(Var* var,
-								     double lambda_g, double lambda_e,
-								     int kmer);
+
 
 double get_biallelic_log_lik(Covg covg_model_true,
 			     Covg  covg_model_err,
@@ -83,7 +81,8 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 
 void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
-		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon);
+		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon,
+		      int contamination_covg);
 
 InfectionType resistotype(Var* var, 
 						  double err_rate, 

@@ -14,7 +14,7 @@
 
 //this is for SNPS and indels, not for gene presence
 //epsilon =  pow(1--err_rate, cmd_line->kmer_size)
-double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk,
+double get_log_posterior_truly_resistant_plus(double llk,
 								      int max_perc_covg_on_res_allele,
 								      double epsilon)
 
@@ -32,7 +32,7 @@ double get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(double llk
 
 
 
-double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(double llk,
+double get_log_posterior_truly_susceptible_mut(double llk,
 									   int max_perc_covg_on_res_allele,
 									   double epsilon)
 {
@@ -42,11 +42,14 @@ double get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(doubl
 
 double get_log_posterior_of_mixed_infection(double llk,
 					    Var* var,
-					    int max_perc_covg_on_res_allele)
+					    int max_perc_covg_on_res_allele,
+              int contamination_covg)
 {
   if ( (max_perc_covg_on_res_allele==100)
        && 
        (var->vob_best_sus->susceptible_allele.percent_nonzero==100)
+       &&
+       (contamination_covg == 0)
       )
     {
       return llk;
@@ -66,20 +69,13 @@ double get_log_posterior_of_mixed_infection(double llk,
 
 
 
-double get_log_lik_minor_pop_resistant(Var* var,
-				       double lambda_g, double lambda_e,
-				       int kmer, double err_rate,
-				       float min_frac_to_detect_minor_pops)
+double get_log_lik_R_S_coverage(Var* var,
+				       double R_covg, double S_covg,
+				       int kmer)
 {
   Covg c = get_max_covg_on_any_resistant_allele(var->vob_best_res);
-  
-  double frac = min_frac_to_detect_minor_pops;
-  if (err_rate > 0.1)
-    {
-      return -999999999;
-    }
   return get_biallelic_log_lik(c, var->vob_best_sus->susceptible_allele.median_covg,
-			       frac*lambda_g, (1-frac)*lambda_g, kmer);
+			       R_covg, S_covg, kmer);
   
 }
 
@@ -213,7 +209,8 @@ void choose_ml_model(double llk_R, double llk_S, double llk_M,
 //max a posteriori
 void choose_map_model(Var* var,
 		      double llk_R, double llk_S, double llk_M,
-		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon)
+		      Model* best_model, Model* mid_model, Model* worst_model, double epsilon,
+          int contamination_covg)
 {
 
   Model mR;
@@ -234,14 +231,14 @@ void choose_map_model(Var* var,
 
   int max_perc_covg_on_res = get_max_perc_covg_on_any_resistant_allele(var->vob_best_res);
 
-  mR.lp = llk_R + get_log_posterior_truly_resistant_plus_errors_on_suscep_allele(llk_R, 
+  mR.lp = llk_R + get_log_posterior_truly_resistant_plus(llk_R, 
 										 max_perc_covg_on_res,
 										 epsilon);
-  mS.lp = llk_S + get_log_posterior_truly_susceptible_plus_errors_on_resistant_allele(llk_S, 
+  mS.lp = llk_S + get_log_posterior_truly_susceptible(llk_S, 
 										      max_perc_covg_on_res,
 										      epsilon);
   mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, var,
-						       max_perc_covg_on_res);
+						       max_perc_covg_on_res, contamination_covg);
   Model arr[3]={mR, mS, mM};
   qsort(arr, 3, sizeof(Model), model_cmp_logpost);
   best_model->conf = arr[2].lp-arr[1].lp;
@@ -300,19 +297,35 @@ InfectionType resistotype(Var* var,
   double llk_R;
 
 
-  // If contaminiation is present turn of mixed model and bump up S. 
+  // If contaminiation is present turn of mixed model and set S to be contam_covg on R with expected_covg on S
   if (contamination_covg > 0 ){
-    llk_M = -9999999999;
-    llk_S = get_log_lik_minor_pop_resistant(var, contamination_covg, contamination_covg * err_rate / 3, kmer, err_rate, 0.75); 
+    llk_M = -99999999;
+    // Is the resistant coverage due to contamination with S from target
+    double llk_S_contaim = get_log_lik_R_S_coverage(var, contamination_covg, expected_covg, kmer); 
+    // Is the resistant coverage due to errors with S from target
+    double llk_S_error = get_log_lik_R_S_coverage(var, expected_covg * err_rate / 3, expected_covg, kmer);  
+    if (llk_S_error > llk_S_contaim){
+      llk_S = llk_S_error;
+    }else{
+      llk_S = llk_S_contaim;
+    }
+    // Is the resistant coverage due to target with S from errors
+    double llk_R_error = get_log_lik_R_S_coverage(var, expected_covg, expected_covg * err_rate / 3, kmer);
+    // Is the resistant coverage due to target with S from contamination
+    double llk_R_contaim = get_log_lik_R_S_coverage(var, expected_covg, contamination_covg, kmer);
+    if (llk_R_error > llk_R_contaim){
+      llk_R = llk_R_error;
+    }else{
+      llk_R = llk_R_contaim;
+    }    
   }
   else{
-    llk_M = get_log_lik_minor_pop_resistant(var, expected_covg, expected_covg * err_rate / 3, kmer, err_rate, 0.1 );
-    llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(var, 
-                         expected_covg, expected_covg * err_rate / 3,
-                         kmer);     
+    llk_M = get_log_lik_R_S_coverage(var, min_frac_to_detect_minor_pops * expected_covg, (1-min_frac_to_detect_minor_pops) * expected_covg , kmer );
+    llk_S = get_log_lik_R_S_coverage(var, expected_covg * err_rate / 3, expected_covg, kmer);  
+    llk_R = get_log_lik_R_S_coverage(var, expected_covg, expected_covg * err_rate / 3, kmer);
+
   }  
 
-  llk_R = get_log_lik_minor_pop_resistant(var, expected_covg, expected_covg * err_rate / 3, kmer, err_rate,0.75);
 
 
 
@@ -337,7 +350,7 @@ InfectionType resistotype(Var* var,
     {
       choose_map_model(var, llk_R, llk_S, llk_M, 
 		       best_model, &mid_model,&worst_model, 
-		       epsilon);
+		       epsilon, contamination_covg);
     }
 
     // printf("mid_model.conf %f best_model->conf %f \n", mid_model.conf , best_model->conf);
