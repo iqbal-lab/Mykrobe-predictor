@@ -141,7 +141,7 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 					      AntibioticInfo* abi,
 					      ReadingUtils* rutils,
 					      VarOnBackground* tmp_vob,	
-					      int ignore_first, int ignore_last, int expected_covg)
+					      int ignore_first, int ignore_last)
 {
   reset_reading_utils(rutils);
   reset_var_on_background(tmp_vob);
@@ -167,8 +167,8 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 				       rutils->working_ca, 
 				       MAX_LEN_MUT_ALLELE,
 				       tmp1, tmp2, tmp3,
-				       ignore_first, ignore_last, 
-				       expected_covg, &m);
+				       ignore_first, ignore_last,
+				       &m);
 
 
     }
@@ -243,7 +243,6 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       GeneInfo* tmp_gi,
 				       int ignore_first, 
 				       int ignore_last, 
-				       int expected_covg,
 				       StrBuf* install_dir)
 
 {
@@ -265,7 +264,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 					      abi,
 					      rutils, 
 					      tmp_vob,
-					      ignore_first, ignore_last, expected_covg);
+					      ignore_first, ignore_last);
       fclose(fp);
     }
   if (abi->num_genes>0)
@@ -332,7 +331,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
       							StrBuf* install_dir,
       							int ignore_first,
                     int ignore_last,
-                    int expected_covg,
+                    SpeciesInfo* species_info,
       							double lambda_g,
                     double lambda_e,
                     double err_rate,
@@ -342,7 +341,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last,
-					int expected_covg,
+					SpeciesInfo* species_info,
 					double lambda_g, double lambda_e, double err_rate,
           CmdLine* cmd_line,
 					boolean output_last,//for JSON,

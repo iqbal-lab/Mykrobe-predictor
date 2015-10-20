@@ -17,6 +17,7 @@
 #include "json.h"
 #include "global.h"
 #include "cmd_line.h"
+#include "species.h"
 
 
 //#define MAX_MUTS_IN_ANY_GENE 129
@@ -73,7 +74,7 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 					      AntibioticInfo* abi,
 					      ReadingUtils* rutils,
 					      VarOnBackground* tmp_vob,
-					      int ignore_first, int ignore_last, int expected_covg);
+					      int ignore_first, int ignore_last);
 
 void load_antibiotic_gene_presence_info_on_sample(FILE* fp,
 						  dBGraph* db_graph,
@@ -99,7 +100,6 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       GeneInfo* tmp_gi,
 				       int ignore_first, 
 				       int ignore_last, 
-				       int expected_covg,
 				       StrBuf* install_dir);
 
 {% for drug in selfer.drugs %}
@@ -128,13 +128,13 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 							GeneInfo* tmp_gi,
 							AntibioticInfo* abi,
 							StrBuf* install_dir,
-							int ignore_first, int ignore_last, int expected_covg,
+							int ignore_first, int ignore_last, SpeciesInfo* species_info,
 							double lambda_g, double lambda_e, double err_rate,
 							CalledVariant* called_variants,CalledGene* called_genes,
 							CmdLine* cmd_line),
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
-					int ignore_first, int ignore_last, int expected_covg,
+					int ignore_first, int ignore_last, SpeciesInfo* species_info,
 					double lambda_g, double lambda_e, double err_rate, CmdLine* cmd_line, boolean output_last,
 					CalledVariant* called_variants,CalledGene* called_genes
 					);

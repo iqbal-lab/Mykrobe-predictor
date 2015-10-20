@@ -9,7 +9,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
 				  GeneInfo* tmp_gi,
 				  AntibioticInfo* abi,
 				  StrBuf* install_dir,
-				  int ignore_first, int ignore_last, int expected_covg,
+				  int ignore_first, int ignore_last, SpeciesInfo* species_info,
 				  double lambda_g, double lambda_e, double err_rate,
             	  {% if drug.name =="Erythromycin" %} boolean* any_erm_present,{% endif %}				  
 				   CalledVariant* called_variants,CalledGene* called_genes,

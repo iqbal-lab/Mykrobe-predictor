@@ -16,7 +16,186 @@
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
 {
   
-    die("Unknown gene %s\n", sbuf->buff);
+    
+    if(strcmp(sbuf->buff, "vgbA")==0)
+      {
+        return vgbA;
+      }
+    
+    else if(strcmp(sbuf->buff, "IsaB")==0)
+      {
+        return IsaB;
+      }
+    
+    else if(strcmp(sbuf->buff, "blaZ")==0)
+      {
+        return blaZ;
+      }
+    
+    else if(strcmp(sbuf->buff, "lnuA")==0)
+      {
+        return lnuA;
+      }
+    
+    else if(strcmp(sbuf->buff, "lnuB")==0)
+      {
+        return lnuB;
+      }
+    
+    else if(strcmp(sbuf->buff, "ermB")==0)
+      {
+        return ermB;
+      }
+    
+    else if(strcmp(sbuf->buff, "ermC")==0)
+      {
+        return ermC;
+      }
+    
+    else if(strcmp(sbuf->buff, "ermA")==0)
+      {
+        return ermA;
+      }
+    
+    else if(strcmp(sbuf->buff, "ermY")==0)
+      {
+        return ermY;
+      }
+    
+    else if(strcmp(sbuf->buff, "mupB")==0)
+      {
+        return mupB;
+      }
+    
+    else if(strcmp(sbuf->buff, "mupA")==0)
+      {
+        return mupA;
+      }
+    
+    else if(strcmp(sbuf->buff, "ermT")==0)
+      {
+        return ermT;
+      }
+    
+    else if(strcmp(sbuf->buff, "dfrA")==0)
+      {
+        return dfrA;
+      }
+    
+    else if(strcmp(sbuf->buff, "vgaALC")==0)
+      {
+        return vgaALC;
+      }
+    
+    else if(strcmp(sbuf->buff, "dfrC")==0)
+      {
+        return dfrC;
+      }
+    
+    else if(strcmp(sbuf->buff, "dfrD")==0)
+      {
+        return dfrD;
+      }
+    
+    else if(strcmp(sbuf->buff, "dfrG")==0)
+      {
+        return dfrG;
+      }
+    
+    else if(strcmp(sbuf->buff, "mecC")==0)
+      {
+        return mecC;
+      }
+    
+    else if(strcmp(sbuf->buff, "mecA")==0)
+      {
+        return mecA;
+      }
+    
+    else if(strcmp(sbuf->buff, "dfrK")==0)
+      {
+        return dfrK;
+      }
+    
+    else if(strcmp(sbuf->buff, "vgaB")==0)
+      {
+        return vgaB;
+      }
+    
+    else if(strcmp(sbuf->buff, "vgaA")==0)
+      {
+        return vgaA;
+      }
+    
+    else if(strcmp(sbuf->buff, "tetK")==0)
+      {
+        return tetK;
+      }
+    
+    else if(strcmp(sbuf->buff, "tetM")==0)
+      {
+        return tetM;
+      }
+    
+    else if(strcmp(sbuf->buff, "tetL")==0)
+      {
+        return tetL;
+      }
+    
+    else if(strcmp(sbuf->buff, "tetO")==0)
+      {
+        return tetO;
+      }
+    
+    else if(strcmp(sbuf->buff, "msrA")==0)
+      {
+        return msrA;
+      }
+    
+    else if(strcmp(sbuf->buff, "vanA")==0)
+      {
+        return vanA;
+      }
+    
+    else if(strcmp(sbuf->buff, "vanC")==0)
+      {
+        return vanC;
+      }
+    
+    else if(strcmp(sbuf->buff, "vanB")==0)
+      {
+        return vanB;
+      }
+    
+    else if(strcmp(sbuf->buff, "fusB")==0)
+      {
+        return fusB;
+      }
+    
+    else if(strcmp(sbuf->buff, "fusC")==0)
+      {
+        return fusC;
+      }
+    
+    else if(strcmp(sbuf->buff, "str")==0)
+      {
+        return str;
+      }
+    
+    else if(strcmp(sbuf->buff, "aacAaphD")==0)
+      {
+        return aacAaphD;
+      }
+    
+    else if(strcmp(sbuf->buff, "PVL")==0)
+      {
+        return PVL;
+      }
+    
+    else 
+      {
+        die("Unknown gene %s\n", sbuf->buff);
+      }
   
 
 }
@@ -25,7 +204,190 @@ GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf)
 boolean map_gene_to_fasta(GenePresenceGene gene, StrBuf* fa, StrBuf* install_dir)
 {
   
-    return false;  
+    strbuf_append_str(fa, install_dir->buff);
+    strbuf_append_str(fa, "data/staph/antibiotics/");
+    
+    if(gene==vgbA)
+      {
+        strbuf_append_str(fa, "vgbA.fa");
+      }
+    
+    else if(gene==IsaB)
+      {
+        strbuf_append_str(fa, "IsaB.fa");
+      }
+    
+    else if(gene==blaZ)
+      {
+        strbuf_append_str(fa, "blaZ.fa");
+      }
+    
+    else if(gene==lnuA)
+      {
+        strbuf_append_str(fa, "lnuA.fa");
+      }
+    
+    else if(gene==lnuB)
+      {
+        strbuf_append_str(fa, "lnuB.fa");
+      }
+    
+    else if(gene==ermB)
+      {
+        strbuf_append_str(fa, "ermB.fa");
+      }
+    
+    else if(gene==ermC)
+      {
+        strbuf_append_str(fa, "ermC.fa");
+      }
+    
+    else if(gene==ermA)
+      {
+        strbuf_append_str(fa, "ermA.fa");
+      }
+    
+    else if(gene==ermY)
+      {
+        strbuf_append_str(fa, "ermY.fa");
+      }
+    
+    else if(gene==mupB)
+      {
+        strbuf_append_str(fa, "mupB.fa");
+      }
+    
+    else if(gene==mupA)
+      {
+        strbuf_append_str(fa, "mupA.fa");
+      }
+    
+    else if(gene==ermT)
+      {
+        strbuf_append_str(fa, "ermT.fa");
+      }
+    
+    else if(gene==dfrA)
+      {
+        strbuf_append_str(fa, "dfrA.fa");
+      }
+    
+    else if(gene==vgaALC)
+      {
+        strbuf_append_str(fa, "vgaALC.fa");
+      }
+    
+    else if(gene==dfrC)
+      {
+        strbuf_append_str(fa, "dfrC.fa");
+      }
+    
+    else if(gene==dfrD)
+      {
+        strbuf_append_str(fa, "dfrD.fa");
+      }
+    
+    else if(gene==dfrG)
+      {
+        strbuf_append_str(fa, "dfrG.fa");
+      }
+    
+    else if(gene==mecC)
+      {
+        strbuf_append_str(fa, "mecC.fa");
+      }
+    
+    else if(gene==mecA)
+      {
+        strbuf_append_str(fa, "mecA.fa");
+      }
+    
+    else if(gene==dfrK)
+      {
+        strbuf_append_str(fa, "dfrK.fa");
+      }
+    
+    else if(gene==vgaB)
+      {
+        strbuf_append_str(fa, "vgaB.fa");
+      }
+    
+    else if(gene==vgaA)
+      {
+        strbuf_append_str(fa, "vgaA.fa");
+      }
+    
+    else if(gene==tetK)
+      {
+        strbuf_append_str(fa, "tetK.fa");
+      }
+    
+    else if(gene==tetM)
+      {
+        strbuf_append_str(fa, "tetM.fa");
+      }
+    
+    else if(gene==tetL)
+      {
+        strbuf_append_str(fa, "tetL.fa");
+      }
+    
+    else if(gene==tetO)
+      {
+        strbuf_append_str(fa, "tetO.fa");
+      }
+    
+    else if(gene==msrA)
+      {
+        strbuf_append_str(fa, "msrA.fa");
+      }
+    
+    else if(gene==vanA)
+      {
+        strbuf_append_str(fa, "vanA.fa");
+      }
+    
+    else if(gene==vanC)
+      {
+        strbuf_append_str(fa, "vanC.fa");
+      }
+    
+    else if(gene==vanB)
+      {
+        strbuf_append_str(fa, "vanB.fa");
+      }
+    
+    else if(gene==fusB)
+      {
+        strbuf_append_str(fa, "fusB.fa");
+      }
+    
+    else if(gene==fusC)
+      {
+        strbuf_append_str(fa, "fusC.fa");
+      }
+    
+    else if(gene==str)
+      {
+        strbuf_append_str(fa, "str.fa");
+      }
+    
+    else if(gene==aacAaphD)
+      {
+        strbuf_append_str(fa, "aacAaphD.fa");
+      }
+    
+    else if(gene==PVL)
+      {
+        strbuf_append_str(fa, "PVL.fa");
+      }
+    
+    else if (gene==unspecified_gpg)
+      {
+        strbuf_reset(fa);
+        return false;
+      }
+    return true;
     
 }
 
@@ -33,6 +395,76 @@ const char* map_enum_to_gene_name(GenePresenceGene gene)
 {
    switch (gene) 
    {
+    
+    case vgbA : return "vgbA";
+    
+    case IsaB : return "IsaB";
+    
+    case blaZ : return "blaZ";
+    
+    case lnuA : return "lnuA";
+    
+    case lnuB : return "lnuB";
+    
+    case ermB : return "ermB";
+    
+    case ermC : return "ermC";
+    
+    case ermA : return "ermA";
+    
+    case ermY : return "ermY";
+    
+    case mupB : return "mupB";
+    
+    case mupA : return "mupA";
+    
+    case ermT : return "ermT";
+    
+    case dfrA : return "dfrA";
+    
+    case vgaALC : return "vgaALC";
+    
+    case dfrC : return "dfrC";
+    
+    case dfrD : return "dfrD";
+    
+    case dfrG : return "dfrG";
+    
+    case mecC : return "mecC";
+    
+    case mecA : return "mecA";
+    
+    case dfrK : return "dfrK";
+    
+    case vgaB : return "vgaB";
+    
+    case vgaA : return "vgaA";
+    
+    case tetK : return "tetK";
+    
+    case tetM : return "tetM";
+    
+    case tetL : return "tetL";
+    
+    case tetO : return "tetO";
+    
+    case msrA : return "msrA";
+    
+    case vanA : return "vanA";
+    
+    case vanC : return "vanC";
+    
+    case vanB : return "vanB";
+    
+    case fusB : return "fusB";
+    
+    case fusC : return "fusC";
+    
+    case str : return "str";
+    
+    case aacAaphD : return "aacAaphD";
+    
+    case PVL : return "PVL";
     
     case unspecified_gpg  : return "unknown";
    }

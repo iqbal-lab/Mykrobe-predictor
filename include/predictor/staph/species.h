@@ -20,9 +20,11 @@ char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 	 	
 	 	Coagneg = 1,
 	 	
-    unknownphylo_group=2
+	 	Staphaureus = 2,
+	 	
+    unknownphylo_group=3
 	   	} Phylo_Group ;
-	#define NUM_Phylo_Group 2
+	#define NUM_Phylo_Group 3
    	
   void map_phylo_group_enum_to_str(Phylo_Group sp, StrBuf* sbuf);
   void load_all_phylo_group_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );

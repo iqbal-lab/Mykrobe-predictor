@@ -23,7 +23,6 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 #include "antibiotics.h"
-#include "species.h"
 #include "json.h"
 
 #ifdef __mingw__
@@ -346,9 +345,9 @@ int main(int argc, char **argv)
   InfectionType erythromycin_resistotype;  
   print_erythromycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
             &is_erythromycin_susceptible, tmp_name, cmd_line->install_dir,
-            ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
+            ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,     
             &any_erm_present,&erythromycin_resistotype,
-            called_variants,called_genes);
+            called_variants, called_genes);
   
   
   
@@ -356,79 +355,79 @@ int main(int argc, char **argv)
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_penicillin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_mupirocin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_trimethoprim_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_methicillin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_tetracycline_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_vancomycin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_fusidicacid_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_gentamicin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_rifampicin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_ciprofloxacin_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-                      called_variants,called_genes);   
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+                      called_variants, called_genes);   
   
   
   output_last=true;
   print_clindamycin_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
            &is_clindamycin_susceptible, tmp_name, 
            any_erm_present, erythromycin_resistotype,cmd_line->install_dir,
-           ignore, ignore, species_info->phylo_group_covg_info->median_coverage[Saureus], lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
-           called_variants,called_genes);
+           ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+           called_variants, called_genes);
 
    
   if (cmd_line->format==JSON)
@@ -443,12 +442,8 @@ int main(int argc, char **argv)
     }
     print_json_virulence_start();
   
-  print_tsst1_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_tsst1_positive, 
-		     cmd_line->install_dir, cmd_line->format); 
-  
-  print_lukpvf_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
-		     &is_lukpvf_positive, 
+  print_pvl_presence(db_graph, &file_reader_fasta, ru,  tmp_gi, 
+		     &is_pvl_positive, 
 		     cmd_line->install_dir, cmd_line->format); 
   
   print_json_virulence_end();

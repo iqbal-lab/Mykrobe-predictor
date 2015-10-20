@@ -21,10 +21,80 @@
 typedef enum
   {
     
-    unspecified_gpg = 0
+    vgbA=0,
+    
+    IsaB=1,
+    
+    blaZ=2,
+    
+    lnuA=3,
+    
+    lnuB=4,
+    
+    ermB=5,
+    
+    ermC=6,
+    
+    ermA=7,
+    
+    ermY=8,
+    
+    mupB=9,
+    
+    mupA=10,
+    
+    ermT=11,
+    
+    dfrA=12,
+    
+    vgaALC=13,
+    
+    dfrC=14,
+    
+    dfrD=15,
+    
+    dfrG=16,
+    
+    mecC=17,
+    
+    mecA=18,
+    
+    dfrK=19,
+    
+    vgaB=20,
+    
+    vgaA=21,
+    
+    tetK=22,
+    
+    tetM=23,
+    
+    tetL=24,
+    
+    tetO=25,
+    
+    msrA=26,
+    
+    vanA=27,
+    
+    vanC=28,
+    
+    vanB=29,
+    
+    fusB=30,
+    
+    fusC=31,
+    
+    str=32,
+    
+    aacAaphD=33,
+    
+    PVL=34,
+    
+    unspecified_gpg = 35
   } GenePresenceGene;
 
-#define NUM_GENE_PRESENCE_GENES 0    //ignore unspecified_gpg
+#define NUM_GENE_PRESENCE_GENES 35    //ignore unspecified_gpg
 #define MAX_LEN_GENE 3155
 
 GenePresenceGene map_string_to_gene_presence_gene(StrBuf* sbuf);
