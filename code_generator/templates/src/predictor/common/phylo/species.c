@@ -77,6 +77,10 @@ void print_json_phylogenetics(SpeciesInfo* species_info){
   {% for phylogroup in selfer.phylo_groups %}
     print_json_{{phylogroup.name}}(species_info);
   {% endfor %}
+  {% if selfer.species == "staph" %}
+      print_json_lineage(species_info);
+  {% endif %}
+
     print_json_phylogenetics_end();  
 }
 
