@@ -11,7 +11,7 @@
 
 
 void print_json_phylo_group_start();
-void print_json_phylo_group_end();
+// void print_json_phylo_group_end();
 char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 
 	typedef enum 
@@ -31,7 +31,7 @@ char* get_ith_phylo_group_name(CovgInfo* covg_info, int i);
 
 
 void print_json_species_start();
-void print_json_species_end();
+// void print_json_species_end();
 char* get_ith_species_name(CovgInfo* covg_info, int i);
 
 	typedef enum 
@@ -83,7 +83,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
   
 
 
-
+int get_expected_covg(SpeciesInfo* species_info);
 
 char* get_char_name_of_species_enum(Species species);
 int get_best_hit(CovgInfo* covg_info, boolean* mask);

@@ -1,4 +1,4 @@
-{% if selfer.all_mutations %}
+
 KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
 {
   {% for mut in selfer.all_mutations %}
@@ -14,9 +14,3 @@ KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
       return NotSpecified;
     } 
 }
-{% else %}
-KnownMutation map_mutation_name_to_enum(StrBuf* sbuf, GeneMutationGene gene)
-{
-    return 0;
-}
-{% endif %}

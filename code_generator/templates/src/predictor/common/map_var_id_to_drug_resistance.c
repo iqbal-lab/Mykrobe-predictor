@@ -1,4 +1,4 @@
-{% if selfer.all_mutations %}
+
 char* map_var_id_to_drug_resistance(KnownMutation km)
 {
    switch (km) 
@@ -12,10 +12,3 @@ char* map_var_id_to_drug_resistance(KnownMutation km)
    }
    return  "NotSpecified";
 }
-{% else %}
-char* map_var_id_to_drug_resistance(KnownMutation km)
-{
-   return  "NotSpecified";
-}
-
-{% endif %}

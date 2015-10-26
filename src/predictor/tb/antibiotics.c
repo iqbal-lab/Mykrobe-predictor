@@ -211,7 +211,7 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 					      AntibioticInfo* abi,
 					      ReadingUtils* rutils,
 					      VarOnBackground* tmp_vob,	
-					      int ignore_first, int ignore_last, int expected_covg)
+					      int ignore_first, int ignore_last)
 {
   reset_reading_utils(rutils);
   reset_var_on_background(tmp_vob);
@@ -237,8 +237,8 @@ void  load_antibiotic_mutation_info_on_sample(FILE* fp,
 				       rutils->working_ca, 
 				       MAX_LEN_MUT_ALLELE,
 				       tmp1, tmp2, tmp3,
-				       ignore_first, ignore_last, 
-				       expected_covg, &m);
+				       ignore_first, ignore_last,
+				       &m);
 
 
     }
@@ -313,7 +313,6 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 				       GeneInfo* tmp_gi,
 				       int ignore_first, 
 				       int ignore_last, 
-				       int expected_covg,
 				       StrBuf* install_dir)
 
 {
@@ -335,7 +334,7 @@ void load_antibiotic_mut_and_gene_info(dBGraph* db_graph,
 					      abi,
 					      rutils, 
 					      tmp_vob,
-					      ignore_first, ignore_last, expected_covg);
+					      ignore_first, ignore_last);
       fclose(fp);
     }
   if (abi->num_genes>0)
@@ -376,24 +375,27 @@ void update_infection_type(InfectionType* I_new, InfectionType* I_permenant){
 
 
 InfectionType is_amikacin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -409,13 +411,13 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -439,7 +441,7 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -486,24 +488,27 @@ InfectionType is_amikacin_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -519,13 +524,13 @@ InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -549,7 +554,7 @@ InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -596,24 +601,27 @@ InfectionType is_capreomycin_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -629,13 +637,13 @@ InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -659,7 +667,7 @@ InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -706,24 +714,27 @@ InfectionType is_ethambutol_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -739,13 +750,13 @@ InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -769,7 +780,7 @@ InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -816,24 +827,27 @@ InfectionType is_isoniazid_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -849,13 +863,13 @@ InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -879,7 +893,7 @@ InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -926,24 +940,27 @@ InfectionType is_kanamycin_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -959,13 +976,13 @@ InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -981,7 +998,7 @@ InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
 	}
   genotyped_present = false;
   InfectionType I=resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-    lambda_g, lambda_e, epsilon, expected_covg, 
+    lambda_g, lambda_e, epsilon, expected_covg, contaminiation_covg,
     &best_model, MaxAPosteriori,
     cmd_line->min_frac_to_detect_minor_pops,
     &genotyped_present);
@@ -1028,24 +1045,27 @@ InfectionType is_pyrazinamide_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_quinolones_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -1061,13 +1081,13 @@ InfectionType is_quinolones_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -1091,7 +1111,7 @@ InfectionType is_quinolones_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -1138,24 +1158,27 @@ InfectionType is_quinolones_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -1171,13 +1194,13 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -1201,7 +1224,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -1248,24 +1271,27 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
 
 
 InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
-				    int (*file_reader)(FILE * fp, 
-						       Sequence * seq, 
-						       int max_read_length, 
-						       boolean new_entry, 
-						       boolean * full_entry),
-				    ReadingUtils* rutils,
-				    VarOnBackground* tmp_vob,
-				    GeneInfo* tmp_gi,
-				    AntibioticInfo* abi,
-				    StrBuf* install_dir,
-				    int ignore_first, int ignore_last, int expected_covg,
-				    double lambda_g, double lambda_e, double err_rate,
+            int (*file_reader)(FILE * fp, 
+                   Sequence * seq, 
+                   int max_read_length, 
+                   boolean new_entry, 
+                   boolean * full_entry),
+            ReadingUtils* rutils,
+            VarOnBackground* tmp_vob,
+            GeneInfo* tmp_gi,
+            AntibioticInfo* abi,
+            StrBuf* install_dir,
+            int ignore_first, int ignore_last, SpeciesInfo* species_info,
+            double lambda_g, double lambda_e, double err_rate,
             
              CalledVariant* called_variants,CalledGene* called_genes,
              CmdLine* cmd_line
-				    )
+            )
 
 {
+  int expected_covg = get_expected_covg(species_info);
+  int contaminiation_covg = get_contamination_covg(species_info);
+
   InfectionType I_permanent = Unsure;
   reset_antibiotic_info(abi);
   
@@ -1281,13 +1307,13 @@ InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
 
   double epsilon = pow(1-err_rate, db_graph->kmer_size);
   load_antibiotic_mut_and_gene_info(db_graph,
-				    file_reader,
-				    abi,
-				    rutils,
-				    tmp_vob,
-				    tmp_gi,
-				    ignore_first, ignore_last, expected_covg,
-				    install_dir);
+            file_reader,
+            abi,
+            rutils,
+            tmp_vob,
+            tmp_gi,
+            ignore_first, ignore_last,
+            install_dir);
   double max_sus_conf=0;
   double min_conf=9999999;  
   int i;
@@ -1311,7 +1337,7 @@ InfectionType is_streptomycin_susceptible(dBGraph* db_graph,
       genotyped_present = false;
       InfectionType I=
 	    resistotype(abi->vars[i], err_rate, db_graph->kmer_size, 
-		    lambda_g, lambda_e, epsilon,expected_covg, 
+		    lambda_g, lambda_e, epsilon,expected_covg, contaminiation_covg,
 		    &best_model, MaxAPosteriori,
 		    cmd_line->min_frac_to_detect_minor_pops,
         &genotyped_present);
@@ -1382,7 +1408,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
       							StrBuf* install_dir,
       							int ignore_first,
                     int ignore_last,
-                    int expected_covg,
+                    SpeciesInfo* species_info,
       							double lambda_g,
                     double lambda_e,
                     double err_rate,
@@ -1392,7 +1418,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 					StrBuf* tmpbuf,
 					StrBuf* install_dir,
 					int ignore_first, int ignore_last,
-					int expected_covg,
+					SpeciesInfo* species_info,
 					double lambda_g, double lambda_e, double err_rate,
           CmdLine* cmd_line,
 					boolean output_last,//for JSON,
@@ -1411,7 +1437,7 @@ void print_antibiotic_susceptibility(dBGraph* db_graph,
 	      install_dir,
 	      ignore_first, 
 	      ignore_last, 
-	      expected_covg,
+	      species_info,
 	      lambda_g,
 	      lambda_e,
 	      err_rate,

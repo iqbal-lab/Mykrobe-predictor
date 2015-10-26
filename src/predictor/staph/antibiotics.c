@@ -487,9 +487,7 @@ InfectionType is_erythromycin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -601,9 +599,7 @@ InfectionType is_clindamycin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -712,9 +708,7 @@ InfectionType is_penicillin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -800,9 +794,7 @@ InfectionType is_mupirocin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -901,9 +893,7 @@ InfectionType is_trimethoprim_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1059,9 +1049,7 @@ InfectionType is_methicillin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1160,9 +1148,7 @@ InfectionType is_tetracycline_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1265,9 +1251,7 @@ InfectionType is_vancomycin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1368,9 +1352,7 @@ InfectionType is_fusidicacid_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1662,9 +1644,7 @@ InfectionType is_gentamicin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1763,9 +1743,7 @@ InfectionType is_rifampicin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -1927,9 +1905,7 @@ InfectionType is_ciprofloxacin_susceptible(dBGraph* db_graph,
             )
 
 {
-  
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;

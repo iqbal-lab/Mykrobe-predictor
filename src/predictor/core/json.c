@@ -43,9 +43,14 @@ void print_json_end()
 // {
 //   printf("\t\t},\n");
 // }
-void print_json_phylo_group_end()
+void print_json_phylo_group_end(boolean last)
 {
-  printf("\t\t},\n");
+  if (last){
+    printf("\t\t}\n");
+  }else{
+    printf("\t\t},\n");
+  }
+  
 }
 
 

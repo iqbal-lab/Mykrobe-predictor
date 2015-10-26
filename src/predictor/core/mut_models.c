@@ -234,7 +234,7 @@ void choose_map_model(Var* var,
   mR.lp = llk_R + get_log_posterior_truly_resistant_plus(llk_R, 
 										 max_perc_covg_on_res,
 										 epsilon);
-  mS.lp = llk_S + get_log_posterior_truly_susceptible(llk_S, 
+  mS.lp = llk_S + get_log_posterior_truly_susceptible_mut(llk_S, 
 										      max_perc_covg_on_res,
 										      epsilon);
   mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, var,

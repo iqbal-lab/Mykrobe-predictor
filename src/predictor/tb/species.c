@@ -52,26 +52,27 @@
   void complex_threshold(int* thresholds){
 	
 	  thresholds[Mtbc] = 50;
-	  thresholds[Mtbc] = 50;
 	
-	  thresholds[Ntm] = 50;
 	  thresholds[Ntm] = 50;
 	
 }
   
-void print_json_complex(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->complex_covg_info;    
-    int num_panels_present = covg_info->num_panels_present;
-    print_json_complex_start();
-    if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_complex_name);
-    }
-    else
-    {
-      print_json_called_variant_item( "Unknown complex", -1, true);
-    }
-    print_json_phylo_group_end();  
-}
+    
+      void print_json_complex(SpeciesInfo* species_info){
+          CovgInfo* covg_info =species_info->complex_covg_info;    
+          int num_panels_present = covg_info->num_panels_present;
+          print_json_complex_start();
+          if (num_panels_present > 0){
+            print_json_indiv_phylo(covg_info,get_ith_complex_name);
+          }
+          else
+          {
+            print_json_called_variant_item( "Unknown complex", -1, true);
+          }
+          print_json_phylo_group_end( false );  
+      }
+
+  
   char* get_ith_complex_name(CovgInfo* covg_info, int i)
 {
   Complex complex;
@@ -86,32 +87,42 @@ void print_json_complex(SpeciesInfo* species_info){
   
      if(sp==Lineage1){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lineage1");
+        strbuf_append_str(sbuf, "East Africa / Indian ocean");
       }
   
      else if(sp==Lineage2){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lineage2");
+        strbuf_append_str(sbuf, "Beijing/East Asia");
       }
   
      else if(sp==Lineage3){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lineage3");
+        strbuf_append_str(sbuf, "Delhi/Central Asia");
       }
   
      else if(sp==Lineage4){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lineage4");
+        strbuf_append_str(sbuf, "European/American");
       }
   
      else if(sp==Lineage5){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lineage5");
+        strbuf_append_str(sbuf, "Ethiopian");
       }
   
      else if(sp==Lineage6){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lineage6");
+        strbuf_append_str(sbuf, "West Africa");
+      }
+  
+     else if(sp==Animallineage){
+        strbuf_reset(sbuf);
+        strbuf_append_str(sbuf, "M. bovis");
+      }
+  
+     else if(sp==Beijingsublineage){
+        strbuf_reset(sbuf);
+        strbuf_append_str(sbuf, "Beijing/East Asia");
       }
   
   else
@@ -140,42 +151,49 @@ void print_json_complex(SpeciesInfo* species_info){
   panel_file_paths[Lineage6] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[Lineage6], "data/tb/phylo/lineage/lineage_6.fa" );
   
+  panel_file_paths[Animallineage] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[Animallineage], "data/tb/phylo/lineage/animal_lineage.fa" );
+  
+  panel_file_paths[Beijingsublineage] = strbuf_create(install_dir->buff);
+  strbuf_append_str(panel_file_paths[Beijingsublineage], "data/tb/phylo/lineage/beijing_sublineage.fa" );
+  
 }
   void lineage_threshold(int* thresholds){
 	
 	  thresholds[Lineage1] = 50;
-	  thresholds[Lineage1] = 50;
 	
-	  thresholds[Lineage2] = 50;
 	  thresholds[Lineage2] = 50;
 	
 	  thresholds[Lineage3] = 50;
-	  thresholds[Lineage3] = 50;
 	
-	  thresholds[Lineage4] = 50;
 	  thresholds[Lineage4] = 50;
 	
 	  thresholds[Lineage5] = 50;
-	  thresholds[Lineage5] = 50;
 	
 	  thresholds[Lineage6] = 50;
-	  thresholds[Lineage6] = 50;
+	
+	  thresholds[Animallineage] = 50;
+	
+	  thresholds[Beijingsublineage] = 50;
 	
 }
   
-void print_json_lineage(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->lineage_covg_info;    
-    int num_panels_present = covg_info->num_panels_present;
-    print_json_lineage_start();
-    if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_lineage_name);
-    }
-    else
-    {
-      print_json_called_variant_item( "Unknown lineage", -1, true);
-    }
-    print_json_phylo_group_end();  
-}
+    
+      void print_json_lineage(SpeciesInfo* species_info){
+          CovgInfo* covg_info =species_info->lineage_covg_info;    
+          int num_panels_present = covg_info->num_panels_present;
+          print_json_lineage_start();
+          if (num_panels_present > 0){
+            print_json_indiv_phylo(covg_info,get_ith_lineage_name);
+          }
+          else
+          {
+            print_json_called_variant_item( "Unknown lineage", -1, true);
+          }
+          print_json_phylo_group_end( false );  
+      }
+
+  
   char* get_ith_lineage_name(CovgInfo* covg_info, int i)
 {
   Lineage lineage;
@@ -190,232 +208,222 @@ void print_json_lineage(SpeciesInfo* species_info){
   
      if(sp==Abscessus){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "abscessus");
+        strbuf_append_str(sbuf, "M. abscessus");
       }
   
      else if(sp==Africanum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "africanum");
-      }
-  
-     else if(sp==Animallineage){
-        strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "animallineage");
+        strbuf_append_str(sbuf, "M. africanum");
       }
   
      else if(sp==Aromaticivorans){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "aromaticivorans");
+        strbuf_append_str(sbuf, "M. aromaticivorans");
       }
   
      else if(sp==Avium){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "avium");
-      }
-  
-     else if(sp==Beijingsublineage){
-        strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "beijingsublineage");
+        strbuf_append_str(sbuf, "M. avium");
       }
   
      else if(sp==Bovis){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "bovis");
+        strbuf_append_str(sbuf, "M. bovis");
       }
   
      else if(sp==Branderi){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "branderi");
+        strbuf_append_str(sbuf, "M. branderi");
       }
   
      else if(sp==Caprae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "caprae");
+        strbuf_append_str(sbuf, "M. caprae");
       }
   
      else if(sp==Chelonae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "chelonae");
+        strbuf_append_str(sbuf, "M. chelonae");
       }
   
      else if(sp==Chlorophenolicum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "chlorophenolicum");
+        strbuf_append_str(sbuf, "M. chlorophenolicum");
       }
   
      else if(sp==Chubuense){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "chubuense");
+        strbuf_append_str(sbuf, "M. chubuense");
       }
   
      else if(sp==Colombiense){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "colombiense");
+        strbuf_append_str(sbuf, "M. colombiense");
       }
   
      else if(sp==Crocinum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "crocinum");
+        strbuf_append_str(sbuf, "M. crocinum");
       }
   
      else if(sp==Flavescens){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "flavescens");
+        strbuf_append_str(sbuf, "M. flavescens");
       }
   
      else if(sp==Fluoranthenivorans){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "fluoranthenivorans");
+        strbuf_append_str(sbuf, "M. fluoranthenivorans");
       }
   
      else if(sp==Fortuitum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "fortuitum");
+        strbuf_append_str(sbuf, "M. fortuitum");
       }
   
      else if(sp==Gilvum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "gilvum");
+        strbuf_append_str(sbuf, "M. gilvum");
       }
   
      else if(sp==Gordonae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "gordonae");
+        strbuf_append_str(sbuf, "M. gordonae");
       }
   
      else if(sp==Hodleri){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "hodleri");
+        strbuf_append_str(sbuf, "M. hodleri");
       }
   
      else if(sp==Interjectum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "interjectum");
+        strbuf_append_str(sbuf, "M. interjectum");
       }
   
      else if(sp==Intracellulare){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "intracellulare");
+        strbuf_append_str(sbuf, "M. intracellulare");
       }
   
      else if(sp==Kansasii){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "kansasii");
+        strbuf_append_str(sbuf, "M. kansasii");
       }
   
      else if(sp==Lentiflavum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "lentiflavum");
+        strbuf_append_str(sbuf, "M. lentiflavum");
       }
   
      else if(sp==Leprae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "leprae");
+        strbuf_append_str(sbuf, "M. leprae");
       }
   
      else if(sp==Malmoense){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "malmoense");
+        strbuf_append_str(sbuf, "M. malmoense");
       }
   
      else if(sp==Marinum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "marinum");
+        strbuf_append_str(sbuf, "M. marinum");
       }
   
      else if(sp==Mucogenicum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "mucogenicum");
+        strbuf_append_str(sbuf, "M. mucogenicum");
       }
   
      else if(sp==Pallens){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "pallens");
+        strbuf_append_str(sbuf, "M. pallens");
       }
   
      else if(sp==Peregrinum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "peregrinum");
+        strbuf_append_str(sbuf, "M. peregrinum");
       }
   
      else if(sp==Phage){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "phage");
+        strbuf_append_str(sbuf, "M. phage");
       }
   
      else if(sp==Pyrenivorans){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "pyrenivorans");
+        strbuf_append_str(sbuf, "M. pyrenivorans");
       }
   
      else if(sp==Rhodesiae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "rhodesiae");
+        strbuf_append_str(sbuf, "M. rhodesiae");
       }
   
      else if(sp==Rufum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "rufum");
+        strbuf_append_str(sbuf, "M. rufum");
       }
   
      else if(sp==Rutilum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "rutilum");
+        strbuf_append_str(sbuf, "M. rutilum");
       }
   
      else if(sp==Scrofulaceum){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "scrofulaceum");
+        strbuf_append_str(sbuf, "M. scrofulaceum");
       }
   
      else if(sp==Senegalense){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "senegalense");
+        strbuf_append_str(sbuf, "M. senegalense");
       }
   
      else if(sp==Smegmatis){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "smegmatis");
+        strbuf_append_str(sbuf, "M. smegmatis");
       }
   
      else if(sp==Sphagni){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "sphagni");
+        strbuf_append_str(sbuf, "M. sphagni");
       }
   
      else if(sp==Szulgai){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "szulgai");
+        strbuf_append_str(sbuf, "M. szulgai");
       }
   
      else if(sp==Triplex){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "triplex");
+        strbuf_append_str(sbuf, "M. triplex");
       }
   
      else if(sp==Tuberculosis){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "tuberculosis");
+        strbuf_append_str(sbuf, "M. tuberculosis");
       }
   
      else if(sp==Tusciae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "tusciae");
+        strbuf_append_str(sbuf, "M. tusciae");
       }
   
      else if(sp==Ulcerans){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "ulcerans");
+        strbuf_append_str(sbuf, "M. ulcerans");
       }
   
      else if(sp==Vaccae){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "vaccae");
+        strbuf_append_str(sbuf, "M. vaccae");
       }
   
      else if(sp==Xenopi){
         strbuf_reset(sbuf);
-        strbuf_append_str(sbuf, "xenopi");
+        strbuf_append_str(sbuf, "M. xenopi");
       }
   
   else
@@ -432,17 +440,11 @@ void print_json_lineage(SpeciesInfo* species_info){
   panel_file_paths[Africanum] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[Africanum], "data/tb/phylo/species/africanum.fa" );
   
-  panel_file_paths[Animallineage] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[Animallineage], "data/tb/phylo/species/animal_lineage.fa" );
-  
   panel_file_paths[Aromaticivorans] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[Aromaticivorans], "data/tb/phylo/species/aromaticivorans.fa" );
   
   panel_file_paths[Avium] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[Avium], "data/tb/phylo/species/avium.fa" );
-  
-  panel_file_paths[Beijingsublineage] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[Beijingsublineage], "data/tb/phylo/species/beijing_sublineage.fa" );
   
   panel_file_paths[Bovis] = strbuf_create(install_dir->buff);
   strbuf_append_str(panel_file_paths[Bovis], "data/tb/phylo/species/bovis.fa" );
@@ -568,158 +570,111 @@ void print_json_lineage(SpeciesInfo* species_info){
   void species_threshold(int* thresholds){
 	
 	  thresholds[Abscessus] = 50;
-	  thresholds[Abscessus] = 50;
 	
 	  thresholds[Africanum] = 50;
-	  thresholds[Africanum] = 50;
 	
-	  thresholds[Animallineage] = 50;
-	  thresholds[Animallineage] = 50;
-	
-	  thresholds[Aromaticivorans] = 50;
 	  thresholds[Aromaticivorans] = 50;
 	
 	  thresholds[Avium] = 50;
-	  thresholds[Avium] = 50;
 	
-	  thresholds[Beijingsublineage] = 50;
-	  thresholds[Beijingsublineage] = 50;
-	
-	  thresholds[Bovis] = 50;
 	  thresholds[Bovis] = 50;
 	
 	  thresholds[Branderi] = 50;
-	  thresholds[Branderi] = 50;
 	
-	  thresholds[Caprae] = 50;
 	  thresholds[Caprae] = 50;
 	
 	  thresholds[Chelonae] = 50;
-	  thresholds[Chelonae] = 50;
 	
-	  thresholds[Chlorophenolicum] = 50;
 	  thresholds[Chlorophenolicum] = 50;
 	
 	  thresholds[Chubuense] = 50;
-	  thresholds[Chubuense] = 50;
 	
-	  thresholds[Colombiense] = 50;
 	  thresholds[Colombiense] = 50;
 	
 	  thresholds[Crocinum] = 50;
-	  thresholds[Crocinum] = 50;
 	
-	  thresholds[Flavescens] = 50;
 	  thresholds[Flavescens] = 50;
 	
 	  thresholds[Fluoranthenivorans] = 50;
-	  thresholds[Fluoranthenivorans] = 50;
 	
-	  thresholds[Fortuitum] = 50;
 	  thresholds[Fortuitum] = 50;
 	
 	  thresholds[Gilvum] = 50;
-	  thresholds[Gilvum] = 50;
 	
-	  thresholds[Gordonae] = 50;
 	  thresholds[Gordonae] = 50;
 	
 	  thresholds[Hodleri] = 50;
-	  thresholds[Hodleri] = 50;
 	
-	  thresholds[Interjectum] = 50;
 	  thresholds[Interjectum] = 50;
 	
 	  thresholds[Intracellulare] = 50;
-	  thresholds[Intracellulare] = 50;
 	
-	  thresholds[Kansasii] = 50;
 	  thresholds[Kansasii] = 50;
 	
 	  thresholds[Lentiflavum] = 50;
-	  thresholds[Lentiflavum] = 50;
 	
-	  thresholds[Leprae] = 50;
 	  thresholds[Leprae] = 50;
 	
 	  thresholds[Malmoense] = 50;
-	  thresholds[Malmoense] = 50;
 	
-	  thresholds[Marinum] = 50;
 	  thresholds[Marinum] = 50;
 	
 	  thresholds[Mucogenicum] = 50;
-	  thresholds[Mucogenicum] = 50;
 	
-	  thresholds[Pallens] = 50;
 	  thresholds[Pallens] = 50;
 	
 	  thresholds[Peregrinum] = 50;
-	  thresholds[Peregrinum] = 50;
 	
-	  thresholds[Phage] = 50;
 	  thresholds[Phage] = 50;
 	
 	  thresholds[Pyrenivorans] = 50;
-	  thresholds[Pyrenivorans] = 50;
 	
-	  thresholds[Rhodesiae] = 50;
 	  thresholds[Rhodesiae] = 50;
 	
 	  thresholds[Rufum] = 50;
-	  thresholds[Rufum] = 50;
 	
-	  thresholds[Rutilum] = 50;
 	  thresholds[Rutilum] = 50;
 	
 	  thresholds[Scrofulaceum] = 50;
-	  thresholds[Scrofulaceum] = 50;
 	
-	  thresholds[Senegalense] = 50;
 	  thresholds[Senegalense] = 50;
 	
 	  thresholds[Smegmatis] = 50;
-	  thresholds[Smegmatis] = 50;
 	
-	  thresholds[Sphagni] = 50;
 	  thresholds[Sphagni] = 50;
 	
 	  thresholds[Szulgai] = 50;
-	  thresholds[Szulgai] = 50;
 	
-	  thresholds[Triplex] = 50;
 	  thresholds[Triplex] = 50;
 	
 	  thresholds[Tuberculosis] = 50;
-	  thresholds[Tuberculosis] = 50;
 	
-	  thresholds[Tusciae] = 50;
 	  thresholds[Tusciae] = 50;
 	
 	  thresholds[Ulcerans] = 50;
-	  thresholds[Ulcerans] = 50;
 	
 	  thresholds[Vaccae] = 50;
-	  thresholds[Vaccae] = 50;
 	
-	  thresholds[Xenopi] = 50;
 	  thresholds[Xenopi] = 50;
 	
 }
   
-void print_json_species(SpeciesInfo* species_info){
-    CovgInfo* covg_info =species_info->species_covg_info;    
-    int num_panels_present = covg_info->num_panels_present;
-    print_json_species_start();
-    if (num_panels_present > 0){
-      print_json_indiv_phylo(covg_info,get_ith_species_name);
-    }
-    else
-    {
-      print_json_called_variant_item( "Unknown species", -1, true);
-    }
-    print_json_phylo_group_end();  
-}
+    
+      void print_json_species(SpeciesInfo* species_info){
+          CovgInfo* covg_info =species_info->species_covg_info;    
+          int num_panels_present = covg_info->num_panels_present;
+          print_json_species_start();
+          if (num_panels_present > 0){
+            print_json_indiv_phylo(covg_info,get_ith_species_name);
+          }
+          else
+          {
+            print_json_called_variant_item( "Unknown species", -1, true);
+          }
+          print_json_phylo_group_end( true );  
+      }
+
+  
   char* get_ith_species_name(CovgInfo* covg_info, int i)
 {
   Species species;
@@ -787,6 +742,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
 
 
 
+
 void print_json_complex_start()
 {
   printf("\t\t\"complex\": {\n");
@@ -815,6 +771,112 @@ void print_json_phylogenetics(SpeciesInfo* species_info){
   
     print_json_species(species_info);
   
+  
+
     print_json_phylogenetics_end();  
 }
 
+
+
+boolean* create_MTBC_mask()
+{
+  boolean* mask= create_mask(false);
+  mask[Tuberculosis] = true;
+  mask[Bovis] = true;
+  mask[Caprae] = true;
+  mask[Africanum] = true;
+  return (mask);
+}
+
+boolean* create_NTM_mask()
+{
+  boolean* mask= create_mask(true);
+  mask[Tuberculosis] = false;
+  mask[Bovis] = false;
+  mask[Caprae] = false;
+  mask[Africanum] = false;
+  return (mask);
+}
+
+Species get_best_MTBC_species(SpeciesInfo* species_info ){
+  boolean* mask = create_MTBC_mask();
+  int species_enum = get_best_hit(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
+  Species species = species_enum;
+  return (species);
+}
+
+Species get_best_NTM_species(SpeciesInfo* species_info ){
+  boolean* mask = create_NTM_mask();
+  int species_enum  = get_best_hit(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
+  Species species = species_enum;
+  return (species);
+}
+
+Lineage get_best_lineage(SpeciesInfo* species_info ){
+  boolean* mask= create_mask(true);
+  int lineage_enum  = get_best_hit(species_info->lineage_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
+  Lineage lineage = lineage_enum;
+  return (lineage);
+}
+
+boolean MTBC_panels_are_present(SpeciesInfo* species_info){
+  boolean* mask = create_MTBC_mask();
+  boolean MTBC_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
+  return (MTBC_species_panels_are_present);
+}
+boolean NTM_panels_are_present(SpeciesInfo* species_info){
+  boolean* mask = create_NTM_mask();
+  boolean NTM_species_panels_are_present = panels_are_present(species_info->species_covg_info,mask);
+  // Finished with the mask so we need to free it. 
+  free(mask);    
+  return (NTM_species_panels_are_present);  
+}
+
+boolean no_MTBC_panels_are_present(SpeciesInfo* species_info){
+  return (!MTBC_panels_are_present(species_info));
+}
+boolean no_NTM_panels_are_present(SpeciesInfo* species_info){
+  return (!NTM_panels_are_present(species_info));  
+}
+
+boolean no_lineage_panels_are_present(SpeciesInfo* species_info){
+  if (species_info->lineage_covg_info->num_panels_present >0 ){
+    return (false);
+  }
+  else{
+    return (true);
+  }
+}
+
+boolean tuberculosis_is_present(SpeciesInfo* species_info){
+  return (species_info->species_covg_info->present[Tuberculosis]);
+}
+boolean myco_is_present(SpeciesInfo* species_info){
+  boolean MTBC_is_present = species_info->complex_covg_info->present[Mtbc];
+  boolean NTM_is_present = species_info->complex_covg_info->present[Ntm];
+  return (MTBC_is_present || NTM_is_present);
+}
+
+int get_contamination_covg(SpeciesInfo* species_info){
+	
+  boolean is_contamination_present = NTM_panels_are_present(species_info);
+  int contamination_covg = 0;
+	if (is_contamination_present){
+    contamination_covg = get_best_NTM_species(species_info);
+	}
+  return contamination_covg;
+	
+}
+
+int get_expected_covg(SpeciesInfo* species_info){
+  int expected_covg = species_info->complex_covg_info->median_coverage[Mtbc];
+  return expected_covg;
+}

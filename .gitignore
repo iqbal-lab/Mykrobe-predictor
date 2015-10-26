@@ -64,6 +64,13 @@ src/predictor/staph/species.c
 src/predictor/staph/main.c
 src/predictor/core/main.c
 data/staph/list_speciesbranches_genes_and_muts
+src/predictor/tb/species.c
+src/predictor/tb/main.c
+src/predictor/tb/antibiotics.c
+src/predictor/staph/antibiotics.c
+src/predictor/core/known_mutations.c
+code_generator/rendered
+
 
 ## test file that is too big for github
 data/test/myKrobe/predictor/test1.bam

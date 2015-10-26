@@ -9,8 +9,9 @@
 
 
 
+
 void print_json_complex_start();
-void print_json_complex_end();
+// void print_json_complex_end();
 char* get_ith_complex_name(CovgInfo* covg_info, int i);
 
 	typedef enum 
@@ -30,7 +31,7 @@ char* get_ith_complex_name(CovgInfo* covg_info, int i);
 
 
 void print_json_lineage_start();
-void print_json_lineage_end();
+// void print_json_lineage_end();
 char* get_ith_lineage_name(CovgInfo* covg_info, int i);
 
 	typedef enum 
@@ -48,9 +49,13 @@ char* get_ith_lineage_name(CovgInfo* covg_info, int i);
 	 	
 	 	Lineage6 = 5,
 	 	
-    unknownlineage=6
+	 	Animallineage = 6,
+	 	
+	 	Beijingsublineage = 7,
+	 	
+    unknownlineage=8
 	   	} Lineage ;
-	#define NUM_Lineage 6
+	#define NUM_Lineage 8
    	
   void map_lineage_enum_to_str(Lineage sp, StrBuf* sbuf);
   void load_all_lineage_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
@@ -58,7 +63,7 @@ char* get_ith_lineage_name(CovgInfo* covg_info, int i);
 
 
 void print_json_species_start();
-void print_json_species_end();
+// void print_json_species_end();
 char* get_ith_species_name(CovgInfo* covg_info, int i);
 
 	typedef enum 
@@ -68,97 +73,93 @@ char* get_ith_species_name(CovgInfo* covg_info, int i);
 	 	
 	 	Africanum = 1,
 	 	
-	 	Animallineage = 2,
+	 	Aromaticivorans = 2,
 	 	
-	 	Aromaticivorans = 3,
+	 	Avium = 3,
 	 	
-	 	Avium = 4,
+	 	Bovis = 4,
 	 	
-	 	Beijingsublineage = 5,
+	 	Branderi = 5,
 	 	
-	 	Bovis = 6,
+	 	Caprae = 6,
 	 	
-	 	Branderi = 7,
+	 	Chelonae = 7,
 	 	
-	 	Caprae = 8,
+	 	Chlorophenolicum = 8,
 	 	
-	 	Chelonae = 9,
+	 	Chubuense = 9,
 	 	
-	 	Chlorophenolicum = 10,
+	 	Colombiense = 10,
 	 	
-	 	Chubuense = 11,
+	 	Crocinum = 11,
 	 	
-	 	Colombiense = 12,
+	 	Flavescens = 12,
 	 	
-	 	Crocinum = 13,
+	 	Fluoranthenivorans = 13,
 	 	
-	 	Flavescens = 14,
+	 	Fortuitum = 14,
 	 	
-	 	Fluoranthenivorans = 15,
+	 	Gilvum = 15,
 	 	
-	 	Fortuitum = 16,
+	 	Gordonae = 16,
 	 	
-	 	Gilvum = 17,
+	 	Hodleri = 17,
 	 	
-	 	Gordonae = 18,
+	 	Interjectum = 18,
 	 	
-	 	Hodleri = 19,
+	 	Intracellulare = 19,
 	 	
-	 	Interjectum = 20,
+	 	Kansasii = 20,
 	 	
-	 	Intracellulare = 21,
+	 	Lentiflavum = 21,
 	 	
-	 	Kansasii = 22,
+	 	Leprae = 22,
 	 	
-	 	Lentiflavum = 23,
+	 	Malmoense = 23,
 	 	
-	 	Leprae = 24,
+	 	Marinum = 24,
 	 	
-	 	Malmoense = 25,
+	 	Mucogenicum = 25,
 	 	
-	 	Marinum = 26,
+	 	Pallens = 26,
 	 	
-	 	Mucogenicum = 27,
+	 	Peregrinum = 27,
 	 	
-	 	Pallens = 28,
+	 	Phage = 28,
 	 	
-	 	Peregrinum = 29,
+	 	Pyrenivorans = 29,
 	 	
-	 	Phage = 30,
+	 	Rhodesiae = 30,
 	 	
-	 	Pyrenivorans = 31,
+	 	Rufum = 31,
 	 	
-	 	Rhodesiae = 32,
+	 	Rutilum = 32,
 	 	
-	 	Rufum = 33,
+	 	Scrofulaceum = 33,
 	 	
-	 	Rutilum = 34,
+	 	Senegalense = 34,
 	 	
-	 	Scrofulaceum = 35,
+	 	Smegmatis = 35,
 	 	
-	 	Senegalense = 36,
+	 	Sphagni = 36,
 	 	
-	 	Smegmatis = 37,
+	 	Szulgai = 37,
 	 	
-	 	Sphagni = 38,
+	 	Triplex = 38,
 	 	
-	 	Szulgai = 39,
+	 	Tuberculosis = 39,
 	 	
-	 	Triplex = 40,
+	 	Tusciae = 40,
 	 	
-	 	Tuberculosis = 41,
+	 	Ulcerans = 41,
 	 	
-	 	Tusciae = 42,
+	 	Vaccae = 42,
 	 	
-	 	Ulcerans = 43,
+	 	Xenopi = 43,
 	 	
-	 	Vaccae = 44,
-	 	
-	 	Xenopi = 45,
-	 	
-    unknownspecies=46
+    unknownspecies=44
 	   	} Species ;
-	#define NUM_Species 46
+	#define NUM_Species 44
    	
   void map_species_enum_to_str(Species sp, StrBuf* sbuf);
   void load_all_species_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir );
@@ -174,15 +175,48 @@ typedef struct
 
   CovgInfo* species_covg_info;
 
+  
 } SpeciesInfo;
+
+void print_json_phylogenetics(SpeciesInfo* species_info);
+
 
 SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len, 
                             StrBuf* install_dir,int expected_covg,
                             int ignore_first,int ignore_last);
 
 
-  void print_json_complex(SpeciesInfo* species_info);
+  
+    void print_json_complex(SpeciesInfo* species_info);
+  
 
-  void print_json_lineage(SpeciesInfo* species_info);
+  
+    void print_json_lineage(SpeciesInfo* species_info);
+  
 
-  void print_json_species(SpeciesInfo* species_info);
+  
+    void print_json_species(SpeciesInfo* species_info);
+  
+
+
+int get_expected_covg(SpeciesInfo* species_info);
+
+
+boolean* create_MTBC_mask();
+boolean* create_NTM_mask();
+Species get_best_MTBC_species(SpeciesInfo* species_info );
+Species get_best_NTM_species(SpeciesInfo* species_info );
+Lineage get_best_lineage(SpeciesInfo* species_info );
+boolean MTBC_panels_are_present(SpeciesInfo* species_info);
+boolean NTM_panels_are_present(SpeciesInfo* species_info);
+boolean no_MTBC_panels_are_present(SpeciesInfo* species_info);
+boolean no_NTM_panels_are_present(SpeciesInfo* species_info);
+boolean no_lineage_panels_are_present(SpeciesInfo* species_info);
+
+
+boolean myco_is_present(SpeciesInfo* species_info);
+boolean tuberculosis_is_present(SpeciesInfo* species_info);
+
+int get_contamination_covg(SpeciesInfo* species_info);
+
+

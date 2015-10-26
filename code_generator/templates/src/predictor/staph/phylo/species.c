@@ -6,14 +6,6 @@ void print_json_lineage_start()
 {
   printf("\t\t\"lineage\": {\n");
 }
-void print_json_lineage_end()
-{
-  printf("\t\t}\n");
-}  
-void print_json_species_end()
-{
-  printf("\t\t},\n");
-}
 
 
 char* get_char_name_of_species_enum(Species species){
@@ -148,7 +140,7 @@ void print_json_phylo_group(SpeciesInfo* species_info){
         print_json_called_variant_item( "Non Staphylococcus", -1, true);
       }
     }
-    print_json_phylo_group_end();  
+    print_json_phylo_group_end(false);  
 }
 
 void print_json_species(SpeciesInfo* species_info){
@@ -168,38 +160,13 @@ void print_json_species(SpeciesInfo* species_info){
     {
       print_json_called_variant_item( "Unknown Species", -1, true);
     }    
-    print_json_species_end();  
+    print_json_phylo_group_end(false);  
 }
 
 void print_json_lineage(SpeciesInfo* species_info){
     print_json_lineage_start();
     print_json_called_variant_item( "N/A", -1, true);
-    print_json_lineage_end(); 
-}
-
-int get_best_hit(CovgInfo* covg_info, boolean* mask)
-{
-  int i;
-  int best_perc_cov_so_far=0;
-  int best_median_cov_so_far=0;
-  Species unknown_enum = unknownspecies;
-  int curr=(int) unknown_enum;
-
-  for (i=0; i<covg_info->NUM_PANELS; i++)
-  {
-    if (mask[i]){
-      if (covg_info->percentage_coverage[i] >= best_perc_cov_so_far)
-      {
-         best_perc_cov_so_far = covg_info->percentage_coverage[i];
-        // Only update if the median coverage has also improved
-        if (covg_info->median_coverage[i] > best_median_cov_so_far){
-          best_median_cov_so_far = covg_info->median_coverage[i];
-          curr=i;
-        }          
-      }      
-    }
-  }
-  return  curr;
+    print_json_phylo_group_end(true); 
 }
 
 boolean* create_staph_mask(){
@@ -278,4 +245,12 @@ int get_contamination_covg(SpeciesInfo* species_info){
   return contamination_covg;
 	
 }
+
+int get_expected_covg(SpeciesInfo* species_info){
+  
+  int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
+  return expected_covg;
+  
+}
+
 {% endblock %}

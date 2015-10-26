@@ -11,7 +11,7 @@ Troolean is_{{gene| lower}}_positive(dBGraph* db_graph,
 
 {
   StrBuf* fa = strbuf_create(install_dir->buff);
-  strbuf_append_str(fa, "data/{{selfer.species}}/virulence/{{gene}}.fa");
+  strbuf_append_str(fa, "data/staph/virulence/{{gene}}.fa");
 
   FILE* fp = fopen(fa->buff, "r");
   if (fp==NULL)

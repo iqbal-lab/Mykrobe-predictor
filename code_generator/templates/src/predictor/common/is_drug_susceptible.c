@@ -17,13 +17,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
             )
 
 {
-  {% if selfer.species == "staph" %}
-    int expected_covg = species_info->species_covg_info->median_coverage[Saureus];
-  {% elif selfer.species == "staph"  %}
-    int expected_covg = species_info->phylo_group_covg_info->median_coverage[MTBC];
-  {% elif selfer.species == "gn" %}
-    int expected_covg =
-  {% endif %}
+  int expected_covg = get_expected_covg(species_info);
   int contaminiation_covg = get_contamination_covg(species_info);
 
   InfectionType I_permanent = Unsure;
@@ -34,7 +28,7 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
   //setup antibiotic info object
   abi->ab = {{drug}};
   strbuf_append_str(abi->m_fasta, install_dir->buff);
-  strbuf_append_str(abi->m_fasta, "data/staph/antibiotics/{{drug|lower}}.fa");
+  strbuf_append_str(abi->m_fasta, "data/{{selfer.species}}/antibiotics/{{drug|lower}}.fa");
   {% for gene_enum in drug.genes_resistance_induced_by %}
     abi->which_genes[{{loop.index0}}]={{gene_enum}};
   {% endfor %}
@@ -56,17 +50,17 @@ InfectionType is_{{drug | lower }}_susceptible(dBGraph* db_graph,
   Model best_model;
   boolean genotyped_present = false;
 {% if drug.num_mutations > 1 %}
-{% include 'src/predictor/staph/mutations_iter.c' %}
+{% include 'src/predictor/common/mutations_iter.c' %}
 {% elif drug.num_mutations == 1 %}
-{% include 'src/predictor/staph/single_mut.c' %}
+{% include 'src/predictor/common/single_mut.c' %}
 {% endif %}
 {% if drug.num_genes ==1 %}
-{% include 'src/predictor/staph/single_gene.c' %}
+{% include 'src/predictor/common/single_gene.c' %}
 {% elif drug.num_genes  > 1 %}
-{% include 'src/predictor/staph/genes_iter.c' %}
+{% include 'src/predictor/common/genes_iter.c' %}
 {% endif %}  
 {% if drug.has_epistatic_muts %}
-{% include 'src/predictor/staph/epistatic.c' %}
+{% include 'src/predictor/common/epistatic.c' %}
 {% endif %}
 
   

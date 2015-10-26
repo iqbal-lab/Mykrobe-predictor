@@ -23,7 +23,6 @@
 #include "gene_presence.h"
 #include "genotyping_known.h"
 #include "antibiotics.h"
-#include "species.h"
 #include "json.h"
 
 #ifdef __mingw__
@@ -337,7 +336,7 @@ int main(int argc, char **argv)
     {% endif %} 
   print_antibiotic_susceptibility(db_graph, &file_reader_fasta, ru, tmp_vob, tmp_gi, abi,
           &is_{{drug | lower }}_susceptible, tmp_name, cmd_line->install_dir,
-          ignore, ignore, expected_depth, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
+          ignore, ignore, species_info, lambda_g_err, lambda_e_err, err_rate, cmd_line, output_last,
                       called_variants,called_genes);  
 
 

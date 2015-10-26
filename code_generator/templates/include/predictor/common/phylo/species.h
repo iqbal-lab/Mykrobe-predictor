@@ -11,7 +11,7 @@
 {% for phylogroup in selfer.phylo_groups %}
 
 void print_json_{{phylogroup.name}}_start();
-void print_json_{{phylogroup.name}}_end();
+// void print_json_{{phylogroup.name}}_end();
 char* get_ith_{{phylogroup.name}}_name(CovgInfo* covg_info, int i);
 
 	typedef enum 
@@ -51,6 +51,6 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
   {% endif %}
 {% endfor %}
 
-
+int get_expected_covg(SpeciesInfo* species_info);
 {% block extra %}
 {% endblock %}

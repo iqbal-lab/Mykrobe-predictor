@@ -22,23 +22,23 @@ cd bin
 cd ..
 
 
-# cd code_generator
-# python tb.py
-# cd ..
+cd code_generator
+python tb.py
+cd ..
 
-# cd data/skeleton_binary/tb/
-# ls ../../tb/antibiotics/*.fa > list_speciesbranches_genes_and_muts
-# ls ../../tb/virulence/*.fa >> list_speciesbranches_genes_and_muts
-# ls ../../tb/phylo/*/*.fa >> list_speciesbranches_genes_and_muts
-# cd ../../../
+cd data/skeleton_binary/tb/
+ls ../../tb/antibiotics/*.fa > list_speciesbranches_genes_and_muts
+ls ../../tb/virulence/*.fa >> list_speciesbranches_genes_and_muts
+ls ../../tb/phylo/*/*.fa >> list_speciesbranches_genes_and_muts
+cd ../../../
 
 
-# cp code_generator/rendered/include/predictor/core/* include/predictor/core/
-# cp code_generator/rendered/include/predictor/tb/* include/predictor/tb/
-# cp code_generator/rendered/src/predictor/core/* src/predictor/core/
-# cp code_generator/rendered/src/predictor/tb/* src/predictor/tb/
+cp code_generator/rendered/include/predictor/core/* include/predictor/core/
+cp code_generator/rendered/include/predictor/tb/* include/predictor/tb/
+cp code_generator/rendered/src/predictor/core/* src/predictor/core/
+cp code_generator/rendered/src/predictor/tb/* src/predictor/tb/
 
-# make TB=1 predictor 
-# cd bin
-# ./Mykrobe.predictor.tb  --file ../data/tb/phylo/complex/MTBC.fa --install_dir ../ --verbose
-# cd ..
+make TB=1 predictor 
+cd bin
+./Mykrobe.predictor.tb  --file ../data/tb/phylo/complex/MTBC.fa --install_dir ../
+cd ..
