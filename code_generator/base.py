@@ -277,18 +277,31 @@ class PhyloGroup(object):
         self.species = species
         self.enum = name.title()
         self.taxon_coverage_threshold_dict = taxon_coverage_threshold_dict
+        self._load_basename_to_taxon()
 
     @property 
     def taxons(self):
         fasta_list = glob.glob('../data/%s/phylo/%s/*fasta'  %  (self.species, self.name))
         fasta_list.extend(glob.glob('../data/%s/phylo/%s/*.fa'  %  (self.species, self.name)))  
-        return  [Taxon(os.path.basename(f), self.taxon_coverage_threshold_dict) for f in fasta_list]
+        return [Taxon(os.path.basename(f), self.taxon_coverage_threshold_dict, basename_to_taxon_name = self.basename_to_taxon_name) for f in fasta_list]
 
+    def _load_basename_to_taxon(self):
+        try:
+            with open('data/%s/basename_to_taxon_name.json'  % self.species ,'r') as infile:
+                self.basename_to_taxon_name =  json.load(infile)
+        except:
+            logging.warning("Cannot find data/%s/basename_to_taxon_name.json " % self.species)
+            self.basename_to_taxon_name = {}        
 
 class Taxon(object):
 
-    def __init__(self, filename, taxon_coverage_threshold_dict = {}):
+    def __init__(self, filename, taxon_coverage_threshold_dict = {}, basename_to_taxon_name = {}):
         self.filename = filename
-        self.name = make_safe_string(filename.split('.')[0])
-        self.enum = self.name.title() 
+        self.basename_to_taxon_name = basename_to_taxon_name
+        self.basename = make_safe_string(filename.split('.')[0])
+        self.enum = self.basename.title() 
         self.threshold = taxon_coverage_threshold_dict.get(self.enum, 50)
+
+    @property 
+    def name(self):
+        return self.basename_to_taxon_name.get(self.basename, self.basename)

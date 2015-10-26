@@ -49,6 +49,7 @@ libs/string_buffer/strbuf_test
 *.tmp2
 *.tmp
 *.pyc
+data/skeleton_binary/staph/
 
 ## scripts
 data/staph/antibiotics/getallMuts.py
@@ -58,7 +59,11 @@ data/tb/antibiotics/backup/
 data/tb/antibiotics/all_NS/
 data/staph/species/coag_neg_old.fa
 
-
+## Rendered
+src/predictor/staph/species.c
+src/predictor/staph/main.c
+src/predictor/core/main.c
+data/staph/list_speciesbranches_genes_and_muts
 
 ## test file that is too big for github
 data/test/myKrobe/predictor/test1.bam
