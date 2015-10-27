@@ -70,7 +70,12 @@ src/predictor/tb/antibiotics.c
 src/predictor/staph/antibiotics.c
 src/predictor/core/known_mutations.c
 code_generator/rendered
-
+include/predictor/core/gene_presence.h
+include/predictor/core/known_mutations.h
+include/predictor/staph/antibiotics.h
+include/predictor/staph/species.h
+include/predictor/tb/antibiotics.h
+include/predictor/tb/species.h
 
 ## test file that is too big for github
 data/test/myKrobe/predictor/test1.bam
