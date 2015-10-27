@@ -2,6 +2,29 @@
 
 {% block extra %}
 
+
+void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_info){
+  if (MTBC_panels_are_present(species_info)){
+    if (! species_info->phylo_group_covg_info->present[Mtbc]){
+      species_info->phylo_group_covg_info->present[Mtbc] = true;
+      species_info->phylo_group_covg_info->num_panels_present = species_info->phylo_group_covg_info->num_panels_present + 1;
+    }
+    Species best_MTBC_species = get_best_MTBC_species(species_info);
+    species_info->phylo_group_covg_info->percentage_coverage[Mtbc] = max(species_info->phylo_group_covg_info->percentage_coverage[Mtbc] , species_info->species_covg_info->percentage_coverage[best_MTBC_species] );
+    species_info->phylo_group_covg_info->median_coverage[Mtbc] = max(species_info->phylo_group_covg_info->median_coverage[Mtbc] , species_info->species_covg_info->median_coverage[best_MTBC_species] );
+  }
+  if (NTM_panels_are_present(species_info)){
+    if (! species_info->phylo_group_covg_info->present[Ntm]){
+      species_info->phylo_group_covg_info->present[Ntm] = true;
+      species_info->phylo_group_covg_info->num_panels_present = species_info->phylo_group_covg_info->num_panels_present + 1;
+    }
+    Species best_NTM_species = get_best_NTM_species(species_info);
+    species_info->phylo_group_covg_info->percentage_coverage[Ntm] = max(species_info->phylo_group_covg_info->percentage_coverage[Ntm] , species_info->species_covg_info->percentage_coverage[best_NTM_species] );
+    species_info->phylo_group_covg_info->median_coverage[Ntm] = max(species_info->phylo_group_covg_info->median_coverage[Ntm] , species_info->species_covg_info->median_coverage[best_NTM_species] );
+  }
+}
+
+
 boolean* create_MTBC_mask()
 {
   boolean* mask= create_mask(false);
@@ -84,8 +107,8 @@ boolean tuberculosis_is_present(SpeciesInfo* species_info){
   return (species_info->species_covg_info->present[Tuberculosis]);
 }
 boolean myco_is_present(SpeciesInfo* species_info){
-  boolean MTBC_is_present = species_info->complex_covg_info->present[Mtbc];
-  boolean NTM_is_present = species_info->complex_covg_info->present[Ntm];
+  boolean MTBC_is_present = species_info->phylo_group_covg_info->present[Mtbc];
+  boolean NTM_is_present = species_info->phylo_group_covg_info->present[Ntm];
   return (MTBC_is_present || NTM_is_present);
 }
 
@@ -101,7 +124,7 @@ int get_contamination_covg(SpeciesInfo* species_info){
 }
 
 int get_expected_covg(SpeciesInfo* species_info){
-  int expected_covg = species_info->complex_covg_info->median_coverage[Mtbc];
+  int expected_covg = species_info->phylo_group_covg_info->median_coverage[Mtbc];
   return expected_covg;
 }
 {% endblock %}

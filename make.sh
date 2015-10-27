@@ -1,25 +1,25 @@
 make clean
 rm data/skeleton_binary/*/skeleton.k15.ctx
 
-cd code_generator
-python staph.py
-cd ..
-cp code_generator/rendered/include/predictor/core/* include/predictor/core/
-cp code_generator/rendered/include/predictor/staph/* include/predictor/staph/
-cp code_generator/rendered/src/predictor/core/* src/predictor/core/
-cp code_generator/rendered/src/predictor/staph/* src/predictor/staph/
+# cd code_generator
+# python staph.py
+# cd ..
+# cp code_generator/rendered/include/predictor/core/* include/predictor/core/
+# cp code_generator/rendered/include/predictor/staph/* include/predictor/staph/
+# cp code_generator/rendered/src/predictor/core/* src/predictor/core/
+# cp code_generator/rendered/src/predictor/staph/* src/predictor/staph/
 
-cd data/skeleton_binary/staph/
-ls ../../../data/staph/*/*.fa > list_speciesbranches_genes_and_muts
-ls ../../../data/staph/*/*.fasta >> list_speciesbranches_genes_and_muts
-ls ../../../data/staph/*/*/*.fasta >> list_speciesbranches_genes_and_muts
-ls ../../../data/staph/*/*/*.fasta >> list_speciesbranches_genes_and_muts
-cd ../../../
+# cd data/skeleton_binary/staph/
+# ls ../../../data/staph/*/*.fa > list_speciesbranches_genes_and_muts
+# ls ../../../data/staph/*/*.fasta >> list_speciesbranches_genes_and_muts
+# ls ../../../data/staph/*/*/*.fasta >> list_speciesbranches_genes_and_muts
+# ls ../../../data/staph/*/*/*.fasta >> list_speciesbranches_genes_and_muts
+# cd ../../../
 
-make STAPH=1 predictor
-cd bin
-./Mykrobe.predictor.staph  --file ../data/staph/phylo/species/Saureus.fasta --install_dir ../
-cd ..
+# make STAPH=1 predictor
+# cd bin
+# ./Mykrobe.predictor.staph  --file ../data/staph/phylo/species/Saureus.fasta --install_dir ../
+# cd ..
 
 
 cd code_generator
@@ -40,5 +40,5 @@ cp code_generator/rendered/src/predictor/tb/* src/predictor/tb/
 
 make TB=1 predictor 
 cd bin
-./Mykrobe.predictor.tb  --file ../data/tb/phylo/complex/MTBC.fa --install_dir ../
+./Mykrobe.predictor.tb  --file ../data/tb/phylo/phylo_group/MTBC.fa --install_dir ../
 cd ..

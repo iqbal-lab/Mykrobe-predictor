@@ -1,7 +1,7 @@
 {% extends 'include/predictor/common/phylo/species.h' %}
 
 {% block extra %}
-
+void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_info);
 boolean* create_MTBC_mask();
 boolean* create_NTM_mask();
 Species get_best_MTBC_species(SpeciesInfo* species_info );

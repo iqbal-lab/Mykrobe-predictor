@@ -70,7 +70,7 @@ SpeciesInfo* get_species_info(dBGraph *db_graph,int max_branch_len,
   species_info->{{phylogroup.name}}_covg_info = {{phylogroup.name}}_covg_info;
   {% endfor %}
 
-  // update_phylo_group_presence_and_coverage_from_species(species_info);
+  update_phylo_group_presence_and_coverage_from_species(species_info);
 
   return species_info;
 }

@@ -283,7 +283,7 @@ class PhyloGroup(object):
     def taxons(self):
         fasta_list = glob.glob('../data/%s/phylo/%s/*fasta'  %  (self.species, self.name))
         fasta_list.extend(glob.glob('../data/%s/phylo/%s/*.fa'  %  (self.species, self.name)))  
-        return [Taxon(os.path.basename(f), self.taxon_coverage_threshold_dict, basename_to_taxon_name = self.basename_to_taxon_name) for f in fasta_list]
+        return [Taxon(os.path.basename(f), self.name, self.taxon_coverage_threshold_dict, basename_to_taxon_name = self.basename_to_taxon_name) for f in fasta_list]
 
     def _load_basename_to_taxon(self):
         try:
@@ -295,13 +295,25 @@ class PhyloGroup(object):
 
 class Taxon(object):
 
-    def __init__(self, filename, taxon_coverage_threshold_dict = {}, basename_to_taxon_name = {}):
+    def __init__(self, filename, phylo_group, taxon_coverage_threshold_dict = {}, basename_to_taxon_name = {}):
         self.filename = filename
+        self.phylo_group = phylo_group
         self.basename_to_taxon_name = basename_to_taxon_name
         self.basename = make_safe_string(filename.split('.')[0])
         self.enum = self.basename.title() 
-        self.threshold = taxon_coverage_threshold_dict.get(self.enum, 50)
+        self.threshold = taxon_coverage_threshold_dict.get(self.enum, self.default_threshold)
+        
 
     @property 
     def name(self):
         return self.basename_to_taxon_name.get(self.basename, self.basename)
+
+    @property
+    def default_threshold(self):
+        if self.phylo_group == "lineage":
+            return 90
+        elif self.phylo_group == "species":
+            return 30
+        else:
+            return 50
+    
