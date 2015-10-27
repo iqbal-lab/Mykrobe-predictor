@@ -1,6 +1,6 @@
 make clean
 rm data/skeleton_binary/*/skeleton.k15.ctx
-
+mkdir -p data/skeleton_binary/{staph,tb}
 cd code_generator
 python staph.py
 cd ..

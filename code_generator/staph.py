@@ -9,6 +9,9 @@ class StaphCodeGenerator(CodeGenerator):
 
     def __init__(self):
         self.species = species
+        self.genome_size = 2800000
+        self.kmer_size = 15
+        self.species_long_name = "S. aureus"        
         super(StaphCodeGenerator, self).__init__()  
         
     @property 

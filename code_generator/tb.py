@@ -8,6 +8,9 @@ class TBCodeGenerator(CodeGenerator):
 
     def __init__(self):
         self.species = species
+        self.genome_size = 4000000
+        self.kmer_size = 21    
+        self.species_long_name = "M. tuberculosis"          
         super(TBCodeGenerator, self).__init__()  
         
     @property 
