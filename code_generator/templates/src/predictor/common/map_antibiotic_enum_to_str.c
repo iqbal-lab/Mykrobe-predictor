@@ -9,7 +9,7 @@ void map_antibiotic_enum_to_str(Antibiotic ab, StrBuf* name)
   else if (ab=={{drug_enum}})
     {
       strbuf_reset(name);
-      strbuf_append_str(name, "{{drug_enum}}");
+      strbuf_append_str(name, "{{drug_enum | capitalize}}");
     }
   {% endfor %}
   else
