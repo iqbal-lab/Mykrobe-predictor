@@ -24,6 +24,16 @@ void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_
   }
 }
 
+boolean is_MTBC_present(SpeciesInfo* species_info)
+{
+  // Is combined MTBC panel present OR any of the MTBC species panels
+  if (species_info->phylo_group_covg_info->present[Mtbc]){
+    return (true);
+  }
+  else{
+    return (false);
+  }
+}
 
 boolean* create_MTBC_mask()
 {

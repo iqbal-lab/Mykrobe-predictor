@@ -63,6 +63,7 @@ const char* usage=
 "   [--progress] \t\t\t\t\t=\t Output progress information during processing.\n" \
 "   [--install_dir PATH] \t\t\t\t\t=\t Mykrobe.predictor needs to use config files that come in the install, so you need to specify the full path to your install\n" 
 "   [--verbose] \t\t\t\t\t=\t Print out coverage information on all variables and genes rather than only the ones called \n\n" 
+"   [--force] \t\t\t\t\t=\t Show resistance predictions even if species is not {{selfer.species_long_name}} \n\n" 
 "   [--ont] \t\t\t\t\t=\t Data is from Oxford nanopore \n\n" ;
 
 int default_opts(CmdLine * c)
@@ -88,6 +89,7 @@ int default_opts(CmdLine * c)
   c->progress=false;
   c->verbose=false;
   c->ont=false;
+  c->force=false;
   c->min_frac_to_detect_minor_pops = (float) 0.0;
   return 1;
 }
@@ -160,6 +162,7 @@ int parse_cmdline_inner_loop(int argc, char* argv[], int unit_size, CmdLine* cmd
     {"progress", no_argument, NULL, 'g'},
     {"verbose", no_argument, NULL, 'v'},
     {"ont", no_argument, NULL, 'n'},
+    {"force", no_argument, NULL, 'b'},
     {"minor_pop_frac", required_argument, NULL, 'p'},
     {0,0,0,0}	
   };
@@ -337,7 +340,12 @@ case 'n'://ont
       {
   cmdline_ptr->ont=true;
   break;
-      }      
+      }  
+case 'b'://force
+      {
+  cmdline_ptr->force=true;
+  break;
+      }            
   case 'p'://minor_pop_frac
       {
   if (optarg==NULL)

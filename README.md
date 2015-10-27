@@ -42,6 +42,15 @@ Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/Mykrobe-pr
 
 Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases
 
+#### Force resistance predictions if species is not target species. 
+
+By default, if we can't find S. aureus or MTBC in the data we don't show resistance predictions. 
+
+You can force resistance predictions with --force flaf
+
+Mykrobe.predictor.staph --file some_non_staph.fastq --install_dir /path/to/Mykrobe-predictor --force
+
+
 ### Output ### 
 
 The output of Mykrobe is in JSON format. An exemplar output might looks like this:

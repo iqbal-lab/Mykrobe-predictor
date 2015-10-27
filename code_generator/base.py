@@ -82,6 +82,13 @@ class CodeGenerator(object):
             logging.warning("Using default antibiotics.c template")
             return self.render_str('src/predictor/common/antibiotics.c')        
 
+    def render_cmd_line_include(self):
+        try:
+            return self.render_str('include/predictor/%s/cmd_line.h' % self.species)        
+        except TemplateNotFound:
+            logging.warning("Using default cmd_line.h template")
+            return self.render_str('include/predictor/common/cmd_line.h')
+
     def render_cmd_line_src(self):
         try:
             return self.render_str('src/predictor/%s/cmd_line.c' % self.species)        
@@ -113,6 +120,8 @@ class CodeGenerator(object):
     def render_and_write_cmd_line(self):
         st = self.render_cmd_line_src()
         self.write_to_file(st, 'src/predictor/%s/cmd_line.c' % self.species)
+        st = self.render_cmd_line_include()
+        self.write_to_file(st, 'include/predictor/%s/cmd_line.h' % self.species)
 
     def render_known_mutations_src(self):
         return self.render_str('src/predictor/core/known_mutations.c')
