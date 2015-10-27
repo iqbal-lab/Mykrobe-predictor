@@ -71,8 +71,10 @@ print("Inserting documents to DB " )
 def make_panel(vf):
 	context = [Variant(vft.reference_bases, vft.start , "/".join(vft.alternate_bases)) for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer)]
 	variant = Variant(vf.reference_bases, vf.start , "/".join(vf.alternate_bases))
-	panel = al.create(variant, context)
-	return VariantPanel().create_doc(vf, panel.alts)	
+	print len(context)
+	if len(context) <= 15:
+		panel = al.create(variant, context)
+		return VariantPanel().create_doc(vf, panel.alts)	
 
 if vfs:
 
@@ -82,13 +84,14 @@ if vfs:
 	print("Improving panel for genotyping" ) 
 	update_names = []
 	affected_variants = []
-	for new_vf in VariantFreq.objects(name__in = new_names):
-		query = VariantFreq.objects(start__gt = new_vf.start - args.kmer, start__lt = new_vf.start + args.kmer)
-		for q in query:
-			affected_variants.append(q.id)
-			update_names.append(q.name)
-	## Remove all panels that need updating
-	VariantPanel.objects(variant__in = affected_variants).delete()
+	if VariantPanel.objects().count() > 0:
+		for new_vf in VariantFreq.objects(name__in = new_names):
+			query = VariantFreq.objects(start__gt = new_vf.start - args.kmer, start__lt = new_vf.start + args.kmer)
+			for q in query:
+				affected_variants.append(q.id)
+				update_names.append(q.name)
+		## Remove all panels that need updating
+		VariantPanel.objects(variant__in = affected_variants).delete()
 	## Make panels for all new variants and panels needing updating
 	# pool = multiprocessing.Pool(20)	
 	# variant_panels = pool.map(make_panel,  VariantFreq.objects(name__in = unique(new_names + update_names) ))

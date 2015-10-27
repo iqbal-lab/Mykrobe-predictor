@@ -1,15 +1,18 @@
 #! /usr/bin/env python
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import logging
 logging.basicConfig(level=logging.DEBUG)
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
 
-from vcf2db import CallSet
-from vcf2db import Reference
-from vcf2db import Variant
-from vcf2db import VariantSet
-from vcf2db import Call
+from atlas import CallSet
+from atlas import Reference
+from atlas import Variant
+from atlas import VariantSet
+from atlas import Call
 from pymongo import MongoClient
 client = MongoClient()
 
@@ -70,10 +73,13 @@ for record in vcf_reader:
 			except OperationError:
 				pass
 
-
-variant_ids =  db.variant.insert(variants)
-logging.info("Uploaded %i variants to database" % len(variant_ids))
-for i,_id in enumerate(variant_ids):
-	calls[i]["variant"] = _id
-db.call.insert(calls)	
+try:
+	variant_ids =  [v.id for v in Variant.objects.insert(variants)]
+except NotUniqueError:
+	logging.error("Variants must be unique within a given VCF")
+else:
+	logging.info("Uploaded %i variants to database" % len(variant_ids))
+	for i,_id in enumerate(variant_ids):
+		calls[i]["variant"] = _id
+	db.call.insert(calls)	
 

@@ -180,8 +180,8 @@ class Variant(Document):
             }    
     """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.
       Variants belong to a `VariantSet`.This is equivalent to a row in VCF."""
-    variant_set = ReferenceField('VariantSet', required = True, unique_with = ["name", "reference"])
-    name = StringField()
+    variant_set = ReferenceField('VariantSet', required = True)
+    name = StringField(unique_with = "variant_set")
     # created_at = DateTimeField(required = True, default=datetime.datetime.now)
     # updated_at = DateTimeField(required = True, default=datetime.datetime.now)
     reference = ReferenceField('Reference', required = True)
@@ -194,15 +194,19 @@ class Variant(Document):
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        return {"variant_set" : variant_set.id,
-        "name": name,
-        "reference" : reference.id  ,
-        "start" : start, 
-        "reference_bases" : reference_bases ,
-        "alternate_bases" : alternate_bases
-        }
-        # return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
-        #     alternate_bases = alternate_bases, reference = reference, name = name)
+        # return {"variant_set" : variant_set.id,
+        # "name": name,
+        # "reference" : reference.id  ,
+        # "start" : start, 
+        # "reference_bases" : reference_bases ,
+        # "alternate_bases" : alternate_bases
+        # }
+        return cls(variant_set = variant_set,
+                   start = start, end = end,
+                   reference_bases = reference_bases,
+                   alternate_bases = alternate_bases,
+                   reference = reference,
+                   name = name)
 
     @classmethod
     def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
