@@ -46,7 +46,7 @@ Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, w
 
 By default, if we can't find S. aureus or MTBC in the data we don't show resistance predictions. 
 
-You can force resistance predictions with --force flaf
+You can force resistance predictions with --force flag
 
 Mykrobe.predictor.staph --file some_non_staph.fastq --install_dir /path/to/Mykrobe-predictor --force
 

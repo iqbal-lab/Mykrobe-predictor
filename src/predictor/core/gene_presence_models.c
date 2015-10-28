@@ -297,13 +297,15 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   double llk_S;
   double llk_R;
 
-  llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
+  
   // If contaminiation is present turn of mixed model and bump up S. 
   if (contamination_covg > 0 ){
     llk_M = -99999999;
+    llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 1, expected_covg, kmer);
     llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 1, contamination_covg, kmer);    
   }
   else{
+    llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
     llk_M = get_log_lik_observed_coverage_on_gene(gi, lambda_g, freq, expected_covg, kmer);
     llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);     
   }
