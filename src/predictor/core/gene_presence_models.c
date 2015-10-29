@@ -301,7 +301,13 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   // If contaminiation is present turn of mixed model and bump up S. 
   if (contamination_covg > 0 ){
     llk_M = -99999999;
-    llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 1, expected_covg, kmer);
+    double llk_R_1 = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 1, expected_covg, kmer);
+    double llk_R_2 = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 1, expected_covg + contamination_covg, kmer);
+    if (llk_R_1 > llk_R_2){
+      llk_R = llk_R_1;
+    }else{
+      llk_R = llk_R_2;
+    }    
     llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 1, contamination_covg, kmer);    
   }
   else{
@@ -329,7 +335,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     if (best_model->type != Susceptible){
       *genotyped_present = true;
     }
-    if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
+    // If there's contamination or the best model is minor then impose the minimum treshold of CN
+    if ( ((best_model->type == MixedInfection) || (contamination_covg > 0))  && CN_of_gene(gi, expected_covg) < min_gene_cn ){
       return Susceptible;
     }else{
       return best_model->type;
