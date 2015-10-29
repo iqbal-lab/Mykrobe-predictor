@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 import os
 from base import CodeGenerator
 from base import DrugCodeGenerator

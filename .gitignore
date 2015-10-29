@@ -1,3 +1,4 @@
+code_generator/venv/
 *.pyc
 code_generator/rendered
 ._*

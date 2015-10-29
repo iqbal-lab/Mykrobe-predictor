@@ -1,5 +1,10 @@
 import os
-import jinja2
+import sys
+try:
+    import jinja2
+except:
+    print "Missing python package. Please run 'pip install -r code_generator/requriements.txt'"
+    sys.exit()
 import json
 import csv
 import string
