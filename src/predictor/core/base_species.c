@@ -305,7 +305,7 @@ void print_json_indiv_phylo(CovgInfo* covg_info,
     }     
 }
 
-int get_best_hit(CovgInfo* covg_info,boolean* mask)
+int get_best_hit(CovgInfo* covg_info, boolean* mask)
 {
   int i;
   int best_perc_cov_so_far=0;
