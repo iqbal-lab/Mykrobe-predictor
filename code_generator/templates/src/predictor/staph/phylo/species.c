@@ -30,7 +30,7 @@ void update_phylo_group_presence_and_coverage_from_species(SpeciesInfo* species_
 void load_all_cat_file_paths(StrBuf** panel_file_paths , StrBuf* install_dir )
 {
   panel_file_paths[0] = strbuf_create(install_dir->buff);
-  strbuf_append_str(panel_file_paths[0], "data/staph/species/coag_neg.fasta" ); 
+  strbuf_append_str(panel_file_paths[0], "data/staph/phylo/phylo_group/Coagneg.fasta" ); 
 }
 
 void cat_threshold(int* thresholds){
