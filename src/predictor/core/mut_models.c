@@ -313,11 +313,17 @@ InfectionType resistotype(Var* var,
     double llk_R_error = get_log_lik_R_S_coverage(var, expected_covg, expected_covg * err_rate / 3, kmer);
     // Is the resistant coverage due to target with S from contamination
     double llk_R_contaim = get_log_lik_R_S_coverage(var, expected_covg, contamination_covg, kmer);
+    // Is the resistant coverage due to target with S from contamination
+    double llk_R_contaim_plus_expected = get_log_lik_R_S_coverage(var, expected_covg + contamination_covg,
+                                                                   (expected_covg + contamination_covg) * (err_rate / 3), kmer);    
     if (llk_R_error > llk_R_contaim){
       llk_R = llk_R_error;
     }else{
       llk_R = llk_R_contaim;
-    }    
+    }
+    if (llk_R_contaim_plus_expected > llk_R){
+      llk_R = llk_R_contaim_plus_expected;
+    }
   }
   else{
     llk_M = get_log_lik_R_S_coverage(var, min_frac_to_detect_minor_pops * expected_covg, (1-min_frac_to_detect_minor_pops) * expected_covg , kmer );
