@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 import os
 from base import unique,flatten
 from base import CodeGenerator
