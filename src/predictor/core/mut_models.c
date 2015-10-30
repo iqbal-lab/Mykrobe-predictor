@@ -308,6 +308,7 @@ InfectionType resistotype(Var* var,
       llk_S = llk_S_error;
     }else{
       llk_S = llk_S_contaim;
+      *genotyped_present = true;
     }
     // Is the resistant coverage due to target with S from errors
     double llk_R_error = get_log_lik_R_S_coverage(var, expected_covg, expected_covg * err_rate / 3, kmer);

@@ -310,7 +310,14 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     }
     // If the contamination and target coverage are very close don't use contam as S
     if (abs(expected_covg - contamination_covg) > 5){
-      llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, contamination_covg, kmer);    
+      double llk_S_no_contaim = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);
+      double llk_S_with_contaim = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, contamination_covg, kmer);
+      if (llk_S_with_contaim > llk_S_no_contaim){
+        llk_S = llk_S_with_contaim;
+        *genotyped_present = true;
+      }else{
+        llk_S = llk_S_no_contaim;
+      }
     }else{
       llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);     
     }
