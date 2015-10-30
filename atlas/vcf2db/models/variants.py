@@ -194,13 +194,6 @@ class Variant(Document):
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        # return {"variant_set" : variant_set.id,
-        # "name": name,
-        # "reference" : reference.id  ,
-        # "start" : start, 
-        # "reference_bases" : reference_bases ,
-        # "alternate_bases" : alternate_bases
-        # }
         return cls(variant_set = variant_set,
                    start = start, end = end,
                    reference_bases = reference_bases,
@@ -229,7 +222,55 @@ class Variant(Document):
         return self.name
 
     def __repr__(self):
-        return self.name        
+        return self.name  
+
+    @property
+    def is_indel(self):
+        """ Return whether or not the variant is an INDEL """
+        if len(self.reference_bases) > 1:
+            return True
+        for alt in self.alternate_bases:
+            if alt is None:
+                return True
+            elif len(alt) != len(self.reference_bases):
+                return True
+        return False
+
+    @property
+    def is_deletion(self):
+        """ Return whether or not the INDEL is a deletion """
+        # if multiple alts, it is unclear if we have a transition
+        if len(self.alternate_bases) > 1:
+            return False
+
+        if self.is_indel:
+            # just one alt allele
+            alt_allele = self.alternate_bases[0]
+            if alt_allele is None:
+                return True
+            if len(self.reference_bases) > len(alt_allele):
+                return True
+            else:
+                return False
+        else:
+            return False 
+
+    @property 
+    def is_insertion(self):
+        if len(self.alternate_bases) > 1:
+            return False  
+        if self.is_indel:
+            # just one alt allele
+            alt_allele = self.alternate_bases[0]
+            if alt_allele is None:
+                return False
+            if len(alt_allele) > len(self.reference_bases):
+                return True
+            else:
+                return False
+        else:
+            return False                   
+
 
 
 
