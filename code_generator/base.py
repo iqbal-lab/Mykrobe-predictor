@@ -2,9 +2,22 @@ import os
 import jinja2
 import json
 import csv
-from utils import unique,flatten
 
 from mutations import MutationFasta
+
+
+def make_safe_string(s):
+    valid_chars = "%s%s" % (string.ascii_letters, string.digits)
+    return ''.join(c for c in s if c in valid_chars)
+
+def unique(seq):
+    seen = set()
+    seen_add = seen.add
+    return [ x for x in seq if x not in seen and not seen_add(x)]
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+
 
 class CodeGenerator(object):
 
