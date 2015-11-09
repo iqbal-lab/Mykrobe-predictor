@@ -1,10 +1,8 @@
 services: mongodb
 language: python
 python:
-  - "3.5.0b3"
   - "2.7"
   - "3.4"
-  - "3.5-dev"
 # command to install dependencies
 install: "pip install -r requirements.txt"
 # command to run tests

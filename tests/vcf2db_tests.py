@@ -39,14 +39,16 @@ class TestVariant(BaseTest):
         self.vs = VariantSet.create(name = "C00123")
 
     def test_create_SNP(self):
-        v1 = Variant.create(variant_set = self.vs, start = 0, end = 1, reference_bases = "A", alternate_bases = ["T"], reference = self.ref)
+        v1 = Variant.create(variant_set = self.vs, start = 0, end = 1,
+                            reference_bases = "A", alternate_bases = ["T"],
+                            reference = self.ref)
         assert v1.start == 0
         assert v1.end == 1
         assert v1.alt == "T"
 
     def test_create_insertion(self):
         v1 = Variant.create(variant_set = self.vs,
-                            start = 0, end = 1, reference_bases = "",
+                            start = 0, end = 1, reference_bases = "T",
                             alternate_bases = ["TA"], reference = self.ref)
         assert v1.start == 0
         assert v1.end == 1
@@ -59,10 +61,10 @@ class TestVariant(BaseTest):
     def test_create_deletion(self):
         v1 = Variant.create(variant_set = self.vs,
                             start = 0, end = 1, reference_bases = "AA",
-                            alternate_bases = [""], reference = self.ref)
+                            alternate_bases = ["A"], reference = self.ref)
         assert v1.start == 0
         assert v1.end == 1
-        assert v1.alt == ""        
+        assert v1.alt == "A"        
         assert v1.reference_bases == "AA"        
         assert v1.is_insertion == False        
         assert v1.is_deletion == True

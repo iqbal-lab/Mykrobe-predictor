@@ -64,7 +64,9 @@ for record in vcf_reader:
 	if not record.FILTER and record.is_snp and is_record_valid(record):
 		for sample in record.samples:
 			try:
-				v = Variant.create_object(variant_set = variant_set, start = record.POS, reference_bases = record.REF,
+				v = Variant.create_object(variant_set = variant_set,
+				                    start = record.POS,
+				                    reference_bases = record.REF,
 								 	alternate_bases = [str(a) for a in record.ALT], 
 								 	reference = reference)
 				variants.append(v)

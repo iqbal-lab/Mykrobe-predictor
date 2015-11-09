@@ -40,7 +40,8 @@ class AlleleGenerator(object):
 
 	def create(self, v, context = []):
 		## Position should be 1 based
-		assert v.pos > 0
+		if v.pos <= 0 :
+			raise ValueError("Position should be 1 based")
 		i, start_index, end_index = self._get_start_end(v.pos)
 		self._check_valid_variant(v)
 		wild_type_reference = copy(self.ref[start_index:end_index])
