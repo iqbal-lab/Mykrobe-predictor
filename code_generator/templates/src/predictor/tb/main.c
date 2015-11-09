@@ -263,7 +263,7 @@ int main(int argc, char **argv)
     }
   else
     {
-      cmd_line->min_frac_to_detect_minor_pops = 0.25;
+      cmd_line->min_frac_to_detect_minor_pops = 0.2;
     }
   }
 

@@ -33,10 +33,18 @@ double get_log_posterior_truly_resistant_plus(double llk,
 
 
 double get_log_posterior_truly_susceptible_mut(double llk,
-									   int max_perc_covg_on_res_allele,
+									   int max_perc_covg_on_sus_allele,
 									   double epsilon)
 {
-      return log(1)+llk;;
+  if (max_perc_covg_on_sus_allele==100)
+    {
+      return log(1)+llk;
+    }
+  else
+    {
+      return -99999999;
+    } 
+  return log(1)+llk;;
 }
 
 
@@ -235,7 +243,7 @@ void choose_map_model(Var* var,
 										 max_perc_covg_on_res,
 										 epsilon);
   mS.lp = llk_S + get_log_posterior_truly_susceptible_mut(llk_S, 
-										      max_perc_covg_on_res,
+										      var->vob_best_sus->susceptible_allele.percent_nonzero,
 										      epsilon);
   mM.lp = llk_M + get_log_posterior_of_mixed_infection(llk_M, var,
 						       max_perc_covg_on_res, contamination_covg);
