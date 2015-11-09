@@ -53,14 +53,14 @@ class AlleleGenerator(object):
 		alternates = []
 		for background in backgrounds:
 			alternate = copy(background)
-			assert alternate[i] == v.ref	
+			assert "".join(alternate[i:(i + len(v.ref))]) == v.ref	
 			alternate[i] = v.alt
 			alternates.append(alternate)
 		return alternates
 		
 	def _check_valid_variant(self, v):
 		index = v.pos - 1
-		if self.ref[index] != v.ref:
+		if "".join(self.ref[index:(index + len(v.ref))]) != v.ref:
 			raise ValueError("""Cannot create alleles as ref at pos %i is not %s (it's %s) are you sure you're using one-based co-ordinates?
 							 """ % (v.pos, v.ref, self.ref[index]))			
 

@@ -121,12 +121,12 @@ class TestINDELAlleleGenerator(TestSNPAlleleGenerator):
 
 
     def test_simple_deletion(self):
-        v = Variant("AT", 31, "T")
+        v = Variant("AA", 31, "T")
         panel = self.pg.create(v)
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         # assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC"]
 
-        v = Variant("AA", 32, "A")
+        v = Variant("AT", 32, "A")
         panel = self.pg.create(v)
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         # assert panel.alts == ["GATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATCC"]        
@@ -139,7 +139,7 @@ class TestINDELAlleleGenerator(TestSNPAlleleGenerator):
         # assert panel.alts == ["ATAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTT"] 
 
         ## To do. 3 letter deletion
-        
+
     def test_simple_insertion(self):
 
         v = Variant("C", 1, "TTTC")
