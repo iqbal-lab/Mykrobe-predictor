@@ -84,13 +84,11 @@ class AlleleGenerator(object):
     def create(self, v, context = []):
         ## Position should be 1 based
         self._check_valid_variant(v)
+        context = self._remove_contexts_spanning_del(v, context)
+        context = self._remove_contexts_not_within_k(v, context)
         wild_type_reference = self._get_wildtype_reference(v.pos)
         alternates = self._generate_alternates_on_all_backgrounds(v,  context)
         return Panel(wild_type_reference, v.pos, alternates)
-
-    def _get_wildtype_reference(self, pos):
-        i, start_index, end_index = self._get_start_end(pos)        
-        return self._get_reference_segment(start_index, end_index)
 
     def _check_valid_variant(self, v):
         index = v.pos - 1
@@ -100,7 +98,32 @@ class AlleleGenerator(object):
                                 co-ordinates?
                              """ % (v.pos, v.ref, "".join(self.ref[index: (index + len(v.ref))])))
         if v.pos <= 0 :
-            raise ValueError("Position should be 1 based")        
+            raise ValueError("Position should be 1 based")  
+
+    def _remove_contexts_spanning_del(self, v, context):
+        """If there's a var within the range of an DEL remove from context"""
+        if v.is_deletion:
+            ran = range(v.pos, v.pos + len(v.ref))
+            context = [c for c in context if not c.pos in ran]
+        return context
+
+    def _remove_contexts_not_within_k(self, v, context):
+        new_context = []
+        for c in context:
+            if c.is_insertion:
+                effective_pos = c.pos - c.length
+            elif c.is_deletion:
+                effective_pos = c.pos + c.length
+            else:
+                effective_pos = c.pos
+            if abs(v.pos - effective_pos) < self.kmer:
+                new_context.append(c)
+        return new_context
+
+
+    def _get_wildtype_reference(self, pos):
+        i, start_index, end_index = self._get_start_end(pos)        
+        return self._get_reference_segment(start_index, end_index)    
 
     def _get_reference_segment(self, start_index, end_index):
         return copy(self.ref[start_index:end_index])
@@ -111,33 +134,39 @@ class AlleleGenerator(object):
         return self._get_reference_segment(start_index, end_index)        
 
     def _generate_alternates_on_all_backgrounds(self, v, context):
-        ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context)
-        i, start_index, end_index = self._get_start_end(v.pos, delta = ref_segment_length_delta)
-        alternate_reference_segment = self._get_reference_segment(start_index, end_index)
-        backgrounds = self._generate_all_backgrounds_using_context(i, v, alternate_reference_segment, context)
-
+        ## First, create all the context combinations
+        context_combinations = self._get_all_context_combinations(context)
+        ## For each context, create the background and alternate
         alternates = []
-        for background in backgrounds:
+        for context_combo in context_combinations:
+            ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context_combo)
+            i, start_index, end_index = self._get_start_end(v.pos, delta = ref_segment_length_delta)
+            alternate_reference_segment = self._get_reference_segment(start_index, end_index)
+            background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
-            assert "".join(alternate[i:(i + len(v.ref))]) == v.ref    
+            i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
+            assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
         return alternates
 
-    def _generate_all_backgrounds_using_context(self, i, v, alternate_reference_segment, context = []):
-        backgrounds = [alternate_reference_segment]
+    def _get_all_context_combinations(self, context):
+        context_list = [[]]
         if context:
-            contexts = self._create_multiple_contexts(context)
+            contexts = self._create_multiple_contexts(context) ## Create contexts if multiple variants at given posision
             for context in contexts:
                 context_combinations = self._get_combinations_of_backgrounds(context)
-                for variants in context_combinations:
-                    new_background = copy(alternate_reference_segment)
-                    for variant in variants:
-                        j = i + variant.pos - v.pos
-                        assert "".join(new_background[j : j+ len(variant.ref)]) == variant.ref                        
-                        new_background[j : j + len(variant.ref)] = variant.alt
-                    backgrounds.append(new_background)
-        return backgrounds
+                context_list.extend(context_combinations)
+        return context_list
+
+    def _generate_background_using_context(self, i, v, alternate_reference_segment, context ):
+        backgrounds = [alternate_reference_segment]
+        new_background = copy(alternate_reference_segment)
+        for variant in context:
+            j = i + variant.pos - v.pos
+            assert "".join(new_background[j : j+ len(variant.ref)]) == variant.ref                        
+            new_background[j : j + len(variant.ref)] = variant.alt
+        return new_background
 
     def _create_multiple_contexts(self, context):
         new_contexts = self._recursive_context_creator([context])
@@ -177,13 +206,12 @@ class AlleleGenerator(object):
         combination_context = []
         for L in range(1, len(context)+1):
           for subset in itertools.combinations(context, L):
-            combination_context.append(subset)    
+            combination_context.append(list(subset))
         return combination_context
 
     def _get_start_end(self, pos, delta = 0):
         start_delta = math.floor(delta / 2)
         end_delta = math.ceil(delta / 2)
-
         start_index = pos - self.kmer - start_delta
         end_index =  pos + self.kmer + end_delta + 1
         i = self.kmer - 1 + start_delta
@@ -203,9 +231,12 @@ class AlleleGenerator(object):
         """Calculates the change in required bases for given variant.
         For deletions we need extra bases to get same length flanks"""
         variants = context + [v]
+        return self._calculate_length_delta_from_variant_list(variants)
+
+    def _calculate_length_delta_from_variant_list(self, variants):
         deletions_length = [v.length for v in variants if v.is_deletion]
         insertions_length = [v.length for v in variants if v.is_insertion]
-        return sum(deletions_length) - sum(insertions_length)
+        return sum(deletions_length) - sum(insertions_length)        
 
 class Panel(object):
 
