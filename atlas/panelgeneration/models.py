@@ -5,6 +5,8 @@ import itertools
 from collections import Counter
 import logging
 import datetime
+import math 
+
 def unique(seq):
     seen = set()
     seen_add = seen.add
@@ -82,12 +84,13 @@ class AlleleGenerator(object):
     def create(self, v, context = []):
         ## Position should be 1 based
         self._check_valid_variant(v)
-        i, start_index, end_index = self._get_start_end(v.pos)        
-        wild_type_reference = self._get_wild_type_reference(start_index, end_index)
-        alternate_reference_segment = self._get_alternate_reference_segment(v, context)
-        backgrounds = self._generate_all_backgrounds_using_context(i, v, alternate_reference_segment, context)
-        alternates = self._generate_alternates_on_all_backgrounds(i, v,  backgrounds)
+        wild_type_reference = self._get_wildtype_reference(v.pos)
+        alternates = self._generate_alternates_on_all_backgrounds(v,  context)
         return Panel(wild_type_reference, v.pos, alternates)
+
+    def _get_wildtype_reference(self, pos):
+        i, start_index, end_index = self._get_start_end(pos)        
+        return self._get_reference_segment(start_index, end_index)
 
     def _check_valid_variant(self, v):
         index = v.pos - 1
@@ -95,19 +98,31 @@ class AlleleGenerator(object):
             raise ValueError("""Cannot create alleles as ref at pos %i is not %s 
                                 (it's %s) are you sure you're using one-based
                                 co-ordinates?
-                             """ % (v.pos, v.ref, self.ref[index]))        
+                             """ % (v.pos, v.ref, "".join(self.ref[index: (index + len(v.ref))])))
         if v.pos <= 0 :
             raise ValueError("Position should be 1 based")        
 
-    def _get_wild_type_reference(self, start_index, end_index):
-        """Gets the WT reference for this variant"""
+    def _get_reference_segment(self, start_index, end_index):
         return copy(self.ref[start_index:end_index])
 
     def _get_alternate_reference_segment(self, v, context):
-        """Gets the reference segment needed to add variants to. This can be longer or shorter than WT ref"""
         ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context)
-        i, start_index, end_index = self._get_start_end(v.pos)
-        return copy(self.ref[start_index:end_index])
+        i, start_index, end_index = self._get_start_end(v.pos, delta = ref_segment_length_delta)
+        return self._get_reference_segment(start_index, end_index)        
+
+    def _generate_alternates_on_all_backgrounds(self, v, context):
+        ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context)
+        i, start_index, end_index = self._get_start_end(v.pos, delta = ref_segment_length_delta)
+        alternate_reference_segment = self._get_reference_segment(start_index, end_index)
+        backgrounds = self._generate_all_backgrounds_using_context(i, v, alternate_reference_segment, context)
+
+        alternates = []
+        for background in backgrounds:
+            alternate = copy(background)
+            assert "".join(alternate[i:(i + len(v.ref))]) == v.ref    
+            alternate[i : i + len(v.ref)] = v.alt
+            alternates.append(alternate)
+        return alternates
 
     def _generate_all_backgrounds_using_context(self, i, v, alternate_reference_segment, context = []):
         backgrounds = [alternate_reference_segment]
@@ -123,15 +138,6 @@ class AlleleGenerator(object):
                         new_background[j : j + len(variant.ref)] = variant.alt
                     backgrounds.append(new_background)
         return backgrounds
-
-    def _generate_alternates_on_all_backgrounds(self, i, v, backgrounds):
-        alternates = []
-        for background in backgrounds:
-            alternate = copy(background)
-            assert "".join(alternate[i:(i + len(v.ref))]) == v.ref    
-            alternate[i : i + len(v.ref)] = v.alt
-            alternates.append(alternate)
-        return alternates
 
     def _create_multiple_contexts(self, context):
         new_contexts = self._recursive_context_creator([context])
@@ -174,10 +180,13 @@ class AlleleGenerator(object):
             combination_context.append(subset)    
         return combination_context
 
-    def _get_start_end(self, pos):
-        start_index = pos - self.kmer
-        end_index =  pos + self.kmer +1
-        i = self.kmer - 1
+    def _get_start_end(self, pos, delta = 0):
+        start_delta = math.floor(delta / 2)
+        end_delta = math.ceil(delta / 2)
+
+        start_index = pos - self.kmer - start_delta
+        end_index =  pos + self.kmer + end_delta + 1
+        i = self.kmer - 1 + start_delta
         if start_index < 0:
             diff = abs(start_index)
             start_index = 0 
