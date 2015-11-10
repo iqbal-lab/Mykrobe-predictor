@@ -181,8 +181,8 @@ class AlleleGenerator(object):
         return combination_context
 
     def _get_start_end(self, pos, delta = 0):
-        start_delta = math.floor(delta / 2)
-        end_delta = math.ceil(delta / 2)
+        start_delta = int(math.floor(delta / 2))
+        end_delta = int(math.ceil(delta / 2))
 
         start_index = pos - self.kmer - start_delta
         end_index =  pos + self.kmer + end_delta + 1
