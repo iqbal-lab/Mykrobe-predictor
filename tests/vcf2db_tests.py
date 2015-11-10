@@ -45,6 +45,8 @@ class TestVariant(BaseTest):
         assert v1.start == 0
         assert v1.end == 1
         assert v1.alt == "T"
+        assert v1.length == 0
+
 
     def test_create_insertion(self):
         v1 = Variant.create(variant_set = self.vs,
@@ -56,6 +58,9 @@ class TestVariant(BaseTest):
         assert v1.is_insertion == True
         assert v1.is_deletion == False
         assert v1.is_indel == True
+        assert v1._length == None
+        assert v1.length == 1
+        assert v1._length == 1
 
 
     def test_create_deletion(self):
@@ -69,6 +74,7 @@ class TestVariant(BaseTest):
         assert v1.is_insertion == False        
         assert v1.is_deletion == True
         assert v1.is_indel == True
+        assert v1.length == 1
         
 
 class TestCall(BaseTest):

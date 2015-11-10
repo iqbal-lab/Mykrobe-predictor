@@ -164,6 +164,15 @@ class Call(Document):
     def call_set_name(self):
         return self.call_set.name
 
+def lazyprop(fn):
+    attr_name = '_' + fn.__name__
+    @property
+    def _lazyprop(self):
+        if not getattr(self, attr_name):
+            setattr(self, attr_name, fn(self))
+            self.save()
+        return getattr(self, attr_name)
+    return _lazyprop
 
 class Variant(Document):
     meta = {'indexes': [
@@ -186,6 +195,7 @@ class Variant(Document):
     # updated_at = DateTimeField(required = True, default=datetime.datetime.now)
     reference = ReferenceField('Reference', required = True)
     start = IntField(required = True) #(0-based)
+    _length = IntField(required = False, default = None) 
     end = IntField(required = False) #  The end position (exclusive), resulting in [start, end) closed-open interval.
     reference_bases = StringField(required = True)
     alternate_bases = ListField(StringField(), required = True)
@@ -207,6 +217,10 @@ class Variant(Document):
         return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
             alternate_bases = alternate_bases, reference = reference, name = name).save()
 
+    @lazyprop 
+    def length(self):
+        return abs(len(self.reference_bases) - max([len(a) for a in self.alternate_bases]))
+
     @property 
     def alt(self):
         if len(self.alternate_bases) == 1:
@@ -222,7 +236,7 @@ class Variant(Document):
         return self.name
 
     def __repr__(self):
-        return self.name  
+        return self.name
 
     @property
     def is_indel(self):
