@@ -13,16 +13,16 @@ class TestINDELandSNPSAlleleGenerator():
         v2 = Variant("A", 32, "T")
         panel = self.pg.create(v, context = [v2])
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert panel.alts == ["ATTAAAGATAGAAATACACGATGCGAGCATTTATCAAATTTCATAACATCACCATGAGTTTGA",
-                              "ATTAAAGATAGAAATACACGATGCGAGCATTTTTCAAATTTCATAACATCACCATGAGTTTGA"]
+        assert sorted(panel.alts) == sorted(["ATTAAAGATAGAAATACACGATGCGAGCATTTATCAAATTTCATAACATCACCATGAGTTTGA",
+                                             "ATTAAAGATAGAAATACACGATGCGAGCATTTTTCAAATTTCATAACATCACCATGAGTTTGA"])
 
     def test_del_with_SNP_context1(self):
         v = Variant("AA", 31, "A")
         v2 = Variant("T", 33, "A")
         panel = self.pg.create(v, context = [v2])
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC",
-        					  "CGATTAAAGATAGAAATACACGATGCGAGCAACAAATTTCATAACATCACCATGAGTTTGATC"]                                 
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC",
+        					                 "CGATTAAAGATAGAAATACACGATGCGAGCAACAAATTTCATAACATCACCATGAGTTTGATC"])
 
     def test_del_with_SNP_context2(self):
         v = Variant("AA", 31, "A")
@@ -30,7 +30,7 @@ class TestINDELandSNPSAlleleGenerator():
         panel = self.pg.create(v, context = [v2])
         self.pg._remove_contexts_spanning_del(v, [v2]) == []
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC"]
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC"])
 
     def test_del_with_ins_context1(self):
         v = Variant("AAT", 31, "A")
@@ -38,8 +38,8 @@ class TestINDELandSNPSAlleleGenerator():
         panel = self.pg.create(v, context = [v2])
         self.pg._remove_contexts_spanning_del(v, [v2]) == [v2]
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTTTTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGAT"]  
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGATCC",
+                                             "GATTTTTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGAT"])
 
 
     def test_del_with_ins_context2(self):
@@ -49,7 +49,7 @@ class TestINDELandSNPSAlleleGenerator():
         assert self.pg._remove_contexts_spanning_del(v, [v2]) == [v2]
         assert self.pg._remove_contexts_not_within_k(v, [v2]) == []
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"] 
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"] 
 
     def test_del_with_ins_context3(self):
         v = Variant("ATC", 32, "A")
@@ -57,8 +57,8 @@ class TestINDELandSNPSAlleleGenerator():
         panel = self.pg.create(v, context = [v2])
         assert self.pg._remove_contexts_spanning_del(v, [v2]) == [v2]
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"]
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
+                                             "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
 
     def test_del_with_ins_context4(self):
@@ -69,8 +69,8 @@ class TestINDELandSNPSAlleleGenerator():
         assert self.pg._remove_contexts_spanning_del(v, [v2, v3]) == [v2, v3]
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTGAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
+                                             "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
+                                             "GATTGAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
 
 
@@ -81,10 +81,10 @@ class TestINDELandSNPSAlleleGenerator():
         panel = self.pg.create(v, context = [v2, v3])
         assert self.pg._remove_contexts_spanning_del(v, [v2, v3]) == [v2, v3]
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTAGAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-                              "GATTTAGAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATC"]
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
+                                             "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
+                                             "GATTAGAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
+                                             "GATTTAGAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATC"])
 
 
     def test_del_with_ins_context_where_base_is_deleted(self):
@@ -93,7 +93,7 @@ class TestINDELandSNPSAlleleGenerator():
         panel = self.pg.create(v, context = [v2])
         assert self.pg._remove_contexts_spanning_del(v, [v2]) == []
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"]                                                                                                                
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"]                                                                                                                
 
     def test_del_with_ins_context_where_base_is_deleted2(self):
         v = Variant("ATC", 32, "A")
