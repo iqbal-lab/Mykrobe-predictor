@@ -95,16 +95,14 @@ class TestINDELandSNPSAlleleGenerator():
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"]                                                                                                                
 
-    # def test_del_with_ins_context_where_base_is_deleted2(self):
-    #     v = Variant("ATC", 32, "A")
-    #     v2 = Variant("TAAA", 5, "T")
-    #     v3 = Variant("A", 7, "AG")
-    #     panel = self.pg.create(v, context = [v2, v3])
-    #     assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-    #     print (panel.alts)
-    #     assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
-    #                           "CGATTGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCCAAA",
-    #                           "GATTAGAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"] 
-    #                           #CGGGTTGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCCAA 
+    def test_del_with_ins_context_where_base_is_deleted2(self):
+        v = Variant("ATC", 32, "A")
+        v2 = Variant("TAAA", 5, "T")
+        v3 = Variant("A", 7, "AG")
+        panel = self.pg.create(v, context = [v2, v3])
+        assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
+        assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
+                              "CGATTGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCCAAA",
+                              "GATTAAGAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
    	

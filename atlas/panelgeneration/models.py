@@ -33,7 +33,6 @@ class Variant(object):
         return self.pos < other.pos
 
     def overlapping(self, other):
-        # return self.pos == other.pos
         return other.pos in self.ref_range 
 
     @property
@@ -219,7 +218,7 @@ class AlleleGenerator(object):
 
     def _get_first_two_incompatible_variants(self, context):
         for pair in itertools.combinations(context, 2):
-            if pair[0].pos == pair[1].pos:
+            if pair[0].overlapping(pair[1]):
                 return pair
 
     def _are_contexts_all_valid(self, compatiblity_of_contexts):
@@ -227,7 +226,6 @@ class AlleleGenerator(object):
 
     def _all_variants_are_combatible(self, variants):
         pairs = list(itertools.combinations(variants, 2))
-        # position_counts = Counter([v.pos for v in variants])
         return all([not v1.overlapping(v2) for v1,v2 in pairs])
 
     def _get_combinations_of_backgrounds(self, context):
