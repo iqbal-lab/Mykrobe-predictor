@@ -42,7 +42,7 @@ double get_log_posterior_truly_susceptible_mut(double llk,
     }
   else
     {
-      return -99999999;
+      return -9999999;
     } 
   return log(1)+llk;;
 }
@@ -70,7 +70,7 @@ double get_log_posterior_of_mixed_infection(double llk,
       }*/
   else
     {
-      return -9999999;
+      return -99999999;
     }
 }
 
