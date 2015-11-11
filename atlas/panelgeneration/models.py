@@ -33,8 +33,8 @@ class Variant(object):
         return self.pos < other.pos
 
     def overlapping(self, other):
-        return self.pos == other.pos
-        # return other.pos in self.ref_range 
+        # return self.pos == other.pos
+        return other.pos in self.ref_range 
 
     @property
     def ref_range(self):
