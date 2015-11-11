@@ -26,6 +26,20 @@ class Variant(object):
     def __repr__(self):
         return "".join([self.ref, str(self.pos), self.alt])
 
+    def __gt__(self, other):
+        return self.pos > other.pos
+
+    def __lt__(self, other):
+        return self.pos < other.pos
+
+    def overlapping(self, other):
+        return self.pos == other.pos
+        # return other.pos in self.ref_range 
+
+    @property
+    def ref_range(self):
+        return range(self.pos, self.pos + len(self.ref))        
+
     @property
     def length(self):
         return abs(len(self.ref) - len(self.alt))
@@ -103,8 +117,7 @@ class AlleleGenerator(object):
     def _remove_contexts_spanning_del(self, v, context):
         """If there's a var within the range of an DEL remove from context"""
         if v.is_deletion:
-            ran = range(v.pos, v.pos + len(v.ref))
-            context = [c for c in context if not c.pos in ran]
+            context = [c for c in context if not c.pos in v.ref_range]
         return context
 
     def _remove_contexts_not_within_k(self, v, context):
@@ -162,10 +175,14 @@ class AlleleGenerator(object):
     def _generate_background_using_context(self, i, v, alternate_reference_segment, context ):
         backgrounds = [alternate_reference_segment]
         new_background = copy(alternate_reference_segment)
+
+        variants_added = []
         for variant in context:
             j = i + variant.pos - v.pos
+            j -= self._calculate_length_delta_from_variant_list([c for c in variants_added if c.pos <= variant.pos and c.is_indel])
             assert "".join(new_background[j : j+ len(variant.ref)]) == variant.ref                        
             new_background[j : j + len(variant.ref)] = variant.alt
+            variants_added.append(variant)
         return new_background
 
     def _create_multiple_contexts(self, context):
@@ -174,33 +191,44 @@ class AlleleGenerator(object):
 
     def _recursive_context_creator(self, contexts):
         ## This is only run when there are multiple variants at the same position
-        valid = True
-        for i,context in enumerate(contexts):
-            position_counts = Counter([v.pos for v in context])
-            if not all([c == 1 for c in position_counts.values()]):
-                valid = False
-        if valid:
+        compatiblity_of_contexts = [self._all_variants_are_combatible(context) for context in contexts]
+        if self._are_contexts_all_valid(compatiblity_of_contexts):
             return contexts
         else:
-            for i,context in enumerate(contexts):
-                position_counts = Counter([v.pos for v in context])
-                if not all([c == 1 for c in position_counts.values()]):
-                    position = position_counts.most_common(1)[0][0]
-                    repeated_vars = []
-                    common_vars = []
-                    for var in context:
-                        if var.pos == position:
-                            repeated_vars.append(var)
-                        else:
-                            common_vars.append(var)
-                    new_contexts = []
-                    for var in repeated_vars:
-                        context = [var] + common_vars
-                        new_contexts.append(context)
-                    contexts.pop(i)
-                    contexts += new_contexts
-                    self._recursive_context_creator(contexts)
-        return contexts
+            ## If there are variants that are incompatible (e.g. SNPs at the same position or overlapping INDELs)
+            ## we need to distangle them into multiple contexts which are all compatible with each other
+            ## Get the first incompatible context
+            i = compatiblity_of_contexts.index(False)
+            incompatible_context = contexts.pop(i)
+            ## Split it into two smaller contexts by removing incompatible variants
+            split_context = self._split_context(incompatible_context)
+            contexts.extend(split_context)
+            return self._recursive_context_creator(contexts)
+    
+    def _split_context(self, context):
+        assert not self._all_variants_are_combatible(context)
+        v1, v2 = self._get_first_two_incompatible_variants(context)
+        nov1 = []
+        nov2 = []
+        for x in context:
+            if not x is v1:
+                nov1.append(x)
+            if not x is v2:
+                nov2.append(x)
+        return [nov1, nov2]
+
+    def _get_first_two_incompatible_variants(self, context):
+        for pair in itertools.combinations(context, 2):
+            if pair[0].pos == pair[1].pos:
+                return pair
+
+    def _are_contexts_all_valid(self, compatiblity_of_contexts):
+        return all(compatiblity_of_contexts)        
+
+    def _all_variants_are_combatible(self, variants):
+        pairs = list(itertools.combinations(variants, 2))
+        # position_counts = Counter([v.pos for v in variants])
+        return all([not v1.overlapping(v2) for v1,v2 in pairs])
 
     def _get_combinations_of_backgrounds(self, context):
         combination_context = []
