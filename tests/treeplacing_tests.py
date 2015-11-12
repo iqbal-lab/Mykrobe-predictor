@@ -31,9 +31,8 @@ class BaseTest(TestCase):
         c.drop_database(DBNAME)
         Reference.drop_collection()
 
-
-
 class TestNodes(BaseTest):
+
 
     def test_single_node_no_children(self):
         node = Node()
@@ -50,6 +49,7 @@ class TestNodes(BaseTest):
         assert root.samples == ['C1', 'C2']
 
 class TestMultiNode(TestNodes):
+
 
     def setUp(self):
         DB.drop_database(DBNAME)
@@ -138,12 +138,12 @@ class TestMultiNode(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(name = "C6") 
-        GenotypedVariant.create("A1T", new_call_set.id, 30)
+        GenotypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30)
         assert Placer(root = self.root).place("C6") == "C1"
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(name = "C7") 
-        GenotypedVariant.create("A4T", new_call_set.id, 30)
+        GenotypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30)
         assert Placer(root = self.root).place("C7") == ["C4", "C5"]
 
 
@@ -241,7 +241,7 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(name = "C8") 
-        GenotypedVariant.create("A1T", new_call_set.id, 30)
+        GenotypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30)
         ### Note - I think the commented line hear should be correct behaviour
         Placer(root = self.root).place("C8") == ["C1"]
         # print Placer(root = self.root).place("C8", verbose=True)
@@ -249,7 +249,7 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(name = "C9") 
-        GenotypedVariant.create("A4T", new_call_set.id, 30)
+        GenotypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30)
         assert Placer(root = self.root).place("C9") == "C4"
 
 

@@ -26,7 +26,7 @@ class GenotypedVariant(Document):
     alt_coverage = IntField()
     ref_pnz = IntField()
     alt_pnz = IntField()    
-    created_at = DateTimeField(required = True, default=datetime.datetime.now)
+    created_at = DateTimeField(required = True, default = datetime.datetime.now)
     
     start = IntField()
     reference_bases = StringField()
@@ -34,7 +34,7 @@ class GenotypedVariant(Document):
     call_set = ReferenceField('CallSet')
 
     @classmethod
-    def create_object(cls, name, call_set,ref_pnz, alt_pnz, ref_coverage, alt_coverage):
+    def create_object(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage):
         reference_bases, start, alternate_bases = split_var_name(name)
         if ref_coverage is None:
             ref_coverage = 0
@@ -52,8 +52,8 @@ class GenotypedVariant(Document):
                     )   
 
     @classmethod
-    def create(cls, name, call_set, coverage):
-        return cls.create_object(name, call_set, coverage).save()
+    def create(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage):
+        return cls.create_object(name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage).save()
 
 
 # class VariantSetMetadata(Document)
