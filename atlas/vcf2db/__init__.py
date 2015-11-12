@@ -6,3 +6,4 @@ from atlas.vcf2db.models import GenotypedVariant
 from atlas.vcf2db.models import VariantSet
 from atlas.vcf2db.models import VariantPanel
 from atlas.vcf2db.models import Reference
+from atlas.vcf2db.models import split_var_name

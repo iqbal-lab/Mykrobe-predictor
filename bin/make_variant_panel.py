@@ -1,4 +1,7 @@
 #! /usr/bin/env python
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import datetime
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -9,17 +12,22 @@ from pymongo import MongoClient
 import multiprocessing
 client = MongoClient()
 
-from vcf2db import VariantFreq
-from vcf2db import Variant as CalledVariant
-from vcf2db import VariantSet
-from vcf2db import VariantPanel
-from panelgeneration import AlleleGenerator
-from panelgeneration import Variant
-from utils import unique
+from atlas.vcf2db import VariantFreq
+from atlas.vcf2db import Variant as CalledVariant
+from atlas.vcf2db import VariantSet
+from atlas.vcf2db import VariantPanel
+from atlas.vcf2db import split_var_name
+from atlas.panelgeneration import AlleleGenerator
+from atlas.panelgeneration import Variant
+
+def unique(seq):
+    seen = set()
+    seen_add = seen.add
+    return [ x for x in seq if x not in seen and not seen_add(x)]
 
 import argparse
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
-parser.add_argument('--reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath', default="data/NC_000962.2.fasta")
+parser.add_argument('reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath')
 parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
 args = parser.parse_args()
@@ -54,9 +62,7 @@ print("%i new unique variants " % len(new_names) )
 print("Storing and sorting unique variants " ) 
 vfs = []
 for name in new_names:
-	reference_bases = name[0]
-	alternate_bases = [name[-1]]
-	start = int(name[1:-1])
+	reference_bases, start, alternate_bases = split_var_name(name)
 	vf = VariantFreq.create(name = name,
 					   # count = CalledVariant.objects(name = name).count(),
 					   # total_samples = total_samples,
@@ -72,7 +78,7 @@ def make_panel(vf):
 	context = [Variant(vft.reference_bases, vft.start , "/".join(vft.alternate_bases)) for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer)]
 	variant = Variant(vf.reference_bases, vf.start , "/".join(vf.alternate_bases))
 	print len(context)
-	if len(context) <= 15:
+	if len(context) <= 8:
 		panel = al.create(variant, context)
 		return VariantPanel().create_doc(vf, panel.alts)	
 

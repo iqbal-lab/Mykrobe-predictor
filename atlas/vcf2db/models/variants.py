@@ -1,4 +1,5 @@
 import datetime
+import re
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -203,6 +204,9 @@ class Variant(Document):
 
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
+        if not len(reference_bases) < 31 and all([len(a) < 31 for a in alternate_bases ]):
+            raise ValueError("INDEL is too large. Atlas can only consider small INDELs < 31 bases for now.")
+
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
         return cls(variant_set = variant_set,
                    start = start, end = end,
@@ -286,5 +290,8 @@ class Variant(Document):
             return False                   
 
 
+def split_var_name(name):
+    items = re.match(r"([A-Z]+)([0-9]+)([A-Z]+)", name, re.I).groups()
+    return items[0],int(items[1]),items[2]
 
 

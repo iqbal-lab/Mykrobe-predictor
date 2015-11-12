@@ -3,6 +3,7 @@ from atlas.vcf2db import VariantSet
 from atlas.vcf2db import Call 
 from atlas.vcf2db import CallSet 
 from atlas.vcf2db import Reference
+from atlas.vcf2db import split_var_name
 from mongoengine import connect
 DB = connect('atlas-test')
 
@@ -75,6 +76,31 @@ class TestVariant(BaseTest):
         assert v1.is_deletion == True
         assert v1.is_indel == True
         assert v1.length == 1
+
+
+    def test_split_name(self):
+        name = "A12T"
+        r,pos,a =  split_var_name(name)
+        assert r == "A"
+        assert pos == 12
+        assert a == "T"
+
+    def test_split_name_del(self):
+        name = "AA12T"
+        r,pos,a =  split_var_name(name)
+        assert r == "AA"
+        assert pos == 12
+        assert a == "T"
+
+
+    def test_split_name_ins(self):
+        name = "A12TT"
+        r,pos,a =  split_var_name(name)
+        assert r == "A"
+        assert pos == 12
+        assert a == "TT"        
+
+
         
 
 class TestCall(BaseTest):
@@ -91,6 +117,7 @@ class TestCall(BaseTest):
         assert c1.call_set_name == "C00123"
         assert self.v1.call == c1
         assert c1.genotype == [0, 1]
+
 
 
 

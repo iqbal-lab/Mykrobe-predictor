@@ -8,11 +8,11 @@ from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
 
-from atlas import CallSet
-from atlas import Reference
-from atlas import Variant
-from atlas import VariantSet
-from atlas import Call
+from atlas.vcf2db import CallSet
+from atlas.vcf2db  import Reference
+from atlas.vcf2db  import Variant
+from atlas.vcf2db  import VariantSet
+from atlas.vcf2db  import Call
 from pymongo import MongoClient
 client = MongoClient()
 
@@ -61,7 +61,7 @@ except NotUniqueError:
 variants = []
 calls = []
 for record in vcf_reader:
-	if not record.FILTER and record.is_snp and is_record_valid(record):
+	if not record.FILTER and is_record_valid(record):
 		for sample in record.samples:
 			try:
 				v = Variant.create_object(variant_set = variant_set,
@@ -72,8 +72,8 @@ for record in vcf_reader:
 				variants.append(v)
 				c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = sample['GT_CONF'])
 				calls.append(c)
-			except OperationError:
-				pass
+			except (OperationError, ValueError) as e:
+				print e
 
 try:
 	variant_ids =  [v.id for v in Variant.objects.insert(variants)]
