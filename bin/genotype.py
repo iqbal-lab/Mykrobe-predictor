@@ -77,13 +77,23 @@ gvs = []
 for vp in VariantPanel.objects():
     alt_pnz, alt_covg = alt_coverage(vp.alts)
     ref_pnz, ref_covg = coverage_on_seq(vp.ref)
-    if alt_covg or args.all:
+    if alt_covg:
         gvs.append(GenotypedVariant.create_object(name = vp.name,
                                                   call_set = call_set,
                                                   ref_pnz = ref_pnz, 
                                                   alt_pnz = alt_pnz,
                                                   ref_coverage = ref_covg, 
-                                                  alt_coverage = alt_covg))
+                                                  alt_coverage = alt_covg,
+                                                  gt = "1/1"))
+    elif not alt_covg and args.all:
+        gvs.append(GenotypedVariant.create_object(name = vp.name,
+                                                  call_set = call_set,
+                                                  ref_pnz = ref_pnz, 
+                                                  alt_pnz = alt_pnz,
+                                                  ref_coverage = ref_covg, 
+                                                  alt_coverage = alt_covg,
+                                                  gt = "0/1"))        
+
 GenotypedVariant.objects.insert(gvs)
 
 

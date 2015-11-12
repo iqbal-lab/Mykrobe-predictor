@@ -157,7 +157,8 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref)
+            print (i, len(v.ref))
+            print ("".join(alternate[i:(i + len(v.ref))]) , v.ref)
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
@@ -242,7 +243,9 @@ class AlleleGenerator(object):
         kmer = self.kmer
         if len(v.ref) > 2 * kmer:
             kmer = int(math.ceil(float(len(v.ref)) / 2)) + 5
-            print kmer
+        elif  (v.length > 2 * kmer):
+            kmer = int(math.ceil(float(v.length) / 2)) + 5
+
         if len(v.ref) > kmer:
             shift = int( (kmer - 1) - math.floor(float((2 * kmer + 1) - len(v.ref)) / 2))
         pos = v.pos
@@ -263,7 +266,7 @@ class AlleleGenerator(object):
             i += diff
         start_index += shift
         end_index += shift
-        i -= shift            
+        i -= shift
         return (i, start_index, end_index)
 
     def _calculate_length_delta_from_indels(self, v, context):

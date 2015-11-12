@@ -32,9 +32,10 @@ class GenotypedVariant(Document):
     reference_bases = StringField()
     alternate_bases = StringField()
     call_set = ReferenceField('CallSet')
+    gt = StringField()
 
     @classmethod
-    def create_object(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage):
+    def create_object(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage, gt):
         reference_bases, start, alternate_bases = split_var_name(name)
         if ref_coverage is None:
             ref_coverage = 0
@@ -48,7 +49,8 @@ class GenotypedVariant(Document):
                     ref_pnz = int(ref_pnz), 
                     alt_pnz = int(alt_pnz),
                     ref_coverage = int(ref_coverage),
-                    alt_coverage = int(alt_coverage)                    
+                    alt_coverage = int(alt_coverage),
+                    gt = gt                
                     )   
 
     @classmethod
@@ -209,7 +211,6 @@ class Variant(Document):
     end = IntField(required = False) #  The end position (exclusive), resulting in [start, end) closed-open interval.
     reference_bases = StringField(required = True)
     alternate_bases = ListField(StringField(), required = True)
-   
 
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
