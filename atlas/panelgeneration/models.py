@@ -99,7 +99,7 @@ class AlleleGenerator(object):
         self._check_valid_variant(v)
         context = self._remove_contexts_spanning_del(v, context)
         context = self._remove_contexts_not_within_k(v, context)
-        wild_type_reference = self._get_wildtype_reference(v.pos)
+        wild_type_reference = self._get_wildtype_reference(v)
         alternates = self._generate_alternates_on_all_backgrounds(v,  context)
         return Panel(wild_type_reference, v.pos, alternates)
 
@@ -133,8 +133,8 @@ class AlleleGenerator(object):
         return new_context
 
 
-    def _get_wildtype_reference(self, pos):
-        i, start_index, end_index = self._get_start_end(pos)        
+    def _get_wildtype_reference(self, v):
+        i, start_index, end_index = self._get_start_end(v)           
         return self._get_reference_segment(start_index, end_index)    
 
     def _get_reference_segment(self, start_index, end_index):
@@ -142,7 +142,7 @@ class AlleleGenerator(object):
 
     def _get_alternate_reference_segment(self, v, context):
         ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context)
-        i, start_index, end_index = self._get_start_end(v.pos, delta = ref_segment_length_delta)
+        i, start_index, end_index = self._get_start_end(v, delta = ref_segment_length_delta)
         return self._get_reference_segment(start_index, end_index)        
 
     def _generate_alternates_on_all_backgrounds(self, v, context):
@@ -152,7 +152,7 @@ class AlleleGenerator(object):
         alternates = []
         for context_combo in context_combinations:
             ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context_combo)
-            i, start_index, end_index = self._get_start_end(v.pos, delta = ref_segment_length_delta)
+            i, start_index, end_index = self._get_start_end(v, delta = ref_segment_length_delta)
             alternate_reference_segment = self._get_reference_segment(start_index, end_index)
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
@@ -235,12 +235,17 @@ class AlleleGenerator(object):
             combination_context.append(list(subset))
         return combination_context
 
-    def _get_start_end(self, pos, delta = 0):
+    def _get_start_end(self, v, delta = 0):
+        ## Is large var
+        shift = 0
+        if len(v.ref) > self.kmer:
+            shift = int(30 - math.floor(float((2 * self.kmer + 1) - len(v.ref)) / 2))
+        pos = v.pos
         start_delta = int(math.floor(float(delta) / 2))
         end_delta = int(math.ceil(float(delta) / 2))
         start_index = pos - self.kmer - start_delta
         end_index =  pos + self.kmer + end_delta + 1
-        i = self.kmer - 1 + start_delta
+        i = self.kmer - 1 + start_delta 
         if start_index < 0:
             diff = abs(start_index)
             start_index = 0 
@@ -251,6 +256,9 @@ class AlleleGenerator(object):
             end_index = self.ref_length
             start_index -= diff
             i += diff
+        start_index += shift
+        end_index += shift
+        i -= shift            
         return (i, start_index, end_index)
 
     def _calculate_length_delta_from_indels(self, v, context):

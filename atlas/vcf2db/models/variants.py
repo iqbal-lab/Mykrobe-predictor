@@ -22,7 +22,10 @@ class GenotypedVariant(Document):
                 ]
             }    
     name = StringField()
-    coverage = IntField()
+    ref_coverage = IntField()
+    alt_coverage = IntField()
+    ref_pnz = IntField()
+    alt_pnz = IntField()    
     created_at = DateTimeField(required = True, default=datetime.datetime.now)
     
     start = IntField()
@@ -31,14 +34,22 @@ class GenotypedVariant(Document):
     call_set = ReferenceField('CallSet')
 
     @classmethod
-    def create_object(cls, name, call_set, coverage):
+    def create_object(cls, name, call_set,ref_pnz, alt_pnz, ref_coverage, alt_coverage):
         reference_bases, start, alternate_bases = split_var_name(name)
+        if ref_coverage is None:
+            ref_coverage = 0
+        if alt_coverage is None:
+            alt_coverage = 0            
         return cls( name = name, 
                     reference_bases = reference_bases, 
                     start = start, 
                     alternate_bases = alternate_bases,
                     call_set = call_set,
-                    coverage = int(coverage))   
+                    ref_pnz = int(ref_pnz), 
+                    alt_pnz = int(alt_pnz),
+                    ref_coverage = int(ref_coverage),
+                    alt_coverage = int(alt_coverage)                    
+                    )   
 
     @classmethod
     def create(cls, name, call_set, coverage):
@@ -202,8 +213,8 @@ class Variant(Document):
 
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
-        if not len(reference_bases) < 31 or not all([len(a) < 31 for a in alternate_bases ]):
-            raise ValueError("INDEL is too large. Atlas can only consider small INDELs < 31 bases for now.")
+        if not len(reference_bases) < 150 or not all([len(a) < 150 for a in alternate_bases ]):
+            raise ValueError("INDEL is too large. Atlas can only consider small INDELs < 150 bases for now.")
 
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
         return cls(variant_set = variant_set,

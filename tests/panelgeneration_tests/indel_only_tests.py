@@ -39,8 +39,6 @@ class TestINDELAlleleGenerator():
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"] 
 
-#         ## To do. 3 letter deletion
-
     def test_simple_insertion1(self):
         v = Variant("C", 1, "TTTC")
         panel = self.pg.create(v)
@@ -77,5 +75,8 @@ class TestINDELAlleleGenerator():
         assert panel.ref ==   "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
         assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "CAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"                
         assert panel.alts == ["CAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTATGCT"] 
+
+
+
 
   

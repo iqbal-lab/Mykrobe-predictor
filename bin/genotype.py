@@ -18,6 +18,8 @@ from mongoengine import ReferenceField
 from mongoengine import DoesNotExist
 from atlas.vcf2db import CallSet
 from atlas.vcf2db import GenotypedVariant
+from atlas.vcf2db import VariantPanel
+
 import multiprocessing
 import argparse
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
@@ -25,7 +27,8 @@ parser.add_argument('sample', metavar='sample', type=str, help='sample id')
 parser.add_argument('db_name', metavar='db_name', type=str, help='db_name')
 parser.add_argument('kmer', metavar='kmer', type=int, help='kmer size')
 parser.add_argument('kmer_count', metavar='kmer_count', type=str, help='kmer count')
-parser.add_argument('jobs', metavar='jobs', type=int, help='jobs', default = 10)
+parser.add_argument('--jobs', metavar='jobs', type=int, help='jobs', default = 10)
+parser.add_argument('--all', help='Store ref GT aswell as alt', default = False, action = "store_true")
 args = parser.parse_args()
 
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
@@ -41,22 +44,28 @@ with open(args.kmer_count,'r') as infile:
             pass
 
 # Read fasta
-def process_panel(filepath):
-    coverage = {}
-    for e,record in enumerate(SeqIO.parse(filepath,"fasta")):
-        seq = str(record.seq)
-        coverage_record = []
-        for i in xrange(kmer+2):
-            kmer_coverage = kmer_counts.get(seq[i:i+kmer],0)
-            if kmer_coverage <= 1:
+def alt_coverage(alts):
+    best_percent_non_zero = 0
+    best_coverage = 0
+    for seq in alts:
+        percent_non_zero, coverage = coverage_on_seq(seq)
+        if percent_non_zero >= best_percent_non_zero:
+            best_percent_non_zero = best_percent_non_zero
+            if coverage > best_coverage:
+                best_coverage = coverage
+    return best_percent_non_zero, best_coverage
 
-                coverage_record = []
-                break
-            else:
-                coverage_record.append(kmer_coverage)
-        if coverage_record:
-            coverage[record.name] = median(coverage_record)
-    return coverage
+def coverage_on_seq(seq):
+    coverage_record = []
+    coverage = None
+    for i in xrange(kmer+2):
+        kmer_coverage = kmer_counts.get(seq[i:i+kmer],0)
+        coverage_record.append(kmer_coverage)
+    non_zero = [c for c in coverage_record if c > 0]
+    percent_non_zero = sum(non_zero) / len(coverage_record)
+    if non_zero:
+        coverage = median(non_zero)
+    return percent_non_zero, coverage  
 
 try:
     call_set = CallSet.objects.get(name = args.sample)
@@ -64,14 +73,18 @@ except DoesNotExist:
     call_set = CallSet.create(name = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
-pool = multiprocessing.Pool(args.jobs)
 gvs = []
-covg_list = pool.map(process_panel,  glob.glob("*.fa")) 
-for cc in covg_list:
-    for name, covg in cc.iteritems():
-        gvs.append(GenotypedVariant.create_object(name = name, call_set = call_set, coverage = covg))
+for vp in VariantPanel.objects():
+    alt_pnz, alt_covg = alt_coverage(vp.alts)
+    ref_pnz, ref_covg = coverage_on_seq(vp.ref)
+    if alt_covg or args.all:
+        gvs.append(GenotypedVariant.create_object(name = vp.name,
+                                                  call_set = call_set,
+                                                  ref_pnz = ref_pnz, 
+                                                  alt_pnz = alt_pnz,
+                                                  ref_coverage = ref_covg, 
+                                                  alt_coverage = alt_covg))
 GenotypedVariant.objects.insert(gvs)
-# covg = process_panel("panel_k%s.fasta" % args.kmer)
 
 
 

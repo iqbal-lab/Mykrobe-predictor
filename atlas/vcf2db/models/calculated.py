@@ -19,13 +19,15 @@ class UniqueVariants(Document):
 class VariantPanel(Document):
 
     variant = ReferenceField('VariantFreq', unique = True)
+    ref = StringField()    
     alts = ListField(StringField())
     _name = StringField(default = None)
 
     @classmethod
-    def create_doc(cls, variant, alts):
+    def create_doc(cls, variant, ref, alts):
         return {
         "variant" : variant.id, 
+        "ref" : ref, 
         "alts" : alts,
         "_name" : variant.name
         }

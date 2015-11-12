@@ -73,6 +73,7 @@ for record in vcf_reader:
 			except (OperationError, ValueError) as e:
 				print e
 				print record.POS
+				print record
 			else:
 				variants.append(v)
 				c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = sample['GT_CONF'])

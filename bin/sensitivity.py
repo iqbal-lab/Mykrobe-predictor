@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 ## Compare genotype vs discovered
-from vcf2db import *
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
+from atlas.vcf2db import *
 import pymongo
 import mongoengine
 import argparse
@@ -33,5 +36,5 @@ genotyped_set = set(genotyped.distinct('name'))
 
 print args.sample, len(variant_set), len(genotyped_set), len(variant_set & genotyped_set), len(variant_set - genotyped_set), len(genotyped_set - variant_set), float(len(variant_set & genotyped_set))/float(len(variant_set)) 
 
-# for var in variant_set - genotyped_set:
-#     print var, Variant.objects.get(name = var, id__in = variant_list).call.genotype_likelihood, VariantFreq.objects(name = var).count()
+for var in variant_set - genotyped_set:
+    print var, Variant.objects.get(name = var, id__in = [v.id for v in variants]).call.genotype_likelihood, VariantFreq.objects(name = var).count()
