@@ -157,6 +157,7 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
+            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref)
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
@@ -238,14 +239,18 @@ class AlleleGenerator(object):
     def _get_start_end(self, v, delta = 0):
         ## Is large var
         shift = 0
-        if len(v.ref) > self.kmer:
-            shift = int(30 - math.floor(float((2 * self.kmer + 1) - len(v.ref)) / 2))
+        kmer = self.kmer
+        if len(v.ref) > 2 * kmer:
+            kmer = int(math.ceil(float(len(v.ref)) / 2)) + 5
+            print kmer
+        if len(v.ref) > kmer:
+            shift = int( (kmer - 1) - math.floor(float((2 * kmer + 1) - len(v.ref)) / 2))
         pos = v.pos
         start_delta = int(math.floor(float(delta) / 2))
         end_delta = int(math.ceil(float(delta) / 2))
-        start_index = pos - self.kmer - start_delta
-        end_index =  pos + self.kmer + end_delta + 1
-        i = self.kmer - 1 + start_delta 
+        start_index = pos - kmer - start_delta
+        end_index =  pos + kmer + end_delta + 1
+        i = kmer - 1 + start_delta 
         if start_index < 0:
             diff = abs(start_index)
             start_index = 0 
