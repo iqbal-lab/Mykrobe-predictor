@@ -157,8 +157,7 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            print (i, len(v.ref))
-            print ("".join(alternate[i:(i + len(v.ref))]) , v.ref)
+            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref)
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
