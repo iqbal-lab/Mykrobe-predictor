@@ -32,9 +32,7 @@ class GenotypedVariant(Document):
 
     @classmethod
     def create_object(cls, name, call_set, coverage):
-        reference_bases = name[0]
-        start = int(name[1:-1])
-        alternate_bases = name[-1]
+        reference_bases, start, alternate_bases = split_var_name(name)
         return cls( name = name, 
                     reference_bases = reference_bases, 
                     start = start, 
@@ -204,7 +202,7 @@ class Variant(Document):
 
     @classmethod
     def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
-        if not len(reference_bases) < 31 and all([len(a) < 31 for a in alternate_bases ]):
+        if not len(reference_bases) < 31 or not all([len(a) < 31 for a in alternate_bases ]):
             raise ValueError("INDEL is too large. Atlas can only consider small INDELs < 31 bases for now.")
 
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])

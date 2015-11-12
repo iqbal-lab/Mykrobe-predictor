@@ -76,8 +76,7 @@ print("Inserting documents to DB " )
 
 def make_panel(vf):
 	context = [Variant(vft.reference_bases, vft.start , "/".join(vft.alternate_bases)) for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer)]
-	variant = Variant(vf.reference_bases, vf.start , "/".join(vf.alternate_bases))
-	print len(context)
+	variant = Variant(vf.reference_bases, vf.start , vf.alternate_bases)
 	if len(context) <= 8:
 		panel = al.create(variant, context)
 		return VariantPanel().create_doc(vf, panel.alts)	

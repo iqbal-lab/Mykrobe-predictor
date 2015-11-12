@@ -64,16 +64,19 @@ for record in vcf_reader:
 	if not record.FILTER and is_record_valid(record):
 		for sample in record.samples:
 			try:
-				v = Variant.create_object(variant_set = variant_set,
-				                    start = record.POS,
-				                    reference_bases = record.REF,
-								 	alternate_bases = [str(a) for a in record.ALT], 
-								 	reference = reference)
-				variants.append(v)
-				c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = sample['GT_CONF'])
-				calls.append(c)
+				if len([str(a) for a in record.ALT]) == 1:
+					v = Variant.create_object(variant_set = variant_set,
+					                    start = record.POS,
+					                    reference_bases = record.REF,
+									 	alternate_bases = [str(a) for a in record.ALT], 
+									 	reference = reference)
 			except (OperationError, ValueError) as e:
 				print e
+				print record.POS
+			else:
+				variants.append(v)
+				c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = sample['GT_CONF'])
+				calls.append(c)				
 
 try:
 	variant_ids =  [v.id for v in Variant.objects.insert(variants)]
