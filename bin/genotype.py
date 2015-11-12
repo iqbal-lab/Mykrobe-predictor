@@ -6,6 +6,7 @@ import csv
 from Bio import SeqIO
 import glob
 from numpy import median
+import math
 ## Read the kmer counts into a hash
 import datetime
 from mongoengine import connect
@@ -50,7 +51,7 @@ def alt_coverage(alts):
     for seq in alts:
         percent_non_zero, coverage = coverage_on_seq(seq)
         if percent_non_zero >= best_percent_non_zero:
-            best_percent_non_zero = best_percent_non_zero
+            best_percent_non_zero = percent_non_zero
             if coverage > best_coverage:
                 best_coverage = coverage
     return best_percent_non_zero, best_coverage
@@ -62,7 +63,7 @@ def coverage_on_seq(seq):
         kmer_coverage = kmer_counts.get(seq[i:i+kmer],0)
         coverage_record.append(kmer_coverage)
     non_zero = [c for c in coverage_record if c > 0]
-    percent_non_zero = sum(non_zero) / len(coverage_record)
+    percent_non_zero = int(math.floor(100 * float(len(non_zero)) / len(coverage_record)))
     if non_zero:
         coverage = median(non_zero)
     return percent_non_zero, coverage  
@@ -77,7 +78,8 @@ gvs = []
 for vp in VariantPanel.objects():
     alt_pnz, alt_covg = alt_coverage(vp.alts)
     ref_pnz, ref_covg = coverage_on_seq(vp.ref)
-    if alt_covg:
+    print alt_pnz, alt_covg,  ref_pnz, ref_covg
+    if alt_pnz:
         gvs.append(GenotypedVariant.create_object(name = vp.name,
                                                   call_set = call_set,
                                                   ref_pnz = ref_pnz, 
@@ -92,7 +94,7 @@ for vp in VariantPanel.objects():
                                                   alt_pnz = alt_pnz,
                                                   ref_coverage = ref_covg, 
                                                   alt_coverage = alt_covg,
-                                                  gt = "0/1"))        
+                                                  gt = "0/0"))        
 
 GenotypedVariant.objects.insert(gvs)
 

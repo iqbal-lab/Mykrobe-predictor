@@ -29,7 +29,7 @@ call_set = CallSet.objects.get(name = args.sample)
 variant_set = VariantSet.objects.get(name__startswith = args.sample)
 variants = Variant.objects(variant_set = variant_set)#.order_by('start')
 ## All genotyped
-genotyped = GenotypedVariant.objects(call_set = call_set)#.order_by('start')
+genotyped = GenotypedVariant.objects(call_set = call_set, gt = "1/1")#.order_by('start')
 
 variant_set = set(variants.distinct('name'))
 genotyped_set = set(genotyped.distinct('name'))
