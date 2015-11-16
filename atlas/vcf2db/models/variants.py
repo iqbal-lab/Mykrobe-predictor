@@ -1,5 +1,6 @@
 import datetime
 import re
+import hashlib
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -192,7 +193,7 @@ class Variant(Document):
                     'fields' : ['start']
                 },
                 {
-                    'fields' : ['name']
+                    'fields' : ['name_hash']
                 },
                 {
                     'fields' : ['variant_set']
@@ -202,7 +203,8 @@ class Variant(Document):
     """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.
       Variants belong to a `VariantSet`.This is equivalent to a row in VCF."""
     variant_set = ReferenceField('VariantSet', required = True)
-    name = StringField(unique_with = "variant_set")
+    name_hash = StringField(unique_with = "variant_set")
+    name = StringField()
     # created_at = DateTimeField(required = True, default=datetime.datetime.now)
     # updated_at = DateTimeField(required = True, default=datetime.datetime.now)
     reference = ReferenceField('Reference', required = True)
@@ -213,23 +215,24 @@ class Variant(Document):
     alternate_bases = ListField(StringField(), required = True)
 
     @classmethod
-    def create_object(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
-        if not len(reference_bases) < 150 or not all([len(a) < 150 for a in alternate_bases ]):
-            raise ValueError("INDEL is too large. Atlas can only consider small INDELs < 150 bases for now.")
-
-        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
+    def create_object(cls, variant_set, start,  reference_bases,
+                      alternate_bases, reference, end = None):
+        name = "".join([reference_bases,str(start), 
+                        "/".join(alternate_bases)])
+        name_hash = hashlib.sha256(name.encode("ascii", errors="ignore")).hexdigest()
         return cls(variant_set = variant_set,
                    start = start, end = end,
                    reference_bases = reference_bases,
                    alternate_bases = alternate_bases,
                    reference = reference,
-                   name = name)
+                   name = name, name_hash = name_hash)
 
     @classmethod
     def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
+        name_hash = hashlib.sha256( name.encode("ascii", errors="ignore")).hexdigest()
         return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
-            alternate_bases = alternate_bases, reference = reference, name = name).save()
+            alternate_bases = alternate_bases, reference = reference, name = name, name_hash = name_hash).save()
 
     @lazyprop 
     def length(self):

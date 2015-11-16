@@ -45,7 +45,7 @@ current_vars = VariantFreq.objects().distinct('name')
 # current_vars = []
 # for r in result:
 # 	current_vars.append(r["_id"])
-new_names = CalledVariant.objects(name__nin = current_vars).distinct('name')
+new_names = CalledVariant.objects(name__nin = current_vars).distinct('name_hash')
 # result = CalledVariant._get_collection().aggregate([ 
 # 	{"$match" : {"name" : {"$nin" : current_vars}}},
 #     { "$group": { "_id": "$name"}  }
