@@ -34,84 +34,64 @@ args = parser.parse_args()
 
 db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
-# "/home/phelimb/git/atlas/data/R00000022.fasta"
-al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
-print("Extracting unique variants " )
-## Get all variant freq names
-current_vars = VariantFreq.objects().distinct('name')
-# result = VariantFreq._get_collection().aggregate([ 
-#     { "$group": { "_id": "$name"}  }
-#     ])
-# current_vars = []
-# for r in result:
-# 	current_vars.append(r["_id"])
-new_names = CalledVariant.objects(name__nin = current_vars).distinct('name_hash')
-# result = CalledVariant._get_collection().aggregate([ 
-# 	{"$match" : {"name" : {"$nin" : current_vars}}},
-#     { "$group": { "_id": "$name"}  }
-#     ])
-
-# new_names = []
-# for r in result:
-# 	new_names.append(r["_id"])
-
-print("%i new unique variants " % len(new_names) )
-
-
-
-print("Storing and sorting unique variants " ) 
-vfs = []
-for name in new_names:
-	reference_bases, start, alternate_bases = split_var_name(name)
-	vf = VariantFreq.create(name = name,
-					   # count = CalledVariant.objects(name = name).count(),
-					   # total_samples = total_samples,
-					   start = start,
-					   reference_bases = reference_bases,
-					   alternate_bases = alternate_bases
-					   )
-	vfs.append(vf)
-
-print("Inserting documents to DB " ) 
 
 def make_panel(vf):
 	context = [Variant(vft.reference_bases, vft.start , "/".join(vft.alternate_bases)) for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer)]
 	variant = Variant(vf.reference_bases, vf.start , vf.alternate_bases)
 	if len(context) <= 8:
-		# print variant, context
 		panel = al.create(variant, context)
 		return VariantPanel().create_doc(vf, panel.ref, panel.alts)	
 
-if vfs:
+# "/home/phelimb/git/atlas/data/R00000022.fasta"
+al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
+print("Extracting unique variants " )
+## Get all variant freq names
+current_vars = VariantFreq.objects().distinct('name_hash')
+new_name_hashes = CalledVariant.objects(name_hash__nin = current_vars).distinct('name_hash')
+print("%i new unique variants " % len(new_name_hashes) )
+print("Storing and sorting unique variants " ) 
+vfs = []
+for name_hash in new_name_hashes:
+	v = CalledVariant.objects(name_hash = name_hash)[0]
+	vf = VariantFreq.create(name = v.name,
+						name_hash = v.name_hash,
+					   # count = CalledVariant.objects(name = name).count(),
+					   # total_samples = total_samples,
+					   start = v.start,
+					   reference_bases = v.reference_bases,
+					   alternate_bases = v.alternate_bases
+					   )
+	vfs.append(vf)
 
-	db.variant_freq.insert(vfs)
+print("Inserting documents to DB " ) 
+
+if vfs:
+	VariantFreq.objects.insert(vfs)
 	## Get names of panels that need updating 
 	## Get all the variants that are within K bases of new variants
 	print("Improving panel for genotyping" ) 
-	update_names = []
+	update_name_hashes = []
 	affected_variants = []
 	if VariantPanel.objects().count() > 0:
-		for new_vf in VariantFreq.objects(name__in = new_names):
+		for new_vf in VariantFreq.objects(name_hash__in = new_name_hashes):
 			query = VariantFreq.objects(start__gt = new_vf.start - args.kmer, start__lt = new_vf.start + args.kmer)
 			for q in query:
 				affected_variants.append(q.id)
-				update_names.append(q.name)
+				update_name_hashes.append(q.name)
 		## Remove all panels that need updating
 		VariantPanel.objects(variant__in = affected_variants).delete()
 	## Make panels for all new variants and panels needing updating
-	# pool = multiprocessing.Pool(20)	
-	# variant_panels = pool.map(make_panel,  VariantFreq.objects(name__in = unique(new_names + update_names) ))
 	variant_panels = []
-	for vf in VariantFreq.objects(name__in = unique(new_names + update_names)):
+	for vf in VariantFreq.objects(name_hash__in = unique(new_name_hashes + update_name_hashes)):
 		variant_panels.append(make_panel(vf))
 	new_panels = db.variant_panel.insert(variant_panels)
 
 	with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer),'a') as panel_file:
 		for variant_panel in VariantPanel.objects(id__in = new_panels):
-			panel_file.write(">ref-%s?num_alts=%i\n" % (variant_panel.variant.name, len(variant_panel.alts)))
+			panel_file.write(">ref-%s?num_alts=%i\n" % (variant_panel.variant.id, len(variant_panel.alts)))
 			panel_file.write("%s\n" % variant_panel.ref)
 			for a in variant_panel.alts:
-				panel_file.write(">alt-%s\n" % variant_panel.variant.name)
+				panel_file.write(">alt-%s\n" % variant_panel.variant.id)
 				panel_file.write("%s\n" % a)
 
 

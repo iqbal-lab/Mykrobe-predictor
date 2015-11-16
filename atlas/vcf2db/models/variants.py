@@ -1,6 +1,6 @@
 import datetime
 import re
-import hashlib
+from base import make_hash
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -15,7 +15,7 @@ class GenotypedVariant(Document):
                     'fields' : ['start']
                 },
                 {
-                    'fields' : ['name']
+                    'fields' : ['name_hash']
                 },
                 {
                     'fields' : ['call_set']
@@ -23,6 +23,7 @@ class GenotypedVariant(Document):
                 ]
             }    
     name = StringField()
+    name_hash = StringField()
     ref_coverage = IntField()
     alt_coverage = IntField()
     ref_pnz = IntField()
@@ -41,8 +42,10 @@ class GenotypedVariant(Document):
         if ref_coverage is None:
             ref_coverage = 0
         if alt_coverage is None:
-            alt_coverage = 0            
+            alt_coverage = 0   
+
         return cls( name = name, 
+                    name_hash = make_hash(name),
                     reference_bases = reference_bases, 
                     start = start, 
                     alternate_bases = alternate_bases,
@@ -219,7 +222,8 @@ class Variant(Document):
                       alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start), 
                         "/".join(alternate_bases)])
-        name_hash = hashlib.sha256(name.encode("ascii", errors="ignore")).hexdigest()
+        name_hash = make_hash(name)
+        
         return cls(variant_set = variant_set,
                    start = start, end = end,
                    reference_bases = reference_bases,
@@ -230,7 +234,7 @@ class Variant(Document):
     @classmethod
     def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        name_hash = hashlib.sha256( name.encode("ascii", errors="ignore")).hexdigest()
+        name_hash = make_hash(name)
         return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
             alternate_bases = alternate_bases, reference = reference, name = name, name_hash = name_hash).save()
 

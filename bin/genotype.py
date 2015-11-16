@@ -6,9 +6,11 @@ import csv
 import glob
 ## Read the kmer counts into a hash
 import datetime
-
+from mongoengine import connect
+from mongoengine import DoesNotExist
 from atlas.vcf2db import CallSet
 from atlas.vcf2db import GenotypedVariant
+from atlas.vcf2db import VariantFreq
 
 from atlas.genotyping import ColourCovgsReader
 
@@ -17,7 +19,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
 parser.add_argument('coverage', metavar='coverage', type=str, help='File with coverage on alleles output from CORTEX align')
-parser.add_argument('db_name', metavar='db_name', type=str, help='db_name')
+parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = 'tb')
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer size', default = 31)
 parser.add_argument('--all', help='Store ref GT aswell as alt', default = False, action = "store_true")
 args = parser.parse_args()
@@ -36,7 +38,8 @@ with open(args.coverage, 'r') as infile:
     reader = ColourCovgsReader(infile)
     for allele in reader:
         allele_name, params = allele.name.split('?')
-        alt_or_ref, name = allele_name.split('-')
+        alt_or_ref, _id = allele_name.split('-')
+        v = VariantFreq.objects.get(id = _id)
         if alt_or_ref == "ref":
             ref_pnz = allele.percent_non_zero_coverage
             ref_covg = allele.median_non_zero_coverage
@@ -51,7 +54,7 @@ with open(args.coverage, 'r') as infile:
                   if allele.median_non_zero_coverage > alt_covg:
                       alt_covg = allele.median_non_zero_coverage 
         if alt_pnz:
-            gvs.append(GenotypedVariant.create_object(name = name,
+            gvs.append(GenotypedVariant.create_object(name = v.name,
                                                       call_set = call_set,
                                                       ref_pnz = ref_pnz, 
                                                       alt_pnz = alt_pnz,
@@ -59,7 +62,7 @@ with open(args.coverage, 'r') as infile:
                                                       alt_coverage = alt_covg,
                                                       gt = "1/1"))
         elif not alt_covg and args.all:
-            gvs.append(GenotypedVariant.create_object(name = name,
+            gvs.append(GenotypedVariant.create_object(name = v.name,
                                                       call_set = call_set,
                                                       ref_pnz = ref_pnz, 
                                                       alt_pnz = alt_pnz,
