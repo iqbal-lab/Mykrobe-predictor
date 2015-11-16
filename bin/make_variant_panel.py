@@ -110,28 +110,15 @@ if vfs:
 	
 
 	kmers = set()
-	with open("panel_%s_k%i.kmers" % (args.db_name, args.kmer) ,'a') as panel_kmer_file:
-		with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer),'a') as panel_file:
-			for variant_panel in VariantPanel.objects(id__in = new_panels):
-				panel_file.write(">ref %s\n" % variant_panel.variant.name)
-				panel_file.write("%s\n" % variant_panel.ref)
-				for i in xrange(len(variant_panel.ref)-args.kmer+1):
-					seq = variant_panel.ref[i:i+args.kmer]
-					if not seq in kmers:
-						kmers.add(seq)
-						panel_kmer_file.write(">%i\n" % i)
-						panel_kmer_file.write("%s\n" % seq)				
-						i+=1					
-				for a in variant_panel.alts:
-					panel_file.write(">alt %s\n" % variant_panel.variant.name)
-					panel_file.write("%s\n" % a)
-					for i in xrange(len(a)-args.kmer+1):
-						seq = a[i:i+args.kmer]
-						if not seq in kmers:
-							kmers.add(seq)
-							panel_kmer_file.write(">%i\n" % i)
-							panel_kmer_file.write("%s\n" % seq)				
-							i+=1					
+
+	with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer),'a') as panel_file:
+		for variant_panel in VariantPanel.objects(id__in = new_panels):
+			panel_file.write(">ref-%s\n" % variant_panel.variant.name)
+			panel_file.write("%s\n" % variant_panel.ref)
+			for a in variant_panel.alts:
+				panel_file.write(">alt-%s\n" % variant_panel.variant.name)
+				panel_file.write("%s\n" % a)
+
 
 
 
