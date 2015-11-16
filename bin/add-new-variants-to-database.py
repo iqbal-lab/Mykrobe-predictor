@@ -36,8 +36,12 @@ def is_record_valid(record):
 	for sample in record.samples:
 		if sample["GT"] is None:
 			valid = False
+		else:
+			if sum([int(i) for i in sample['GT'].split('/')]) < 2:
+				valid = False
         if sample["GT_CONF"] < 1:
             valid = False
+        
 	return valid
 
 vcf_reader = vcf.Reader(open(args.vcf, 'r'))
