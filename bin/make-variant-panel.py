@@ -106,14 +106,9 @@ if vfs:
 		variant_panels.append(make_panel(vf))
 	new_panels = db.variant_panel.insert(variant_panels)
 
-
-	
-
-	kmers = set()
-
 	with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer),'a') as panel_file:
 		for variant_panel in VariantPanel.objects(id__in = new_panels):
-			panel_file.write(">ref-%s\n" % variant_panel.variant.name)
+			panel_file.write(">ref-%s?num_alts=%i\n" % (variant_panel.variant.name, len(variant_panel.alts)))
 			panel_file.write("%s\n" % variant_panel.ref)
 			for a in variant_panel.alts:
 				panel_file.write(">alt-%s\n" % variant_panel.variant.name)

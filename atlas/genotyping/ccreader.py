@@ -6,7 +6,7 @@ class ColourCovgsReader(object):
     Iterable over coverages in colour_covgs file
     """
 
-    def __init__(self, file, kmerSize = 31):
+    def __init__(self, file):
         self._reader = file
 
     def __iter__(self):
