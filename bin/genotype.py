@@ -9,7 +9,6 @@ import datetime
 
 from atlas.vcf2db import CallSet
 from atlas.vcf2db import GenotypedVariant
-# from atlas.vcf2db import VariantPanel
 
 from atlas.genotyping import ColourCovgsReader
 
@@ -66,28 +65,7 @@ with open(args.coverage, 'r') as infile:
                                                       alt_pnz = alt_pnz,
                                                       ref_coverage = ref_covg, 
                                                       alt_coverage = alt_covg,
-                                                      gt = "0/0")) 
-
-# for vp in VariantPanel.objects():
-#     alt_pnz, alt_covg = alt_coverage(vp.alts)
-#     ref_pnz, ref_covg = coverage_on_seq(vp.ref)
-#     print alt_pnz, alt_covg,  ref_pnz, ref_covg
-#     if alt_pnz:
-#         gvs.append(GenotypedVariant.create_object(name = vp.name,
-#                                                   call_set = call_set,
-#                                                   ref_pnz = ref_pnz, 
-#                                                   alt_pnz = alt_pnz,
-#                                                   ref_coverage = ref_covg, 
-#                                                   alt_coverage = alt_covg,
-#                                                   gt = "1/1"))
-#     elif not alt_covg and args.all:
-#         gvs.append(GenotypedVariant.create_object(name = vp.name,
-#                                                   call_set = call_set,
-#                                                   ref_pnz = ref_pnz, 
-#                                                   alt_pnz = alt_pnz,
-#                                                   ref_coverage = ref_covg, 
-#                                                   alt_coverage = alt_covg,
-#                                                   gt = "0/0"))        
+                                                      gt = "0/0"))  
 
 GenotypedVariant.objects.insert(gvs)
 
