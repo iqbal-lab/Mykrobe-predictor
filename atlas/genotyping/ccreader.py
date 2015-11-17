@@ -1,6 +1,8 @@
 import re
 import math
+from future.utils import implements_iterator
 
+@implements_iterator
 class ColourCovgsReader(object):
     """ 
     Iterable over coverages in colour_covgs file
@@ -12,10 +14,10 @@ class ColourCovgsReader(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         colour_covgs = []
         for i in range(4):
-            line = self._reader.next()
+            line = next(self._reader)
             colour_covgs.append(line)
         read = ColourCovgsRead(colour_covgs)
         return read
@@ -41,7 +43,7 @@ class ColourCovgsRead(object):
             if length == 1:
                 return sorts[0]
             if not length % 2:
-                return (sorts[length / 2] + sorts[length / 2 - 1]) / 2.0
+                return (sorts[int(length / 2)] + sorts[int(length / 2 - 1)]) / 2.0
             return sorts[length / 2]   
 
     def mean(self,lis):
