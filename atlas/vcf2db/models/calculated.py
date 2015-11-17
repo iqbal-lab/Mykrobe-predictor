@@ -1,4 +1,5 @@
 import datetime
+from base import make_hash
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -48,13 +49,14 @@ class VariantFreq(Document):
                     'fields' : ['start']
                 },
                 {
-                    'fields' : ['name']
+                    'fields' : ['name_hash']
                 }                                                   
                 ]
             }    
     name = StringField()
-    count = IntField()
-    total_samples = IntField()
+    name_hash = StringField()
+    # count = IntField()
+    # total_samples = IntField()
     freq = FloatField()
     created_at = DateTimeField(required = True, default=datetime.datetime.now)
     
@@ -64,26 +66,18 @@ class VariantFreq(Document):
 
 
     @classmethod
-    def create(cls, name, reference_bases, start, alternate_bases, total_samples= None):
-        # freq = float(count) / float(total_samples)
-        return {
-        "name" : name,
-        # "count" : count,
-        # "total_samples" : total_samples,
-        # "freq" : freq,
-        "start" : int(start),
-        "reference_bases" : reference_bases,
-        "alternate_bases" : alternate_bases
-        }
-
-        # return cls(name = name,
-        #            count = count,
-        #            total_samples = total_samples,
-        #            freq = freq, 
-        #            start = int(start),
-        #            reference_bases = reference_bases, 
-        #            alternate_bases = alternate_bases
-        #            ).save()
+    def create(cls, name, reference_bases, start, alternate_bases, name_hash = None, total_samples= None):
+        if name_hash is None:
+            name_hash = make_hash(name)
+        return cls(name = name,
+                    name_hash = name_hash,
+                   # count = count,
+                   # total_samples = total_samples,
+                   # freq = freq, 
+                   start = int(start),
+                   reference_bases = reference_bases, 
+                   alternate_bases = alternate_bases
+                   )
 
     def __str__(self):
         return "".join([self.reference_bases, str(self.start), "/".join(self.alternate_bases)])

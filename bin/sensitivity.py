@@ -31,10 +31,10 @@ variants = Variant.objects(variant_set = variant_set)#.order_by('start')
 ## All genotyped
 genotyped = GenotypedVariant.objects(call_set = call_set, gt = "1/1")#.order_by('start')
 
-variant_set = set(variants.distinct('name'))
-genotyped_set = set(genotyped.distinct('name'))
+variant_set = set(variants.distinct('name_hash'))
+genotyped_set = set(genotyped.distinct('name_hash'))
 
 print args.sample, len(variant_set), len(genotyped_set), len(variant_set & genotyped_set), len(variant_set - genotyped_set), len(genotyped_set - variant_set), float(len(variant_set & genotyped_set))/float(len(variant_set)) 
 
 for var in variant_set - genotyped_set:
-    print var, Variant.objects.get(name = var, id__in = [v.id for v in variants]).call.genotype_likelihood, VariantFreq.objects(name = var).count()
+    print var, Variant.objects.get(name_hash = var, id__in = [v.id for v in variants]).call.genotype_likelihood, VariantFreq.objects(name_hash = var).count()
