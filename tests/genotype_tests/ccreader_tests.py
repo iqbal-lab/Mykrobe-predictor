@@ -14,12 +14,12 @@ class TestColourCovgsReader():
 
     	ccreader = ColourCovgsReader(self.f)
 
-    	ccread = ccreader.next()
+    	ccread = next(ccreader)
     	assert ccread.name == "ref-A1004177C"
     	assert ccread.median_non_zero_coverage == 0
     	assert ccread.percent_non_zero_coverage == 0
 
-    	ccread2 = ccreader.next()
+    	ccread2 = next(ccreader)
     	assert ccread2.name == "alt-A1004177C"
     	assert ccread2.percent_non_zero_coverage == 100 
     	assert ccread2.median_non_zero_coverage == 56
