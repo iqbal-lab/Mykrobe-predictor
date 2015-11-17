@@ -223,7 +223,6 @@ class Variant(Document):
         name = "".join([reference_bases,str(start), 
                         "/".join(alternate_bases)])
         name_hash = make_hash(name)
-        
         return cls(variant_set = variant_set,
                    start = start, end = end,
                    reference_bases = reference_bases,
@@ -232,11 +231,14 @@ class Variant(Document):
                    name = name, name_hash = name_hash)
 
     @classmethod
-    def create(cls, variant_set, start,  reference_bases, alternate_bases, reference, end = None):
-        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        name_hash = make_hash(name)
-        return cls(variant_set = variant_set, start = start, end = end, reference_bases = reference_bases,
-            alternate_bases = alternate_bases, reference = reference, name = name, name_hash = name_hash).save()
+    def create(cls, variant_set, start,  reference_bases, alternate_bases,
+                     reference, end = None):
+        return cls().create_object(variant_set = variant_set,
+                            start = start,
+                            reference_bases = reference_bases,
+                            alternate_bases = alternate_bases,
+                            reference = reference,
+                            end = end).save()
 
     @lazyprop 
     def length(self):
