@@ -45,8 +45,8 @@ def make_panels(vf):
 	for alt in vf.alternate_bases:
 		variant = Variant(vf.reference_bases, vf.start , alt)
 		if len(context) <= 8:
-			print variant
-			print context
+			print (variant)
+			print (context)
 			panel = al.create(variant, context)
 			panels.append(VariantPanel().create_doc(vf, panel.ref, panel.alts))
 	return panels

@@ -1,3 +1,5 @@
+.DS_Store
+.temporary_delete_me
 .#*
 *.vcf
 *.dat
