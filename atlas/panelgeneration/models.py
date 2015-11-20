@@ -156,7 +156,8 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i)
+            print context_combo
+            print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i)
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
@@ -176,19 +177,21 @@ class AlleleGenerator(object):
         new_background = copy(alternate_reference_segment)
 
         variants_added = []
-        for variant in context:
+        for e, variant in enumerate(context):
             j = i + variant.pos - v.pos
             j -= self._calculate_length_delta_from_variant_list([c for c in variants_added if c.pos <= variant.pos and c.is_indel])
-            # print (variant, "".join(new_background[j : j+ len(variant.ref)]),  variant.ref, j)
-            if j <= len(new_background):
+            if j <= len(new_background) and j >= 0:
                 if j + len(variant.ref) > len(new_background):
                     hang =  j + len(variant.ref) - len(new_background)
                     assert "".join(new_background[j : len(new_background)]) == variant.ref[:len(variant.ref) - hang]
                     new_background[j : j + len(variant.ref)] = variant.alt[:len(variant.ref) - hang]
                 else:
+                    print (variant, "".join(new_background[j : j+ len(variant.ref)]),  variant.ref, j)
                     assert "".join(new_background[j : j + len(variant.ref)]) == variant.ref                        
                     new_background[j : j + len(variant.ref)] = variant.alt
                 variants_added.append(variant)
+            else:
+                del context[e]
         return new_background
 
     def _create_multiple_contexts(self, context):

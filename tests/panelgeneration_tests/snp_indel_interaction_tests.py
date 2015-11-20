@@ -6,8 +6,8 @@ from nose.tools import assert_raises
 class TestINDELandSNPSAlleleGenerator():
 
     def setUp(self):
-        # self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
         self.pg2 = AlleleGenerator(reference_filepath = "data/NC_000962.2.fasta")
+        self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
 
     def test_ins_with_SNP_context(self):
         v = Variant("A", 31, "ATTT")
@@ -140,6 +140,20 @@ class TestINDELandSNPSAlleleGenerator():
         sorted(["ATCATGCGATTCTGCGTCTGCTCGCGAGGCGCGAGCAGACGCCGGCGCTGGCGGGCGATCTCG",
                 "CGATTCTGCGTCTGCTCGCGATCTAGCCGCAAGGGCGCGAGCAGACGCCGGCGCTGGCGGGCG",
                 "ATCATGCGATTCTGCGTCTGCTCGCGAGGCGCGAGCAGACGCCGGCGCTGGCGGGCGATCGCG"])
+
+    def test_complex_context(self):
+        v = Variant("ATTT", 1503643, "A")
+        v1 = Variant("CCT", 1503615, "C")
+        v2 = Variant("A", 1503655, "ATGCCGCCGCC")
+        panel = self.pg2.create(v, context = [v1, v2])
+        assert panel.ref ==   \
+            "ATCCTGGAGCCCACCAGCGGAAACACCGGCATTTCGCTGGCGATGGCGGCCCGGTTGAAGGGG"
+        assert panel.alts == \
+            ["CATCCTGGAGCCCACCAGCGGAAACACCGGCACGCTGGCGATGGCGGCCCGGTTGAAGGGGTA",
+             "CCATCGGAGCCCACCAGCGGAAACACCGGCACGCTGGCGATGGCGGCCCGGTTGAAGGGGTAC",
+             "TGGAGCCCACCAGCGGAAACACCGGCACGCTGGCGATGCCGCCGCCTGGCGGCCCGGTTGAAG",
+             "CTGGAGCCCACCAGCGGAAACACCGGCACGCTGGCGATGGCGGCCCGGTTGAAGG"]    
+
 
 
 
