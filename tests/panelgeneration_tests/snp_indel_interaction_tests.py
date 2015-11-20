@@ -126,7 +126,6 @@ class TestINDELandSNPSAlleleGenerator():
             "ATCATGCGATTCTGCGTCTGCTCGCGAGGCGCGAGCAGACGCCGGCGCTGGCGGGCGATCGCG"]
 
         panel = self.pg2.create(v, context = [v1, v2])
-        print sorted(panel.alts)
         assert sorted(panel.alts) == \
         sorted(["ATCATGCGATTCTGCGTCTGCTCGCGAGGCGCGAGCAGACGCCGGCGCTGGCGGGCGATCTCG",
                 "CGATTCTGCGTCTGCTCGCGATCTAGCCGCAAGGGCGCGAGCAGACGCCGGCGCTGGCGGGCG",
