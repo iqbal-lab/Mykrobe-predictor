@@ -6,7 +6,7 @@ from nose.tools import assert_raises
 class TestINDELandSNPSAlleleGenerator():
 
     def setUp(self):
-        self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
+        # self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
         self.pg2 = AlleleGenerator(reference_filepath = "data/NC_000962.2.fasta")
 
     def test_ins_with_SNP_context(self):
@@ -106,6 +106,16 @@ class TestINDELandSNPSAlleleGenerator():
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
                                              "CGATTGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCCAAA",
                                              "GATTAAGAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])        
+
+    def test_snp_with_replace_context(self):
+        v = Variant("G", 2338961, "A")
+        v1 = Variant("GGATG", 2338990, "CGATA")        
+        panel = self.pg2.create(v, context = [v1])
+        assert panel.ref ==   \
+            "CGACTAGCCACCATCGCGCATCAGTGCGAGGTCAAAAGCGACCAAAGCGAGCAAGTCGCGGAT"
+        assert panel.alts == \
+            ["CGACTAGCCACCATCGCGCATCAGTGCGAGATCAAAAGCGACCAAAGCGAGCAAGTCGCGGAT",
+             "CGACTAGCCACCATCGCGCATCAGTGCGAGATCAAAAGCGACCAAAGCGAGCAAGTCGCCGAT"]
 
     def test_indel_snp_indel_context(self):
         v = Variant("TCGCGTGGC", 4021459, "GCGAGCAGA" )

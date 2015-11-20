@@ -181,8 +181,13 @@ class AlleleGenerator(object):
             j -= self._calculate_length_delta_from_variant_list([c for c in variants_added if c.pos <= variant.pos and c.is_indel])
             # print (variant, "".join(new_background[j : j+ len(variant.ref)]),  variant.ref, j)
             if j <= len(new_background):
-                assert "".join(new_background[j : j+ len(variant.ref)]) == variant.ref                        
-                new_background[j : j + len(variant.ref)] = variant.alt
+                if j + len(variant.ref) > len(new_background):
+                    hang =  j + len(variant.ref) - len(new_background)
+                    assert "".join(new_background[j : len(new_background)]) == variant.ref[:len(variant.ref) - hang]
+                    new_background[j : j + len(variant.ref)] = variant.alt[:len(variant.ref) - hang]
+                else:
+                    assert "".join(new_background[j : j + len(variant.ref)]) == variant.ref                        
+                    new_background[j : j + len(variant.ref)] = variant.alt
                 variants_added.append(variant)
         return new_background
 
