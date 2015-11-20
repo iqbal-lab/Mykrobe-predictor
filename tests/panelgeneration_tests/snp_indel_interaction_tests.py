@@ -28,7 +28,7 @@ class TestINDELandSNPSAlleleGenerator():
         v = Variant("AA", 31, "A")
         v2 = Variant("A", 32, "T")
         panel = self.pg.create(v, context = [v2])
-        self.pg._remove_contexts_spanning_del(v, [v2]) == []
+        assert self.pg._remove_overlapping_contexts(v, [v2]) == []
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC"])
 
@@ -36,7 +36,7 @@ class TestINDELandSNPSAlleleGenerator():
         v = Variant("AAT", 31, "A")
         v2 = Variant("T", 4, "TTTT")
         panel = self.pg.create(v, context = [v2])
-        self.pg._remove_contexts_spanning_del(v, [v2]) == [v2]
+        assert self.pg._remove_overlapping_contexts(v, [v2]) == [v2]
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGATCC",
                                              "GATTTTTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGAT"])
@@ -46,7 +46,7 @@ class TestINDELandSNPSAlleleGenerator():
         v = Variant("ATC", 32, "A")
         v2 = Variant("C", 1, "CTTT")
         panel = self.pg.create(v, context = [v2])
-        assert self.pg._remove_contexts_spanning_del(v, [v2]) == [v2]
+        assert self.pg._remove_overlapping_contexts(v, [v2]) == [v2]
         assert self.pg._remove_contexts_not_within_k(v, [v2]) == []
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
@@ -55,7 +55,7 @@ class TestINDELandSNPSAlleleGenerator():
         v = Variant("ATC", 32, "A")
         v2 = Variant("T", 5, "TT")
         panel = self.pg.create(v, context = [v2])
-        assert self.pg._remove_contexts_spanning_del(v, [v2]) == [v2]
+        assert self.pg._remove_overlapping_contexts(v, [v2]) == [v2]
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
                                              "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
@@ -66,7 +66,7 @@ class TestINDELandSNPSAlleleGenerator():
         v2 = Variant("T", 5, "TT")
         v3 = Variant("T", 5, "TG")
         panel = self.pg.create(v, context = [v2, v3])
-        assert self.pg._remove_contexts_spanning_del(v, [v2, v3]) == [v2, v3]
+        assert self.pg._remove_overlapping_contexts(v, [v2, v3]) == [v2, v3]
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
                                              "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
@@ -79,7 +79,7 @@ class TestINDELandSNPSAlleleGenerator():
         v2 = Variant("T", 5, "TT")
         v3 = Variant("A", 6, "AG")
         panel = self.pg.create(v, context = [v2, v3])
-        assert self.pg._remove_contexts_spanning_del(v, [v2, v3]) == [v2, v3]
+        assert self.pg._remove_overlapping_contexts(v, [v2, v3]) == [v2, v3]
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
                                              "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC",
@@ -91,7 +91,7 @@ class TestINDELandSNPSAlleleGenerator():
         v = Variant("ATC", 32, "A")
         v2 = Variant("T", 33, "C")
         panel = self.pg.create(v, context = [v2])
-        assert self.pg._remove_contexts_spanning_del(v, [v2]) == []
+        assert self.pg._remove_overlapping_contexts(v, [v2]) == []
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(panel.alts) == sorted(["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])                                                                                                                
 

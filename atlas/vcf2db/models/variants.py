@@ -222,13 +222,12 @@ class Variant(Document):
                       alternate_bases, reference, end = None):
         name = "".join([reference_bases,str(start), 
                         "/".join(alternate_bases)])
-        name_hash = make_hash(name)
         return cls(variant_set = variant_set,
                    start = start, end = end,
                    reference_bases = reference_bases,
                    alternate_bases = alternate_bases,
                    reference = reference,
-                   name = name, name_hash = name_hash)
+                   name = name, name_hash = make_hash(name))
 
     @classmethod
     def create(cls, variant_set, start,  reference_bases, alternate_bases,

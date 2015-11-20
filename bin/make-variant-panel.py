@@ -30,24 +30,36 @@ parser = argparse.ArgumentParser(description='Parse VCF and upload variants to D
 parser.add_argument('reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath')
 parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
+parser.add_argument('--force', default = False, action = "store_true")
 args = parser.parse_args()
 
 db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
-def make_panel(vf):
-	context = [Variant(vft.reference_bases, vft.start , "/".join(vft.alternate_bases)) for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer)]
-	variant = Variant(vf.reference_bases, vf.start , vf.alternate_bases)
-	if len(context) <= 8:
-		panel = al.create(variant, context)
-		return VariantPanel().create_doc(vf, panel.ref, panel.alts)	
+def make_panels(vf):
+	context = []
+	panels = []
+	for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer):
+		for alt in vft.alternate_bases:
+			context.append( Variant(vft.reference_bases, vft.start , alt) )
+	for alt in vf.alternate_bases:
+		variant = Variant(vf.reference_bases, vf.start , alt)
+		if len(context) <= 8:
+			print variant
+			print context
+			panel = al.create(variant, context)
+			panels.append(VariantPanel().create_doc(vf, panel.ref, panel.alts))
+	return panels
 
 # "/home/phelimb/git/atlas/data/R00000022.fasta"
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
 print("Extracting unique variants " )
 ## Get all variant freq names
-current_vars = VariantFreq.objects().distinct('name_hash')
-new_name_hashes = CalledVariant.objects(name_hash__nin = current_vars).distinct('name_hash')
+if args.force:
+	new_name_hashes = CalledVariant.objects().distinct('name_hash')
+else:
+	current_vars = VariantFreq.objects().distinct('name_hash')
+	new_name_hashes = CalledVariant.objects(name_hash__nin = current_vars).distinct('name_hash')
 print("%i new unique variants " % len(new_name_hashes) )
 print("Storing and sorting unique variants " ) 
 vfs = []
@@ -83,10 +95,14 @@ if vfs:
 	## Make panels for all new variants and panels needing updating
 	variant_panels = []
 	for vf in VariantFreq.objects(name_hash__in = unique(new_name_hashes + update_name_hashes)):
-		variant_panels.append(make_panel(vf))
+		variant_panels.extend(make_panels(vf))
 	new_panels = db.variant_panel.insert(variant_panels)
 
-	with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer),'a') as panel_file:
+	if args.force:
+		write_mode = "w"
+	else:
+		write_mode = "a"
+	with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer), write_mode) as panel_file:
 		for variant_panel in VariantPanel.objects(id__in = new_panels):
 			panel_file.write(">ref-%s?num_alts=%i\n" % (variant_panel.variant.id, len(variant_panel.alts)))
 			panel_file.write("%s\n" % variant_panel.ref)

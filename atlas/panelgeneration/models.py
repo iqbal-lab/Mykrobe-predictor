@@ -97,7 +97,7 @@ class AlleleGenerator(object):
     def create(self, v, context = []):
         ## Position should be 1 based
         self._check_valid_variant(v)
-        context = self._remove_contexts_spanning_del(v, context)
+        context = self._remove_overlapping_contexts(v, context)
         context = self._remove_contexts_not_within_k(v, context)
         wild_type_reference = self._get_wildtype_reference(v)
         alternates = self._generate_alternates_on_all_backgrounds(v,  context)
@@ -113,10 +113,9 @@ class AlleleGenerator(object):
         if v.pos <= 0 :
             raise ValueError("Position should be 1 based")  
 
-    def _remove_contexts_spanning_del(self, v, context):
+    def _remove_overlapping_contexts(self, v, context):
         """If there's a var within the range of an DEL remove from context"""
-        if v.is_deletion:
-            context = [c for c in context if not c.pos in v.ref_range]
+        context = [c for c in context if not c.overlapping(v)]
         return context
 
     def _remove_contexts_not_within_k(self, v, context):
@@ -150,6 +149,7 @@ class AlleleGenerator(object):
         context_combinations = self._get_all_context_combinations(context)
         ## For each context, create the background and alternate
         alternates = []
+        print context_combinations
         for context_combo in context_combinations:
             ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context_combo)
             i, start_index, end_index = self._get_start_end(v, delta = ref_segment_length_delta)
@@ -157,7 +157,7 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref)
+            print ("".join(alternate[i-2:(i + len(v.ref) +2)]) , v.ref, i)
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)

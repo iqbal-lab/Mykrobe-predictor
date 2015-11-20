@@ -6,7 +6,7 @@ from nose.tools import assert_raises
 class TestINDELAlleleGenerator():
 
     def setUp(self):
-        self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
+        self.pg = AlleleGenerator(reference_filepath = "data/NC_000962.2.fasta")
         # print self.pg.ref_length
 
     def test_simple_deletion1(self):
@@ -75,6 +75,15 @@ class TestINDELAlleleGenerator():
         assert panel.ref ==   "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
         assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "CAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"                
         assert panel.alts == ["CAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTATGCT"] 
+
+    def test_double_insertion(self):     
+        v = Variant("A", 4021408, "ACGCTGGCGGGCG")
+        v1  = Variant("AGA", 4021406, "CGG")
+        context = [v1]
+        assert self.pg._remove_overlapping_contexts(v, [v1]) == []
+        panel = self.pg.create(v, context = context)
+        assert panel.ref ==   "ATCTAGCCGCAAGGGCGCGAGCAGACGCAGAATCGCATGATTTGAGCTCAAATCATGCGATTC"
+        assert panel.alts == ["CCGCAAGGGCGCGAGCAGACGCAGACGCTGGCGGGCGATCGCATGATTTGAGCTCAAATCATG"] 
 
 
 
