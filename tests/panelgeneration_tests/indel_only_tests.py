@@ -6,8 +6,8 @@ from nose.tools import assert_raises
 class TestINDELAlleleGenerator():
 
     def setUp(self):
-        self.pg = AlleleGenerator(reference_filepath = "data/NC_000962.2.fasta")
-        # print self.pg.ref_length
+        self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
+        self.pg2 = AlleleGenerator(reference_filepath = "data/NC_000962.2.fasta")
 
     def test_simple_deletion1(self):
         v = Variant("AA", 31, "A")
@@ -80,8 +80,8 @@ class TestINDELAlleleGenerator():
         v = Variant("A", 4021408, "ACGCTGGCGGGCG")
         v1  = Variant("AGA", 4021406, "CGG")
         context = [v1]
-        assert self.pg._remove_overlapping_contexts(v, [v1]) == []
-        panel = self.pg.create(v, context = context)
+        assert self.pg2._remove_overlapping_contexts(v, [v1]) == []
+        panel = self.pg2.create(v, context = context)
         assert panel.ref ==   "ATCTAGCCGCAAGGGCGCGAGCAGACGCAGAATCGCATGATTTGAGCTCAAATCATGCGATTC"
         assert panel.alts == ["CCGCAAGGGCGCGAGCAGACGCAGACGCTGGCGGGCGATCGCATGATTTGAGCTCAAATCATG"] 
 
