@@ -22,7 +22,7 @@ class TestColourCovgsReader():
     	ccread2 = next(ccreader)
     	assert ccread2.name == "alt-A1004177C"
     	assert ccread2.percent_non_zero_coverage == 100 
-    	assert ccread2.median_non_zero_coverage == 56
+    	assert ccread2.median_non_zero_coverage == 57
 
     	for i,read in enumerate(ccreader):
     		if i == 0:
