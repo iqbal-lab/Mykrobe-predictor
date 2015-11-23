@@ -59,7 +59,7 @@ with open(args.coverage, 'r') as infile:
               if allele.percent_non_zero_coverage >= alt_pnz:
                   alt_pnz = allele.percent_non_zero_coverage
                   if allele.median_non_zero_coverage > alt_covg:
-                      alt_covg = allele.median_non_zero_coverage 
+                      alt_covg = allele.median_non_zero_coverage                 
         if alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz < MAX_PNZ_THRESHOLD:
             gt = "1/1"
         elif alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz >= MAX_PNZ_THRESHOLD:

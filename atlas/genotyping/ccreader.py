@@ -27,7 +27,9 @@ class ColourCovgsRead(object):
     Colour Coverage read object
     """
     def __init__(self, lines):
-        self.seq = lines[1].replace('\n','')[3:-3]
+        self.lines = lines
+        self.lines[3] = self.lines[3].replace("  "," ").strip() ## for mccortex format
+        self.seq = self.lines[1].replace('\n','')[3:-3]
         self.name = lines[0].replace('\n','')[1:]
         self.covgs = [int(i) for i in lines[3].replace('\n','').split(' ')[3:-3] if i ]
 
