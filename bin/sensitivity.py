@@ -24,17 +24,31 @@ args = parser.parse_args()
 db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
-call_set = CallSet.objects.get(name = args.sample)
-## Get all discovered variants
-variant_set = VariantSet.objects.get(name__startswith = args.sample)
-variants = Variant.objects(variant_set = variant_set)#.order_by('start')
-## All genotyped
-genotyped = GenotypedVariant.objects(call_set = call_set, gt = "1/1")#.order_by('start')
 
-variant_set = set(variants.distinct('name_hash'))
+
+## Get all discovered variants
+variant_sets = VariantSet.objects(name__startswith = args.sample)
+variants = Variant.objects(variant_set__in = variant_sets)#.order_by('start')
+## All genotyped
+
+sample_variant_set = set(variants.distinct('name_hash'))
+
+
+atlas_gt_call_set_name = args.sample + "_atlas_gt"
+atlas_gt_call_set = CallSet.objects.get(name = atlas_gt_call_set_name)
+genotyped = GenotypedVariant.objects(call_set = atlas_gt_call_set, gt = "1/1")
 genotyped_set = set(genotyped.distinct('name_hash'))
 
-print args.sample, len(variant_set), len(genotyped_set), len(variant_set & genotyped_set), len(variant_set - genotyped_set), len(genotyped_set - variant_set), float(len(variant_set & genotyped_set))/float(len(variant_set)) 
+print "CallSet", "union", "vars_in_callset", "intersection", "missing", "extra", "intersection/union"
+print atlas_gt_call_set.name, len(sample_variant_set), len(genotyped_set), len(sample_variant_set & genotyped_set), len(sample_variant_set - genotyped_set), len(genotyped_set - sample_variant_set), float(len(sample_variant_set & genotyped_set))/float(len(sample_variant_set)) 
+for variant_set in variant_sets:
+	cur_variant_set = set(Variant.objects(variant_set = variant_set).distinct('name_hash'))
+	print variant_set.name, len(sample_variant_set), len(cur_variant_set), len(sample_variant_set & cur_variant_set), len(sample_variant_set - cur_variant_set), len(cur_variant_set - sample_variant_set), float(len(sample_variant_set & cur_variant_set))/float(len(sample_variant_set)) 
 
-for var in variant_set - genotyped_set:
-    print var, Variant.objects.get(name_hash = var, id__in = [v.id for v in variants]).call.genotype_likelihood, VariantFreq.objects(name_hash = var).count()
+
+
+# for var in variant_set - genotyped_set:
+#     v = Variant.objects.get(name_hash = var, id__in = [v.id for v in variants])
+#     vf = VariantFreq.objects(name_hash = var)
+#     print v.name, v.call.genotype_likelihood, v.variant_set.name
+

@@ -4,13 +4,14 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import csv
 import glob
+import math
 ## Read the kmer counts into a hash
 import datetime
 from mongoengine import connect
 from mongoengine import DoesNotExist
 from atlas.vcf2db import CallSet
 from atlas.vcf2db import GenotypedVariant
-from atlas.vcf2db import VariantFreq
+from atlas.vcf2db import VariantPanel
 
 from atlas.genotyping import ColourCovgsReader
 
@@ -28,18 +29,23 @@ connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
 # Read fasta
 try:
-    call_set = CallSet.objects.get(name = args.sample)
+    call_set = CallSet.objects.get(name = args.sample + "_atlas_gt")
 except DoesNotExist:
-    call_set = CallSet.create(name = args.sample)
+    call_set = CallSet.create(name = args.sample  + "_atlas_gt", sample_id = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
 gvs = []
+
+def max_pnz_threshold(vp):
+    t =  max(100 - 2 * math.floor(float(max([len(alt) for alt in vp.alts])) / 100), 30)
+    return t
+
 with open(args.coverage, 'r') as infile:
     reader = ColourCovgsReader(infile)
     for allele in reader:
         allele_name, params = allele.name.split('?')
         alt_or_ref, _id = allele_name.split('-')
-        v = VariantFreq.objects.get(id = _id)
+        vp = VariantPanel.objects.get(id = _id)
         if alt_or_ref == "ref":
             ref_pnz = allele.percent_non_zero_coverage
             ref_covg = allele.median_non_zero_coverage
@@ -53,16 +59,16 @@ with open(args.coverage, 'r') as infile:
                   alt_pnz = allele.percent_non_zero_coverage
                   if allele.median_non_zero_coverage > alt_covg:
                       alt_covg = allele.median_non_zero_coverage 
-        if alt_pnz:
-            gvs.append(GenotypedVariant.create_object(name = v.name,
+        if alt_pnz >= max_pnz_threshold(vp):
+            gvs.append(GenotypedVariant.create_object(name = vp.name,
                                                       call_set = call_set,
                                                       ref_pnz = ref_pnz, 
                                                       alt_pnz = alt_pnz,
                                                       ref_coverage = ref_covg, 
                                                       alt_coverage = alt_covg,
                                                       gt = "1/1"))
-        elif not alt_covg and args.all:
-            gvs.append(GenotypedVariant.create_object(name = v.name,
+        elif alt_covg < max_pnz_threshold(vp) and args.all:
+            gvs.append(GenotypedVariant.create_object(name = vp.name,
                                                       call_set = call_set,
                                                       ref_pnz = ref_pnz, 
                                                       alt_pnz = alt_pnz,

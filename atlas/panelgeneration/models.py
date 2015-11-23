@@ -6,6 +6,7 @@ from collections import Counter
 import logging
 import datetime
 import math 
+from atlas.vcf2db.models.base import make_hash
 
 def unique(seq):
     seen = set()
@@ -21,10 +22,10 @@ class Variant(object):
         self.alt = alt
 
     def __str__(self):
-        return "".join([self.ref, str(self.pos), self.alt])
+        return self.name
 
     def __repr__(self):
-        return "".join([self.ref, str(self.pos), self.alt])
+        return self.name
 
     def __gt__(self, other):
         return self.pos > other.pos
@@ -34,6 +35,14 @@ class Variant(object):
 
     def overlapping(self, other):
         return (other.pos in self.ref_range) or (self.pos in other.ref_range)
+
+    @property 
+    def name(self):
+        return "%s%i%s" % (self.ref, self.pos, self.alt)
+
+    @property
+    def name_hash(self):
+        return make_hash(self.name)
 
     @property
     def ref_range(self):
@@ -156,8 +165,7 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            print context_combo
-            print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i)
+            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i)
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
@@ -186,7 +194,7 @@ class AlleleGenerator(object):
                     assert "".join(new_background[j : len(new_background)]) == variant.ref[:len(variant.ref) - hang]
                     new_background[j : j + len(variant.ref)] = variant.alt[:len(variant.ref) - hang]
                 else:
-                    print (variant, "".join(new_background[j : j+ len(variant.ref)]),  variant.ref, j)
+                    # print (variant, "".join(new_background[j : j+ len(variant.ref)]),  variant.ref, j)
                     assert "".join(new_background[j : j + len(variant.ref)]) == variant.ref                        
                     new_background[j : j + len(variant.ref)] = variant.alt
                 variants_added.append(variant)

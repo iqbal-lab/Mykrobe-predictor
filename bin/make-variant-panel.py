@@ -4,13 +4,13 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import datetime
 import logging
+from collections import Counter
 logging.basicConfig(level=logging.DEBUG)
 from Bio import SeqIO
 
 from mongoengine import connect
-from pymongo import MongoClient
 import multiprocessing
-client = MongoClient()
+
 
 from atlas.vcf2db import VariantFreq
 from atlas.vcf2db import Variant as CalledVariant
@@ -33,7 +33,6 @@ parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', defa
 parser.add_argument('--force', default = False, action = "store_true")
 args = parser.parse_args()
 
-db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
 def make_panels(vf):
@@ -45,10 +44,8 @@ def make_panels(vf):
 	for alt in vf.alternate_bases:
 		variant = Variant(vf.reference_bases, vf.start , alt)
 		if len(context) <= 8:
-			print (variant)
-			print (context)
 			panel = al.create(variant, context)
-			panels.append(VariantPanel().create_doc(vf, panel.ref, panel.alts))
+			panels.append(VariantPanel().create(variant,vf, panel.ref, panel.alts))
 	return panels
 
 # "/home/phelimb/git/atlas/data/R00000022.fasta"
@@ -57,6 +54,8 @@ print("Extracting unique variants " )
 ## Get all variant freq names
 if args.force:
 	new_name_hashes = CalledVariant.objects().distinct('name_hash')
+	VariantFreq.objects().delete()
+	VariantPanel.objects().delete()
 else:
 	current_vars = VariantFreq.objects().distinct('name_hash')
 	new_name_hashes = CalledVariant.objects(name_hash__nin = current_vars).distinct('name_hash')
@@ -89,25 +88,25 @@ if vfs:
 			query = VariantFreq.objects(start__gt = new_vf.start - args.kmer, start__lt = new_vf.start + args.kmer)
 			for q in query:
 				affected_variants.append(q.id)
-				update_name_hashes.append(q.name)
+				update_name_hashes.append(q.name_hash)
 		## Remove all panels that need updating
-		VariantPanel.objects(variant__in = affected_variants).delete()
+		# VariantPanel.objects(variant__in = affected_variants).delete()
 	## Make panels for all new variants and panels needing updating
 	variant_panels = []
 	for vf in VariantFreq.objects(name_hash__in = unique(new_name_hashes + update_name_hashes)):
 		variant_panels.extend(make_panels(vf))
-	new_panels = db.variant_panel.insert(variant_panels)
+	new_panels = VariantPanel.objects.insert(variant_panels)
 
 	if args.force:
 		write_mode = "w"
 	else:
 		write_mode = "a"
 	with open("panel_%s_k%i.fasta" % (args.db_name, args.kmer), write_mode) as panel_file:
-		for variant_panel in VariantPanel.objects(id__in = new_panels):
-			panel_file.write(">ref-%s?num_alts=%i\n" % (variant_panel.variant.id, len(variant_panel.alts)))
+		for variant_panel in VariantPanel.objects(id__in = [vp.id for vp in new_panels]):
+			panel_file.write(">ref-%s?num_alts=%i\n" % (variant_panel.id, len(variant_panel.alts)))
 			panel_file.write("%s\n" % variant_panel.ref)
 			for a in variant_panel.alts:
-				panel_file.write(">alt-%s\n" % variant_panel.variant.id)
+				panel_file.write(">alt-%s\n" % variant_panel.id)
 				panel_file.write("%s\n" % a)
 
 

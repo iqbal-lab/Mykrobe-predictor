@@ -19,29 +19,34 @@ class UniqueVariants(Document):
         
 class VariantPanel(Document):
 
-    variant = ReferenceField('VariantFreq', unique = True)
+    meta = {'indexes': [
+                {
+                    'fields' : ['variant']
+                },
+                {
+                    'fields' : ['name_hash']
+                }                                                                  
+                ]
+            } 
+
+    variant = ReferenceField('VariantFreq')
     ref = StringField()    
     alts = ListField(StringField())
-    _name = StringField(default = None)
+    name = StringField(default = None)
+    name_hash = StringField(unique = True)
 
     @classmethod
-    def create_doc(cls, variant, ref, alts):
-        return {
-        "variant" : variant.id, 
-        "ref" : ref, 
-        "alts" : alts,
-        "_name" : variant.name
-        }
+    def create(cls, variant, vf, ref, alts):
+        return cls(
+        variant = vf, 
+        ref = ref, 
+        alts = alts,
+        name = variant.name,
+        name_hash = variant.name_hash
+        )
 
     def __repr__(self):
         return "PANAL %s" % self._name
-
-    @property
-    def name(self):
-        if not self._name:
-            return self._name
-        else:
-            return self.variant.name
 
 class VariantFreq(Document):
     meta = {'indexes': [

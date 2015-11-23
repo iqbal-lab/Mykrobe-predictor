@@ -23,7 +23,7 @@ class GenotypedVariant(Document):
                 ]
             }    
     name = StringField()
-    name_hash = StringField()
+    name_hash = StringField(unique_with = "call_set")
     ref_coverage = IntField()
     alt_coverage = IntField()
     ref_pnz = IntField()
@@ -115,7 +115,7 @@ class CallSet(Document):
          It belongs to a `VariantSet`. This is equivalent to one column in VCF.
     """
     name = StringField(required = True, unique = True)
-    sample_id = StringField()
+    sample_id = StringField(required = True)
     created_at = DateTimeField(default = datetime.datetime.now)
     updated_at = DateTimeField(required = True, default=datetime.datetime.now)
 
