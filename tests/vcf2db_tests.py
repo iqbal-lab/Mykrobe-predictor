@@ -30,7 +30,7 @@ class TestVariantSet(BaseTest):
 class TestCallSet(BaseTest):
 
     def test_create_SNP_call(self):
-        cs = CallSet.create(name = "C00123")
+        cs = CallSet.create(sample_id = "C00123", name = "C00123")
         assert cs.name == "C00123"
 
 class TestVariant(BaseTest):
@@ -109,7 +109,7 @@ class TestCall(BaseTest):
         self.ref = Reference.create(name = "ref", length = 10000, source_accessions = "SRA_ABC123")
         self.vs = VariantSet.create(name = "C00123")  
         self.v1 = Variant.create(variant_set = self.vs, start = 0, end = 1, reference_bases = "A", alternate_bases = ["T"], reference = self.ref)
-        self.cs = CallSet.create(name = "C00123")  
+        self.cs = CallSet.create(sample_id = "C00123", name = "C00123")  
         
 
     def test_create_SNP_call(self):
