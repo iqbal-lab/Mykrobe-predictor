@@ -36,19 +36,26 @@ sample_variant_set = set(variants.distinct('name_hash'))
 
 atlas_gt_call_set_name = args.sample + "_atlas_gt"
 atlas_gt_call_set = CallSet.objects.get(name = atlas_gt_call_set_name)
-genotyped = GenotypedVariant.objects(call_set = atlas_gt_call_set, gt = "1/1")
+genotyped = GenotypedVariant.objects(call_set = atlas_gt_call_set, gt__ne = "0/0")
 genotyped_set = set(genotyped.distinct('name_hash'))
 
 print "CallSet", "union", "vars_in_callset", "intersection", "missing", "extra", "intersection/union"
 print atlas_gt_call_set.name, len(sample_variant_set), len(genotyped_set), len(sample_variant_set & genotyped_set), len(sample_variant_set - genotyped_set), len(genotyped_set - sample_variant_set), float(len(sample_variant_set & genotyped_set))/float(len(sample_variant_set)) 
 for variant_set in variant_sets:
-	cur_variant_set = set(Variant.objects(variant_set = variant_set).distinct('name_hash'))
-	print variant_set.name, len(sample_variant_set), len(cur_variant_set), len(sample_variant_set & cur_variant_set), len(sample_variant_set - cur_variant_set), len(cur_variant_set - sample_variant_set), float(len(sample_variant_set & cur_variant_set))/float(len(sample_variant_set)) 
+    cur_variant_set = set(Variant.objects(variant_set = variant_set).distinct('name_hash'))
+    print variant_set.name, len(sample_variant_set), len(cur_variant_set), len(sample_variant_set & cur_variant_set), len(sample_variant_set - cur_variant_set), len(cur_variant_set - sample_variant_set), float(len(sample_variant_set & cur_variant_set))/float(len(sample_variant_set)) 
 
 
+print "MISSING"
+for var in sample_variant_set - genotyped_set:
+    vp = VariantPanel.objects.get(name_hash = var)
+    v = vp.variant
+    print v.name
 
-# for var in variant_set - genotyped_set:
-#     v = Variant.objects.get(name_hash = var, id__in = [v.id for v in variants])
-#     vf = VariantFreq.objects(name_hash = var)
-#     print v.name, v.call.genotype_likelihood, v.variant_set.name
+# print "EXTRA"
+# for var in genotyped_set - sample_variant_set:
+#     print var
+#     vp = VariantPanel.objects.get(name_hash = var)
+#     v = vp.variant
+#     print v.name
 

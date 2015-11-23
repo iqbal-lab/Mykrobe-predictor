@@ -68,15 +68,15 @@ class TestMultiNode(TestNodes):
         self.root = Node(children = [self.node1, self.node3])
         self.ref = Reference.create(name = "ref1", length = 10000, source_accessions = "SRA_ABC123")
         vs1 = VariantSet.create(name = "C1")
-        cs1 = CallSet.create(name = "C1") 
+        cs1 = CallSet.create(sample_id = "123",name = "C1") 
         vs2 = VariantSet.create(name = "C2")
-        cs2 = CallSet.create(name = "C2") 
+        cs2 = CallSet.create(sample_id = "123",name = "C2") 
         vs3 = VariantSet.create(name = "C3")
-        cs3 = CallSet.create(name = "C3") 
+        cs3 = CallSet.create(sample_id = "123",name = "C3") 
         vs4 = VariantSet.create(name = "C4")
-        cs4 = CallSet.create(name = "C4") 
+        cs4 = CallSet.create(sample_id = "123",name = "C4") 
         vs5 = VariantSet.create(name = "C5")
-        cs5 = CallSet.create(name = "C5")                 
+        cs5 = CallSet.create(sample_id = "123",name = "C5")                 
 
         self.v1 = Variant.create(variant_set = vs1.id,
                                  start = 1,
@@ -137,12 +137,12 @@ class TestMultiNode(TestNodes):
         assert self.l5.phylo_snps == {self.v5.name : 0} 
 
     def test_placement(self):
-        new_call_set = CallSet.create(name = "C6") 
+        new_call_set = CallSet.create(sample_id = "123",name = "C6") 
         GenotypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
         assert Placer(root = self.root).place("C6") == "C1"
 
     def test_abigious_placement(self):
-        new_call_set = CallSet.create(name = "C7") 
+        new_call_set = CallSet.create(sample_id = "123",name = "C7") 
         GenotypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
         assert Placer(root = self.root).place("C7") == ["C4", "C5"]
 
@@ -168,15 +168,15 @@ class TestMultiNodeHomoplasy(TestNodes):
         self.root = Node(children = [self.node1, self.node3])
         self.ref = Reference.create(name = "ref1", length = 10000, source_accessions = "SRA_ABC123")
         vs1 = VariantSet.create(name = "C1")
-        cs1 = CallSet.create(name = "C1") 
+        cs1 = CallSet.create(sample_id = "123",name = "C1") 
         vs2 = VariantSet.create(name = "C2")
-        cs2 = CallSet.create(name = "C2") 
+        cs2 = CallSet.create(sample_id = "123",name = "C2") 
         vs3 = VariantSet.create(name = "C3")
-        cs3 = CallSet.create(name = "C3") 
+        cs3 = CallSet.create(sample_id = "123",name = "C3") 
         vs4 = VariantSet.create(name = "C4")
-        cs4 = CallSet.create(name = "C4") 
+        cs4 = CallSet.create(sample_id = "123",name = "C4") 
         vs5 = VariantSet.create(name = "C5")
-        cs5 = CallSet.create(name = "C5")                 
+        cs5 = CallSet.create(sample_id = "123",name = "C5")                 
 
 
         self.v1 = Variant.create(variant_set = vs1.id,
@@ -240,7 +240,7 @@ class TestMultiNodeHomoplasy(TestNodes):
         assert self.l5.phylo_snps == {self.v1.name : 1}
 
     def test_placement(self):
-        new_call_set = CallSet.create(name = "C8") 
+        new_call_set = CallSet.create(sample_id = "123",name = "C8") 
         GenotypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
         ### Note - I think the commented line hear should be correct behaviour
         Placer(root = self.root).place("C8") == ["C1"]
@@ -248,7 +248,7 @@ class TestMultiNodeHomoplasy(TestNodes):
         # assert sorted(Placer(root = self.root).place("C8")) == sorted(['C1', 'C2', 'C3', 'C4', 'C5'])
 
     def test_abigious_placement(self):
-        new_call_set = CallSet.create(name = "C9") 
+        new_call_set = CallSet.create(sample_id = "123",name = "C9") 
         GenotypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
         assert Placer(root = self.root).place("C9") == "C4"
 

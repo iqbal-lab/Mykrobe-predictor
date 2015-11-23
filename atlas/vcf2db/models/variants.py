@@ -1,6 +1,6 @@
 import datetime
-import re
 from atlas.vcf2db.models.base import make_hash
+from atlas.vcf2db.models.base import split_var_name
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -307,9 +307,5 @@ class Variant(Document):
         else:
             return False                   
 
-
-def split_var_name(name):
-    items = re.match(r"([A-Z]+)([0-9]+)([A-Z]+)", name, re.I).groups()
-    return items[0],int(items[1]),items[2]
 
 

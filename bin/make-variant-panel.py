@@ -16,7 +16,7 @@ from atlas.vcf2db import VariantFreq
 from atlas.vcf2db import Variant as CalledVariant
 from atlas.vcf2db import VariantSet
 from atlas.vcf2db import VariantPanel
-from atlas.vcf2db import split_var_name
+from atlas.vcf2db.models.base import split_var_name
 from atlas.panelgeneration import AlleleGenerator
 from atlas.panelgeneration import Variant
 
@@ -35,18 +35,30 @@ args = parser.parse_args()
 
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
-def make_panels(vf):
+def get_context(pos):
 	context = []
-	panels = []
-	for vft in VariantFreq.objects(start__ne = vf.start, start__gt = vf.start - args.kmer, start__lt = vf.start + args.kmer):
+	for vft in VariantFreq.objects(start__ne = pos, start__gt = pos - args.kmer, start__lt = pos + args.kmer):
 		for alt in vft.alternate_bases:
 			context.append( Variant(vft.reference_bases, vft.start , alt) )
+	return context	
+
+def make_panels(vf):
+	context = get_context(vf.start)
+	panels = []
 	for alt in vf.alternate_bases:
 		variant = Variant(vf.reference_bases, vf.start , alt)
 		if len(context) <= 8:
 			panel = al.create(variant, context)
 			panels.append(VariantPanel().create(variant,vf, panel.ref, panel.alts))
 	return panels
+
+def update_panel(vp):
+	context = get_context(vp.variant.start)
+	ref, pos, alt = split_var_name(vp.name)
+	variant = Variant(ref, pos, alt) 
+	if len(context) <= 8:
+		panel = al.create(variant, context)
+		vp.update(panel.ref, panel.alts)
 
 # "/home/phelimb/git/atlas/data/R00000022.fasta"
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
@@ -80,21 +92,29 @@ if vfs:
 	VariantFreq.objects.insert(vfs)
 	## Get names of panels that need updating 
 	## Get all the variants that are within K bases of new variants
+	## and that are not new variants
 	print("Improving panel for genotyping" ) 
 	update_name_hashes = []
 	affected_variants = []
 	if VariantPanel.objects().count() > 0:
 		for new_vf in VariantFreq.objects(name_hash__in = new_name_hashes):
-			query = VariantFreq.objects(start__gt = new_vf.start - args.kmer, start__lt = new_vf.start + args.kmer)
+			query = VariantFreq.objects(start__gt = new_vf.start - args.kmer,
+			                              start__lt = new_vf.start + args.kmer)
 			for q in query:
-				affected_variants.append(q.id)
-				update_name_hashes.append(q.name_hash)
+				if not q.name_hash in new_name_hashes:
+					affected_variants.append(q)
+					update_name_hashes.append(q.name_hash)
 		## Remove all panels that need updating
 		# VariantPanel.objects(variant__in = affected_variants).delete()
 	## Make panels for all new variants and panels needing updating
 	variant_panels = []
-	for vf in VariantFreq.objects(name_hash__in = unique(new_name_hashes + update_name_hashes)):
+	for vf in VariantFreq.objects(name_hash__in = new_name_hashes):
 		variant_panels.extend(make_panels(vf))
+	for variant in affected_variants:
+		vps= VariantPanel.objects(variant = variant)
+		for vp in vps:
+			update_panel(vp)
+
 	new_panels = VariantPanel.objects.insert(variant_panels)
 
 	if args.force:

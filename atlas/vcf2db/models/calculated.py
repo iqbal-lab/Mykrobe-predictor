@@ -45,6 +45,11 @@ class VariantPanel(Document):
         name_hash = variant.name_hash
         )
 
+    def update(self, ref, alts):
+        self.ref = ref
+        self.alts = alts
+        self.save()
+        
     def __repr__(self):
         return "PANAL %s" % self._name
 

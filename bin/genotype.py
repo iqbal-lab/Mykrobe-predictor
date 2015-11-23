@@ -46,6 +46,7 @@ with open(args.coverage, 'r') as infile:
         allele_name, params = allele.name.split('?')
         alt_or_ref, _id = allele_name.split('-')
         vp = VariantPanel.objects.get(id = _id)
+        MAX_PNZ_THRESHOLD = max_pnz_threshold(vp)
         if alt_or_ref == "ref":
             ref_pnz = allele.percent_non_zero_coverage
             ref_covg = allele.median_non_zero_coverage
@@ -59,22 +60,21 @@ with open(args.coverage, 'r') as infile:
                   alt_pnz = allele.percent_non_zero_coverage
                   if allele.median_non_zero_coverage > alt_covg:
                       alt_covg = allele.median_non_zero_coverage 
-        if alt_pnz >= max_pnz_threshold(vp):
-            gvs.append(GenotypedVariant.create_object(name = vp.name,
+        if alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz < MAX_PNZ_THRESHOLD:
+            gt = "1/1"
+        elif alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz >= MAX_PNZ_THRESHOLD:
+            gt = "0/1"
+        elif alt_covg < MAX_PNZ_THRESHOLD:
+            gt = "0/0"
+            
+        if gt != "0/0" or args.all:
+           gvs.append(GenotypedVariant.create_object(name = vp.name,
                                                       call_set = call_set,
                                                       ref_pnz = ref_pnz, 
                                                       alt_pnz = alt_pnz,
                                                       ref_coverage = ref_covg, 
                                                       alt_coverage = alt_covg,
-                                                      gt = "1/1"))
-        elif alt_covg < max_pnz_threshold(vp) and args.all:
-            gvs.append(GenotypedVariant.create_object(name = vp.name,
-                                                      call_set = call_set,
-                                                      ref_pnz = ref_pnz, 
-                                                      alt_pnz = alt_pnz,
-                                                      ref_coverage = ref_covg, 
-                                                      alt_coverage = alt_covg,
-                                                      gt = "0/0"))  
+                                                      gt = gt))
 
 GenotypedVariant.objects.insert(gvs)
 
