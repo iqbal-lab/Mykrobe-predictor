@@ -34,7 +34,7 @@ except DoesNotExist:
     call_set = CallSet.create(name = args.sample  + "_atlas_gt", sample_id = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
-gvs = []
+gvs = {}
 
 def max_pnz_threshold(vp):
     t =  max(100 - 2 * math.floor(float(max([len(alt) for alt in vp.alts])) / 100), 30)
@@ -68,15 +68,15 @@ with open(args.coverage, 'r') as infile:
             gt = "0/0"
             
         if gt != "0/0" or args.all:
-           gvs.append(GenotypedVariant.create_object(name = vp.name,
+           gvs[vp.name_hash] = GenotypedVariant.create_object(name = vp.name,
                                                       call_set = call_set,
                                                       ref_pnz = ref_pnz, 
                                                       alt_pnz = alt_pnz,
                                                       ref_coverage = ref_covg, 
                                                       alt_coverage = alt_covg,
-                                                      gt = gt))
+                                                      gt = gt)
 
-GenotypedVariant.objects.insert(gvs)
+GenotypedVariant.objects.insert(gvs.values())
 
 
 

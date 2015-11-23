@@ -48,6 +48,8 @@ def make_panels(vf):
 	for alt in vf.alternate_bases:
 		variant = Variant(vf.reference_bases, vf.start , alt)
 		if len(context) <= 8:
+			# print variant
+			# print context
 			panel = al.create(variant, context)
 			panels.append(VariantPanel().create(variant,vf, panel.ref, panel.alts))
 	return panels
@@ -58,7 +60,8 @@ def update_panel(vp):
 	variant = Variant(ref, pos, alt) 
 	if len(context) <= 8:
 		panel = al.create(variant, context)
-		vp.update(panel.ref, panel.alts)
+		vp = vp.update(panel.ref, panel.alts)
+	return vp
 
 # "/home/phelimb/git/atlas/data/R00000022.fasta"
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
@@ -86,9 +89,10 @@ for name_hash in new_name_hashes:
 					   )
 	vfs.append(vf)
 
-print("Inserting documents to DB " ) 
+
 
 if vfs:
+	print("Inserting %i documents to DB" % len(vfs)) 	
 	VariantFreq.objects.insert(vfs)
 	## Get names of panels that need updating 
 	## Get all the variants that are within K bases of new variants
@@ -107,16 +111,18 @@ if vfs:
 		## Remove all panels that need updating
 		# VariantPanel.objects(variant__in = affected_variants).delete()
 	## Make panels for all new variants and panels needing updating
-	variant_panels = []
+	new_variant_panels = []
+	updated_variant_panels = []
 	for vf in VariantFreq.objects(name_hash__in = new_name_hashes):
-		variant_panels.extend(make_panels(vf))
+		new_variant_panels.extend(make_panels(vf))
 	for variant in affected_variants:
 		vps= VariantPanel.objects(variant = variant)
 		for vp in vps:
-			update_panel(vp)
+			updated_variant_panels.append(update_panel(vp))
 
-	new_panels = VariantPanel.objects.insert(variant_panels)
+	new_panels = VariantPanel.objects.insert(new_variant_panels) + updated_variant_panels
 
+	print("Appending %i panels" % len(new_panels) ) 
 	if args.force:
 		write_mode = "w"
 	else:

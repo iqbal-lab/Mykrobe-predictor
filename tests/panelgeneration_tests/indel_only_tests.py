@@ -16,21 +16,18 @@ class TestINDELAlleleGenerator():
         panel = self.pg.create(v)
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert self.pg._calculate_length_delta_from_indels(v, []) == 1
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC"]
 
     def test_simple_deletion2(self):
         v = Variant("AT", 32, "A")
         panel = self.pg.create(v)
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATCC"
         assert panel.alts == ["GATTAAAGATAGAAATACACGATGCGAGCAACAAATTTCATAACATCACCATGAGTTTGATCC"]        
 
     def test_simple_deletion3(self):
         v = Variant("AT", 2902618, "T")
         panel = self.pg.create(v)
         assert panel.ref ==   "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "ATAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"        
         assert panel.alts == ["ATAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTT"] 
 
     def test_simple_deletion4(self):
@@ -45,36 +42,31 @@ class TestINDELAlleleGenerator():
         assert v.is_indel
         assert v.is_insertion
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTT"        
-        assert panel.alts == ["TTTCGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTT"]
+        assert panel.alts == ["TTTCGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"]
 
     def test_simple_insertion2(self):
         v = Variant("C", 1, "CTTT")
         panel = self.pg.create(v)
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTT"                
-        assert panel.alts == ["CTTTGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTT"]
+        assert panel.alts == ["CTTTGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"]
 
     def test_simple_insertion3(self):
         v = Variant("A", 31, "ATTT")
         panel = self.pg.create(v)
         assert panel.ref ==   "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "ATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGA"                        
-        assert panel.alts == ["ATTAAAGATAGAAATACACGATGCGAGCATTTATCAAATTTCATAACATCACCATGAGTTTGA"]
+        assert panel.alts == ["CGATTAAAGATAGAAATACACGATGCGAGCATTTATCAAATTTCATAACATCACCATGAGTTTGAT"]
 
     def test_simple_insertion4(self):
         v = Variant("A", 32, "AGGGG")
         panel = self.pg.create(v)
         assert panel.ref ==   "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "TTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGA"                        
-        assert panel.alts == ["TTAAAGATAGAAATACACGATGCGAGCAAGGGGTCAAATTTCATAACATCACCATGAGTTTGA"]        
+        assert panel.alts == ["GATTAAAGATAGAAATACACGATGCGAGCAAGGGGTCAAATTTCATAACATCACCATGAGTTTGATC"]        
 
     def test_simple_insertion5(self):     
         v = Variant("A", 2902618, "ATGC")
         panel = self.pg.create(v)
         assert panel.ref ==   "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
-        assert "".join(self.pg._get_alternate_reference_segment(v, [])) == "CAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"                
-        assert panel.alts == ["CAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTATGCT"] 
+        assert panel.alts == ["TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTATGCT"] 
 
     def test_double_insertion(self):     
         v = Variant("A", 4021408, "ACGCTGGCGGGCG")
@@ -83,7 +75,14 @@ class TestINDELAlleleGenerator():
         assert self.pg2._remove_overlapping_contexts(v, [v1]) == []
         panel = self.pg2.create(v, context = context)
         assert panel.ref ==   "ATCTAGCCGCAAGGGCGCGAGCAGACGCAGAATCGCATGATTTGAGCTCAAATCATGCGATTC"
-        assert panel.alts == ["CCGCAAGGGCGCGAGCAGACGCAGACGCTGGCGGGCGATCGCATGATTTGAGCTCAAATCATG"] 
+        assert panel.alts == ["ATCTAGCCGCAAGGGCGCGAGCAGACGCAGACGCTGGCGGGCGATCGCATGATTTGAGCTCAAATCATGCGATTC"] 
+
+    def test_large_insertion(self):
+        v = Variant("CCGCCGGCCCCGCCGTTT",1636155,"CTGCCGGCCCCGCCGGCGCCGCCCAATCCACCGAAGCCCCTCCCTTCGGTGGGGTCGCTGCCGCCGTCGCCGCCGTCACCGCCCTTGCCGCCGGCCCCGCCGTCGCCGCCGGCTCCGGCGGTGCCGTCGCCGCCCTGGCCGCCGGCCCCGCCGTTTCCG")
+        panel = self.pg2.create(v, context = [])
+        assert panel.ref ==   "GAGTCGCCGAGGACGCCGGCGCCGCCATTGTCGCCAAATACCGTGAGACCTAGCAGGGTGCCGGCGCCGCCCTTGCCGCCGGCCCCGCCGTTTCCGCCGCCGCCATCGCCGATGATGTTTTCCCCGCCCTTGCCGCCAGCCCCAGCGTTCCCG"
+        assert panel.alts == ["GAGTCGCCGAGGACGCCGGCGCCGCCATTGTCGCCAAATACCGTGAGACCTAGCAGGGTGCCGGCGCCGCCCTTGCTGCCGGCCCCGCCGGCGCCGCCCAATCCACCGAAGCCCCTCCCTTCGGTGGGGTCGCTGCCGCCGTCGCCGCCGTCACCGCCCTTGCCGCCGGCCCCGCCGTCGCCGCCGGCTCCGGCGGTGCCGTCGCCGCCCTGGCCGCCGGCCCCGCCGTTTCCGCCGCCGCCGCCATCGCCGATGATGTTTTCCCCGCCCTTGCCGCCAGCCCCAGCGTTCCCG"]
+
 
 
 

@@ -165,7 +165,7 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i)
+            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i, i + len(v.ref), len(alternate))
             assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
             alternate[i : i + len(v.ref)] = v.alt
             alternates.append(alternate)
@@ -261,7 +261,6 @@ class AlleleGenerator(object):
             kmer = int(math.ceil(float(len(v.ref)) / 2)) + 5
         elif  (v.length > 2 * kmer):
             kmer = int(math.ceil(float(v.length) / 2)) + 5
-
         if len(v.ref) > kmer:
             shift = int( (kmer - 1) - math.floor(float((2 * kmer + 1) - len(v.ref)) / 2))
         pos = v.pos
@@ -283,7 +282,10 @@ class AlleleGenerator(object):
         start_index += shift
         end_index += shift
         i -= shift
-        return (i, start_index, end_index)
+        if (end_index - start_index) >= 63:
+            return (i, start_index, end_index)
+        else:
+            return self._get_start_end(v, delta = 0)
 
     def _calculate_length_delta_from_indels(self, v, context):
         """Calculates the change in required bases for given variant.

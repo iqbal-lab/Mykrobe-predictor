@@ -48,7 +48,7 @@ class VariantPanel(Document):
     def update(self, ref, alts):
         self.ref = ref
         self.alts = alts
-        self.save()
+        return self.save()
         
     def __repr__(self):
         return "PANAL %s" % self._name

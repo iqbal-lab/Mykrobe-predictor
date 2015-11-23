@@ -46,11 +46,11 @@ for variant_set in variant_sets:
     print variant_set.name, len(sample_variant_set), len(cur_variant_set), len(sample_variant_set & cur_variant_set), len(sample_variant_set - cur_variant_set), len(cur_variant_set - sample_variant_set), float(len(sample_variant_set & cur_variant_set))/float(len(sample_variant_set)) 
 
 
-print "MISSING"
-for var in sample_variant_set - genotyped_set:
-    vp = VariantPanel.objects.get(name_hash = var)
-    v = vp.variant
-    print v.name
+# print "MISSING"
+# for var in sample_variant_set - genotyped_set:
+#     vp = VariantPanel.objects.get(name_hash = var)
+#     v = vp.variant
+#     print v.name
 
 # print "EXTRA"
 # for var in genotyped_set - sample_variant_set:
