@@ -46,7 +46,7 @@ class ColourCovgsRead(object):
                 return sorts[0]
             if not length % 2:
                 return (sorts[int(length / 2)] + sorts[int(length / 2 - 1)]) / 2.0
-            return sorts[length / 2]   
+            return sorts[int(length / 2)]   
 
     def mean(self,lis):
         if len(lis) == 0:
