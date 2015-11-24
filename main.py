@@ -5,7 +5,7 @@ import atlas.version
 
 def run_subtool(parser, args):
     if args.command == 'add':
-        import commands.add as submodule
+        import atlas.commands.add as submodule
     elif args.command == "genotype":
         import genotype as submodule
     elif args.command == "dump":
