@@ -2,6 +2,8 @@
 import argparse
 import sys
 import atlas.version
+import logging
+logging.basicConfig(level=logging.ERROR)
 
 def run_subtool(parser, args):
     if args.command == 'add':
@@ -28,11 +30,10 @@ def main():
     # create the top-level parser
     #########################################
     parser = argparse.ArgumentParser(prog='atlas', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-v", "--version", help="Installed atlas version",
+    parser.add_argument("--version", help="Installed atlas version",
                         action="version",
                         version="%(prog)s " + str(atlas.version.__version__))
     subparsers = parser.add_subparsers(title='[sub-commands]', dest='command', parser_class=ArgumentParserWithDefaults)
-
     #########################################
     # create the individual tool parsers
     #########################################

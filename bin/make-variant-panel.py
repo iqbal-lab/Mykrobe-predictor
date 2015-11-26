@@ -4,8 +4,9 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import datetime
 import logging
+LOGGER = logging.getLogger("logger")
 from collections import Counter
-logging.basicConfig(level=logging.DEBUG)
+
 from Bio import SeqIO
 
 from mongoengine import connect
@@ -31,7 +32,13 @@ parser.add_argument('reference_filepath', metavar='reference_filepath', type=str
 parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
 parser.add_argument('--force', default = False, action = "store_true")
+parser.add_argument('-v', '--verbose', default = False, action = "store_true")
 args = parser.parse_args()
+
+if args.verbose:
+	LOGGER.setLevel(level=logging.DEBUG)
+else:
+	LOGGER.setLevel(level=logging.ERROR)
 
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
@@ -74,14 +81,20 @@ def make_panels(vf):
 	for alt in vf.alternate_bases:
 		variant = Variant(vf.reference_bases, vf.start , alt)
 		alts = []
+		build_success = True
 		for context in contexts_seen_together:
 			if len(context) <= 5:
-				panel = al.create(variant, context)
-				ref = panel.ref
-				alts.extend(panel.alts)
-		vp = VariantPanel().create(variant, vf, ref, alts)
-		if not VariantPanel.objects(name_hash = vp.name_hash):
-			panels.append(vp)
+				try:
+					panel = al.create(variant, context)
+					ref = panel.ref
+					alts.extend(panel.alts)
+				except ValueError,e:
+					print e
+					build_success = False
+		if build_success:
+			vp = VariantPanel().create(variant, vf, ref, alts)
+			if not VariantPanel.objects(name_hash = vp.name_hash):
+				panels.append(vp)
 	return panels
 
 def update_panel(vp):

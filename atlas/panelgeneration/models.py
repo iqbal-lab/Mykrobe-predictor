@@ -165,10 +165,11 @@ class AlleleGenerator(object):
             background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
-            # print ("".join(alternate[i:(i + len(v.ref))]) , v.ref, i, i + len(v.ref), len(alternate))
-            assert "".join(alternate[i:(i + len(v.ref))]) == v.ref               
-            alternate[i : i + len(v.ref)] = v.alt
-            alternates.append(alternate)
+            if not "".join(alternate[i:(i + len(v.ref))]) == v.ref:
+                raise ValueError("Could not process context combo %s. %s != %s " % (",".join([c.name for c in context_combo] + [v.name]), "".join(alternate[i:(i + len(v.ref))]) , v.ref))
+            else:
+                alternate[i : i + len(v.ref)] = v.alt
+                alternates.append(alternate)
         return alternates
 
     def _get_all_context_combinations(self, context):
@@ -194,9 +195,10 @@ class AlleleGenerator(object):
                     assert "".join(new_background[j : len(new_background)]) == variant.ref[:len(variant.ref) - hang]
                     new_background[j : j + len(variant.ref)] = variant.alt[:len(variant.ref) - hang]
                 else:
-                    # print (variant, "".join(new_background[j : j+ len(variant.ref)]),  variant.ref, j)
-                    assert "".join(new_background[j : j + len(variant.ref)]) == variant.ref                        
-                    new_background[j : j + len(variant.ref)] = variant.alt
+                    if not "".join(new_background[j : j + len(variant.ref)]) == variant.ref:
+                        raise ValueError("Could not process variant %s. %s != %s " % (variant.name, "".join(new_background[j : j + len(variant.ref)]) , variant.ref))
+                    else:
+                        new_background[j : j + len(variant.ref)] = variant.alt
                 variants_added.append(variant)
             else:
                 del context[e]
@@ -296,7 +298,11 @@ class AlleleGenerator(object):
     def _calculate_length_delta_from_variant_list(self, variants):
         deletions_length = [v.length for v in variants if v.is_deletion]
         insertions_length = [v.length for v in variants if v.is_insertion]
-        return sum(deletions_length) - sum(insertions_length)        
+        delta = sum(deletions_length) - sum(insertions_length) 
+        if delta < -self.kmer:
+            return abs(delta)
+        else:
+            return delta
 
 class Panel(object):
 

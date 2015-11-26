@@ -1,6 +1,7 @@
 """Adds variants to the database"""
 
 import logging
+LOGGER = logging.getLogger("logger")
 import os
 import csv
 
@@ -41,64 +42,68 @@ def get_genotype_likelihood(sample):
     return genotype_likelihood        
 
 def run(parser, args):
-	args = parser.parse_args()
-	DBNAME = 'atlas-%s-%i' % (args.db_name ,args.kmer)
-	db = client[DBNAME]
-	connect(DBNAME)
-	logging.info("Using DB %s"  % DBNAME)
+    args = parser.parse_args()
+    if args.quiet:
+        LOGGER.setLevel(logging.ERROR)
+    else:
+        LOGGER.setLevel(logging.INFO)        
+    DBNAME = 'atlas-%s-%i' % (args.db_name ,args.kmer)
+    db = client[DBNAME]
+    connect(DBNAME)
+    LOGGER.debug("Using DB %s"  % DBNAME)
 
-	vcf_reader = vcf.Reader(open(args.vcf, 'r'))
-	assert len(vcf_reader.samples) == 1
+    vcf_reader = vcf.Reader(open(args.vcf, 'r'))
+    assert len(vcf_reader.samples) == 1
 
-	variant_set_name = os.path.splitext(os.path.basename(args.vcf))[0]
-	if args.sample_id is None:
-		sample = vcf_reader.samples[0]
-	else:
-		sample = args.sample_id 
+    variant_set_name = os.path.splitext(os.path.basename(args.vcf))[0]
+    if args.sample_id is None:
+        sample = vcf_reader.samples[0]
+    else:
+        sample = args.sample_id 
 
-	try:
-	    callset = CallSet.create(name = variant_set_name, sample_id = sample)
-	except NotUniqueError:
-	    callset = CallSet.objects.get(name = variant_set_name)
+    try:
+        callset = CallSet.create(name = variant_set_name, sample_id = sample)
+    except NotUniqueError:
+        callset = CallSet.objects.get(name = variant_set_name)
 
-	try:
-	    variant_set = VariantSet.create(name = variant_set_name)
-	except NotUniqueError:
-	    variant_set = VariantSet.objects.get(name = variant_set_name)
+    try:
+        variant_set = VariantSet.create(name = variant_set_name)
+    except NotUniqueError:
+        variant_set = VariantSet.objects.get(name = variant_set_name)
 
-	try:
-	    reference = Reference.create(name = "R00000022")
-	except NotUniqueError:
-	    reference = Reference.objects.get(name = "R00000022")
+    try:
+        reference = Reference.create(name = "R00000022")
+    except NotUniqueError:
+        reference = Reference.objects.get(name = "R00000022")
 
-	variants = []
-	calls = []
-	for record in vcf_reader:
-	    if not record.FILTER and is_record_valid(record):
-	        for sample in record.samples:
-	            try:
-	                v = Variant.create_object(variant_set = variant_set,
-	                                    start = record.POS,
-	                                    reference_bases = record.REF,
-	                                    alternate_bases = [str(a) for a in record.ALT], 
-	                                    reference = reference)
-	            except (OperationError, ValueError) as e:
-	                print e
-	                print record.POS
-	                print record
-	            else:
-	                variants.append(v)
-	                genotype_likelihood = get_genotype_likelihood(sample)
-	                c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = genotype_likelihood)
-	                calls.append(c)
+    variants = []
+    calls = []
+    for record in vcf_reader:
+        if not record.FILTER and is_record_valid(record):
+            for sample in record.samples:
+                try:
+                    v = Variant.create_object(variant_set = variant_set,
+                                        start = record.POS,
+                                        reference_bases = record.REF,
+                                        alternate_bases = [str(a) for a in record.ALT], 
+                                        reference = reference)
+                except (OperationError, ValueError) as e:
+                    print e
+                    print record.POS
+                    print record
+                else:
+                    variants.append(v)
+                    genotype_likelihood = get_genotype_likelihood(sample)
+                    c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = genotype_likelihood)
+                    calls.append(c)
 
-	try:
-	    variant_ids =  [v.id for v in Variant.objects.insert(variants)]
-	except (NotUniqueError) as e:
-	    logging.error(str(e))
-	    logging.error("Variants must be unique within a given VCF")
-	else:
-	    logging.info("Uploaded %i variants to database" % len(variant_ids))
-	    for i,_id in enumerate(variant_ids):
-	        calls[i]["variant"] = _id
-	    db.call.insert(calls)    
+    try:
+        variant_ids =  [v.id for v in Variant.objects.insert(variants)]
+    except (NotUniqueError) as e:
+        LOGGER.error(str(e))
+        LOGGER.error("Variants must be unique within a given VCF")
+    else:
+        LOGGER.info("Uploaded %i variants to database" % len(variant_ids))
+        for i,_id in enumerate(variant_ids):
+            calls[i]["variant"] = _id
+        db.call.insert(calls)    

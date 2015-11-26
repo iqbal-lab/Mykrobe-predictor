@@ -1,4 +1,4 @@
-echo "Colour Covgs" $1 $2
+# echo "Colour Covgs" $1 $2
 comid=$1
 data=$2
 #cp panel_tb_k31.fasta /tmp/"$1"_"$4"_"$5".fasta
