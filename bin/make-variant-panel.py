@@ -40,29 +40,69 @@ def get_context(pos):
 	for vft in VariantFreq.objects(start__ne = pos, start__gt = pos - args.kmer, start__lt = pos + args.kmer):
 		for alt in vft.alternate_bases:
 			context.append( Variant(vft.reference_bases, vft.start , alt) )
-	return context	
+	return context
+
+def called_variant_list_to_panel_generated_variant_list(variants_in):
+	variants_out = []
+	for var in variants_in:
+		for alt in var.alternate_bases:
+			variants_out.append( Variant(var.reference_bases, var.start , alt) )
+	return variants_out	
+
+def seen_together(variants):
+	## Takes a list of variants. 
+	## Returns a list of variants that appear together (in the same variant set)
+	## TODO - would be better if seen in same sample (accross several variant sets)
+	variant_name_hashes = [v.name_hash for v in variants]
+	variant_set_counter = Counter([v.variant_set.id for v in CalledVariant.objects(name_hash__in = variant_name_hashes)])
+	variant_sets = [k for k,v in variant_set_counter.iteritems() if v > 1]
+	contexts = []
+	for vs in variant_sets:
+		vars_together = [v for v in CalledVariant.objects(name_hash__in = variant_name_hashes, variant_set = vs)]
+		if not vars_together in contexts:
+			contexts.append(called_variant_list_to_panel_generated_variant_list(vars_together))
+			variants = [var for var in variants if var not in vars_together] 
+	for var in variants:
+		contexts.append([var])
+	return contexts + [[]]
 
 def make_panels(vf):
 	context = get_context(vf.start)
 	panels = []
+	contexts_seen_together = seen_together(context)	
+
 	for alt in vf.alternate_bases:
 		variant = Variant(vf.reference_bases, vf.start , alt)
-		if len(context) <= 8:
-			# print variant
-			# print context
-			panel = al.create(variant, context)
-			panels.append(VariantPanel().create(variant,vf, panel.ref, panel.alts))
+		alts = []
+		for context in contexts_seen_together:
+			if len(context) <= 5:
+				panel = al.create(variant, context)
+				ref = panel.ref
+				alts.extend(panel.alts)
+		vp = VariantPanel().create(variant, vf, ref, alts)
+		if not VariantPanel.objects(name_hash = vp.name_hash):
+			panels.append(vp)
 	return panels
 
 def update_panel(vp):
 	context = get_context(vp.variant.start)
+	contexts_seen_together = seen_together(context)		
+	
 	ref, pos, alt = split_var_name(vp.name)
-	variant = Variant(ref, pos, alt) 
-	if len(context) <= 8:
-		panel = al.create(variant, context)
-		vp = vp.update(panel.ref, panel.alts)
+	variant = Variant(ref, pos, alt)
+
+	alts = []
+	for context in contexts_seen_together:
+		if len(context) <= 5:
+			panel = al.create(variant, context)
+			alts.extend(panel.alts)
+			ref = panel.ref
+	vp = vp.update(ref, alts)
 	return vp
 
+def unique_name_hash(l):
+	seen = set()
+	return [seen.add(obj.name_hash) or obj for obj in l if obj.name_hash not in seen]	
 # "/home/phelimb/git/atlas/data/R00000022.fasta"
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
 print("Extracting unique variants " )
@@ -89,11 +129,9 @@ for name_hash in new_name_hashes:
 					   )
 	vfs.append(vf)
 
-
-
 if vfs:
 	print("Inserting %i documents to DB" % len(vfs)) 	
-	VariantFreq.objects.insert(vfs)
+	vfs = VariantFreq.objects.insert(vfs)	
 	## Get names of panels that need updating 
 	## Get all the variants that are within K bases of new variants
 	## and that are not new variants
@@ -101,7 +139,7 @@ if vfs:
 	update_name_hashes = []
 	affected_variants = []
 	if VariantPanel.objects().count() > 0:
-		for new_vf in VariantFreq.objects(name_hash__in = new_name_hashes):
+		for new_vf in vfs:
 			query = VariantFreq.objects(start__gt = new_vf.start - args.kmer,
 			                              start__lt = new_vf.start + args.kmer)
 			for q in query:
@@ -113,14 +151,14 @@ if vfs:
 	## Make panels for all new variants and panels needing updating
 	new_variant_panels = []
 	updated_variant_panels = []
-	for vf in VariantFreq.objects(name_hash__in = new_name_hashes):
+	for vf in vfs:
 		new_variant_panels.extend(make_panels(vf))
 	for variant in affected_variants:
 		vps= VariantPanel.objects(variant = variant)
 		for vp in vps:
 			updated_variant_panels.append(update_panel(vp))
 
-	new_panels = VariantPanel.objects.insert(new_variant_panels) + updated_variant_panels
+	new_panels = VariantPanel.objects.insert(unique_name_hash(new_variant_panels)) + updated_variant_panels
 
 	print("Appending %i panels" % len(new_panels) ) 
 	if args.force:

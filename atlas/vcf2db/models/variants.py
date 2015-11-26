@@ -260,6 +260,10 @@ class Variant(Document):
     def __repr__(self):
         return self.name
 
+    def __eq__(self, other):
+        return self.name_hash == other.name_hash
+
+
     @property
     def is_indel(self):
         """ Return whether or not the variant is an INDEL """

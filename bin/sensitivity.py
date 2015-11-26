@@ -3,6 +3,8 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
+import logging
+logging.basicConfig(level=logging.DEBUG)
 from atlas.vcf2db import *
 import pymongo
 import mongoengine
@@ -17,22 +19,21 @@ client = MongoClient()
 
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
-parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="default")
+parser.add_argument('db_name', metavar='db_name', type=str, help='db_name', default="atlas")
 parser.add_argument('kmer', metavar='kmer', type=int, help='kmer size')
 args = parser.parse_args()
 
-db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
-connect('atlas-%s-%i' % (args.db_name ,args.kmer))
-
+DBNAME = 'atlas-%s-%i' % (args.db_name ,args.kmer) 
+db = client[DBNAME]
+connect(DBNAME)
+logging.info("Using DB %s"  % DBNAME)
 
 
 ## Get all discovered variants
 variant_sets = VariantSet.objects(name__startswith = args.sample)
 variants = Variant.objects(variant_set__in = variant_sets)#.order_by('start')
 ## All genotyped
-
 sample_variant_set = set(variants.distinct('name_hash'))
-
 
 atlas_gt_call_set_name = args.sample + "_atlas_gt"
 atlas_gt_call_set = CallSet.objects.get(name = atlas_gt_call_set_name)

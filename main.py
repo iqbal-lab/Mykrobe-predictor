@@ -2,7 +2,9 @@
 import argparse
 import sys
 import atlas.version
-
+import os
+import logging
+logging.basicConfig(level=logging.DEBUG)
 def run_subtool(parser, args):
     if args.command == 'add':
         import atlas.commands.add as submodule
@@ -21,8 +23,8 @@ class ArgumentParserWithDefaults(argparse.ArgumentParser):
                         action="store_true",
                         dest="quiet")
 
-DEFAULT_DB_NAME = "atlas"
-DEFAULT_KMER_SIZE = 31
+DEFAULT_DB_NAME = os.environ.get("ATLAS_DB_NAME", "atlas")
+DEFAULT_KMER_SIZE = os.environ.get("ATLAS_KMER_SIZE", 31)
 def main():
     #########################################
     # create the top-level parser

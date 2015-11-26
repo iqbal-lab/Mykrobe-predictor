@@ -1,8 +1,6 @@
 """Adds variants to the database"""
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
-
 import os
 import csv
 
@@ -44,8 +42,10 @@ def get_genotype_likelihood(sample):
 
 def run(parser, args):
 	args = parser.parse_args()
-	db = client['atlas-%s-%i' % (args.db_name ,args.kmer) ]
-	connect('atlas-%s-%i' % (args.db_name ,args.kmer))
+	DBNAME = 'atlas-%s-%i' % (args.db_name ,args.kmer)
+	db = client[DBNAME]
+	connect(DBNAME)
+	logging.info("Using DB %s"  % DBNAME)
 
 	vcf_reader = vcf.Reader(open(args.vcf, 'r'))
 	assert len(vcf_reader.samples) == 1

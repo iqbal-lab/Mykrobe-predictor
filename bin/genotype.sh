@@ -1,11 +1,17 @@
-echo "Colour Covgs" $2
+echo "Colour Covgs" $1 $2
+comid=$1
+data=$2
 #cp panel_tb_k31.fasta /tmp/"$1"_"$4"_"$5".fasta
 #readlink -f $2 > /tmp/"$1"_"$4"_"$5".blist
 #ls /tmp/"$1"_"$4"_"$5".blist > /tmp/"$1"_"$4"_"$5".clist
 #ls  /tmp/"$1"_"$4"_"$5".fasta > /tmp/"$1"_"$4"_"$5".panel
 #/home/phelimb/git/cortex/bin/cortex_var_31_c1 --colour_list /tmp/"$1"_"$4"_"$5".clist --kmer_size $5 --mem_height 20 --mem_width 250 --align /tmp/"$1"_"$4"_"$5".panel,no --align_input_format LIST_OF_FASTA --max_read_len 10000
 
-mccortex31 coverage -s panel_tb_k31.fasta -m 1GB $2 > /tmp/"$1"_"$3"_"$4".fasta.colour_covgs
+rm -f /home/phelimb/git/atlas-core/panel.ctx
+rm -f /tmp/"$comid"_tb_31.ctx
+/data2/apps/mccortex/bin/mccortex31 build -k 31 -q --nkmers 5000000 -s atlas -1/home/phelimb/git/atlas-core/panel_tb_k31.fasta  /home/phelimb/git/atlas-core/panel.ctx
+/home/phelimb/git/mccortex/bin/mccortex31 build -q --nkmers 5000000 -k 31 -s $comid -1 $data /tmp/"$comid"_tb_31.ctx
+/data2/apps/mccortex/bin/mccortex31 coverage -q --nkmers 5000000 -s /home/phelimb/git/atlas-core/panel_tb_k31.fasta /tmp/"$comid"_tb_31.ctx > /tmp/"$comid"_tb_31.fasta.colour_covgs
 
 # /data2/users/phelim/tools/jellyfish-2.2.0/bin/jellyfish count -o /tmp/"$1"_"$4"_"$5".jf -m $5 -c 3 -t 2 -s 10000000 <(zcat $2)
 # echo "Comparing to PANEL" $1
