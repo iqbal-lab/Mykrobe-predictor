@@ -29,3 +29,4 @@ cd ..
 
 cd ..
 
+./make.sh

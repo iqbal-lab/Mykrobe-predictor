@@ -6,6 +6,6 @@
 */
 
 
-#define MYK_VERSION 1
-#define MYK_SUBVERSION 0
-#define MYK_SUBSUBVERSION 3
+#define MYK_VERSION 0
+#define MYK_SUBVERSION 2
+#define MYK_SUBSUBVERSION 0

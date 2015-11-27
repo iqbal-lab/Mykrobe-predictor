@@ -486,22 +486,26 @@ void find_mutation_name(StrBuf* sbuf_in, StrBuf* sbuf_out)
 //the "sub" says it is a substitution
 //then after the - it says how many resistant alleles there are
 //return false if no more var
-boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph, 
+boolean get_next_var_on_background(FILE* fp, 
+					dBGraph* db_graph, 
 				   VarOnBackground* vob, 
 				   Var** array_vars,//this is the array indexed by var enums in the antibio info
-				   Sequence* seq, KmerSlidingWindow* kmer_window,
+				   Sequence* seq, 
+				   KmerSlidingWindow* kmer_window,
 				   int (*file_reader)(FILE * fp, 
 						      Sequence * seq, 
 						      int max_read_length, 
 						      boolean new_entry, 
 						      boolean * full_entry),
-				   dBNode** array_nodes, Orientation*  array_or,
-				   CovgArray* working_ca, int max_read_length,
+				   dBNode** array_nodes,
+				   Orientation*  array_or,
+				   CovgArray* working_ca,
+				   int max_read_length,
 				   StrBuf* temp_readid_buf, 
 				   StrBuf* temp_mut_buf,
 				   StrBuf* temp_gene_name_buf,
 				   int ignore_first, int ignore_last, 
-				   int expected_covg, KnownMutation* prev_mut)
+				   KnownMutation* prev_mut)
   
 {
 

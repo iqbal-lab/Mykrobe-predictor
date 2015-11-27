@@ -122,7 +122,6 @@ void test_get_next_var_on_background()
   StrBuf* temp_mut = strbuf_new();
   StrBuf* temp_gene = strbuf_new();
   int ignore = 1;
-  int expected_covg = 9;
   AntibioticInfo* abi = alloc_antibiotic_info();
   if (abi==NULL)
     {
@@ -136,7 +135,7 @@ void test_get_next_var_on_background()
 			     &file_reader_fasta,
 			     array_nodes, array_or, working_ca, max_read_length,
 			     temp_rid, temp_mut, temp_gene,
-			     ignore, ignore, expected_covg, &km);
+			     ignore, ignore, &km);
 
   CU_ASSERT(vob->susceptible_allele.median_covg==9);
   CU_ASSERT(vob->susceptible_allele.min_covg==9);
@@ -153,7 +152,7 @@ void test_get_next_var_on_background()
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-			     ignore, ignore, expected_covg, &km);
+			     ignore, ignore, &km);
 
 
   CU_ASSERT(vob->susceptible_allele.median_covg==0);
@@ -170,7 +169,7 @@ void test_get_next_var_on_background()
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-			     ignore, ignore, expected_covg, &km);
+			     ignore, ignore, &km);
 
 
   CU_ASSERT(vob->susceptible_allele.median_covg==0);
@@ -310,7 +309,7 @@ void test_mutation_model_log_likelihoods_1()
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, &km);
+				ignore, ignore, &km);
 
   CU_ASSERT(vob->susceptible_allele.median_covg==100);
   CU_ASSERT(vob->susceptible_allele.min_covg==100);
@@ -323,38 +322,34 @@ void test_mutation_model_log_likelihoods_1()
 
   double error_rate = 0.01;
   double epsilon = pow((1-error_rate), kmer_size);
-  double delta = pow(1-error_rate, kmer_size-1) * error_rate;
+  // double delta = pow(1-error_rate, kmer_size-1) * error_rate;
   int mean_read_len = 61;
   double lambda = (double) expected_covg/(double) mean_read_len;
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
   double lambda_e = error_rate*pow(1-error_rate, kmer_size-1)*lambda;
-  double llk_R = get_log_lik_minor_pop_resistant(abi->vars[4],
-						 lambda_g,
+  double llk_R = get_log_lik_R_S_coverage(abi->vars[4],
+						 lambda_g * 0.75,
 						 lambda_e,
-						 kmer_size,
-						 error_rate,
-						 0.75);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(abi->vars[4],
+						 kmer_size);
+  double llk_S = get_log_lik_R_S_coverage(abi->vars[4],
 									       lambda_g,
 									       lambda_e,
 									       kmer_size);
-  double llk_M = get_log_lik_minor_pop_resistant(abi->vars[4],
-						lambda_g,
+  double llk_M = get_log_lik_R_S_coverage(abi->vars[4],
+						lambda_g * 0.1,
 						error_rate,
-						kmer_size,error_rate,
-						 0.1);
+						kmer_size);
 
   CU_ASSERT(llk_S > llk_R);
   CU_ASSERT(llk_S > llk_M);
   CU_ASSERT(llk_R < llk_M);
 
-  double confidence = 0;
   Model m, m_mid, m_worst;
-  choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon);
+  choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon, 0);
   CU_ASSERT(m.type==Susceptible);
 
   boolean genotyped_present = false;
-  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, &m, MaxAPosteriori, 0.1, &genotyped_present);
+  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, 0, &m, MaxAPosteriori, 0.1, &genotyped_present);
   CU_ASSERT(t==Susceptible);
 
   strbuf_free(temp_rid);
@@ -486,7 +481,7 @@ void test_mutation_model_log_likelihoods_2()
 				&file_reader_fasta,
 				array_nodes, array_or, working_ca, max_read_length,
 				temp_rid, temp_mut, temp_gene,
-				ignore, ignore, expected_covg, &km);
+				ignore, ignore, &km);
 
   CU_ASSERT(vob->susceptible_allele.median_covg==1);
   CU_ASSERT(vob->susceptible_allele.min_covg==1);
@@ -499,27 +494,24 @@ void test_mutation_model_log_likelihoods_2()
 
   double error_rate = 0.01;
   double epsilon = pow((1-error_rate), kmer_size);
-  double delta = pow(1-error_rate, kmer_size-1) * error_rate;
+  // double delta = pow(1-error_rate, kmer_size-1) * error_rate;
   int mean_read_len = 61;
   double lambda = (double)expected_covg/(double) mean_read_len;
   double lambda_g = pow(1-error_rate, kmer_size)*lambda;
   double lambda_e = error_rate*pow(1-error_rate, kmer_size-1)*lambda;
 
-  double llk_R = get_log_lik_minor_pop_resistant(abi->vars[4],
-						 lambda_g,
+  double llk_R = get_log_lik_R_S_coverage(abi->vars[4],
+						 lambda_g * 0.75,
 						 lambda_e,
-						 kmer_size,
-						 error_rate,
-						 0.75);
-  double llk_S = get_log_lik_truly_susceptible_plus_errors_on_resistant_allele(abi->vars[4],
+						 kmer_size);
+  double llk_S = get_log_lik_R_S_coverage(abi->vars[4],
 									       lambda_g,
 									       lambda_e,
 									       kmer_size);
-  double llk_M = get_log_lik_minor_pop_resistant(abi->vars[4],
-						 lambda_g,
+  double llk_M = get_log_lik_R_S_coverage(abi->vars[4],
+						 lambda_g * 0.1,
 						 error_rate,
-						 kmer_size,error_rate,
-						 0.1);
+						 kmer_size);
   
   CU_ASSERT(llk_S < llk_R);
   CU_ASSERT(llk_M > llk_S);
@@ -527,11 +519,11 @@ void test_mutation_model_log_likelihoods_2()
 
   double confidence = 0;
   Model m, m_mid, m_worst;
-  choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon);
+  choose_map_model(abi->vars[4], llk_R, llk_S, llk_M, &m, &m_mid, &m_worst, epsilon, 0);
   CU_ASSERT(m.type==Resistant);
   
   boolean genotyped_present = false;
-  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, &m, MaxAPosteriori, 0.1, &genotyped_present);
+  InfectionType t = resistotype(abi->vars[4], error_rate, kmer_size, lambda_g, lambda_e, epsilon, expected_covg, 0, &m, MaxAPosteriori, 0.1, &genotyped_present);
   CU_ASSERT(t==Resistant);
 
   strbuf_free(temp_rid);

@@ -27,36 +27,38 @@ void print_json_end()
   fflush(stdout);
 }
 
-void print_json_species_start()
+// void print_json_species_start()
+// {
+//   printf("\t\t\"species\": {\n");
+// }
+// void print_json_phylo_group_start()
+// {
+//   printf("\t\t\"phylo_group\": {\n");
+// }
+
+
+
+
+// void print_json_species_end()
+// {
+//   printf("\t\t},\n");
+// }
+void print_json_phylo_group_end(boolean last)
 {
-  printf("\t\t\"species\": {\n");
+  if (last){
+    printf("\t\t}\n");
+  }else{
+    printf("\t\t},\n");
+  }
+  
 }
-void print_json_phylo_group_start()
-{
-  printf("\t\t\"phylo_group\": {\n");
-}
+
+
 void print_json_phylogenetics_start()
 {
   printf("\t\"phylogenetics\": {\n");
 }
-void print_json_lineage_start()
-{
-  printf("\t\t\"lineage\": {\n");
-}
 
-
-void print_json_species_end()
-{
-  printf("\t\t},\n");
-}
-void print_json_phylo_group_end()
-{
-  printf("\t\t},\n");
-}
-void print_json_lineage_end()
-{
-  printf("\t\t}\n");
-}
 void print_json_phylogenetics_end()
 {
   printf("\t},\n");

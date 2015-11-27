@@ -1,3 +1,5 @@
+code_generator/venv/
+*.pyc
 code_generator/rendered
 ._*
 *tmp*
@@ -45,6 +47,7 @@ libs/string_buffer/strbuf_test
 *.tmp2
 *.tmp
 *.pyc
+data/skeleton_binary/staph/
 
 ## scripts
 data/staph/antibiotics/getallMuts.py
@@ -54,6 +57,24 @@ data/tb/antibiotics/backup/
 data/tb/antibiotics/all_NS/
 data/staph/species/coag_neg_old.fa
 
+## Rendered
+src/predictor/staph/species.c
+src/predictor/staph/main.c
+src/predictor/core/main.c
+data/staph/list_speciesbranches_genes_and_muts
+src/predictor/tb/species.c
+src/predictor/tb/main.c
+src/predictor/tb/antibiotics.c
+src/predictor/staph/antibiotics.c
+src/predictor/core/known_mutations.c
+code_generator/rendered
+include/predictor/core/gene_presence.h
+include/predictor/core/known_mutations.h
+include/predictor/staph/antibiotics.h
+include/predictor/staph/species.h
+include/predictor/tb/antibiotics.h
+include/predictor/tb/species.h
+list_speciesbranches_genes_and_muts
 
 
 ## test file that is too big for github
@@ -71,3 +92,4 @@ UI/app/bower_components
 UI/dist
 UI/cache
 UI/_SpecRunner.html
+data/skeleton_binary/tb/

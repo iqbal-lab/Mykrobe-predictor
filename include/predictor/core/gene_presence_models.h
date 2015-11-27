@@ -76,7 +76,9 @@ void choose_map_gene_model(GeneInfo* gi,
 			   int min_expected_kmer_recovery_for_this_gene);
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
-			       double lambda_g, double lambda_e, double epsilon, int expected_covg,
+			       double lambda_g, double lambda_e, double epsilon,
+			       int expected_covg,
+			       int contamination_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene,

@@ -277,7 +277,9 @@ double CN_of_gene(GeneInfo* gi, int expected_covg){
 }
 
 InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
-			       double lambda_g,  double lambda_e, double epsilon, int expected_covg,
+			       double lambda_g,  double lambda_e, double epsilon,
+             int expected_covg,
+             int contamination_covg,
 			       Model* best_model,
 			       ModelChoiceMethod choice,
 			       int min_expected_kmer_recovery_for_this_gene,
@@ -291,9 +293,40 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
   //depending on err rate, set freq
   double freq = calculate_minmum_detectable_freq_given_error_rate(err_rate);
 
-  double llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
-  double llk_M = get_log_lik_observed_coverage_on_gene(gi, lambda_g, freq, expected_covg, kmer);
-  double llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);
+  double llk_M;
+  double llk_S;
+  double llk_R;
+
+  
+  // If contaminiation is present turn of mixed model and bump up S. 
+  if (contamination_covg > 0 ){
+    llk_M = -99999999;
+    double llk_R_1 = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
+    double llk_R_2 = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg + contamination_covg, kmer);
+    if (llk_R_1 > llk_R_2){
+      llk_R = llk_R_1;
+    }else{
+      llk_R = llk_R_2;
+    }
+    // If the contamination and target coverage are very close don't use contam as S
+    if (abs(expected_covg - contamination_covg) > 5){
+      double llk_S_no_contaim = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);
+      double llk_S_with_contaim = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, contamination_covg, kmer);
+      if (llk_S_with_contaim > llk_S_no_contaim){
+        llk_S = llk_S_with_contaim;
+        *genotyped_present = true;
+      }else{
+        llk_S = llk_S_no_contaim;
+      }
+    }else{
+      llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);     
+    }
+  }
+  else{
+    llk_R = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.75, expected_covg, kmer);
+    llk_M = get_log_lik_observed_coverage_on_gene(gi, lambda_g, freq, expected_covg, kmer);
+    llk_S = get_log_lik_observed_coverage_on_gene(gi, lambda_g, 0.001, expected_covg, kmer);     
+  }
 
 
    // printf("LLks of S, M, R are %f, %f and %f\n", llk_S, llk_M, llk_R);
@@ -314,7 +347,8 @@ InfectionType resistotype_gene(GeneInfo* gi, double err_rate, int kmer,
     if (best_model->type != Susceptible){
       *genotyped_present = true;
     }
-    if (best_model->type == MixedInfection && CN_of_gene(gi, expected_covg) < min_gene_cn ){
+    // If there's contamination or the best model is minor then impose the minimum treshold of CN
+    if ( ((best_model->type == MixedInfection) || (contamination_covg > 0))  && CN_of_gene(gi, expected_covg) < min_gene_cn ){
       return Susceptible;
     }else{
       return best_model->type;

@@ -1,16 +1,20 @@
+#! /usr/bin/env python
 import os
-from utils import unique,flatten
+from base import unique,flatten
 from base import CodeGenerator
 from base import DrugCodeGenerator
-from base import GeneCodeGenerator
+from base import SpeciesCodeGenerator
 
+species = "staph"
 class StaphCodeGenerator(CodeGenerator):
 
     def __init__(self):
-        self.species = "staph"
+        self.species = species
+        self.genome_size = 2800000
+        self.kmer_size = 15
+        self.species_long_name = "S. aureus"        
         super(StaphCodeGenerator, self).__init__()  
-
-
+        
     @property 
     def drug_names(self):
         drug_names = unique(self.gene_induced_drug_names + self.mutation_induced_drug_names) 
@@ -29,7 +33,7 @@ class StaphCodeGenerator(CodeGenerator):
 class StaphDrugCodeGenerator(DrugCodeGenerator):
     
     def __init__(self,name):
-        self.species = "staph"
+        self.species = species
         super(StaphDrugCodeGenerator, self).__init__(name)  
 
     @property 
@@ -38,24 +42,9 @@ class StaphDrugCodeGenerator(DrugCodeGenerator):
             return True
         else:
             return False  
-
-    @property
-    def genes_resistance_induced_by(self):
-        genes = []
-        for gene,drugs in self.gene_enum_to_drug_name.iteritems():
-            if self.name in drugs:
-                genes.append(StaphGene(gene))
-        return genes                             
-        
-
-class StaphGene(GeneCodeGenerator):
-    
-    def __init__(self,name):
-        self.species = "staph" 
-        super(StaphGene, self).__init__(name=name)                    
-                               
-
-
-
+            
 cg = StaphCodeGenerator()
 cg.render_and_write_all()
+
+spc = SpeciesCodeGenerator(species)
+spc.render_and_write_phylo()

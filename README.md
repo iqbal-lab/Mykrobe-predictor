@@ -9,6 +9,7 @@ Then run the following command to compile libraries.
 
 sh install.sh 
 
+pip install -r code_generator/requirements.txt
 ### Compilation ###
 
 To compile for S.aureus, run the following command 
@@ -41,6 +42,15 @@ Standard usage
 Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/Mykrobe-predictor
 
 Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases
+
+#### Force resistance predictions if species is not target species. 
+
+By default, if we can't find S. aureus or MTBC in the data we don't show resistance predictions. 
+
+You can force resistance predictions with --force flag
+
+Mykrobe.predictor.staph --file some_non_staph.fastq --install_dir /path/to/Mykrobe-predictor --force
+
 
 ### Output ### 
 
@@ -135,6 +145,8 @@ The "called_genes" and "called_variants" provide the evidence (if any) for the s
 We have a preprint of the paper describing Mykrobe predictor here:
 http://biorxiv.org/content/early/2015/04/26/018564
 Please cite us if you use Mykrobe predictor in a publication
+
+All analysis in this paper was done with release [v0.1.3-beta](https://github.com/iqbal-lab/Mykrobe-predictor/releases/tag/v0.1.3-beta).
 
 ### Extending Mykrobe (modifying panel or supporting a new species) ### 
 Please see [README_EXTENDING_MYKROBE](https://github.com/iqbal-lab/Mykrobe-predictor/blob/extending/README_EXTENDING_MYKROBE.md).

@@ -132,7 +132,7 @@ boolean get_next_var_on_background(FILE* fp, dBGraph* db_graph,
 				StrBuf* temp_mut_buf,
 				StrBuf* temp_gene_name_buf,
 				int ignore_first, int ignore_last, 
-				int expected_covg, KnownMutation* prev_mut);
+				KnownMutation* prev_mut);
 
 
 

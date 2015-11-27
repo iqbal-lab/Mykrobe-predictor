@@ -58,11 +58,9 @@ void test_mutation_S()
 	double err_rate = 0.01;
 	int kmer = 15;
 	int expected_covg = 45;
+	int contamination_covg = 0;
 	
 	float min_frac_to_detect_minor_pops = 0.1;
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 	double epsilon = pow(1-err_rate, kmer);	
@@ -95,13 +93,13 @@ void test_mutation_S()
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
-	ModelChoiceMethod choice = MaxAPosteriori;
 	Model best_model;
 	
 	boolean genotyped_present = false;
 	InfectionType I=
 	  resistotype(vars[0], err_rate, kmer, 
-		      lambda_g, lambda_e, epsilon,expected_covg,
+		      lambda_g, lambda_e, epsilon,
+		      expected_covg, contamination_covg,
 		      &best_model, MaxAPosteriori,
 		      min_frac_to_detect_minor_pops,
 		      &genotyped_present);
@@ -136,11 +134,9 @@ void test_mutation_R()
 	double err_rate = 0.01;
 	int kmer = 15;
 	int expected_covg = 45;
+	int contamination_covg = 0;
 	
 	float min_frac_to_detect_minor_pops = 0.1;
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 	double epsilon = pow(1-err_rate, kmer);	
@@ -172,13 +168,13 @@ void test_mutation_R()
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
-	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
 
     boolean genotyped_present = false;
      InfectionType I=
 	resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,expected_covg,
+		    lambda_g, lambda_e, epsilon,
+		    expected_covg, contamination_covg,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops,
 		    &genotyped_present);
@@ -215,11 +211,9 @@ void test_mutation_r()
 	double err_rate = 0.01;
 	int kmer = 15;
 	int expected_covg = 45;
+	int contamination_covg = 0;
 	
 	float min_frac_to_detect_minor_pops = 0.1;
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 	// double lambda_g = 0.572547;
@@ -256,13 +250,13 @@ void test_mutation_r()
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
-	ModelChoiceMethod choice = MaxAPosteriori;
 	Model best_model;
 	
 	boolean genotyped_present = false;
 	InfectionType I=
 	  resistotype(vars[0], err_rate, kmer, 
-		      lambda_g, lambda_e, epsilon,expected_covg,
+		      lambda_g, lambda_e, epsilon,
+		      expected_covg, contamination_covg,
 		      &best_model, MaxAPosteriori,
 		      min_frac_to_detect_minor_pops,
 		      &genotyped_present);
@@ -316,11 +310,9 @@ void test_mutation_custom_1()
 	double err_rate = 0.01;
 	int kmer = 15;
 	int expected_covg = 252;
+	int contamination_covg = 0;
 	
 	float min_frac_to_detect_minor_pops = 0.1;
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate / 3;
 	// double lambda_g = 3.406567;
@@ -355,15 +347,15 @@ void test_mutation_custom_1()
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
-	ModelChoiceMethod choice = MaxAPosteriori;
 	Model best_model;
 	boolean genotyped_present = false;
 	
 	InfectionType I= resistotype(vars[0], err_rate, kmer, 
-				     lambda_g, lambda_e, epsilon,expected_covg,
-		    &best_model, MaxAPosteriori,
+				     lambda_g, lambda_e, epsilon,
+				     expected_covg, contamination_covg,
+				     &best_model, MaxAPosteriori,
 				     min_frac_to_detect_minor_pops,
-		    &genotyped_present);
+				     &genotyped_present);
 	printf("conf %f\n", best_model.conf);
 	// err_rate 0.010000
 	// lambda_g 3.406567
@@ -403,11 +395,9 @@ void test_low_coverage_ont_mut()
 	double err_rate = 0.10;
 	int kmer = 15;
 	int expected_covg = 0;
+	int contamination_covg = 1;
 	
 	float min_frac_to_detect_minor_pops = 0.1;
-	double genome_size = 280000;
-	double mean_read_length = 10000;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate / 3;
 	// double lambda_g = 3.406567;
@@ -443,12 +433,12 @@ void test_low_coverage_ont_mut()
 	Var** vars =  malloc(sizeof(Var*)*1);
 	vars[0] = var;
 
-	ModelChoiceMethod choice = MaxAPosteriori;
     Model best_model;
     boolean genotyped_present = false;
 
      InfectionType I= resistotype(vars[0], err_rate, kmer, 
-		    lambda_g, lambda_e, epsilon,expected_covg,
+		    lambda_g, lambda_e, epsilon, 
+		    expected_covg, contamination_covg,
 		    &best_model, MaxAPosteriori,
 		    min_frac_to_detect_minor_pops,
 		    &genotyped_present);
