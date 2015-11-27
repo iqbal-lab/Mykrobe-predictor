@@ -9,6 +9,7 @@ Then run the following command to compile libraries.
 
 sh install.sh 
 
+pip install -r code_generator/requirements.txt
 ### Compilation ###
 
 To compile for S.aureus, run the following command 

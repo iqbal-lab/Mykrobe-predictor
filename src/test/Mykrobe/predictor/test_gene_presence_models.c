@@ -29,9 +29,6 @@ void test_resistotype_gene()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -52,7 +49,7 @@ void test_resistotype_gene()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -80,9 +77,6 @@ void test_resistotype_unsure_gene()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -90,7 +84,7 @@ void test_resistotype_unsure_gene()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -120,9 +114,6 @@ void test_resistotype_unsure_gene_2()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -130,7 +121,7 @@ void test_resistotype_unsure_gene_2()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -160,9 +151,6 @@ void test_resistotype_minor_gene()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -170,7 +158,7 @@ void test_resistotype_minor_gene()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -198,9 +186,6 @@ void test_resistotype_gene_at_high_CN()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -208,7 +193,7 @@ void test_resistotype_gene_at_high_CN()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -235,9 +220,6 @@ void test_resistotype_gene_S()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -245,7 +227,7 @@ void test_resistotype_gene_S()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -274,9 +256,6 @@ void test_low_coverage_genes()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 80;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -284,7 +263,7 @@ void test_low_coverage_genes()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -299,7 +278,7 @@ void test_low_coverage_genes()
 
 	genotyped_present = false;
 	I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -325,9 +304,6 @@ void test_low_coverage_ont_genes()
 	ModelChoiceMethod choice = MaxAPosteriori;
 	int min_expected_kmer_recovery_for_this_gene = 30;
 
-	double genome_size = 280000;
-	double mean_read_length = 100;
-	double bp_loaded = 28000000;
 	double lambda_g =expected_covg;
 	double lambda_e = expected_covg*err_rate;
 
@@ -335,7 +311,7 @@ void test_low_coverage_ont_genes()
 
 	boolean genotyped_present = false;
 	InfectionType I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -350,7 +326,7 @@ void test_low_coverage_ont_genes()
 
 	genotyped_present = false;
 	I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
@@ -367,7 +343,7 @@ void test_low_coverage_ont_genes()
 
 	genotyped_present = false;
 	I = resistotype_gene(gi, err_rate, kmer,
-			       lambda_g,  lambda_e, epsilon, expected_covg,
+			       lambda_g,  lambda_e, epsilon, expected_covg, 0,
 			       &best_model,
 			       choice,
 			       min_expected_kmer_recovery_for_this_gene,0.03,
