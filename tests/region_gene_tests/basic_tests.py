@@ -1,15 +1,26 @@
+import copy
+
 from atlas.genes import Region
 from atlas.genes import Gene 
 from atlas.genes import GeneAminoAcidChangeToDNAVariants 
+
+from atlas.panelgeneration import AlleleGenerator
+from atlas.panelgeneration import Variant
+
+from atlas.vcf2db import split_var_name
+
 from nose.tools import assert_raises
 
 from Bio import SeqIO
+from Bio.Seq import Seq
 
 class TestRegions():
 
     def setUp(self):
         with open("data/NC_000962.3.fasta", 'r') as infile:
             self.reference = list(SeqIO.parse(infile, "fasta"))[0].seq
+        self.gm = GeneAminoAcidChangeToDNAVariants(reference = "data/NC_000962.3.fasta", genbank = "data/NC_000962.3.gb")
+
             
     def test_simple_gene(self):
         g = Gene(name = "rpoB", reference = self.reference, start = 759807, end = 763325)
@@ -50,10 +61,27 @@ class TestRegions():
         assert g.get_reference_position(-2) == 4408204  
 
     def test_gene_muts(self):
-        gm = GeneAminoAcidChangeToDNAVariants(reference = "data/NC_000962.3.fasta", genbank = "data/NC_000962.3.gb")
-        assert gm.get_alts("K") == ['AAA', 'AAG']
+        self.gm = GeneAminoAcidChangeToDNAVariants(reference = "data/NC_000962.3.fasta", genbank = "data/NC_000962.3.gb")
+        assert self.gm.get_alts("K") == ['AAA', 'AAG']
         # GAT -> ['GCA', 'GCT', 'GCC', 'GCG'], positions 759813,14,15 
-        assert gm.get_variant_names("rpoB","D3A") == ['AT759814CA', 'A759814C', 'AT759814CC', 'AT759814CG']
+        assert self.gm.get_variant_names("rpoB","D3A") == ['GAT759813GCA', 'GAT759813GCT', 'GAT759813GCC', 'GAT759813GCG']
+        # GAT -> ['GCA', 'GCT', 'GCC', 'GCG'], positions 759813,14,15 
+        assert self.gm.get_variant_names("rpoB","D3X") == ['GAT759813GCA', 'GAT759813GCT', 'GAT759813GCC', 'GAT759813GCG', 'GAT759813TGT', 'GAT759813TGC', 'GAT759813GAA', 'GAT759813GAG', 'GAT759813GAC', 'GAT759813GGA', 'GAT759813GGT', 'GAT759813GGC', 'GAT759813GGG', 'GAT759813TTT', 'GAT759813TTC', 'GAT759813ATA', 'GAT759813ATT', 'GAT759813ATC', 'GAT759813CAT', 'GAT759813CAC', 'GAT759813AAA', 'GAT759813AAG', 'GAT759813ATG', 'GAT759813TTA', 'GAT759813TTG', 'GAT759813CTA', 'GAT759813CTT', 'GAT759813CTC', 'GAT759813CTG', 'GAT759813AAT', 'GAT759813AAC', 'GAT759813CAA', 'GAT759813CAG', 'GAT759813CCA', 'GAT759813CCT', 'GAT759813CCC', 'GAT759813CCG', 'GAT759813AGT', 'GAT759813AGC', 'GAT759813TCA', 'GAT759813TCT', 'GAT759813TCC', 'GAT759813TCG', 'GAT759813AGA', 'GAT759813AGG', 'GAT759813CGA', 'GAT759813CGT', 'GAT759813CGC', 'GAT759813CGG', 'GAT759813ACA', 'GAT759813ACT', 'GAT759813ACC', 'GAT759813ACG', 'GAT759813TGG', 'GAT759813GTA', 'GAT759813GTT', 'GAT759813GTC', 'GAT759813GTG', 'GAT759813TAT', 'GAT759813TAC']
+
+    def test_make_variant_panel(self):
+    	ag = AlleleGenerator("data/NC_000962.3.fasta")
+    	gene = self.gm.get_gene("rpoB")
+    	for var in self.gm.get_variant_names("rpoB","D3A"):
+    		ref, start, alt = split_var_name(var)
+    		v = Variant(ref, start, alt)
+    		panel = ag.create(v)
+    		for alt in panel.alts:
+    			seq = copy.copy(str(gene.seq))
+    			seq = seq.replace(panel.ref[25:], alt[25:])
+    			assert seq != str(gene.seq)
+    			assert Seq(seq).translate()[2] == "A"
+
+
 
 
 

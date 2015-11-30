@@ -3,6 +3,10 @@ from Bio.Data import CodonTable
 import itertools
 
 from atlas.vcf2db import split_var_name
+
+def flatten(l):
+    return [item for sublist in l for item in sublist]
+
 class Region(object):
 
     def __init__(self, reference, start, end, forward = True):
@@ -91,44 +95,37 @@ class GeneAminoAcidChangeToDNAVariants():
                     table[standard_table.forward_table[codon]].append(codon)
                 except:
                     table[standard_table.forward_table[codon]] = [codon]
-        print table
         return table
 
     def _generate_all_possible_codons(self):
         return ["".join(subset) for subset in itertools.product(["A", "T", "C", "G"], repeat = 3)]
 
     def get_alts(self, amino_acid):
-        return self.backward_codon_table[amino_acid]
+        if amino_acid == "X":
+            return flatten(self.backward_codon_table.values())
+        else:
+            return self.backward_codon_table[amino_acid]
 
     def get_location(self, gene, pos):
         dna_pos = (3 * (pos - 1)) + 1#, (pos * 3) + 1
         # return [gene.get_reference_position(p) for p in dna_pos]
         return gene.get_reference_position(dna_pos)
 
-
     def get_variant_names(self, gene, mutation):
         ref, start, alt = split_var_name(mutation)
-        gene = self.genbank[gene]
+        gene = self.get_gene(gene)
         assert gene.prot[start - 1] == ref
         ref_codon = gene.get_codon(start)
         alt_codons = self.get_alts(alt)
+        if ref_codon in alt_codons: alt_codons.remove(ref_codon)
         location = self.get_location(gene, start)
-        names = []
-        for alt_codon in alt_codons:
-            effected_bases = 0
-            assert ref_codon != alt_codon
-            ref = []
-            alt = []
-            for r,a in zip(ref_codon, alt_codon):
-                if r == a and not ref:
-                    effected_bases += 1
-                elif r == a:
-                    pass
-                else:
-                    ref.append(r)
-                    alt.append(a)
-            names.append("".join(["".join(ref), str(location + effected_bases), "".join(alt)]))
+        alternative = "/".join(alt_codons)
+        names = ["".join(["".join(ref_codon), str(location), "".join(alt_codon)]) for alt_codon in alt_codons]
         return names
+
+    def get_gene(self, gene):
+        return self.genbank[gene]
+
 
 
 
