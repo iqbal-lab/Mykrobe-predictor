@@ -18,10 +18,12 @@ from atlas.vcf2db import VariantFreq
 from atlas.vcf2db import Variant as CalledVariant
 
 import argparse
+
 parser = argparse.ArgumentParser(description='Parse VCF and upload variants to DB')
 parser.add_argument('reference_filepath', metavar='reference_filepath', type=str, help='reference_filepath')
 parser.add_argument('-v','--variant', type=str, action='append', help='Variant in DNA positions e.g. A1234T', default = [])
 parser.add_argument('-f','--file', type=str, help='File containing variants as rows A1234T')
+parser.add_argument('-g','--genbank', type=str, help='Genbank file containing genes as features')
 parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
 parser.add_argument('-q', '--quiet', default = False, action = "store_true")
