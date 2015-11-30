@@ -49,7 +49,10 @@ def seen_together(variants):
 			variants = [var for var in variants if var not in vars_together] 
 	for var in variants:
 		contexts.append([var])
-	return contexts + [[]]
+	if not contexts:
+		return [[]]
+	else:
+		return contexts
 
 def make_panels(var):
 	reference_bases, start, alt = split_var_name(var)
@@ -61,13 +64,9 @@ def make_panels(var):
 		variant = Variant(reference_bases, start , alt)
 		for context in contexts_seen_together:
 			if len(context) <= 5:
-				try:
-					panel = al.create(variant, context)
-				except ValueError,e:
-					pass
-				else:
-					vo = "".join([reference_bases, str(start), alt])
-					panels.append((vo, panel))
+				panel = al.create(variant, context)
+				vo = "".join([reference_bases, str(start), alt])
+				panels.append((vo, panel))
 	return panels
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
 for var in args.variant:
