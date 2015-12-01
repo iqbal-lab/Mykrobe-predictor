@@ -162,7 +162,11 @@ class AlleleGenerator(object):
             ref_segment_length_delta = self._calculate_length_delta_from_indels(v, context_combo)
             i, start_index, end_index = self._get_start_end(v, delta = ref_segment_length_delta)
             alternate_reference_segment = self._get_reference_segment(start_index, end_index)
-            background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
+            try:
+                background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
+            except ValueError, e:
+                m = "Could not process context combo %s. " % (",".join([c.name for c in context_combo] + [v.name]))
+                raise ValueError("\n".join([m, str(e)]))
             alternate = copy(background)
             i -=  self._calculate_length_delta_from_variant_list([c for c in context_combo if c.pos <= v.pos and c.is_indel])              
             if not "".join(alternate[i:(i + len(v.ref))]) == v.ref:

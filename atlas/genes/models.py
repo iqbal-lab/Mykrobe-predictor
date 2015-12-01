@@ -151,6 +151,8 @@ class GeneAminoAcidChangeToDNAVariants():
         return [name]
 
     def _process_coding_mutation(self, gene, ref, start, alt):
+        if not gene.prot or start > len(gene.prot):
+            raise ValueError("Error translating %s_%s " % (gene, "".join([ref, str(start), alt])))
         if not gene.prot[start - 1] == ref:
             raise ValueError("Error processing %s_%s. The reference at pos %i is not %s, it's %s. " % (gene, "".join([ref, str(start), alt]), start, ref, gene.prot[start - 1]))
         ref_codon = gene.get_reference_codon(start)

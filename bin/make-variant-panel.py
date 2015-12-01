@@ -113,7 +113,11 @@ def make_panels(var):
         variant = Variant(reference_bases, start , alt)
         for context in contexts_seen_together:
             if len(context) <= 5:
-                panel = al.create(variant, context)
+                try:
+                    panel = al.create(variant, context)
+                except ValueError, e:
+                    sys.stderr.write(str(e))
+                    panel = al.create(variant)
                 vo = "".join([reference_bases, str(start), alt])
                 panels.append((vo, panel))
     return panels
