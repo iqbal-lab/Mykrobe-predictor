@@ -164,7 +164,7 @@ class AlleleGenerator(object):
             alternate_reference_segment = self._get_reference_segment(start_index, end_index)
             try:
                 background = self._generate_background_using_context(i, v, alternate_reference_segment, context_combo)
-            except ValueError, e:
+            except ValueError as e:
                 m = "Could not process context combo %s. " % (",".join([c.name for c in context_combo] + [v.name]))
                 raise ValueError("\n".join([m, str(e)]))
             alternate = copy(background)
