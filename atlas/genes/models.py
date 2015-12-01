@@ -1,4 +1,5 @@
 from Bio import SeqIO
+from Bio.Seq import Seq
 from Bio.Data import CodonTable 
 import itertools
 
@@ -35,8 +36,10 @@ class Region(object):
         elif pos < 0 and not self.forward:
             ## Upstream of a gene on the reverse stand
             return self.end - pos            
-        elif pos > 0:
+        elif pos > 0 and self.forward:
             return self.start + pos - 1
+        elif pos > 0 and not self.forward:
+            return self.end - pos + 1
         else:
             raise ValueError("Positions are 1-based")
 
@@ -56,6 +59,12 @@ class Gene(Region):
             raise ValueError("There are only %s aminoacids in this gene" % len(self.prot))
         else:
             return self.seq[(3 *(pos - 1)) : pos * 3]
+
+    def get_reference_codon(self, pos):
+        if self.forward:
+            return self.get_codon(pos)
+        else:
+            return self.get_codon(pos).reverse_complement()
 
     def __str__(self):
         return "Gene:%s" % self.name
@@ -81,8 +90,15 @@ class GeneAminoAcidChangeToDNAVariants():
                 if feat.type == "gene":
                     name = feat.qualifiers.get("gene",feat.qualifiers.get("db_xref"))[0]
                     ## SeqIO converts to 0-based
+                    strand = int(feat.location.strand) 
+                    if strand == 1:
+                        forward = True
+                    elif strand == -1:
+                        forward = False                        
+                    else:
+                        raise ValueError("Strand must be 1 or -1")
                     d[name] = Gene(name, self.reference, start = feat.location.start + 1, 
-                        end = feat.location.end + 1, forward = bool(feat.location.strand))
+                            end = feat.location.end , forward = forward)
         return d
 
     def _make_backward_codon_table(self):
@@ -106,17 +122,39 @@ class GeneAminoAcidChangeToDNAVariants():
         else:
             return self.backward_codon_table[amino_acid]
 
+    def get_reference_alts(self, gene, amino_acid):
+        if gene.forward:
+            return self.get_alts(amino_acid)
+        else:
+            return [str(Seq(s).reverse_complement()) for s in self.get_alts(amino_acid)]
+
     def get_location(self, gene, pos):
-        dna_pos = (3 * (pos - 1)) + 1#, (pos * 3) + 1
-        # return [gene.get_reference_position(p) for p in dna_pos]
+        if gene.forward:
+            dna_pos = (3 * (pos - 1)) + 1
+        else:
+            dna_pos = (3 * (pos))
         return gene.get_reference_position(dna_pos)
 
     def get_variant_names(self, gene, mutation):
         ref, start, alt = split_var_name(mutation)
         gene = self.get_gene(gene)
-        assert gene.prot[start - 1] == ref
-        ref_codon = gene.get_codon(start)
-        alt_codons = self.get_alts(alt)
+        if start < 0:
+            return self._process_upstream_DNA_mutation(gene, ref, start, alt)
+        elif start > 0:
+            return self._process_coding_mutation(gene, ref, start, alt)
+        else:
+            raise ValueError("Variants are defined in 1-based coordinates. You can't have pos 0. ")
+
+    def _process_upstream_DNA_mutation(self, gene, ref, start, alt):
+        pos = gene.get_reference_position(start)
+        name = "".join([ref, str(pos), alt])
+        return [name]
+
+    def _process_coding_mutation(self, gene, ref, start, alt):
+        if not gene.prot[start - 1] == ref:
+            raise ValueError("Error processing %s_%s. The reference at pos %i is not %s, it's %s. " % (gene, "".join([ref, str(start), alt]), start, ref, gene.prot[start - 1]))
+        ref_codon = gene.get_reference_codon(start)
+        alt_codons = self.get_reference_alts(gene, alt)
         if ref_codon in alt_codons: alt_codons.remove(ref_codon)
         location = self.get_location(gene, start)
         alternative = "/".join(alt_codons)

@@ -104,7 +104,14 @@ class TestVariant(BaseTest):
         r,pos,a =  split_var_name(name)
         assert r == "A"
         assert pos == 12
-        assert a == "T/A"                 
+        assert a == "T/A"   
+
+    def test_split_name3(self):
+        name = "C-54T"
+        r,pos,a =  split_var_name(name)
+        assert r == "C"
+        assert pos == -54
+        assert a == "T"                        
 
 class TestCall(BaseTest):
 

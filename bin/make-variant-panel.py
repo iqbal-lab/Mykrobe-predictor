@@ -30,6 +30,7 @@ parser.add_argument('-f','--file', type=str, help='File containing variants as r
 parser.add_argument('-g','--genbank', type=str, help='Genbank file containing genes as features')
 parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default="tb")
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
+# parser.add_argument('--alphabet', metavar='alphabet', type=str, help='DNA or PROT variants', choices = ["DNA", "PROT"])
 parser.add_argument('-q', '--quiet', default = False, action = "store_true")
 args = parser.parse_args()
 
@@ -48,8 +49,8 @@ class Mutation(object):
     @property
     def mut(self):
         standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
-        r = standard_table.forward_table[self.ref]
-        a = standard_table.forward_table[self.alt]
+        r = standard_table.forward_table.get(self.ref, self.ref)
+        a = standard_table.forward_table.get(self.alt, self.alt)
         return "".join([r, str(self.location), a])
 
 if args.genbank:
