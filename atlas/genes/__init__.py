@@ -1,3 +1,4 @@
-from models import Region
-from models import Gene
-from models import GeneAminoAcidChangeToDNAVariants
+from atlas.genes.models import Region 
+from atlas.genes.models import Gene 
+from atlas.genes.models import GeneAminoAcidChangeToDNAVariants 
+
