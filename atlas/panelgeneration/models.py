@@ -288,7 +288,7 @@ class AlleleGenerator(object):
         start_index += shift
         end_index += shift
         i -= shift
-        if (end_index - start_index) >= 63:
+        if (end_index - start_index) >= (2 * kmer) + 1:
             return (i, start_index, end_index)
         else:
             return self._get_start_end(v, delta = 0)

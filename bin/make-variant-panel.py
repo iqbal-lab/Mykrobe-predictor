@@ -32,6 +32,7 @@ parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', de
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = 31)
 # parser.add_argument('--alphabet', metavar='alphabet', type=str, help='DNA or PROT variants', choices = ["DNA", "PROT"])
 parser.add_argument('-q', '--quiet', default = False, action = "store_true")
+parser.add_argument('--mykrobe', default = False, action = "store_true")
 args = parser.parse_args()
 
 connect('atlas-%s-%i' % (args.db_name ,args.kmer))
@@ -123,15 +124,26 @@ def make_panels(var):
     return panels
 
 al = AlleleGenerator(reference_filepath = args.reference_filepath, kmer = args.kmer)
-for mut in mutations:
-    var = mut.dna_var
-    panels = make_panels(var)
-    for name, variant_panel in panels:
-        if mut.gene:
-            sys.stdout.write(">ref-%s?num_alts=%i&gene=%s&mut=%s\n" % (name, len(variant_panel.alts), mut.gene, mut.mut ))
-        else:
-            sys.stdout.write(">ref-%s?num_alts=%i\n" % (name, len(variant_panel.alts)))
-        sys.stdout.write("%s\n" % variant_panel.ref)
-        for a in variant_panel.alts:
-            sys.stdout.write(">alt-%s\n" % name)
-            sys.stdout.write("%s\n" % a)        
+if args.mykrobe:
+    for mut in mutations:
+        var = mut.dna_var
+        panels = make_panels(var)
+        for name, variant_panel in panels:
+            sys.stdout.write(">ref_%s_sub-%i-%s\n" % (mut.mut, len(variant_panel.alts), mut.gene))
+            sys.stdout.write("%s\n" % variant_panel.ref)
+            for i,a in enumerate(variant_panel.alts):
+                sys.stdout.write(">alt_%s_alt-%i-%s\n" % (mut.mut, i + 1, mut.gene))
+                sys.stdout.write("%s\n" % a)  
+else:
+    for mut in mutations:
+        var = mut.dna_var
+        panels = make_panels(var)
+        for name, variant_panel in panels:
+            if mut.gene:
+                sys.stdout.write(">ref-%s?num_alts=%i&gene=%s&mut=%s\n" % (name, len(variant_panel.alts), mut.gene, mut.mut ))
+            else:
+                sys.stdout.write(">ref-%s?num_alts=%i\n" % (name, len(variant_panel.alts)))
+            sys.stdout.write("%s\n" % variant_panel.ref)
+            for a in variant_panel.alts:
+                sys.stdout.write(">alt-%s\n" % name)
+                sys.stdout.write("%s\n" % a)        

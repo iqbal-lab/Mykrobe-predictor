@@ -28,7 +28,7 @@ def is_record_valid(record):
             if sum([int(i) for i in sample['GT'].split('/')]) < 2:
                 valid = False
         try:
-            if sample["GT_CONF"] < 1:
+            if sample["GT_CONF"] <= 1:
                 valid = False
         except AttributeError:
             pass
@@ -79,7 +79,7 @@ def run(parser, args):
     variants = []
     calls = []
     for record in vcf_reader:
-        if not record.FILTER and is_record_valid(record):
+        if not record.FILTER and is_record_valid(record) and record.is_snp:
             for sample in record.samples:
                 try:
                     v = Variant.create_object(variant_set = variant_set,

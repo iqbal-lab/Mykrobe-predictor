@@ -20,6 +20,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Genotype a sample based on kmer coverage on alleles')
 parser.add_argument('sample', metavar='sample', type=str, help='sample id')
 parser.add_argument('coverage', metavar='coverage', type=str, help='File with coverage on alleles output from CORTEX align')
+parser.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')
 parser.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = 'tb')
 parser.add_argument('--kmer', metavar='kmer', type=int, help='kmer size', default = 31)
 parser.add_argument('--all', help='Store ref GT aswell as alt', default = False, action = "store_true")
@@ -29,9 +30,9 @@ connect('atlas-%s-%i' % (args.db_name ,args.kmer))
 
 # Read fasta
 try:
-    call_set = CallSet.objects.get(name = args.sample + "_atlas_gt")
+    call_set = CallSet.objects.get(name = args.sample + "_%s" % args.name)
 except DoesNotExist:
-    call_set = CallSet.create(name = args.sample  + "_atlas_gt", sample_id = args.sample)
+    call_set = CallSet.create(name = args.sample  + "_%s" % args.name, sample_id = args.sample)
 ## Clear any genotyped calls so far
 GenotypedVariant.objects(call_set = call_set).delete()
 gvs = {}
@@ -51,7 +52,6 @@ with open(args.coverage, 'r') as infile:
             ref_pnz = allele.percent_non_zero_coverage
             ref_covg = allele.median_non_zero_coverage
             num_alts = int(params.split('=')[1])
-
             alt_pnz = 0
             alt_covg = 0            
             for _ in range(num_alts):
@@ -60,13 +60,12 @@ with open(args.coverage, 'r') as infile:
                   alt_pnz = allele.percent_non_zero_coverage
                   if allele.median_non_zero_coverage > alt_covg:
                       alt_covg = allele.median_non_zero_coverage                 
-        if alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz < MAX_PNZ_THRESHOLD and alt_covg > 2:
+        if alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz < MAX_PNZ_THRESHOLD and alt_covg > 0:
             gt = "1/1"
-        elif alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz >= MAX_PNZ_THRESHOLD and alt_covg > 2:
+        elif alt_pnz >= MAX_PNZ_THRESHOLD and ref_pnz >= MAX_PNZ_THRESHOLD and alt_covg > 0:
             gt = "0/1"
         elif alt_covg < MAX_PNZ_THRESHOLD:
             gt = "0/0"
-            
         if gt != "0/0" or args.all:
            gvs[vp.name_hash] = GenotypedVariant.create_object(name = vp.name,
                                                       call_set = call_set,
