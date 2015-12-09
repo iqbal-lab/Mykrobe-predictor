@@ -2,14 +2,14 @@
 import argparse
 import sys
 import atlas.version
-import os
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.ERROR)
+
 def run_subtool(parser, args):
     if args.command == 'add':
         import atlas.commands.add as submodule
     elif args.command == "genotype":
-        import genotype as submodule
+        import atlas.commands.genotype as submodule
     elif args.command == "dump":
         import dump as submodule
 
@@ -23,18 +23,17 @@ class ArgumentParserWithDefaults(argparse.ArgumentParser):
                         action="store_true",
                         dest="quiet")
 
-DEFAULT_DB_NAME = os.environ.get("ATLAS_DB_NAME", "atlas")
-DEFAULT_KMER_SIZE = os.environ.get("ATLAS_KMER_SIZE", 31)
+DEFAULT_DB_NAME = "atlas"
+DEFAULT_KMER_SIZE = 31
 def main():
     #########################################
     # create the top-level parser
     #########################################
     parser = argparse.ArgumentParser(prog='atlas', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-v", "--version", help="Installed atlas version",
+    parser.add_argument("--version", help="Installed atlas version",
                         action="version",
                         version="%(prog)s " + str(atlas.version.__version__))
     subparsers = parser.add_subparsers(title='[sub-commands]', dest='command', parser_class=ArgumentParserWithDefaults)
-
     #########################################
     # create the individual tool parsers
     #########################################
@@ -44,24 +43,25 @@ def main():
     ##########
     parser_add = subparsers.add_parser('add',
                                         help='Adds a set of variants to the atlas')
-    parser_add.add_argument('sample_id', metavar='sample', type=str, help='sample id')    
-    parser_add.add_argument('vcf', metavar='vcf', type=str, help='a vcf file')
-    parser_add.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = DEFAULT_DB_NAME)
-    parser_add.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
+    parser_add.add_argument('-s','--sample',  type=str, help='sample id')
+    parser_add.add_argument('-f', '--vcf', metavar='vcf', type=str, help='a vcf file')
+    parser_add.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
+    parser_add.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = None)
     parser_add.set_defaults(func=run_subtool)
 
 
     # ##########
     # # Genotype
     # ##########
-    parser_fastq = subparsers.add_parser('genotype',
-                                        help='Genotype a sample')
-    parser_fastq.add_argument('sample_id', metavar='sample', type=str, help='sample id')    
-    parser_fastq.add_argument('files', metavar='FILES', nargs='+',
-                             help='The input fastq files.')
-    parser_fastq.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = DEFAULT_DB_NAME)
-    parser_fastq.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
-    parser_fastq.set_defaults(func=run_subtool)
+    parser_geno = subparsers.add_parser('genotype', help='Genotype a sample')
+    parser_geno.add_argument('-s','--sample',  type=str, help='sample id')
+    parser_geno.add_argument('-1', '--seq', type=str, help='Seq file', nargs='+')
+    parser_geno.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')
+    parser_geno.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
+    parser_geno.add_argument('--kmer', metavar='kmer', type=int, help='kmer size', default = None)
+    parser_geno.add_argument('--all', help='Store ref GT aswell as alt', default = False, action = "store_true")
+    parser_geno.add_argument('--force', help='Force rebuilding of binaries', default = False, action = "store_true")
+    parser_geno.set_defaults(func=run_subtool)
 
     # ##########
     # # Dump panel
