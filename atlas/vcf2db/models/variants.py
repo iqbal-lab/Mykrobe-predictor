@@ -1,4 +1,6 @@
 import datetime
+import json
+
 from atlas.vcf2db.models.base import make_hash
 from atlas.vcf2db.models.base import split_var_name
 from mongoengine import Document
@@ -23,11 +25,12 @@ class GenotypedVariant(Document):
                 ]
             }    
     name = StringField()
+    alt_name = StringField()
     name_hash = StringField(unique_with = "call_set")
     ref_coverage = IntField()
     alt_coverage = IntField()
-    ref_pnz = IntField()
-    alt_pnz = IntField()    
+    ref_pnz = FloatField()
+    alt_pnz = FloatField()    
     created_at = DateTimeField(required = True, default = datetime.datetime.now)
     
     start = IntField()
@@ -37,7 +40,7 @@ class GenotypedVariant(Document):
     gt = StringField()
 
     @classmethod
-    def create_object(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage, gt):
+    def create_object(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage, gt, alt_name = None):
         reference_bases, start, alternate_bases = split_var_name(name)
         if ref_coverage is None:
             ref_coverage = 0
@@ -54,12 +57,25 @@ class GenotypedVariant(Document):
                     alt_pnz = int(alt_pnz),
                     ref_coverage = int(ref_coverage),
                     alt_coverage = int(alt_coverage),
-                    gt = gt                
+                    gt = gt,
+                    alt_name = alt_name           
                     )   
 
     @classmethod
     def create(cls, name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage, gt):
         return cls.create_object(name, call_set, ref_pnz, alt_pnz, ref_coverage, alt_coverage, gt).save()
+
+    def to_dict(self):
+        d  = {  "name" : self.name,
+                "alt_name" : self.alt_name,
+                "gt" : self.gt,
+                "covg" : {"reference_percent_coverage" : self.ref_pnz, 
+                          "alternate_percent_coverage" : self.alt_pnz, 
+                          "reference_median_depth": self.ref_coverage,
+                          "alternate_median_depth" : self.alt_coverage
+                          }
+              }
+        return d
 
 
 # class VariantSetMetadata(Document)

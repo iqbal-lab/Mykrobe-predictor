@@ -54,8 +54,9 @@ def main():
     # # Genotype
     # ##########
     parser_geno = subparsers.add_parser('genotype', help='Genotype a sample')
-    parser_geno.add_argument('-s','--sample',  type=str, help='sample id')
-    parser_geno.add_argument('-1', '--seq', type=str, help='Seq file', nargs='+')
+    parser_geno.add_argument('-s','--sample',  type=str, help='sample id', required = True)
+    parser_geno.add_argument('-1', '--seq', type=str, help='Seq file', nargs='+', required = True)
+    parser_geno.add_argument('--panel', metavar='panel', type=str, help='panel', default = None)
     parser_geno.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')
     parser_geno.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
     parser_geno.add_argument('--kmer', metavar='kmer', type=int, help='kmer size', default = None)

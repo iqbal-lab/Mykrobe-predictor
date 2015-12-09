@@ -18,6 +18,7 @@ from atlas.vcf2db.models  import Reference
 from atlas.vcf2db.models  import Variant
 from atlas.vcf2db.models  import VariantSet
 from atlas.vcf2db.models  import Call
+from atlas.utils import check_args
 
 def is_record_valid(record):
     valid = True
@@ -43,6 +44,7 @@ def get_genotype_likelihood(sample):
 
 def run(parser, args):
     args = parser.parse_args()
+    args = check_args(args)
     if args.quiet:
         LOGGER.setLevel(logging.ERROR)
     else:
