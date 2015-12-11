@@ -1,5 +1,6 @@
-future
 numpy
+scipy
+future
 Biopython
 mongoengine
 nose
