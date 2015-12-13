@@ -28,7 +28,7 @@ def test_log_lik_depth():
     with assert_raises(ValueError) as cm:
         log_lik_depth(expected_depth = -1, depth = 9 )
     with assert_raises(ValueError) as cm:
-        print log_lik_depth(expected_depth = 12, depth = -1 )
+        log_lik_depth(expected_depth = 12, depth = -1 )
     with assert_raises(ValueError) as cm:
         log_lik_depth(expected_depth = 0, depth = 1)
     assert log_lik_depth(expected_depth = 1, depth = 0) == -1
