@@ -1,7 +1,7 @@
-from atlas.typing.base import Typer
+from atlas.typing.typer.base import Typer
 
 
-class GeneTyper(Typer):
+class PresenceTyper(Typer):
 
 	def __init__(self, depths, contamination_depths = []):
 		self.depths = depths

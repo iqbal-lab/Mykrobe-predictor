@@ -13,11 +13,12 @@ import datetime
 from mongoengine import connect
 from mongoengine import DoesNotExist
 from atlas.vcf2db import CallSet
-from atlas.vcf2db import GenotypedVariant
+from atlas.vcf2db import TypedVariant
 from atlas.vcf2db import VariantPanel
 from atlas.utils import check_args
 
 from atlas.genotyping import GeneTyper
+from atlas.genotyping import Presence as GenePresence
 
 def max_pnz_threshold(vp):
     t =  max(100 - 2 * math.floor(float(max([len(alt) for alt in vp.alts])) / 100), 30)
@@ -32,22 +33,7 @@ def get_params(url):
         params[k] = v
     return params
 
-class GenePresence(object):
-
-  def __init__(self, name, version, percent_coverage, depth, alt_names = []):
-      self.name = name
-      self.version = version
-      self.percent_coverage = percent_coverage
-      self.depth = depth
-      self.alt_names = alt_names
-      if not alt_names:
-        self.alt_names = [self.gene_version]
-
-  def __str__(self):
-      return self.gene_version
-
-  def __repr__(self):
-      return self.gene_version      
+     
 
   @property 
   def gene_version(self):
@@ -107,7 +93,7 @@ def run(parser, args):
     except DoesNotExist:
         call_set = CallSet.create(name = args.sample  + "_%s" % args.name, sample_id = args.sample)
     ## Clear any genotyped calls so far
-    GenotypedVariant.objects(call_set = call_set).delete()
+    TypedVariant.objects(call_set = call_set).delete()
     gvs = {}
     gene_presence = {}
 
@@ -167,7 +153,7 @@ def run(parser, args):
                     # print(alt_pnz, ref_pnz, alt_covg, ref_covg)
                 if gt not in  ["0/0", "-/-"] or args.all:
                    # print _id, params.get("gene"), params.get("mut"), ref_covg, alt_covg, ref_pnz, alt_pnz, gt
-                   gvs[_id] = GenotypedVariant.create_object(name = _id,
+                   gvs[_id] = TypedVariant.create_object(name = _id,
                                                               call_set = call_set,
                                                               ref_pnz = ref_pnz, 
                                                               alt_pnz = alt_pnz,
@@ -185,4 +171,4 @@ def run(parser, args):
     # print(json.dumps({args.sample : {"gene_presence" : gene_presngene_presence}},
     #                   indent=4, separators=(',', ': ')))
 
-    # GenotypedVariant.objects.insert(gvs.values())
+    # TypedVariant.objects.insert(gvs.values())

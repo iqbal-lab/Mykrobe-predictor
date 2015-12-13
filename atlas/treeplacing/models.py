@@ -4,8 +4,9 @@ from os import path
 sys.path.append(path.abspath("../"))
 from atlas.vcf2db import Variant
 from atlas.vcf2db import VariantSet
-from atlas.typing import GenotypedVariant
 from atlas.vcf2db import CallSet
+
+from atlas.typing import TypedVariant
 
 class Placer(object):
 
@@ -15,7 +16,7 @@ class Placer(object):
         self.root = root
 
     def place(self, sample, verbose = False):
-        gvs = GenotypedVariant.objects(call_set = CallSet.objects.get(name = sample)).distinct('name')
+        gvs = TypedVariant.objects(call_set = CallSet.objects.get(name = sample)).distinct('name')
         return self.root.search(variants = gvs, verbose = verbose)
 
 # class Tree(dict):

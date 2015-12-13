@@ -10,7 +10,7 @@ from atlas.vcf2db import VariantSet
 from atlas.vcf2db import Variant
 from atlas.vcf2db import CallSet
 from atlas.vcf2db import Call
-from atlas.typing import GenotypedVariant
+from atlas.typing import TypedVariant
 
 from mongoengine import connect
 from pymongo import MongoClient
@@ -138,12 +138,12 @@ class TestMultiNode(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C6") 
-        GenotypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
         assert Placer(root = self.root).place("C6") == "C1"
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C7") 
-        GenotypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
         assert Placer(root = self.root).place("C7") == ["C4", "C5"]
 
 
@@ -241,7 +241,7 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C8") 
-        GenotypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
         ### Note - I think the commented line hear should be correct behaviour
         Placer(root = self.root).place("C8") == ["C1"]
         # print Placer(root = self.root).place("C8", verbose=True)
@@ -249,7 +249,7 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C9") 
-        GenotypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
         assert Placer(root = self.root).place("C9") == "C4"
 
 

@@ -45,7 +45,7 @@ except DoesNotExist:
 else:
 	for atlas_gt_call_set in atlas_gt_call_sets:
 		print atlas_gt_call_set.name
-		genotyped = GenotypedVariant.objects(call_set = atlas_gt_call_set, gt = "1/1")
+		genotyped = TypedVariant.objects(call_set = atlas_gt_call_set, gt = "1/1")
 		genotyped_set = set(genotyped.distinct('name_hash'))
 
 		sample_variant_set = discover_variant_set#.union(genotyped_set)
@@ -60,13 +60,13 @@ else:
 
 
 		if args.diff:
-			print GenotypedVariant.objects(name_hash__in = genotyped_set - discover_variant_set, call_set = atlas_gt_call_set, gt = "1/1").count()
+			print TypedVariant.objects(name_hash__in = genotyped_set - discover_variant_set, call_set = atlas_gt_call_set, gt = "1/1").count()
 			print "EXTRA"
 			for nh in genotyped_set - discover_variant_set:
 			    # vp = VariantPanel.objects.get(name_hash = nh)
 			    # v = vp.variant
 			    # print v.name
-			    gv = GenotypedVariant.objects.get(name_hash = nh, call_set = atlas_gt_call_set)
+			    gv = TypedVariant.objects.get(name_hash = nh, call_set = atlas_gt_call_set)
 
 			    if gv.gt == "1/1":
 			    	print gv.gt, gv.name,"%%NZ %i:%i" % (gv.ref_pnz, gv.alt_pnz) ,"Median %i:%i" % (gv.ref_coverage, gv.alt_coverage)

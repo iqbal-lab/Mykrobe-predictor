@@ -1,3 +1,3 @@
-from atlas.typing.genotype import GeneTyper
-from atlas.typing.models import GenotypedVariant
+from atlas.typing.models import TypedVariant
+from atlas.typing.typer import PresenceTyper
 

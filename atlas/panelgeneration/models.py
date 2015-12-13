@@ -6,7 +6,7 @@ from collections import Counter
 import logging
 import datetime
 import math 
-from atlas.vcf2db.models.base import make_hash
+from atlas.utils import make_hash
 
 def unique(seq):
     seen = set()

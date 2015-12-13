@@ -1,6 +1,6 @@
-from atlas.typing.genotype import percent_coverage_from_expected_coverage
-from atlas.typing.genotype import log_factorial
-from atlas.typing.genotype import log_lik_depth
+from atlas.stats import percent_coverage_from_expected_coverage
+from atlas.stats import log_factorial
+from atlas.stats import log_lik_depth
 
 from math import log
 from math import exp
