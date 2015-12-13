@@ -54,15 +54,17 @@ def build_binaries(args):
     if not os.path.exists(panel_filepath):
         raise ValueError("Could not find a panel at %s. Run 'atlas dump'. " % panel_filepath)
     ## If ctx binary does not exist then build it
-    ctx_skeleton_filepath = os.path.abspath("data/skeletons/%s.ctx" % args.panel) 
-    if not os.path.exists(ctx_skeleton_filepath):
+    ctx_skeleton_filepath = os.path.abspath("data/skeletons/%s_%i.ctx" % (args.panel, args.kmer)) 
+    if not os.path.exists(ctx_skeleton_filepath) or args.force:
+        if os.path.exists(ctx_skeleton_filepath):
+            os.remove(ctx_skeleton_filepath)        
         subprocess.check_output(["/home/phelimb/git/mccortex/bin/mccortex31", "build", "-q",
                                  "-k", str(args.kmer), "-s", "%s" % args.panel,
                                  "-1", panel_filepath, ctx_skeleton_filepath])
     ## Now get coverage on panel
     sample = "-".join([args.sample, args.db_name, str(args.kmer)])
-    ctx_tmp_filepath = "/tmp/%s.ctx" % sample
-    covg_tmp_file_path = "/tmp/%s.covg" % sample
+    ctx_tmp_filepath =  "/tmp/%s_%s.ctx" % (sample, args.panel)
+    covg_tmp_file_path = "/tmp/%s_%s.ctx" % (sample, args.panel)
 
     if not os.path.exists(ctx_tmp_filepath) or not os.path.exists(covg_tmp_file_path) or args.force:
         if os.path.exists(ctx_tmp_filepath):
@@ -75,7 +77,7 @@ def build_binaries(args):
                "-o", covg_tmp_file_path]
         for seq in args.seq:
           cmd.extend(["-1", seq])
-        cmd.extend(["-c", panel_filepath, "/tmp/%s.ctx" % sample])
+        cmd.extend(["-c", panel_filepath, ctx_tmp_filepath])
         subprocess.check_output(cmd)
     else:
         # print "Warning: Using pre-built binaries. Run with --force if panel has been updated."
