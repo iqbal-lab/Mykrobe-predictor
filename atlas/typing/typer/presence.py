@@ -22,6 +22,6 @@ class PresenceTyper(Typer):
 			if gene.percent_coverage < current_best_gene.percent_coverage:
 				return current_best_gene
 			else:
-				if gene.depth > current_best_gene.depth:
+				if gene.median_depth > current_best_gene.median_depth:
 					current_best_gene = gene
 		return current_best_gene

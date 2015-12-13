@@ -49,7 +49,6 @@ def main():
     parser_add.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = None)
     parser_add.set_defaults(func=run_subtool)
 
-
     # ##########
     # # Genotype
     # ##########

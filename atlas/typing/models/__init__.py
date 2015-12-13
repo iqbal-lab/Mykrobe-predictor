@@ -1,1 +1,2 @@
-from atlas.typing.models.typedvariant import TypedVariant
+from atlas.typing.models.variant import TypedVariant
+from atlas.typing.models.presence import TypedPresence

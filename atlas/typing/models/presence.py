@@ -2,6 +2,8 @@ from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import IntField
 from mongoengine import FloatField
+from mongoengine import ListField
+from mongoengine import ReferenceField
 
 class TypedPresence(Document):
 
@@ -29,3 +31,16 @@ class TypedPresence(Document):
 
   def __repr__(self):
       return self.version 
+
+  @property 
+  def gene_version(self):
+      return "-".join([self.name, self.version])
+
+  def to_dict(self):
+      d  = {  "name" : self.name,
+              "alt_name" : ",".join(self.alt_names),
+              "covg" : {"percent_coverage" : self.percent_coverage, 
+                        "median_depth" : self.median_depth
+                        }
+            }
+      return d        
