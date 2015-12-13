@@ -48,12 +48,7 @@ def get_params(url):
             }
       return d      
 
-def run(parser, args):
-    args = parser.parse_args()
-    args = check_args(args)
-    connect('atlas-%s-%i' % (args.db_name ,args.kmer))
-    if not args.panel:
-        args.panel = "panel-%s-%i" % (args.db_name, args.kmer)
+def build_binaries(args):
     ## If panel does not exists then build it
     panel_filepath = os.path.abspath("data/panels/%s.fasta" % args.panel) 
     if not os.path.exists(panel_filepath):
@@ -84,10 +79,14 @@ def run(parser, args):
         subprocess.check_output(cmd)
     else:
         # print "Warning: Using pre-built binaries. Run with --force if panel has been updated."
-        pass
+        pass  
 
-
-
+def run(parser, args):
+    args = parser.parse_args()
+    args = check_args(args)
+    connect('atlas-%s-%i' % (args.db_name ,args.kmer))
+    if not args.panel:
+        args.panel = "panel-%s-%i" % (args.db_name, args.kmer)
     try:
         call_set = CallSet.objects.get(name = args.sample + "_%s" % args.name)
     except DoesNotExist:
