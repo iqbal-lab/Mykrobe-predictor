@@ -1,8 +1,8 @@
 import copy
 
-from atlas.genes import Region
-from atlas.genes import Gene 
-from atlas.genes import GeneAminoAcidChangeToDNAVariants 
+from atlas.annotation.genes import Region
+from atlas.annotation.genes import Gene 
+from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants 
 
 from atlas.panelgeneration import AlleleGenerator
 from atlas.panelgeneration import Variant

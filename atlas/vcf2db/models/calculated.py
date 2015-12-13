@@ -1,5 +1,5 @@
 import datetime
-from atlas.vcf2db.models.base import make_hash
+from atlas.utils import make_hash
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField

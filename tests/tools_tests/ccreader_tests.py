@@ -1,11 +1,11 @@
-from atlas.genotyping import ColourCovgsReader
+from atlas.tools import ColourCovgsReader
 from nose.tools import assert_raises
 
 
 class TestColourCovgsReader():
 
     def setUp(self):
-    	self.f = open("tests/genotype_tests/test.fasta.colour_covgs", "r")
+    	self.f = open("tests/tools_tests/test.fasta.colour_covgs", "r")
 
     def tearDown(self):
     	self.f.close()

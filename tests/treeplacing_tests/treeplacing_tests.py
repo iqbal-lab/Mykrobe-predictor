@@ -10,7 +10,7 @@ from atlas.vcf2db import VariantSet
 from atlas.vcf2db import Variant
 from atlas.vcf2db import CallSet
 from atlas.vcf2db import Call
-from atlas.vcf2db import GenotypedVariant
+from atlas.typing import GenotypedVariant
 
 from mongoengine import connect
 from pymongo import MongoClient
