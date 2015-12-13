@@ -22,3 +22,9 @@ def log_lik_depth(depth, expected_depth):
 	if depth < 0:
 		raise ValueError("Depth must not be negative")		
 	return log_poisson_prob(lam = expected_depth, k = depth)
+
+def log_lik_R_S_coverage(non_error_depth, error_depth, expected_depth, error_rate):
+  lne = log_poisson_prob(lam = expected_depth, k = non_error_depth)
+  # S allele 
+  le = log_poisson_prob(lam = expected_depth * error_rate, k = error_depth)
+  return lne+le;  

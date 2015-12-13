@@ -1,4 +1,6 @@
 import datetime
+import json 
+
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -34,13 +36,20 @@ class TypedVariant(Document):
     created_at = DateTimeField(required = True, default = datetime.datetime.now)
     
     start = IntField()
+    alt_index = IntField()
     reference_bases = StringField()
     alternate_bases = StringField()
     call_set = ReferenceField('CallSet')
     gt = StringField()
 
     @classmethod
-    def create_object(cls, name, call_set, reference_percent_coverage, alternate_percent_coverage, reference_median_depth, alternate_median_depth, gt, alt_name = None):
+    def create_object(cls,
+                      reference_percent_coverage,
+                      alternate_percent_coverage,
+                      reference_median_depth,
+                      alternate_median_depth,
+                      name = "",  call_set = None, gt = None,
+                      alt_name = None, alt_index = None):
         reference_bases, start, alternate_bases = split_var_name(name)
         if reference_median_depth is None:
             reference_median_depth = 0
@@ -58,13 +67,17 @@ class TypedVariant(Document):
                     reference_median_depth = int(reference_median_depth),
                     alternate_median_depth = int(alternate_median_depth),
                     gt = gt,
-                    alt_name = alt_name           
+                    alt_name = alt_name,
+                    alt_index = alt_index         
                     )   
 
     @classmethod
     def create(cls, name, call_set, reference_percent_coverage, alternate_percent_coverage, reference_median_depth, alternate_median_depth, gt):
         return cls.create_object(name, call_set, reference_percent_coverage, alternate_percent_coverage, reference_median_depth, alternate_median_depth, gt).save()
 
+    def set_genotype(self, gt):
+        self.gt = gt
+        
     def to_dict(self):
         d  = {  "name" : self.name,
                 "alt_name" : self.alt_name,

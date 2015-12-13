@@ -19,7 +19,7 @@ class TypedPresence(Document):
   @classmethod
   def create_object(cls, name, version, percent_coverage, median_depth, alt_names = []):
     if not alt_names:
-      alt_names = [self.version]
+        alt_names = ["-".join([name, str(version)])]
     return cls(name = name,
       version = version,
       percent_coverage = percent_coverage,
