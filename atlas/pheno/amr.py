@@ -19,7 +19,7 @@ class BasePredictor(object):
                 try:
                     out_json[name].append(tv.to_dict())
                 except KeyError:
-                    out_json[name] = tv.to_dict()              
+                    out_json[name] = [tv.to_dict()]
 
     def _create_initial_resistance_prediction(self):
         self.resistance_predictions =  dict((k,"I") for k in self.drugs)
@@ -74,7 +74,6 @@ class TBPredictor(BasePredictor):
 
     def __init__(self, typed_variants, called_genes, sample = ""):
         self.data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/predict/tb/' ))
-        print os.path.join(self.data_dir, "variant_to_resistance_drug.json")
         self.variant_to_resistance_drug = load_json(os.path.join(self.data_dir, "variant_to_resistance_drug.json"))
         super(TBPredictor, self).__init__(typed_variants, called_genes, sample)
 

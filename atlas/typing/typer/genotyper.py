@@ -146,8 +146,7 @@ class Genotyper(CortexGeno):
               try:
                   out_json[name].append(tv.to_dict())
               except KeyError:
-                  out_json[name] = tv.to_dict()
-    
+                  out_json[name] = [tv.to_dict()]
 
   def _connect_to_db(self):
     connect('atlas-%s-%i' % (self.args.db_name ,self.args.kmer))

@@ -11,7 +11,7 @@ from mongoengine import connect
 from collections import Counter
 
 from Bio.Data import CodonTable 
-
+from Bio.Seq import Seq
 from atlas.panelgeneration import AlleleGenerator
 from atlas.panelgeneration import Variant
 
@@ -19,7 +19,7 @@ from atlas.vcf2db import split_var_name
 from atlas.vcf2db import VariantFreq
 from atlas.vcf2db import Variant as CalledVariant
 
-from atlas.genes import GeneAminoAcidChangeToDNAVariants
+from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 
 import argparse
 
@@ -44,14 +44,20 @@ class Mutation(object):
     def __init__(self, dna_var, gene = None, mut = None):
         self.dna_var = dna_var
         self.gene = gene
-        tmp, self.location, tmp= split_var_name(mut)
+        tmp, self.location, tmp = split_var_name(mut)
         self.ref, tmp, self.alt = split_var_name(dna_var)
+        self.standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
 
     @property
     def mut(self):
-        standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
-        r = standard_table.forward_table.get(self.ref, self.ref)
-        a = standard_table.forward_table.get(self.alt, self.alt)
+        if self.gene.forward:
+            ref = self.ref
+            alt = self.alt
+        else:
+            ref = str(Seq(self.ref).reverse_complement())
+            alt = str(Seq(self.alt).reverse_complement())
+        r = self.standard_table.forward_table.get(ref, ref)
+        a = self.standard_table.forward_table.get(alt, alt)            
         return "".join([r, str(self.location), a])
 
 if args.genbank:
@@ -62,7 +68,7 @@ if args.genbank:
             for row in reader:
                 gene, mutation = row
                 for dna_var in aa2dna.get_variant_names(gene, mutation):
-                    mutations.append(Mutation(dna_var, gene = gene, mut = mutation))
+                    mutations.append(Mutation(dna_var, gene = aa2dna.get_gene(gene), mut = mutation))
     else:
         for variant in args.variant:
             gene, mutation = variant.split("_")
@@ -129,7 +135,7 @@ if args.mykrobe:
         var = mut.dna_var
         panels = make_panels(var)
         for name, variant_panel in panels:
-            sys.stdout.write(">ref_%s_sub-%i-%s\n" % (mut.mut, len(variant_panel.alts), mut.gene))
+            sys.stdout.write(">ref_%s_sub-%i-%s\n" % (mut.mut, len(variant_panel.alts), mut.gene.name))
             sys.stdout.write("%s\n" % variant_panel.ref)
             for i,a in enumerate(variant_panel.alts):
                 sys.stdout.write(">alt_%s_alt-%i-%s\n" % (mut.mut, i + 1, mut.gene))
@@ -140,7 +146,7 @@ else:
         panels = make_panels(var)
         for name, variant_panel in panels:
             if mut.gene:
-                sys.stdout.write(">ref-%s?num_alts=%i&gene=%s&mut=%s\n" % (name, len(variant_panel.alts), mut.gene, mut.mut ))
+                sys.stdout.write(">ref-%s?num_alts=%i&gene=%s&mut=%s\n" % (name, len(variant_panel.alts), mut.gene.name, mut.mut ))
             else:
                 sys.stdout.write(">ref-%s?num_alts=%i\n" % (name, len(variant_panel.alts)))
             sys.stdout.write("%s\n" % variant_panel.ref)

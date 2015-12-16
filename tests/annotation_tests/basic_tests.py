@@ -81,7 +81,7 @@ class TestRegions():
         # AGC -> ['CTT', 'CTC', 'CTA', 'CTG']
     #   # GAG -> ['GCA', 'GCT', 'GCC', 'GCG']
         ## RC : CTC -> ['TGC',...] position2156103
-        assert self.gm.get_variant_names("katG","E3A") == ['CTC2156103TGC', 'CTC2156103AGC', 'CTC2156103GGC', 'CTC2156103CGC']
+        assert self.gm.get_variant_names("katG","E3A") == ['GAG2156103TGC', 'CTC2156103AGC', 'CTC2156103GGC', 'CTC2156103CGC']
 
     def test_make_variant_panel(self):
     	ag = AlleleGenerator("data/NC_000962.3.fasta")
@@ -122,6 +122,21 @@ class TestRegions():
                 assert seq != str(gene.seq)
                 assert Seq(seq).reverse_complement().translate()[314] == "L"      
 
+
+    def test_make_variant_panel4(self):
+        ag = AlleleGenerator("data/NC_000962.3.fasta")
+        gene = self.gm.get_gene("katG")
+        print self.gm.get_variant_names("katG","W90R")
+        for var in self.gm.get_variant_names("katG","W90R"):
+            ref, start, alt = split_var_name(var)
+            v = Variant(ref, start, alt)
+            panel = ag.create(v)
+            for alt in panel.alts:
+                seq = copy.copy(str(gene.seq.reverse_complement()))
+                seq = seq.replace(panel.ref, alt)
+                assert seq != str(gene.seq)
+                print Seq(seq).reverse_complement().translate()[89]
+                assert Seq(seq).reverse_complement().translate()[89] == "R"      
 
 
 
