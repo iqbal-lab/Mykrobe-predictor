@@ -101,13 +101,16 @@ class CortexGeno(object):
 
 class Genotyper(CortexGeno):
 
-  def __init__(self, args):
+  def __init__(self, args, panel = None):
     self.args = args
     self.variant_covgs = {}
     self.gene_presence_covgs = {}
     self.out_json = {self.args.sample : {}}   
-    if not args.panel:
-        args.panel = "panel-%s-%i" % (args.db_name, args.kmer)
+    if not self.args.panel:
+        if panel:
+            self.args.panel = panel
+        else:
+            self.args.panel = "panel-%s-%i" % (args.db_name, args.kmer)
 
   def run(self):
       self._connect_to_db()      
@@ -117,8 +120,8 @@ class Genotyper(CortexGeno):
           self._run_cortex()  
       self._parse_covgs()       
       self._type()    
-      print(json.dumps(self.out_json,
-                        indent=4, separators=(',', ': ')))           
+      # print(json.dumps(self.out_json,
+      #                   indent=4, separators=(',', ': ')))           
       # self._insert_to_db()
 
   def _type(self):
@@ -127,11 +130,11 @@ class Genotyper(CortexGeno):
 
   def _type_genes(self):
       gt = PresenceTyper(depths = [100])
-      gene_presence_typed = gt.type(self.gene_presence_covgs)
+      self.gene_presence_covgs = gt.type(self.gene_presence_covgs)
 
       self.out_json[self.args.sample]["typed_presence"] = {}
       out_json = self.out_json[self.args.sample]["typed_presence"] 
-      out_json = [gv.to_dict() for gv in gene_presence_typed]
+      out_json = [gv.to_dict() for gv in self.gene_presence_covgs]
 
   def _type_variants(self):
       gt = VariantTyper(depths = [100]) 

@@ -12,6 +12,8 @@ def run_subtool(parser, args):
         import atlas.commands.genotype as submodule
     elif args.command == "dump":
         import dump as submodule
+    elif args.command == "amr":
+        import atlas.commands.amr as submodule        
 
     # run the chosen submodule.
     submodule.run(parser, args)
@@ -73,6 +75,20 @@ def main():
     parser_dump.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
     parser_dump.add_argument('--force', default = False, action = "store_true")
     parser_dump.set_defaults(func=run_subtool)
+
+    # ##########
+    # # AMR predict
+    # ##########
+    parser_amr = subparsers.add_parser('amr',
+                                        help="Predict the sample's antibiogram")
+    parser_amr.add_argument('-s','--sample',  type=str, help='sample id', required = True)
+    parser_amr.add_argument('-1', '--seq', type=str, help='Seq file', nargs='+', required = True)    
+    parser_amr.add_argument('--panel', metavar='panel', type=str, help='panel', default = None)    
+    parser_amr.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
+    parser_amr.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
+    parser_amr.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')    
+    parser_amr.add_argument('--force', default = False, action = "store_true")    
+    parser_amr.set_defaults(func=run_subtool)    
 
     args = parser.parse_args()
     args.func(parser, args)
