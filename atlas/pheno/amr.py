@@ -50,6 +50,8 @@ class BasePredictor(object):
                 if resistance_prediction == "R":
                     self.resistance_predictions[drug] = resistance_prediction
 
+            variant_or_gene.add_induced_resistance(drug)
+
     def _get_name(self, variant_or_gene):
         if variant_or_gene.alt_name:
             name = variant_or_gene.alt_name

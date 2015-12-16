@@ -15,6 +15,7 @@ class TypedPresence(Document):
   alt_names = ListField(StringField())
   name_hash = StringField(unique_with = "call_set")
   call_set = ReferenceField('CallSet')
+  induced_resistance = ListField(StringField)
 
   @classmethod
   def create_object(cls, name, version, percent_coverage, median_depth, alt_names = []):
@@ -41,6 +42,11 @@ class TypedPresence(Document):
               "alt_name" : ",".join(self.alt_names),
               "covg" : {"percent_coverage" : self.percent_coverage, 
                         "median_depth" : self.median_depth
-                        }
+                        },
+              "induced_resistance" : self.induced_resistance
             }
-      return d        
+      return d 
+
+  def add_induced_resistance(self, drug):
+      if drug not in self.induced_resistance:
+          self.induced_resistance.append(drug)

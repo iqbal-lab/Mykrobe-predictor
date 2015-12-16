@@ -41,6 +41,7 @@ class TypedVariant(Document):
     alternate_bases = StringField()
     call_set = ReferenceField('CallSet')
     gt = StringField()
+    induced_resistance = ListField(StringField)
 
     @classmethod
     def create_object(cls,
@@ -77,6 +78,10 @@ class TypedVariant(Document):
 
     def set_genotype(self, gt):
         self.gt = gt
+
+    def add_induced_resistance(self, drug):
+        if drug not in self.induced_resistance:
+            self.induced_resistance.append(drug)        
         
     def to_dict(self):
         d  = {  "name" : self.name,
@@ -86,6 +91,7 @@ class TypedVariant(Document):
                           "alternate_percent_coverage" : self.alternate_percent_coverage, 
                           "reference_median_depth": self.reference_median_depth,
                           "alternate_median_depth" : self.alternate_median_depth
-                          }
+                          },
+                "induced_resistance" : self.induced_resistance
               }
         return d
