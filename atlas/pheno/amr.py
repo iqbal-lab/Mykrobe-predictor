@@ -35,12 +35,8 @@ class BasePredictor(object):
             self._update_resistance_prediction(gene)
 
     def _update_resistance_prediction(self, variant_or_gene):
-        try:
-            drugs = self.variant_to_resistance_drug[variant_or_gene.alt_name]
-        except KeyError:
-            talt_name = list(variant_or_gene.alt_name)
-            talt_name[-1] = "X"
-            drugs = self.variant_to_resistance_drug["".join(talt_name)]
+        name = self._get_name(variant_or_gene)
+        drugs = self._get_drugs(name)
         resistance_prediction = self._resistance_prediction(variant_or_gene)
         for drug in drugs:
             current_resistance_prediction = self.resistance_predictions.get(drug)
@@ -53,6 +49,22 @@ class BasePredictor(object):
             elif current_resistance_prediction == "r":
                 if resistance_prediction == "R":
                     self.resistance_predictions[drug] = resistance_prediction
+
+    def _get_name(self, variant_or_gene):
+        if variant_or_gene.alt_name:
+            name = variant_or_gene.alt_name
+        else:
+            name = variant_or_gene.name
+        return name  
+
+    def _get_drugs(self, name):
+        try:
+            drugs = self.variant_to_resistance_drug[name]
+        except KeyError:
+            talt_name = list(name)
+            talt_name[-1] = "X"
+            drugs = self.variant_to_resistance_drug["".join(talt_name)]
+        return drugs        
 
     def _resistance_prediction(self, variant_or_gene):
         if variant_or_gene.gt == "1/1":

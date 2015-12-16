@@ -207,6 +207,10 @@ class Genotyper(CortexGeno):
           row = self.reader.next()
           allele, alternate_median_depth, alternate_percent_coverage = self._parse_summary_covgs_row(row)
           if alternate_percent_coverage > 30:
+              try:
+                  alt_name = "_".join([params["gene"], params["mut"]])
+              except KeyError:
+                  alt_name = ""
               tv = TypedVariant.create_object(
                                           name = allele_name,
                                           call_set = self.call_set,
@@ -214,7 +218,7 @@ class Genotyper(CortexGeno):
                                           alternate_percent_coverage = alternate_percent_coverage,
                                           reference_median_depth = reference_median_depth, 
                                           alternate_median_depth = alternate_median_depth,
-                                          alt_name = "_".join([params.get("gene"), params.get("mut")]),
+                                          alt_name = alt_name,
                                           alt_index = i)
               try:
                   self.variant_covgs[allele_name].append(tv)

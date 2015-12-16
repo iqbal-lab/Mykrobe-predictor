@@ -44,7 +44,8 @@ class Mutation(object):
     def __init__(self, dna_var, gene = None, mut = None):
         self.dna_var = dna_var
         self.gene = gene
-        tmp, self.location, tmp = split_var_name(mut)
+        if mut:
+            tmp, self.location, tmp = split_var_name(mut)
         self.ref, tmp, self.alt = split_var_name(dna_var)
         self.standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
 
