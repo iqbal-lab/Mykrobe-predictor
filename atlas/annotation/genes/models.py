@@ -2,7 +2,6 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Data import CodonTable 
 import itertools
-
 from atlas.vcf2db import split_var_name
 
 def flatten(l):
@@ -49,6 +48,7 @@ class Gene(Region):
         super(self.__class__, self).__init__(reference, start, end, forward)
         self.name = name
         self.translation_table = 11
+        self.backward_codon_table = make_backward_codon_table()
 
     @property
     def prot(self):
@@ -66,18 +66,39 @@ class Gene(Region):
         else:
             return self.get_codon(pos).reverse_complement()
 
+    def get_reference_codons(self, pos):
+        ref_codon = self.get_reference_codon(pos)
+        standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
+        ref_aa = standard_table.forward_table[ref_codon]
+        return self.backward_codon_table[ref_aa]       
+
     def __str__(self):
         return "Gene:%s" % self.name
 
     def __repr__(self):
         return "Gene:%s" % self.name        
 
+def make_backward_codon_table():
+        table = {}
+        standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
+        codons = generate_all_possible_codons()
+        for codon in codons:
+            if codon not in standard_table.stop_codons:
+                try:
+                    table[standard_table.forward_table[codon]].append(codon)
+                except:
+                    table[standard_table.forward_table[codon]] = [codon]
+        return table
+
+def generate_all_possible_codons():
+        return ["".join(subset) for subset in itertools.product(["A", "T", "C", "G"], repeat = 3)]
+
 class GeneAminoAcidChangeToDNAVariants():
 
     def __init__(self, reference, genbank):
         self.reference = self._parse_reference(reference)
         self.genbank = self._parse_genbank(genbank)
-        self.backward_codon_table = self._make_backward_codon_table()
+        self.backward_codon_table = make_backward_codon_table()
 
     def _parse_reference(self, reference):
         with open(reference, "r") as infile:
@@ -101,20 +122,7 @@ class GeneAminoAcidChangeToDNAVariants():
                             end = feat.location.end , forward = forward)
         return d
 
-    def _make_backward_codon_table(self):
-        table = {}
-        standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
-        codons = self._generate_all_possible_codons()
-        for codon in codons:
-            if codon not in standard_table.stop_codons:
-                try:
-                    table[standard_table.forward_table[codon]].append(codon)
-                except:
-                    table[standard_table.forward_table[codon]] = [codon]
-        return table
 
-    def _generate_all_possible_codons(self):
-        return ["".join(subset) for subset in itertools.product(["A", "T", "C", "G"], repeat = 3)]
 
     def get_alts(self, amino_acid):
         if amino_acid == "X":
@@ -155,11 +163,14 @@ class GeneAminoAcidChangeToDNAVariants():
             raise ValueError("Error translating %s_%s " % (gene, "".join([ref, str(start), alt])))
         if not gene.prot[start - 1] == ref:
             raise ValueError("Error processing %s_%s. The reference at pos %i is not %s, it's %s. " % (gene, "".join([ref, str(start), alt]), start, ref, gene.prot[start - 1]))
-        ref_codon = gene.get_reference_codon(start)
+        
+        ref_codons = gene.get_reference_codons(start)
         alt_codons = self.get_reference_alts(gene, alt)
-        if ref_codon in alt_codons: alt_codons.remove(ref_codon)
+        for ref_codon in ref_codons:
+            if ref_codon in alt_codons: alt_codons.remove(ref_codon)
         location = self.get_location(gene, start)
         alternative = "/".join(alt_codons)
+        ref_codon = gene.get_reference_codon(start)
         names = ["".join(["".join(ref_codon), str(location), "".join(alt_codon)]) for alt_codon in alt_codons]
         return names
 

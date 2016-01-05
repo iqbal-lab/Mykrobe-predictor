@@ -69,7 +69,7 @@ gyrA	A74S
 gyrA	A90V
 gyrA	A90X
 gyrA	D89X
-gyrA	D94A
+gyrA	D94X
 gyrA	D94G
 gyrA	D94H
 gyrA	D94N

@@ -11,15 +11,16 @@ class BasePredictor(object):
         self.drugs = self._get_drug_list_from_variant_to_resistance_drug()
         self.resistance_prediction = self._create_initial_resistance_prediction()
         self.sample = sample
-        self.out_json = {sample : {}}  
-        self.out_json[self.sample]["typed_variants"] = {} 
-        out_json = self.out_json[self.sample]["typed_variants"]
+        self.out_json = {}  
+        self.out_json["called_variants"] = {} 
+        out_json = self.out_json["called_variants"]
         for name, tvs in typed_variants.iteritems():
             for tv in tvs:
-                try:
-                    out_json[name].append(tv.to_dict())
-                except KeyError:
-                    out_json[name] = [tv.to_dict()]
+                if tv.alternate_percent_coverage > 60:
+                    try:
+                        out_json[name].append(tv.to_dict())
+                    except KeyError:
+                        out_json[name] = [tv.to_dict()]
 
     def _create_initial_resistance_prediction(self):
         self.resistance_predictions =  dict((k,"I") for k in self.drugs)
@@ -49,7 +50,6 @@ class BasePredictor(object):
             elif current_resistance_prediction == "r":
                 if resistance_prediction == "R":
                     self.resistance_predictions[drug] = resistance_prediction
-
             variant_or_gene.add_induced_resistance(drug)
 
     def _get_name(self, variant_or_gene):
@@ -80,9 +80,8 @@ class BasePredictor(object):
 
     def run(self):
         self.predict_antibiogram()
-        self.out_json[self.sample]["susceptibility"] = self.resistance_predictions
-        pprint(self.out_json)
-  
+        self.out_json["susceptibility"] = self.resistance_predictions
+        print(json.dumps(self.out_json, indent = 4))
 
 class TBPredictor(BasePredictor):
 
