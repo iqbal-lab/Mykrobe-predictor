@@ -6,11 +6,11 @@ from nose.tools import assert_raises
 class TestSNPAlleleGenerator():
 
     def setUp(self):
-        self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
+        self.pg = AlleleGenerator(reference_filepath = "data/BX571856.1.fasta")
         # print self.pg.ref_length
 
     def test_panel_generator(self):
-        pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
+        pg = AlleleGenerator(reference_filepath = "data/BX571856.1.fasta")
         assert pg.ref is not None
 
     def test_simple_variant(self):

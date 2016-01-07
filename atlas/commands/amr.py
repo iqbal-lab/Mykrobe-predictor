@@ -21,7 +21,7 @@ def run(parser, args):
     # Genotype
     q = args.quiet
     args.quiet = True
-    gt = Genotyper(args, panels = ["staph_amr_genes"])
+    gt = Genotyper(args, panels = ["staph_amr_genes", "staph-amr-mutations"])
     gt.run()
     args.quiet = q
     # 

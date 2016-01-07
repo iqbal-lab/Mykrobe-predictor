@@ -54,11 +54,16 @@ class Gene(Region):
     def prot(self):
         return self.seq.translate(table = self.translation_table).rstrip("*")
 
+    def get_context(self, pos, N):
+        print pos, N * (pos - 1) , pos * N
+        print self.seq[(3 * (pos - 1)) - N : pos * 3 + N]
+        return self.seq[(3 * (pos - 1)) -N : pos * 3 + N]
+
     def get_codon(self, pos):
         if pos > len(self.prot):
             raise ValueError("There are only %s aminoacids in this gene" % len(self.prot))
         else:
-            return self.seq[(3 *(pos - 1)) : pos * 3]
+            return self.seq[(3 * (pos - 1)) : pos * 3]
 
     def get_reference_codon(self, pos):
         if self.forward:
@@ -67,10 +72,16 @@ class Gene(Region):
             return self.get_codon(pos).reverse_complement()
 
     def get_reference_codons(self, pos):
-        ref_codon = self.get_reference_codon(pos)
-        standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
-        ref_aa = standard_table.forward_table[ref_codon]
-        return self.backward_codon_table[ref_aa]       
+        standard_table = CodonTable.unambiguous_dna_by_id[11]
+        ## Get the reference codon in reading frame
+        ref_codon = self.get_codon(pos)
+        ## Get the backward codons
+        ref_aa = standard_table.forward_table[str(ref_codon)]
+        condons_in_reading_frame = self.backward_codon_table[ref_aa]
+        if self.forward:
+            return condons_in_reading_frame
+        else:
+            return [str(Seq(s).reverse_complement()) for s in condons_in_reading_frame]     
 
     def __str__(self):
         return "Gene:%s" % self.name
@@ -80,7 +91,7 @@ class Gene(Region):
 
 def make_backward_codon_table():
         table = {}
-        standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
+        standard_table = CodonTable.unambiguous_dna_by_id[11]
         codons = generate_all_possible_codons()
         for codon in codons:
             if codon not in standard_table.stop_codons:
@@ -109,17 +120,21 @@ class GeneAminoAcidChangeToDNAVariants():
         with open(genbank, 'r') as infile:
             for feat in SeqIO.read(infile, "genbank").features:
                 if feat.type == "gene":
-                    name = feat.qualifiers.get("gene",feat.qualifiers.get("db_xref"))[0]
-                    ## SeqIO converts to 0-based
-                    strand = int(feat.location.strand) 
-                    if strand == 1:
-                        forward = True
-                    elif strand == -1:
-                        forward = False                        
+                    try:
+                        name = feat.qualifiers.get("gene",feat.qualifiers.get("db_xref"))[0]
+                    except TypeError:
+                        pass
                     else:
-                        raise ValueError("Strand must be 1 or -1")
-                    d[name] = Gene(name, self.reference, start = feat.location.start + 1, 
-                            end = feat.location.end , forward = forward)
+                        ## SeqIO converts to 0-based
+                        strand = int(feat.location.strand) 
+                        if strand == 1:
+                            forward = True
+                        elif strand == -1:
+                            forward = False                        
+                        else:
+                            raise ValueError("Strand must be 1 or -1")
+                        d[name] = Gene(name, self.reference, start = feat.location.start + 1, 
+                                end = feat.location.end , forward = forward)
         return d
 
 
@@ -162,8 +177,10 @@ class GeneAminoAcidChangeToDNAVariants():
         if not gene.prot or start > len(gene.prot):
             raise ValueError("Error translating %s_%s " % (gene, "".join([ref, str(start), alt])))
         if not gene.prot[start - 1] == ref:
+            print gene.seq
+            print gene.get_context(start, N = 5)            
+            print gene.get_reference_codon(start)            
             raise ValueError("Error processing %s_%s. The reference at pos %i is not %s, it's %s. " % (gene, "".join([ref, str(start), alt]), start, ref, gene.prot[start - 1]))
-        
         ref_codons = gene.get_reference_codons(start)
         alt_codons = self.get_reference_alts(gene, alt)
         for ref_codon in ref_codons:

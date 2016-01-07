@@ -6,7 +6,7 @@ from nose.tools import assert_raises
 class TestINDELAlleleGenerator():
 
     def setUp(self):
-        self.pg = AlleleGenerator(reference_filepath = "data/R00000022.fasta")
+        self.pg = AlleleGenerator(reference_filepath = "data/BX571856.1.fasta")
         self.pg2 = AlleleGenerator(reference_filepath = "data/NC_000962.2.fasta")
 
     def test_simple_deletion1(self):
