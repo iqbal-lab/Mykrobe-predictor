@@ -1,5 +1,5 @@
 MIN_CONF = -99999999
-
+MIN_LLK = -99999999
 class Typer(object):
 
 	def __init__(self, depths, contamination_depths = [], error_rate = 0.05):

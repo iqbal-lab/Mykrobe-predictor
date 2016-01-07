@@ -15,6 +15,9 @@ class SequenceCoverage(Document):
   median_depth = StringField()
   alt_names = ListField(StringField())
   percent_coverage_threshold = IntField(default = 30)
+  gt = StringField()
+  induced_resistance = ListField(StringField())
+
 
   @classmethod
   def create_object(cls, name, percent_coverage,
@@ -56,3 +59,7 @@ class SequenceCoverage(Document):
 
   def set_genotype(self, gt):
       self.gt = gt
+
+  @property
+  def alt_name(self):
+      return "".join(self.alt_names)

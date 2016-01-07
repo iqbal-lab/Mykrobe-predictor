@@ -1,8 +1,9 @@
 from atlas.typing.typer.base import Typer
+from atlas.typing.typer.base import MIN_LLK
+
 from atlas.stats import log_lik_depth
 from atlas.stats import percent_coverage_from_expected_coverage
 from math import log
-MIN_LLK = -99999999
 
 
 class PresenceTyper(Typer):
@@ -24,7 +25,7 @@ class PresenceTyper(Typer):
         for expected_depth in self.depths:
             hom_alt_likelihood = log_lik_depth(sequence_coverage.median_depth,
                                                expected_depth * 0.75)
-            het_likelihood     = log_lik_depth(sequence_coverage.median_depth,
+            het_likelihood = log_lik_depth(sequence_coverage.median_depth,
                                                expected_depth * self.minimum_detectable_frequency )
             hom_ref_likelihood = log_lik_depth(sequence_coverage.median_depth, expected_depth * 0.001)
             ## Posterior
@@ -42,10 +43,7 @@ class PresenceTyper(Typer):
         sequence_coverage.set_genotype(gt)
 
     def _type_without_minor_model(self, sequence_coverage):
-        if sequence_coverage.percent_coverage > sequence_coverage.percent_coverage_threshold:
-            sequence_coverage.set_genotype("1/1")
-        else:
-            sequence_coverage.set_genotype("0/0")
+    	raise NotImplementedError("Not implemented yet")
 
     @property
     def minimum_detectable_frequency(self):
@@ -82,9 +80,9 @@ class GeneCollectionTyper(Typer):
         return self.presence_typer.genotype(best_version)
 
     def get_best_version(self, sequence_coverages):
-        sequences.sort(key=lambda x: x.percent_coverage, reverse=True)
-        current_best_gene = sequences[0]
-        for gene in sequences[1:]:
+        sequence_coverages.sort(key=lambda x: x.percent_coverage, reverse=True)
+        current_best_gene = sequence_coverages[0]
+        for gene in sequence_coverages[1:]:
             if gene.percent_coverage < current_best_gene.percent_coverage:
                 return current_best_gene
             else:

@@ -1,5 +1,8 @@
 from atlas.typing.typer.base import Typer
 from atlas.stats import log_lik_R_S_coverage
+from atlas.typing.typer.base import MIN_LLK
+
+
 class VariantTyper(Typer):
 
 	def __init__(self, depths, contamination_depths = [], error_rate = 0.05):
@@ -26,13 +29,13 @@ class VariantTyper(Typer):
 		if include_minor:
 			het_likelihood = self._het_lik(variant)
 		else:
-			het_likelihood = MIN_CONF
+			het_likelihood = MIN_LLK
 		gt = self.likelihoods_to_genotype([hom_ref_likelihood, het_likelihood, hom_alt_likelihood])
 		variant.set_genotype(gt)
 
 	def _hom_ref_lik(self, variant):
 		if variant.reference_percent_coverage < 100:
-			return MIN_CONF
+			return MIN_LLK
 		else:			
 			hom_ref_likes = []
 			## Either alt+cov or alt_covg + contam_covg
@@ -50,7 +53,7 @@ class VariantTyper(Typer):
 
 	def _hom_alt_lik(self, variant):
 		if variant.alternate_percent_coverage < 100:
-			return MIN_CONF
+			return MIN_LLK
 		else:	
 			hom_alt_liks = []
 			## Either alt+cov or alt_covg + contam_covg
@@ -68,7 +71,7 @@ class VariantTyper(Typer):
 
 	def _het_lik(self, variant):
 		if variant.alternate_percent_coverage < 100 or variant.reference_percent_coverage < 100:
-			return MIN_CONF
+			return MIN_LLK
 		else:
 			return log_lik_R_S_coverage(variant.alternate_median_depth,
 									    variant.reference_median_depth,   

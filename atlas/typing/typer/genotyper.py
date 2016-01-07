@@ -12,7 +12,7 @@ from atlas.typing import TypedVariant
 from atlas.typing import SequenceCoverage
 from atlas.typing import Panel
 
-from atlas.typing.typer.presence import PresenceTyper
+from atlas.typing.typer.presence import GeneCollectionTyper
 from atlas.typing.typer.variant import VariantTyper
 
 from atlas.vcf2db import VariantPanel
@@ -37,7 +37,6 @@ def max_pnz_threshold(vp):
     t =  max(100 - 2 * math.floor(float(max([len(alt) for alt in vp.alts])) / 100), 30)
     return t
 
-
 class Genotyper(object):
 
   """Takes output of mccortex coverages and types"""
@@ -48,11 +47,10 @@ class Genotyper(object):
     self.gene_presence_covgs = {}
     self.out_json = {self.args.sample : {}}   
     self.mc_cortex_runner = None
-    if not self.args.panels:
-        if panels:
-            self.args.panels = panels
-        else:
-            self.args.panels = ["panel-%s-%i" % (args.db_name, args.kmer)]
+    if panels:
+        self.panel_names = panels
+    else:
+        self.panel_names = ["panel-%s-%i" % (args.db_name, args.kmer)]
 
   def run(self):
       self._connect_to_db()      
@@ -77,7 +75,7 @@ class Genotyper(object):
   @property
   def panels(self):
       panels = []
-      for panel in self.args.panels:
+      for panel in self.panel_names:
           panels.append(Panel(panel))
       return panels
 
@@ -86,9 +84,12 @@ class Genotyper(object):
       self._type_variants()
 
   def _type_genes(self):
-      gt = PresenceTyper(depths = [100])
-      self.gene_presence_covgs = gt.type(self.gene_presence_covgs)
-      self.out_json[self.args.sample]["typed_presence"]  = self.gene_presence_covgs
+      gt = GeneCollectionTyper(depths = [100])
+      gene_presence_covgs_out = {}
+      for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
+          self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
+          gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
+      self.out_json[self.args.sample]["typed_presence"]  = gene_presence_covgs_out
 
   def _type_variants(self):
       gt = VariantTyper(depths = [100]) 
@@ -139,7 +140,7 @@ class Genotyper(object):
       allele, median_depth, percent_coverage = self._parse_summary_covgs_row(row)
       allele_name = allele.split('?')[0]    
       params = get_params(allele)
-      gp = TypedPresence.create_object(name = params.get('name'),
+      gp = SequenceCoverage.create_object(name = params.get('name'),
                    version = params.get('version', 'N/A'),
                    percent_coverage = percent_coverage,
                    median_depth = median_depth
