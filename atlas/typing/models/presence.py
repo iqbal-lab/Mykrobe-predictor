@@ -5,20 +5,20 @@ from mongoengine import FloatField
 from mongoengine import ListField
 from mongoengine import ReferenceField
 
-class TypedPresence(Document):
+class SequenceCoverage(Document):
 
+  "Summary of kmer coverage of sequence. e.g output of color covearges"
 
   name = StringField()
   version = IntField()
   percent_coverage = FloatField()
   median_depth = StringField()
   alt_names = ListField(StringField())
-  name_hash = StringField(unique_with = "call_set")
-  call_set = ReferenceField('CallSet')
-  induced_resistance = ListField(StringField)
+  percent_coverage_threshold = IntField(default = 30)
+
 
   @classmethod
-  def create_object(cls, name, version, percent_coverage, median_depth, alt_names = []):
+  def create_object(cls, name, percent_coverage, median_depth, version = 1, alt_names = []):
     if not alt_names:
         alt_names = ["-".join([name, str(version)])]
     return cls(name = name,
@@ -28,10 +28,10 @@ class TypedPresence(Document):
       alt_names = alt_names)      
 
   def __str__(self):
-      return self.version
+      return str(self.to_dict())
 
   def __repr__(self):
-      return self.version 
+      return str(self.to_dict())
 
   @property 
   def gene_version(self):
@@ -40,6 +40,7 @@ class TypedPresence(Document):
   def to_dict(self):
       d  = {  "name" : self.name,
               "alt_name" : ",".join(self.alt_names),
+              "gt" : self.gt,
               "covg" : {"percent_coverage" : self.percent_coverage, 
                         "median_depth" : self.median_depth
                         },
@@ -50,3 +51,6 @@ class TypedPresence(Document):
   def add_induced_resistance(self, drug):
       if drug not in self.induced_resistance:
           self.induced_resistance.append(drug)
+
+  def set_genotype(self, gt):
+      self.gt = gt
