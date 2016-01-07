@@ -12,7 +12,7 @@ def log_poisson_prob(lam, k):
 def log_factorial(n):
 	assert n >= 0 
 	out = 0
-	for i in range(n):
+	for i in range(int(n)):
 		out += log(i + 1)
 	return out
 
@@ -20,7 +20,7 @@ def log_lik_depth(depth, expected_depth):
 	if expected_depth <= 0:
 		raise ValueError("Expected depth must be greater than 0")
 	if depth < 0:
-		raise ValueError("Depth must not be negative")		
+		raise ValueError("Depth must not be negative")
 	return log_poisson_prob(lam = expected_depth, k = depth)
 
 def log_lik_R_S_coverage(non_error_depth, error_depth, expected_depth, error_rate):
