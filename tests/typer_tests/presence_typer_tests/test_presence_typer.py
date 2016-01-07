@@ -18,13 +18,14 @@ class PresenceTyperTest(TestCase):
 		vs = self.pt.genotype(s1)
 		assert vs.gt == "0/0"
 
-	# def test_alt_vars(self):
-	# 	v1 = SequenceCoverage.create_object(name="A123T",
-	# 									percent_coverage = 100,
-	# 									median_depth = 100
-	# 									)
-	# 	vs = self.pt.type({"v1" : [v1]})
-	# 	assert vs.get("v1")[0].gt == "1/1"
+	def test_genotyping_gene(self):
+		s = SequenceCoverage.create_object(name="A123T",
+										percent_coverage = 100,
+										median_depth = 100,
+										percent_coverage_threshold = 80,
+										)
+		s = self.pt.genotype(s)
+		assert s.gt == "1/1"
 
 
 	# def test_mixed_vars(self):
