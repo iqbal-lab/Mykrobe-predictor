@@ -114,7 +114,7 @@ def seen_together(variants):
 def make_panels(var):
     reference_bases, start, alt = split_var_name(var)
     alternate_bases = alt.split('/')
-    context = get_context(start)
+    context = []#get_context(start)
     panels = []
     contexts_seen_together = seen_together(context)    
     for alt in alternate_bases:

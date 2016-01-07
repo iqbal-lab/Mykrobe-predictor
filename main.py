@@ -1,4 +1,5 @@
 #! /usr/bin/env python 
+import os
 import argparse
 import sys
 import atlas.version
@@ -25,8 +26,8 @@ class ArgumentParserWithDefaults(argparse.ArgumentParser):
                         action="store_true",
                         dest="quiet")
 
-DEFAULT_DB_NAME = "atlas"
-DEFAULT_KMER_SIZE = 31
+DEFAULT_KMER_SIZE = os.environ.get("KMER_SIZE", 31)
+DEFAULT_DB_NAME = os.environ.get("DB_NAME", "atlas")
 def main():
     #########################################
     # create the top-level parser
