@@ -17,12 +17,14 @@ class SequenceCoverage(Document):
   percent_coverage_threshold = IntField(default = 30)
   gt = StringField()
   induced_resistance = ListField(StringField())
+  length = IntField()
 
 
   @classmethod
   def create_object(cls, name, percent_coverage,
                    median_depth, version = 1, alt_names = [],
-                   percent_coverage_threshold = 30):
+                   percent_coverage_threshold = 30,
+                   length = None):
     if not alt_names:
         alt_names = ["-".join([name, str(version)])]
     return cls(name = name,
@@ -30,13 +32,14 @@ class SequenceCoverage(Document):
       percent_coverage = percent_coverage,
       median_depth = median_depth,
       alt_names = alt_names,
-      percent_coverage_threshold = percent_coverage_threshold)      
+      percent_coverage_threshold = percent_coverage_threshold,
+      length = length)      
 
   def __str__(self):
       return str(self.to_dict())
 
-  def __repr__(self):
-      return str(self.to_dict())
+  # def __repr__(self):
+  #     return str(self.to_dict())
 
   @property 
   def gene_version(self):

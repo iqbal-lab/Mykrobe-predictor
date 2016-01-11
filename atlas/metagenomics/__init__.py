@@ -1,0 +1,1 @@
+from atlas.metagenomics.phylo import SpeciesPredictor

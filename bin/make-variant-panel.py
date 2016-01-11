@@ -35,7 +35,8 @@ parser.add_argument('-q', '--quiet', default = False, action = "store_true")
 parser.add_argument('--mykrobe', default = False, action = "store_true")
 args = parser.parse_args()
 
-connect('atlas-%s-%i' % (args.db_name ,args.kmer))
+DB_NAME = 'atlas-%s-%i' % (args.db_name ,args.kmer)
+connect(DB_NAME)
 
 mutations = []
 ## Check if variants are in aminoacid space
@@ -114,7 +115,7 @@ def seen_together(variants):
 def make_panels(var):
     reference_bases, start, alt = split_var_name(var)
     alternate_bases = alt.split('/')
-    context = []#get_context(start)
+    context = get_context(start)
     panels = []
     contexts_seen_together = seen_together(context)    
     for alt in alternate_bases:

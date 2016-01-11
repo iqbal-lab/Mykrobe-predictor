@@ -3,11 +3,12 @@ from atlas.utils import check_args
 from atlas.typing import Genotyper
 from atlas.pheno import TBPredictor
 from atlas.pheno import StaphPredictor
-
+from atlas.metagenomics import SpeciesPredictor
+from pprint import pprint
 def run(parser, args):
     args = parser.parse_args()
     check_args(args)  
-    # Detect species
+    
 
     # # Genotype
     # gt = Genotyper(args, panel = "panel-tb-21")
@@ -17,15 +18,19 @@ def run(parser, args):
     # 			called_genes = gt.gene_presence_covgs,
     # 			sample = args.sample).run()
 
-
-    # Genotype
     q = args.quiet
     args.quiet = True
-    gt = Genotyper(args, panels = ["staph_amr_genes", "staph-amr-mutations"])
+    gt = Genotyper(args, panels = ["Coagneg", "Staphaureus", "Saureus", "Sepidermidis", 
+                                   "Shaemolyticus", "Sother","staph_amr_genes",
+                                   "staph-amr-mutations"], 
+                                   verbose = False)
     gt.run()
     args.quiet = q
-    # 
+    # Detect species
+    SpeciesPredictor(phylo_group_covgs = gt.covgs["phylo_group"],
+                    species_covgs = gt.covgs["species"],
+                    lineage_covgs = gt.covgs.get("lineage", {}),
+                    base_json = gt.out_json[args.sample]).run()
     StaphPredictor(typed_variants = gt.variant_covgs,
                    called_genes = gt.gene_presence_covgs,
-                   sample = args.sample, 
-                   base_json = gt.out_json).run()    
+                   base_json = gt.out_json[args.sample]).run()    

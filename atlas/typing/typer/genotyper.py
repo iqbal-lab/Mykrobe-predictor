@@ -41,12 +41,14 @@ class Genotyper(object):
 
   """Takes output of mccortex coverages and types"""
 
-  def __init__(self, args, panels = None):
+  def __init__(self, args, panels = None, verbose = True):
     self.args = args
-    self.variant_covgs = {}
-    self.gene_presence_covgs = {}
+    self.covgs = {"variant" : {}, "presence" : {}}
+    self.variant_covgs = self.covgs["variant"]
+    self.gene_presence_covgs = self.covgs["presence"]
     self.out_json = {self.args.sample : {}}   
     self.mc_cortex_runner = None
+    self.verbose = verbose
     if panels:
         self.panel_names = panels
     else:
@@ -88,7 +90,8 @@ class Genotyper(object):
       gene_presence_covgs_out = {}
       for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
           self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
-          gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
+          if self.verbose or self.gene_presence_covgs[gene_name].gt not in ["0/0", "-/-"]:
+              gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
       self.out_json[self.args.sample]["typed_presence"]  = gene_presence_covgs_out
 
   def _type_variants(self):
@@ -98,10 +101,11 @@ class Genotyper(object):
       out_json = self.out_json[self.args.sample]["typed_variants"] 
       for name, tvs in typed_variants.iteritems():
           for tv in tvs:
-              try:
-                  out_json[name].append(tv.to_dict())
-              except KeyError:
-                  out_json[name] = [tv.to_dict()]
+              if self.verbose or tv.gt not in ["0/0", "-/-"]:
+                  try:
+                      out_json[name].append(tv.to_dict())
+                  except KeyError:
+                      out_json[name] = [tv.to_dict()]
 
   def _connect_to_db(self):
     connect('atlas-%s-%i' % (self.args.db_name ,self.args.kmer))
@@ -140,16 +144,23 @@ class Genotyper(object):
       allele, median_depth, percent_coverage = self._parse_summary_covgs_row(row)
       allele_name = allele.split('?')[0]    
       params = get_params(allele)
+      panel_type = params.get("panel_type", "presence")
       gp = SequenceCoverage.create_object(name = params.get('name'),
                    version = params.get('version', 'N/A'),
                    percent_coverage = percent_coverage,
-                   median_depth = median_depth
+                   median_depth = median_depth,
+                   length = params.get("length")
                    )
       try:
-          self.gene_presence_covgs[gp.name][gp.version] = gp
+          self.covgs[panel_type][gp.name][gp.version] = gp
       except KeyError:
-          self.gene_presence_covgs[gp.name] = {}
-          self.gene_presence_covgs[gp.name][gp.version] = gp
+          try:
+              self.covgs[panel_type][gp.name] = {}
+          except KeyError:
+              self.covgs[panel_type] = {}
+              self.covgs[panel_type][gp.name] = {}
+          finally:
+              self.covgs[panel_type][gp.name][gp.version] = gp
 
   def _parse_variant_panel(self, row):
       allele, reference_median_depth, reference_percent_coverage = self._parse_summary_covgs_row(row)

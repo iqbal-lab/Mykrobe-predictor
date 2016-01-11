@@ -2,8 +2,9 @@ import os
 
 class Panel(object):
 
-	def __init__(self, name):
+	def __init__(self, name, type = "sequence"):
 		self.name = name
+		self.type = type
 
 	def __str__(self):
 		return self.name

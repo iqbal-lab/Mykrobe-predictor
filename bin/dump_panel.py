@@ -17,7 +17,7 @@ from atlas.vcf2db import VariantFreq
 from atlas.vcf2db import Variant as CalledVariant
 from atlas.vcf2db import VariantSet
 from atlas.vcf2db import VariantPanel
-from atlas.vcf2db.models.base import split_var_name
+from atlas.utils import split_var_name
 from atlas.panelgeneration import AlleleGenerator
 from atlas.panelgeneration import Variant
 
@@ -142,9 +142,7 @@ for name_hash in new_name_hashes:
 					   )
 	vfs.append(vf)
 
-if vfs:
-	print("Inserting %i documents to DB" % len(vfs)) 	
-	vfs = VariantFreq.objects.insert(vfs)	
+if vfs:	
 	## Get names of panels that need updating 
 	## Get all the variants that are within K bases of new variants
 	## and that are not new variants
@@ -161,6 +159,8 @@ if vfs:
 					update_name_hashes.append(q.name_hash)
 		## Remove all panels that need updating
 		# VariantPanel.objects(variant__in = affected_variants).delete()
+	print("Inserting %i documents to DB" % len(vfs)) 	
+	vfs = VariantFreq.objects.insert(vfs)	
 	## Make panels for all new variants and panels needing updating
 	new_variant_panels = []
 	updated_variant_panels = []

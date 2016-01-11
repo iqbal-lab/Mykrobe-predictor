@@ -26,7 +26,7 @@ class ArgumentParserWithDefaults(argparse.ArgumentParser):
                         action="store_true",
                         dest="quiet")
 
-DEFAULT_KMER_SIZE = os.environ.get("KMER_SIZE", 31)
+DEFAULT_KMER_SIZE = os.environ.get("KMER_SIZE", 15)
 DEFAULT_DB_NAME = os.environ.get("DB_NAME", "atlas")
 def main():
     #########################################
@@ -47,9 +47,9 @@ def main():
     parser_add = subparsers.add_parser('add',
                                         help='Adds a set of variants to the atlas')
     parser_add.add_argument('-s','--sample',  type=str, help='sample id')
-    parser_add.add_argument('-f', '--vcf', metavar='vcf', type=str, help='a vcf file')
+    parser_add.add_argument('-f', '--vcf', metavar='vcf', type=str, help='a vcf file', required = True)
     parser_add.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
-    parser_add.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = None)
+    parser_add.add_argument('-k', '--kmer', metavar='kmer', type=int, help='kmer length', default = None)
     parser_add.set_defaults(func=run_subtool)
 
     # ##########
@@ -61,7 +61,7 @@ def main():
     parser_geno.add_argument('--panels', metavar='panels', type=str, nargs='+', help='panels', default = None)
     parser_geno.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')
     parser_geno.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
-    parser_geno.add_argument('--kmer', metavar='kmer', type=int, help='kmer size', default = None)
+    parser_geno.add_argument('-k', '--kmer', metavar='kmer', type=int, help='kmer size', default = None)
     parser_geno.add_argument('--all', help='Store ref GT aswell as alt', default = False, action = "store_true")
     parser_geno.add_argument('--force', help='Force rebuilding of binaries', default = False, action = "store_true")
     parser_geno.set_defaults(func=run_subtool)
@@ -73,7 +73,7 @@ def main():
                                         help='Dump a panel of variant alleles')
     parser_dump.add_argument('ref', metavar='ref', type=str, help='reference filepath')    
     parser_dump.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = DEFAULT_DB_NAME)
-    parser_dump.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
+    parser_dump.add_argument('-k', '--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
     parser_dump.add_argument('--force', default = False, action = "store_true")
     parser_dump.set_defaults(func=run_subtool)
 
@@ -86,7 +86,7 @@ def main():
     parser_amr.add_argument('-1', '--seq', type=str, help='Seq file', nargs='+', required = True)    
     parser_amr.add_argument('--panel', metavar='panel', type=str, help='panel', default = None)    
     parser_amr.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
-    parser_amr.add_argument('--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
+    parser_amr.add_argument('-k', '--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
     parser_amr.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')    
     parser_amr.add_argument('--force', default = False, action = "store_true")    
     parser_amr.set_defaults(func=run_subtool)    

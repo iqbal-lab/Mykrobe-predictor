@@ -58,10 +58,10 @@ def run(parser, args):
     assert len(vcf_reader.samples) == 1
 
     variant_set_name = os.path.splitext(os.path.basename(args.vcf))[0]
-    if args.sample_id is None:
+    if args.sample is None:
         sample = vcf_reader.samples[0]
     else:
-        sample = args.sample_id 
+        sample = args.sample 
 
     try:
         callset = CallSet.create(name = variant_set_name, sample_id = sample)
