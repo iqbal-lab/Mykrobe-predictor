@@ -18,6 +18,7 @@ class SequenceCoverage(Document):
   gt = StringField()
   induced_resistance = ListField(StringField())
   length = IntField()
+  copy_number = FloatField()
 
 
   @classmethod
@@ -62,6 +63,9 @@ class SequenceCoverage(Document):
 
   def set_genotype(self, gt):
       self.gt = gt
+
+  def set_copy_number(self, cn):
+      self.copy_number = cn
 
   @property
   def alt_name(self):

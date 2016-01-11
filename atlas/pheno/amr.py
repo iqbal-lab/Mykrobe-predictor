@@ -2,7 +2,16 @@ import os
 import json
 from atlas.utils import unique
 from atlas.utils import flatten
+
+from atlas.typing import SequenceCoverage
+from atlas.typing import TypedVariant
+
 from pprint import pprint
+
+
+DEFAULT_MIN_GENE_CN = 0.03
+DEFAULT_MIN_VARIANT_CN = 0.1
+
 class BasePredictor(object):
 
     def __init__(self, typed_variants, called_genes, base_json = {}):
@@ -11,6 +20,19 @@ class BasePredictor(object):
         self.drugs = self._get_drug_list_from_variant_to_resistance_drug()
         self.resistance_prediction = self._create_initial_resistance_prediction()
         self.out_json = base_json 
+        self._coveage_threshold = {
+                                    "ermA" : 0.19,
+                                    "ermB" : 0.19,
+                                    "ermC" : 0.19,
+                                    "ermT" : 0.19,
+                                    "ermY" : 0.19,
+                                    "fusA" : 0.03,
+                                    "aacAaphD" : 0.04,
+                                    "mecA" : 0.06,
+                                    "mupA" : 0.21,
+                                    "blaZ" : 0.04,
+                                    "tetK" : 0.13
+                                }
 
     def _create_initial_resistance_prediction(self):
         self.resistance_predictions =  dict((k,"I") for k in self.drugs)
@@ -65,13 +87,27 @@ class BasePredictor(object):
 
     def _resistance_prediction(self, variant_or_gene):
         if variant_or_gene.gt == "1/1":
-            return "R"
+            if self._coverage_greater_than_threshold(variant_or_gene):
+                return "R"
+            else:
+                return "S"
         elif variant_or_gene.gt == "0/1":
-            return "r"
+            if self._coverage_greater_than_threshold(variant_or_gene):
+                return "r"
+            else:
+                return "S"
         elif variant_or_gene.gt == "0/0":
             return "S"
         else:
             return "I"
+
+    def _coverage_greater_than_threshold(self, variant_or_gene):
+        if isinstance(variant_or_gene, SequenceCoverage):
+            return variant_or_gene.copy_number > self._coveage_threshold.get(variant_or_gene.name, DEFAULT_MIN_GENE_CN)
+        elif isinstance(variant_or_gene, TypedVariant):
+            return variant_or_gene.copy_number > self._coveage_threshold.get(variant_or_gene.name, DEFAULT_MIN_VARIANT_CN)
+        else:
+            raise TypeError("Must be either SequenceCoverage or TypedVariant object")
 
     def run(self):
         self.predict_antibiogram()

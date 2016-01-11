@@ -41,7 +41,7 @@ class Genotyper(object):
 
   """Takes output of mccortex coverages and types"""
 
-  def __init__(self, args, panels = None, verbose = True):
+  def __init__(self, args, depths, panels = None, verbose = True):
     self.args = args
     self.covgs = {"variant" : {}, "presence" : {}}
     self.variant_covgs = self.covgs["variant"]
@@ -49,6 +49,7 @@ class Genotyper(object):
     self.out_json = {self.args.sample : {}}   
     self.mc_cortex_runner = None
     self.verbose = verbose
+    self.depths = depths
     if panels:
         self.panel_names = panels
     else:
@@ -86,7 +87,7 @@ class Genotyper(object):
       self._type_variants()
 
   def _type_genes(self):
-      gt = GeneCollectionTyper(depths = [100])
+      gt = GeneCollectionTyper(depths = self.depths)
       gene_presence_covgs_out = {}
       for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
           self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
@@ -95,7 +96,7 @@ class Genotyper(object):
       self.out_json[self.args.sample]["typed_presence"]  = gene_presence_covgs_out
 
   def _type_variants(self):
-      gt = VariantTyper(depths = [100]) 
+      gt = VariantTyper(depths = self.depths) 
       typed_variants = gt.type(self.variant_covgs)
       self.out_json[self.args.sample]["typed_variants"] = {}
       out_json = self.out_json[self.args.sample]["typed_variants"] 

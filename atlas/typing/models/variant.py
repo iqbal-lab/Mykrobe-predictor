@@ -41,6 +41,7 @@ class TypedVariant(Document):
     alternate_bases = StringField()
     call_set = ReferenceField('CallSet')
     gt = StringField()
+    copy_number = FloatField()
     induced_resistance = ListField(StringField)
 
     @classmethod
@@ -78,6 +79,9 @@ class TypedVariant(Document):
 
     def set_genotype(self, gt):
         self.gt = gt
+
+    def set_copy_number(self, cn):
+        self.copy_number = cn        
 
     def add_induced_resistance(self, drug):
         if drug not in self.induced_resistance:

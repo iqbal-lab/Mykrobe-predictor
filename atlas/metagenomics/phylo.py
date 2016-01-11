@@ -27,7 +27,6 @@ class SpeciesPredictor(object):
 		self.out_json["phylogenetics"]["species"] = self.species_covgs
 		self.out_json["phylogenetics"]["lineage"] = self.lineage_covgs
 
-
 	def _aggregate(self, covgs):
 		del_nodes = []
 		for node, covg_collection  in covgs.iteritems():

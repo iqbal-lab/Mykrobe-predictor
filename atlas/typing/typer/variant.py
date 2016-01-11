@@ -32,6 +32,7 @@ class VariantTyper(Typer):
 			het_likelihood = MIN_LLK
 		gt = self.likelihoods_to_genotype([hom_ref_likelihood, het_likelihood, hom_alt_likelihood])
 		variant.set_genotype(gt)
+		variant.set_copy_number(float(variant.alternate_median_depth) / self.depths[0])		
 
 	def _hom_ref_lik(self, variant):
 		if variant.reference_percent_coverage < 100:

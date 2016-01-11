@@ -41,6 +41,7 @@ class PresenceTyper(Typer):
                                            het_likelihood,
                                            hom_alt_likelihood])
         sequence_coverage.set_genotype(gt)
+        sequence_coverage.set_copy_number(float(sequence_coverage.median_depth) / expected_depth)
 
     def _type_without_minor_model(self, sequence_coverage):
     	raise NotImplementedError("Not implemented yet")
