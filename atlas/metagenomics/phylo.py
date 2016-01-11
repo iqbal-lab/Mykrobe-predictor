@@ -11,7 +11,12 @@ class SpeciesPredictor(object):
 		self.threshold = {}
 
 	def run(self):
+		# self._load_taxon_thresholds()
 		self._aggregate_all()
+
+	def _load_taxon_thresholds(self):
+		with open("data/predict/taxon_coverage_threshold.json", "r") as infile:
+			self.threshold = json.load(infile)
 
 	def _aggregate_all(self):
 		self.phylo_group_summary = self._aggregate(self.phylo_group_covgs)
