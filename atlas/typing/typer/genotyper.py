@@ -37,11 +37,9 @@ def max_pnz_threshold(vp):
     t =  max(100 - 2 * math.floor(float(max([len(alt) for alt in vp.alts])) / 100), 30)
     return t
 
-class Genotyper(object):
+class CoverageParser(object):
 
-  """Takes output of mccortex coverages and types"""
-
-  def __init__(self, args, depths, panels = None, verbose = True):
+  def __init__(self, args, panels = None, verbose = True):
     self.args = args
     self.covgs = {"variant" : {}, "presence" : {}}
     self.variant_covgs = self.covgs["variant"]
@@ -49,22 +47,27 @@ class Genotyper(object):
     self.out_json = {self.args.sample : {}}   
     self.mc_cortex_runner = None
     self.verbose = verbose
-    self.depths = depths
     if panels:
         self.panel_names = panels
     else:
-        self.panel_names = ["panel-%s-%i" % (args.db_name, args.kmer)]
+        self.panel_names = ["panel-%s-%i" % (args.db_name, args.kmer)] 
 
   def run(self):
       self._connect_to_db()      
       self._set_up_db()
       self._run_cortex()
       self._parse_covgs()       
-      self._type()    
-      if not self.args.quiet:
-          print(json.dumps(self.out_json,
-                        indent=4, separators=(',', ': ')))           
-      # self._insert_to_db()
+
+  def _connect_to_db(self):
+    connect('atlas-%s-%i' % (self.args.db_name ,self.args.kmer))
+
+  def _set_up_db(self):
+    try:
+        self.call_set = CallSet.objects.get(name = self.args.sample + "_%s" % self.args.name)
+    except DoesNotExist:
+        self.call_set = CallSet.create(name = self.args.sample  + "_%s" % self.args.name, sample_id = self.args.sample)
+    ## Clear any genotyped calls so far
+    TypedVariant.objects(call_set = self.call_set).delete()  
 
   def _run_cortex(self):
       self.mc_cortex_runner = McCortexRunner(sample = self.args.sample,
@@ -81,43 +84,6 @@ class Genotyper(object):
       for panel in self.panel_names:
           panels.append(Panel(panel))
       return panels
-
-  def _type(self):
-      self._type_genes()
-      self._type_variants()
-
-  def _type_genes(self):
-      gt = GeneCollectionTyper(depths = self.depths)
-      gene_presence_covgs_out = {}
-      for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
-          self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
-          if self.verbose or self.gene_presence_covgs[gene_name].gt not in ["0/0", "-/-"]:
-              gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
-      self.out_json[self.args.sample]["typed_presence"]  = gene_presence_covgs_out
-
-  def _type_variants(self):
-      gt = VariantTyper(depths = self.depths) 
-      typed_variants = gt.type(self.variant_covgs)
-      self.out_json[self.args.sample]["typed_variants"] = {}
-      out_json = self.out_json[self.args.sample]["typed_variants"] 
-      for name, tvs in typed_variants.iteritems():
-          for tv in tvs:
-              if self.verbose or tv.gt not in ["0/0", "-/-"]:
-                  try:
-                      out_json[name].append(tv.to_dict())
-                  except KeyError:
-                      out_json[name] = [tv.to_dict()]
-
-  def _connect_to_db(self):
-    connect('atlas-%s-%i' % (self.args.db_name ,self.args.kmer))
-
-  def _set_up_db(self):
-    try:
-        self.call_set = CallSet.objects.get(name = self.args.sample + "_%s" % self.args.name)
-    except DoesNotExist:
-        self.call_set = CallSet.create(name = self.args.sample  + "_%s" % self.args.name, sample_id = self.args.sample)
-    ## Clear any genotyped calls so far
-    TypedVariant.objects(call_set = self.call_set).delete()                                               
 
   def _parse_summary_covgs_row(self, row):
       return row[0], int(row[2]), 100*float(row[3])
@@ -188,3 +154,53 @@ class Genotyper(object):
               self.variant_covgs[allele_name].append(tv)
           except KeyError:
               self.variant_covgs[allele_name] = [tv]
+
+
+
+class Genotyper(object):
+
+  """Takes output of mccortex coverages and types"""
+
+  def __init__(self, args, depths, variant_covgs, gene_presence_covgs, verbose = False):
+    self.args = args
+    self.variant_covgs = variant_covgs
+    self.gene_presence_covgs = gene_presence_covgs
+    self.out_json = {self.args.sample : {}}   
+    self.verbose = verbose
+    self.depths = depths
+
+  def run(self):
+      self._type()    
+      if not self.args.quiet:
+          print(json.dumps(self.out_json,
+                        indent=4, separators=(',', ': ')))           
+      # self._insert_to_db()
+
+  def _type(self):
+      self._type_genes()
+      self._type_variants()
+
+  def _type_genes(self):
+      gt = GeneCollectionTyper(depths = self.depths)
+      gene_presence_covgs_out = {}
+      for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
+          self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
+          if self.verbose or self.gene_presence_covgs[gene_name].gt not in ["0/0", "-/-"]:
+              gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
+      self.out_json[self.args.sample]["typed_presence"]  = gene_presence_covgs_out
+
+  def _type_variants(self):
+      gt = VariantTyper(depths = self.depths) 
+      typed_variants = gt.type(self.variant_covgs)
+      self.out_json[self.args.sample]["typed_variants"] = {}
+      out_json = self.out_json[self.args.sample]["typed_variants"] 
+      for name, tvs in typed_variants.iteritems():
+          for tv in tvs:
+              if self.verbose or tv.gt not in ["0/0", "-/-"]:
+                  try:
+                      out_json[name].append(tv.to_dict())
+                  except KeyError:
+                      out_json[name] = [tv.to_dict()]
+
+                                             
+
