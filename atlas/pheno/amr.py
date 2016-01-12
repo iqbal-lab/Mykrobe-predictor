@@ -74,6 +74,7 @@ class BasePredictor(object):
         return name  
 
     def _get_drugs(self, name):
+        name = name.lower()
         try:
             drugs = self.variant_or_gene_name_to_resistance_drug[name]
         except KeyError:
@@ -82,7 +83,12 @@ class BasePredictor(object):
             except KeyError:
                 talt_name = list(name)
                 talt_name[-1] = "X"
-                drugs = self.variant_or_gene_name_to_resistance_drug.get("".join(talt_name), [])
+                try:
+                    drugs = self.variant_or_gene_name_to_resistance_drug["".join(talt_name)]
+                except KeyError:
+                    drugs = []
+                    print ("Warning:NoEntry for %s" % name)
+
         return drugs        
 
     def _resistance_prediction(self, variant_or_gene):

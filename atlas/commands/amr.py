@@ -16,7 +16,7 @@ STAPH_PANELS = ["Coagneg",
                 "Sother",
                 "staph_amr_genes",
                 "staph-amr-mutations"]
-GN_PANELS = ["gn-amr-genes","Escherichia_coli", "Klebsiella_pneumoniae"]
+GN_PANELS = ["gn-amr-genes","Escherichia_coli", "Klebsiella_pneumoniae","gn-amr-genes-extended"]
 TB_PANELS = ["MTBC", "NTM",
             "panel-tb-21",
             "abscessus",

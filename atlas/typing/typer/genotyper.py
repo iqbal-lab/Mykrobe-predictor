@@ -117,6 +117,7 @@ class CoverageParser(object):
       params = get_params(allele)
       panel_type = params.get("panel_type", "presence")
       name = params.get('name')
+      # print (allele)
       if panel_type in ["phylo_group", "species", "lineage"]:
           l = int(params["length"])
           try:
