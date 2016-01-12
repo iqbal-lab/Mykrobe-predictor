@@ -5,13 +5,14 @@ import subprocess
 
 class McCortexRunner(object):
 
-  def __init__(self, sample, panels, seq, db_name, kmer = 31, force = False):
+  def __init__(self, sample, panels, seq, db_name, kmer = 31, force = False, panel_name = None):
     self.sample = sample
     self.panels = panels
     self.seq = seq
     self.db_name = db_name
     self.kmer = kmer      
     self.force = force
+    self._panel_name = panel_name
 
   def run(self):
       if self.force or not os.path.exists(self.covg_tmp_file_path):
@@ -76,9 +77,15 @@ class McCortexRunner(object):
   def sample_name(self):
       return "-".join([self.sample, self.db_name, str(self.kmer)])
 
+  @property
+  def panel_name(self):
+      if self._panel_name is None:
+          self._panel_name = "-".join([p.name for p in self.panels])
+      return self._panel_name
+
   @property 
   def sample_panel_name(self):
-      return "_".join([self.sample_name, "-".join([p.name for p in self.panels])])
+      return "_".join([self.sample_name, self.panel_name])
 
   @property
   def ctx_tmp_filepath(self):
@@ -90,5 +97,5 @@ class McCortexRunner(object):
 
   @property 
   def ctx_skeleton_filepath(self):
-      return os.path.abspath("data/skeletons/%s.ctx" % self.sample_panel_name)
+      return os.path.abspath("data/skeletons/%s_%i.ctx" % (self.panel_name, self.kmer))
 

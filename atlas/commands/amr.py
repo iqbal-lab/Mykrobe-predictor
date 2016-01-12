@@ -4,48 +4,96 @@ from atlas.typing import CoverageParser
 from atlas.typing import Genotyper
 from atlas.pheno import TBPredictor
 from atlas.pheno import StaphPredictor
-from atlas.metagenomics import SpeciesPredictor
+from atlas.metagenomics import AMRSpeciesPredictor
 from pprint import pprint
 def run(parser, args):
     args = parser.parse_args()
     check_args(args)  
     
-
-    # # Genotype
-    # gt = Genotyper(args, panel = "panel-tb-21")
-    # gt.run()
-    # # 
-    # TBPredictor(typed_variants = gt.variant_covgs,
-    # 			called_genes = gt.gene_presence_covgs,
-    # 			sample = args.sample).run()
-
-
     ## Run Cortex
-    cp = CoverageParser(args, panels = ["Coagneg", "Staphaureus", "Saureus", "Sepidermidis", 
-                                   "Shaemolyticus", "Sother","staph_amr_genes",
-                                   "staph-amr-mutations"], 
-                                   verbose = False)
+    cp = CoverageParser(args, panels = ["MTBC", "NTM", "Coagneg",
+                                        "Staphaureus",
+                                        "Saureus", "Sepidermidis", 
+                                       "Shaemolyticus",
+                                        "Sother","staph_amr_genes",
+                                       "staph-amr-mutations",
+                                       "panel-tb-21",
+                                       "abscessus",
+                                        "africanum",
+                                        "aromaticivorans",
+                                        "avium",
+                                        "bovis",
+                                        "branderi",
+                                        "caprae",
+                                        "chelonae",
+                                        "chlorophenolicum",
+                                        "chubuense",
+                                        "colombiense",
+                                        "crocinum",
+                                        "flavescens",
+                                        "fluoranthenivorans",
+                                        "fortuitum",
+                                        "gilvum",
+                                        "gordonae",
+                                        "hodleri",
+                                        "interjectum",
+                                        "intracellulare",
+                                        "kansasii",
+                                        "lentiflavum",
+                                        "leprae",
+                                        "malmoense",
+                                        "marinum",
+                                        "mucogenicum",
+                                        "pallens",
+                                        "peregrinum",
+                                        "phage",
+                                        "pyrenivorans",
+                                        "rhodesiae",
+                                        "rufum",
+                                        "rutilum",
+                                        "scrofulaceum",
+                                        "senegalense",
+                                        "smegmatis",
+                                        "sphagni",
+                                        "szulgai",
+                                        "triplex",
+                                        "tuberculosis",
+                                        "tusciae",
+                                        "ulcerans",
+                                        "vaccae",
+                                        "xenopi"], 
+                                       verbose = False,
+                                       panel_name = "amr")
     cp.run()
     
     # Detect species
-    species_predictor = SpeciesPredictor(phylo_group_covgs = cp.covgs["phylo_group"],
+    species_predictor = AMRSpeciesPredictor(phylo_group_covgs = cp.covgs["phylo_group"],
                     species_covgs = cp.covgs["species"],
                     lineage_covgs = cp.covgs.get("lineage", {}),
                     base_json = cp.out_json[args.sample])
     species_predictor.run()
 
+
+
+    # ## AMR prediction
+    if species_predictor.is_saureus_present():
+        depths = [species_predictor.out_json["phylogenetics"]["phylo_group"]["Staphaureus"]["median_depth"]]
+        Predictor = StaphPredictor
+    elif species_predictor.is_mtbc_present():
+        depths = [species_predictor.out_json["phylogenetics"]["phylo_group"]["MTBC"]["median_depth"]]
+        Predictor = TBPredictor
     ## Genotype
     q = args.quiet
     args.quiet = True    
-    gt = Genotyper(args, depths = [species_predictor.out_json["phylogenetics"]["species"]["Saureus"]["median_depth"]],
+    gt = Genotyper(args, depths = depths,
                 variant_covgs = cp.covgs["variant"],
                 gene_presence_covgs = cp.covgs["presence"],
-                verbose = False)
+                verbose = False, 
+                base_json = cp.out_json,
+                contamination_depths = species_predictor.contamination_depths())
     gt.run()
     args.quiet = q
-
-    # ## AMR prediction
-    staph_predictor = StaphPredictor(typed_variants = gt.variant_covgs,
+    predictor = Predictor(typed_variants = gt.variant_covgs,
                    called_genes = gt.gene_presence_covgs,
                    base_json = gt.out_json[args.sample])
-    staph_predictor.run()    
+    predictor.run()    

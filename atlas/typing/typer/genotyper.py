@@ -27,6 +27,7 @@ def get_params(url):
         p_str = url.split("?")[1]
     except IndexError:
         return params
+    p_str = p_str.split(" ")[0]
     p_str = p_str.split('&')
     for p in p_str:
         k,v = p.split("=")
@@ -39,7 +40,7 @@ def max_pnz_threshold(vp):
 
 class CoverageParser(object):
 
-  def __init__(self, args, panels = None, verbose = True):
+  def __init__(self, args, panels = None, verbose = True, panel_name = None):
     self.args = args
     self.covgs = {"variant" : {}, "presence" : {}}
     self.variant_covgs = self.covgs["variant"]
@@ -47,6 +48,8 @@ class CoverageParser(object):
     self.out_json = {self.args.sample : {}}   
     self.mc_cortex_runner = None
     self.verbose = verbose
+    self.panel_name = panel_name
+
     if panels:
         self.panel_names = panels
     else:
@@ -75,7 +78,8 @@ class CoverageParser(object):
                                              seq = self.args.seq,
                                              db_name = self.args.db_name,
                                              kmer = self.args.kmer,
-                                             force = self.args.force)
+                                             force = self.args.force,
+                                             panel_name = self.panel_name)
       self.mc_cortex_runner.run()
 
   @property
@@ -115,15 +119,16 @@ class CoverageParser(object):
       name = params.get('name')
       if panel_type in ["phylo_group", "species", "lineage"]:
           l = int(params["length"])
+          median_non_zero = int(bool(median_depth))
           try:
-              self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
+              self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l * median_non_zero
               self.covgs[panel_type][name]["total_bases"] += l
               self.covgs[panel_type][name]["median"].append(median_depth)
           except KeyError:
               if not panel_type  in self.covgs:
                   self.covgs[panel_type] = {}
               self.covgs[panel_type][name] = {}
-              self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
+              self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l * median_non_zero
               self.covgs[panel_type][name]["total_bases"] = percent_coverage * l
               self.covgs[panel_type][name]["median"] = [median_depth]
 
@@ -172,13 +177,14 @@ class Genotyper(object):
 
   """Takes output of mccortex coverages and types"""
 
-  def __init__(self, args, depths, variant_covgs, gene_presence_covgs, verbose = False):
+  def __init__(self, args, depths, variant_covgs, gene_presence_covgs, contamination_depths = [], verbose = False, base_json = {}):
     self.args = args
     self.variant_covgs = variant_covgs
     self.gene_presence_covgs = gene_presence_covgs
-    self.out_json = {self.args.sample : {}}   
+    self.out_json = base_json
     self.verbose = verbose
     self.depths = depths
+    self.contamination_depths = contamination_depths
 
   def run(self):
       self._type()    
@@ -192,7 +198,7 @@ class Genotyper(object):
       self._type_variants()
 
   def _type_genes(self):
-      gt = GeneCollectionTyper(depths = self.depths)
+      gt = GeneCollectionTyper(depths = self.depths, contamination_depths = self.contamination_depths)
       gene_presence_covgs_out = {}
       for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
           self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
@@ -201,7 +207,7 @@ class Genotyper(object):
       self.out_json[self.args.sample]["typed_presence"]  = gene_presence_covgs_out
 
   def _type_variants(self):
-      gt = VariantTyper(depths = self.depths) 
+      gt = VariantTyper(depths = self.depths, contamination_depths = self.contamination_depths) 
       typed_variants = gt.type(self.variant_covgs)
       self.out_json[self.args.sample]["typed_variants"] = {}
       out_json = self.out_json[self.args.sample]["typed_variants"] 

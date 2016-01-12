@@ -2,10 +2,11 @@ from atlas.typing.typer.base import Typer
 from atlas.stats import log_lik_R_S_coverage
 from atlas.typing.typer.base import MIN_LLK
 
+DEFAULT_ERROR_RATE = 0.05
 
 class VariantTyper(Typer):
 
-	def __init__(self, depths, contamination_depths = [], error_rate = 0.05):
+	def __init__(self, depths, contamination_depths = [], error_rate = DEFAULT_ERROR_RATE):
 		super(VariantTyper, self).__init__(depths, contamination_depths, error_rate)
 		self.method = "MAP"
 
