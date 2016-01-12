@@ -112,21 +112,32 @@ class CoverageParser(object):
       allele_name = allele.split('?')[0]    
       params = get_params(allele)
       panel_type = params.get("panel_type", "presence")
-      gp = SequenceCoverage.create_object(name = params.get('name'),
-                   version = params.get('version', 'N/A'),
-                   percent_coverage = percent_coverage,
-                   median_depth = median_depth,
-                   length = params.get("length")
-                   )
-      try:
-          self.covgs[panel_type][gp.name][gp.version] = gp
-      except KeyError:
+      name = params.get('name')
+      if panel_type in ["phylo_group", "species", "lineage"]:
+          l = int(params["length"])
           try:
-              self.covgs[panel_type][gp.name] = {}
+              self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
+              self.covgs[panel_type][name]["total_bases"] += l
+              self.covgs[panel_type][name]["median"].append(median_depth)
           except KeyError:
-              self.covgs[panel_type] = {}
+              if not panel_type  in self.covgs:
+                  self.covgs[panel_type] = {}
+              self.covgs[panel_type][name] = {}
+              self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
+              self.covgs[panel_type][name]["total_bases"] = percent_coverage * l
+              self.covgs[panel_type][name]["median"] = [median_depth]
+
+      else:
+          gp = SequenceCoverage.create_object(name = name,
+                       version = params.get('version', 'N/A'),
+                       percent_coverage = percent_coverage,
+                       median_depth = median_depth,
+                       length = params.get("length")
+                       )
+          try:
+              self.covgs[panel_type][gp.name][gp.version] = gp
+          except KeyError:
               self.covgs[panel_type][gp.name] = {}
-          finally:
               self.covgs[panel_type][gp.name][gp.version] = gp
 
   def _parse_variant_panel(self, row):

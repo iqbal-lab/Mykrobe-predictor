@@ -44,7 +44,7 @@ def run(parser, args):
     gt.run()
     args.quiet = q
 
-    ## AMR prediction
+    # ## AMR prediction
     staph_predictor = StaphPredictor(typed_variants = gt.variant_covgs,
                    called_genes = gt.gene_presence_covgs,
                    base_json = gt.out_json[args.sample])

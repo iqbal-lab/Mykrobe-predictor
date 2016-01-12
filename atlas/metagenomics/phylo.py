@@ -1,6 +1,16 @@
 from __future__ import print_function
-import numpy as np
 DEFAULT_THRESHOLD = 30
+
+def median(lst):
+    sortedLst = sorted(lst)
+    lstLen = len(lst)
+    index = (lstLen - 1) // 2
+
+    if (lstLen % 2):
+        return sortedLst[index]
+    else:
+        return (sortedLst[index] + sortedLst[index + 1])/2.0
+
 class SpeciesPredictor(object):
 
 	def __init__(self, phylo_group_covgs, species_covgs, lineage_covgs, base_json):
@@ -30,17 +40,12 @@ class SpeciesPredictor(object):
 	def _aggregate(self, covgs):
 		del_nodes = []
 		for node, covg_collection  in covgs.iteritems():
-			bases_covered = 0.0
-			total_bases = 0.0
-			median = []			
-			for version, covg in covg_collection.iteritems():
-				bases_covered += covg.percent_coverage * covg.length
-				total_bases += covg.length
-				if covg.median_depth > 0:
-					median.append(covg.median_depth)
+			bases_covered = covg_collection["bases_covered"]
+			total_bases = covg_collection["total_bases"]
+			_median = covg_collection["median"]			
 			aggregate_percent_covg = bases_covered/total_bases
 			if aggregate_percent_covg >= self.threshold.get(node, DEFAULT_THRESHOLD):
-				covgs[node] = {"percent_coverage" : bases_covered/total_bases, "median_depth" : np.median(median)}
+				covgs[node] = {"percent_coverage" : bases_covered/total_bases, "median_depth" : median(_median)}
 			else:
 				del_nodes.append(node)
 		for node in del_nodes:
