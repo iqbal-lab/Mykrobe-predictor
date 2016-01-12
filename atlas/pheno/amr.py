@@ -114,16 +114,16 @@ class BasePredictor(object):
         self.out_json["susceptibility"] = self.resistance_predictions
         print(json.dumps(self.out_json, indent = 4))
 
+def load_json(f):
+    with open(f, 'r') as infile:
+        return json.load(infile)        
+
 class TBPredictor(BasePredictor):
 
     def __init__(self, typed_variants, called_genes, base_json = {}):
         self.data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/predict/tb/' ))
         self.variant_or_gene_name_to_resistance_drug = load_json(os.path.join(self.data_dir, "variant_to_resistance_drug.json"))
         super(TBPredictor, self).__init__(typed_variants, called_genes, base_json)
-
-def load_json(f):
-    with open(f, 'r') as infile:
-        return json.load(infile)
 
 class StaphPredictor(BasePredictor):
 
@@ -132,9 +132,13 @@ class StaphPredictor(BasePredictor):
         self.variant_or_gene_name_to_resistance_drug = load_json(os.path.join(self.data_dir, "variant_to_resistance_drug.json"))
         super(StaphPredictor, self).__init__(typed_variants, called_genes, base_json)
 
-def load_json(f):
-    with open(f, 'r') as infile:
-        return json.load(infile)        
+class GramNegPredictor(BasePredictor):
+
+    def __init__(self, typed_variants, called_genes, base_json = {}):
+        self.data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/predict/gn/' ))
+        self.variant_or_gene_name_to_resistance_drug = load_json(os.path.join(self.data_dir, "variant_to_resistance_drug.json"))
+        super(GramNegPredictor, self).__init__(typed_variants, called_genes, base_json)        
+    
 
 
 

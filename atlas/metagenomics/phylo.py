@@ -65,6 +65,15 @@ class AMRSpeciesPredictor(SpeciesPredictor):
     def is_mtbc_present(self):
         return "MTBC" in self.out_json["phylogenetics"]["phylo_group"]
 
+    def is_gram_neg_present(self):
+        return self.is_klebsiella_pneumoniae_present() or self.is_escherichia_coli_present()
+                
+    def is_klebsiella_pneumoniae_present(self):
+        return "Klebsiella_pneumoniae" in self.out_json["phylogenetics"]["species"]
+
+    def is_escherichia_coli_present(self):
+        return "Escherichia_coli" in self.out_json["phylogenetics"]["species"]
+
     def contamination_depths(self):
         contamination_depths = []
         ignore = []
@@ -72,9 +81,12 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             ignore.append("Saureus")
         elif self.is_mtbc_present():
             ignore.append("Mtuberculosis")
+        elif self.is_escherichia_coli_present():
+            ignore.append("Escherichia_coli")
+        elif self.is_klebsiella_pneumoniae_present():
+            ignore.append("Klebsiella_pneumoniae")
         for node, covg_collection in self.species_covgs.iteritems():
             if node not in ignore:
-                print (node, covg_collection)
                 contamination_depths.append(covg_collection["median_depth"])
         return contamination_depths
 

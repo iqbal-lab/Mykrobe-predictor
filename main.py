@@ -88,6 +88,7 @@ def main():
     parser_amr.add_argument('--db_name', metavar='db_name', type=str, help='db_name', default = None)
     parser_amr.add_argument('-k', '--kmer', metavar='kmer', type=int, help='kmer length', default = DEFAULT_KMER_SIZE)
     parser_amr.add_argument('--name', metavar='name', type=str, help='name', default = 'atlas_gt')    
+    parser_amr.add_argument('--species', metavar='species', type=str, help='species', default = None)    
     parser_amr.add_argument('--force', default = False, action = "store_true")    
     parser_amr.set_defaults(func=run_subtool)    
 

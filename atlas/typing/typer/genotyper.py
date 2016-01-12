@@ -119,17 +119,16 @@ class CoverageParser(object):
       name = params.get('name')
       if panel_type in ["phylo_group", "species", "lineage"]:
           l = int(params["length"])
-          median_non_zero = int(bool(median_depth))
           try:
-              self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l * median_non_zero
+              self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
               self.covgs[panel_type][name]["total_bases"] += l
               self.covgs[panel_type][name]["median"].append(median_depth)
           except KeyError:
               if not panel_type  in self.covgs:
                   self.covgs[panel_type] = {}
               self.covgs[panel_type][name] = {}
-              self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l * median_non_zero
-              self.covgs[panel_type][name]["total_bases"] = percent_coverage * l
+              self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
+              self.covgs[panel_type][name]["total_bases"] = l
               self.covgs[panel_type][name]["median"] = [median_depth]
 
       else:
