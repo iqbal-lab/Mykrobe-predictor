@@ -74,8 +74,8 @@ class TypedVariant(Document):
                     )   
 
     @classmethod
-    def create(cls, name, call_set, reference_percent_coverage, alternate_percent_coverage, reference_median_depth, alternate_median_depth, gt):
-        return cls.create_object(name, call_set, reference_percent_coverage, alternate_percent_coverage, reference_median_depth, alternate_median_depth, gt).save()
+    def create(cls, **kwargs):
+        return cls.create_object(**kwargs).save()
 
     def set_genotype(self, gt):
         self.gt = gt

@@ -138,12 +138,12 @@ class TestMultiNode(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C6") 
-        TypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create(name = "A1T", call_set =  new_call_set.id, reference_median_depth =  0, reference_percent_coverage = 100, alternate_median_depth = 0, alternate_percent_coverage =  30, gt = "1/1")
         assert Placer(root = self.root).place("C6") == "C1"
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C7") 
-        TypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create(name = "A4T", call_set =  new_call_set.id, reference_median_depth =  0, reference_percent_coverage = 100, alternate_median_depth = 0, alternate_percent_coverage =  30, gt = "1/1")
         assert Placer(root = self.root).place("C7") == ["C4", "C5"]
 
 
@@ -241,7 +241,7 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C8") 
-        TypedVariant.create("A1T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create(name = "A1T", call_set =  new_call_set.id, reference_median_depth =  0, reference_percent_coverage = 100, alternate_median_depth = 0, alternate_percent_coverage =  30, gt = "1/1")
         ### Note - I think the commented line hear should be correct behaviour
         Placer(root = self.root).place("C8") == ["C1"]
         # print Placer(root = self.root).place("C8", verbose=True)
@@ -249,7 +249,7 @@ class TestMultiNodeHomoplasy(TestNodes):
 
     def test_abigious_placement(self):
         new_call_set = CallSet.create(sample_id = "123",name = "C9") 
-        TypedVariant.create("A4T", new_call_set.id, 0, 100, 0, 30, "1/1")
+        TypedVariant.create(name = "A4T", call_set =  new_call_set.id, reference_median_depth =  0, reference_percent_coverage = 100, alternate_median_depth = 0, alternate_percent_coverage =  30, gt = "1/1")
         assert Placer(root = self.root).place("C9") == "C4"
 
 
