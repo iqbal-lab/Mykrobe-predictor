@@ -202,7 +202,7 @@ class Genotyper(object):
   def _type_genes(self):
       gt = GeneCollectionTyper(depths = self.depths, contamination_depths = self.contamination_depths)
       gene_presence_covgs_out = {}
-      for gene_name, gene_collection in self.gene_presence_covgs.iteritems():
+      for gene_name, gene_collection in self.gene_presence_covgs.items():
           self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
           if self.verbose or self.gene_presence_covgs[gene_name].gt not in ["0/0", "-/-"]:
               gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
@@ -213,7 +213,7 @@ class Genotyper(object):
       typed_variants = gt.type(self.variant_covgs)
       self.out_json[self.args.sample]["typed_variants"] = {}
       out_json = self.out_json[self.args.sample]["typed_variants"] 
-      for name, tvs in typed_variants.iteritems():
+      for name, tvs in typed_variants.items():
           for tv in tvs:
               if self.verbose or tv.gt not in ["0/0", "-/-"]:
                   try:

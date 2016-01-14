@@ -23,7 +23,7 @@ class VariantTyper(Typer):
 		return variants
 
 	def _type_with_minor_model(self, variants):
-		for variant_name, variants in variants.iteritems():
+		for variant_name, variants in variants.items():
 			for variant in variants:
 				self._type_individual(variant)
 		return variants

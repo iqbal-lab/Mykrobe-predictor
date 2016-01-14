@@ -41,10 +41,10 @@ class BasePredictor(object):
         return unique(flatten(self.variant_or_gene_name_to_resistance_drug.values()))
 
     def predict_antibiogram(self):
-        for name, variants in self.typed_variants.iteritems():
+        for name, variants in self.typed_variants.items():
             for variant in variants: 
                 self._update_resistance_prediction(variant)
-        for name, gene in self.called_genes.iteritems():
+        for name, gene in self.called_genes.items():
             self._update_resistance_prediction(gene)
 
     def _update_resistance_prediction(self, variant_or_gene):

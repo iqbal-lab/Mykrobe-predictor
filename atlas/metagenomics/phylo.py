@@ -48,7 +48,7 @@ class SpeciesPredictor(object):
 
     def _aggregate(self, covgs):
         del_nodes = []
-        for node, covg_collection  in covgs.iteritems():
+        for node, covg_collection  in covgs.items():
             bases_covered = covg_collection["bases_covered"]
             total_bases = covg_collection["total_bases"]
             _median = covg_collection.get("median", [0])
@@ -94,7 +94,7 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             ignore.append("Escherichia_coli")
         elif self.is_klebsiella_pneumoniae_present():
             ignore.append("Klebsiella_pneumoniae")
-        for node, covg_collection in self.species_covgs.iteritems():
+        for node, covg_collection in self.species_covgs.items():
             if node not in ignore:
                 contamination_depths.append(covg_collection["median_depth"])
         return contamination_depths
