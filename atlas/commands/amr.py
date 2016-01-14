@@ -7,6 +7,7 @@ from atlas.pheno import StaphPredictor
 from atlas.pheno import GramNegPredictor
 from atlas.metagenomics import AMRSpeciesPredictor
 from pprint import pprint
+import json
 
 STAPH_PANELS = ["Coagneg",
                 "Staphaureus",
@@ -84,7 +85,8 @@ def run(parser, args):
                                        verbose = False,
                                        panel_name = panel_name)
     cp.run()
-    
+    # pprint (cp.covgs["species"])
+
     # Detect species
     species_predictor = AMRSpeciesPredictor(phylo_group_covgs = cp.covgs.get("phylo_group", {}),
                     species_covgs = cp.covgs["species"],
@@ -92,9 +94,10 @@ def run(parser, args):
                     base_json = cp.out_json[args.sample])
     species_predictor.run()
 
-
-
     # ## AMR prediction
+
+    depths = []
+    Predictor = None
     if species_predictor.is_saureus_present():
         depths = [species_predictor.out_json["phylogenetics"]["phylo_group"]["Staphaureus"]["median_depth"]]
         Predictor = StaphPredictor
@@ -107,19 +110,25 @@ def run(parser, args):
             depths = [species_predictor.out_json["phylogenetics"]["species"]["Klebsiella_pneumoniae"]["median_depth"]]
         except KeyError:
             depths = [species_predictor.out_json["phylogenetics"]["species"]["Escherichia_coli"]["median_depth"]]
-
+    # pprint (species_predictor.out_json["phylogenetics"]["species"])
     ## Genotype
     q = args.quiet
-    args.quiet = True    
-    gt = Genotyper(args, depths = depths,
-                variant_covgs = cp.covgs["variant"],
-                gene_presence_covgs = cp.covgs["presence"],
-                verbose = False, 
-                base_json = cp.out_json,
-                contamination_depths = species_predictor.contamination_depths())
-    gt.run()
+    args.quiet = True
+    if depths:    
+        gt = Genotyper(args, depths = depths,
+                    variant_covgs = cp.covgs["variant"],
+                    gene_presence_covgs = cp.covgs["presence"],
+                    verbose = False, 
+                    base_json = cp.out_json,
+                    contamination_depths = species_predictor.contamination_depths())
+        gt.run()
     args.quiet = q
-    predictor = Predictor(typed_variants = gt.variant_covgs,
-                   called_genes = gt.gene_presence_covgs,
-                   base_json = gt.out_json[args.sample])
-    predictor.run()    
+    if Predictor is not None:
+        predictor = Predictor(typed_variants = gt.variant_covgs,
+                       called_genes = gt.gene_presence_covgs,
+                       base_json = gt.out_json[args.sample])
+        predictor.run()
+
+    print(json.dumps(cp.out_json, indent = 4))
+
+

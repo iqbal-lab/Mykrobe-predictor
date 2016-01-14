@@ -73,8 +73,9 @@ class BasePredictor(object):
             name = variant_or_gene.name
         return name  
 
-    def _get_drugs(self, name):
-        name = name.lower()
+    def _get_drugs(self, name, lower = False):
+        if lower:
+            name = name.lower()
         try:
             drugs = self.variant_or_gene_name_to_resistance_drug[name]
         except KeyError:
@@ -87,7 +88,10 @@ class BasePredictor(object):
                     drugs = self.variant_or_gene_name_to_resistance_drug["".join(talt_name)]
                 except KeyError:
                     drugs = []
-                    print ("Warning:NoEntry for %s" % name)
+                    if not lower:
+                        return self._get_drugs(name, lower = True)
+                    else:
+                        print ("Warning:NoEntry for %s" % name)
 
         return drugs        
 
@@ -118,7 +122,6 @@ class BasePredictor(object):
     def run(self):
         self.predict_antibiogram()
         self.out_json["susceptibility"] = self.resistance_predictions
-        print(json.dumps(self.out_json, indent = 4))
 
 def load_json(f):
     with open(f, 'r') as infile:
