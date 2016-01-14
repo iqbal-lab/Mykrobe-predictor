@@ -12,39 +12,58 @@ class PresenceTyper(Typer):
 
     def __init__(self, depths, contamination_depths = []):
         super(PresenceTyper, self).__init__(depths, contamination_depths)
+        if len(depths) > 1:
+            raise NotImplementedError("Mixed samples not supported")
 
     def genotype(self, sequence_coverage):
         "Takes a single SequenceCoverage object (or child) and returns genotype"
-        if not self.has_contamination():
-            self._type_with_minor_model(sequence_coverage)
-        else:
-            self._type_without_minor_model(sequence_coverage)
+        self._type(sequence_coverage)
         return sequence_coverage
 
-    def _type_with_minor_model(self, sequence_coverage):
+    def _type(self, sequence_coverage):
+        hom_alt_likelihoods = []
+        het_likelihoods = []
+        hom_ref_likelihoods = []
         for expected_depth in self.depths:
-            hom_alt_likelihood = log_lik_depth(sequence_coverage.median_depth,
-                                               expected_depth * 0.75)
-            het_likelihood = log_lik_depth(sequence_coverage.median_depth,
-                                               expected_depth * self.minimum_detectable_frequency )
-            hom_ref_likelihood = log_lik_depth(sequence_coverage.median_depth, expected_depth * 0.001)
-            ## Posterior
-            hom_ref_likelihood = self._log_post_hom_ref(hom_ref_likelihood)
-            hom_alt_likelihood = self._log_post_het_or_alt(hom_alt_likelihood,
-            											   expected_depth * 0.75,
-            											   sequence_coverage)
-            het_likelihood = self._log_post_het_or_alt(het_likelihood,
-            										  expected_depth * self.minimum_detectable_frequency,
-            										  sequence_coverage)
+            hom_alt_likelihoods.append(self._hom_alt_likeihood(median_depth = sequence_coverage.median_depth, 
+                                                               expected_depth = expected_depth))
+            if not self.has_contamination():
+                het_likelihoods.append(self._het_likelihood(median_depth = sequence_coverage.median_depth, 
+                                                                expected_depth = expected_depth))
+            else:
+                het_likelihoods.append(MIN_LLK)
 
+            hom_ref_likelihoods.append(self._hom_ref_likelihood(median_depth = sequence_coverage.median_depth, 
+                                                              expected_depth = expected_depth))
+
+            for contamination_depth in self.contamination_depths:
+                hom_alt_likelihoods.append(self._hom_alt_likeihood(median_depth = sequence_coverage.median_depth,
+                                                                   expected_depth = expected_depth + contamination_depth))
+                ## NOTE : _HOM_ALT_LIKEIHOOD is not a typo
+                hom_ref_likelihoods.append(self._hom_alt_likeihood(median_depth = sequence_coverage.median_depth,
+                                                                   expected_depth = contamination_depth))
+            ## Posterior
+        hom_ref_likelihood = self._log_post_hom_ref(max(hom_ref_likelihoods))
+        hom_alt_likelihood = self._log_post_het_or_alt(max(hom_alt_likelihoods),
+        											   expected_depth * 0.75,
+        											   sequence_coverage)
+        het_likelihood = self._log_post_het_or_alt(max(het_likelihoods),
+        										  expected_depth * self.minimum_detectable_frequency,
+        										  sequence_coverage)
         gt = self.likelihoods_to_genotype([hom_ref_likelihood,
                                            het_likelihood,
                                            hom_alt_likelihood])
         sequence_coverage.set_genotype(gt)
         sequence_coverage.set_copy_number(float(sequence_coverage.median_depth) / expected_depth)
 
-    def _type_without_minor_model(self, sequence_coverage):
-    	raise NotImplementedError("Not implemented yet")
+    def _hom_alt_likeihood(self, median_depth, expected_depth):
+        return log_lik_depth(median_depth, expected_depth * 0.75)  
+
+    def _het_likelihood(self, median_depth, expected_depth):
+        return log_lik_depth(median_depth,  expected_depth * self.minimum_detectable_frequency )
+
+    def _hom_ref_likelihood(self, median_depth, expected_depth):
+        return log_lik_depth(median_depth, expected_depth * 0.001)
 
     @property
     def minimum_detectable_frequency(self):

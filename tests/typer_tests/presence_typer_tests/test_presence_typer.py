@@ -64,3 +64,62 @@ class PresenceTyperTest(TestCase):
 		s = self.pt_10.genotype(s)
 		assert s.gt == "1/1"								
 
+
+class PresenceTyperTestWithContaim(TestCase):
+
+	def setUp(self):
+		self.pt_no_contaim = PresenceTyper(depths = [100])
+		self.pt_contaim = PresenceTyper(depths = [100], contamination_depths = [10])
+
+	def teardown(self):
+		pass
+
+	def test_genotyping_gene_01(self):
+		s = SequenceCoverage.create_object(name="A123T",
+										percent_coverage = 100,
+										median_depth = 10,
+										percent_coverage_threshold = 80,
+										)
+		s = self.pt_no_contaim.genotype(s)
+		assert s.gt == "0/1"	
+
+		s = self.pt_contaim.genotype(s)
+		assert s.gt == "0/0"	
+
+	def test_genotyping_gene_11(self):
+		pt_no_contaim =  PresenceTyper(depths = [20])
+		pt_contaim =  PresenceTyper(depths = [20], contamination_depths = [10])
+		s = SequenceCoverage.create_object(name="A123T",
+										percent_coverage = 100,
+										median_depth = 10,
+										percent_coverage_threshold = 80,
+										)
+		s = pt_no_contaim.genotype(s)
+		assert s.gt == "1/1"	
+
+		s = pt_contaim.genotype(s)
+		assert s.gt == "0/0"
+
+
+		s = SequenceCoverage.create_object(name="A123T",
+										percent_coverage = 100,
+										median_depth = 30,
+										percent_coverage_threshold = 80,
+										)
+		s = pt_no_contaim.genotype(s)
+		assert s.gt == "1/1"	
+
+		s = pt_contaim.genotype(s)
+		assert s.gt == "1/1"	
+
+		s = SequenceCoverage.create_object(name="A123T",
+										percent_coverage = 100,
+										median_depth = 20,
+										percent_coverage_threshold = 80,
+										)
+		s = pt_no_contaim.genotype(s)
+		assert s.gt == "1/1"	
+
+		s = pt_contaim.genotype(s)
+		assert s.gt == "1/1"												
+
