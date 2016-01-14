@@ -107,7 +107,7 @@ class CoverageParser(object):
       try:
         alt_or_ref, _id = allele_name.split('-')
         return bool(alt_or_ref)      
-      except ValueError, e:
+      except ValueError:
         return False
 
 

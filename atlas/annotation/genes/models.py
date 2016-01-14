@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Data import CodonTable 
@@ -55,8 +57,6 @@ class Gene(Region):
         return self.seq.translate(table = self.translation_table).rstrip("*")
 
     def get_context(self, pos, N):
-        print pos, N * (pos - 1) , pos * N
-        print self.seq[(3 * (pos - 1)) - N : pos * 3 + N]
         return self.seq[(3 * (pos - 1)) -N : pos * 3 + N]
 
     def get_codon(self, pos):
@@ -177,9 +177,6 @@ class GeneAminoAcidChangeToDNAVariants():
         if not gene.prot or start > len(gene.prot):
             raise ValueError("Error translating %s_%s " % (gene, "".join([ref, str(start), alt])))
         if not gene.prot[start - 1] == ref:
-            print gene.seq
-            print gene.get_context(start, N = 5)            
-            print gene.get_reference_codon(start)            
             raise ValueError("Error processing %s_%s. The reference at pos %i is not %s, it's %s. " % (gene, "".join([ref, str(start), alt]), start, ref, gene.prot[start - 1]))
         ref_codons = gene.get_reference_codons(start)
         alt_codons = self.get_reference_alts(gene, alt)

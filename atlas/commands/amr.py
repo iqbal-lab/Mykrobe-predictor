@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 ## Read the kmer counts into a hash
 from atlas.utils import check_args
 from atlas.typing import CoverageParser
