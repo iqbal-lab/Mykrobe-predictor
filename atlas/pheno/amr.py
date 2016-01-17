@@ -91,7 +91,8 @@ class BasePredictor(object):
                     if not lower:
                         return self._get_drugs(name, lower = True)
                     else:
-                        print ("Warning:NoEntry for %s" % name)
+                        pass
+                        # print ("Warning:NoEntry for %s" % name)
 
         return drugs        
 
