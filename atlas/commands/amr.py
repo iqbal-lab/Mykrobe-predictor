@@ -87,8 +87,7 @@ def run(parser, args):
                                        verbose = False,
                                        panel_name = panel_name)
     cp.run()
-    # pprint (cp.covgs["species"])
-
+    print (cp.covgs["species"])
     # Detect species
     species_predictor = AMRSpeciesPredictor(phylo_group_covgs = cp.covgs.get("phylo_group", {}),
                     species_covgs = cp.covgs["species"],
@@ -112,7 +111,7 @@ def run(parser, args):
             depths = [species_predictor.out_json["phylogenetics"]["species"]["Klebsiella_pneumoniae"]["median_depth"]]
         except KeyError:
             depths = [species_predictor.out_json["phylogenetics"]["species"]["Escherichia_coli"]["median_depth"]]
-    # pprint (species_predictor.out_json["phylogenetics"]["species"])
+    pprint (species_predictor.out_json["phylogenetics"]["species"])
     ## Genotype
     q = args.quiet
     args.quiet = True

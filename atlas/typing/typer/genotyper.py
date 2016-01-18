@@ -123,7 +123,7 @@ class CoverageParser(object):
           try:
               self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
               self.covgs[panel_type][name]["total_bases"] += l
-              if percent_coverage > 50:
+              if percent_coverage > 50 and median_depth > 0:
                   self.covgs[panel_type][name]["median"].append(median_depth)
           except KeyError:
               if not panel_type  in self.covgs:
@@ -131,9 +131,8 @@ class CoverageParser(object):
               self.covgs[panel_type][name] = {}
               self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
               self.covgs[panel_type][name]["total_bases"] = l
-              if percent_coverage > 50:
+              if percent_coverage > 50 and median_depth > 0:
                   self.covgs[panel_type][name]["median"] = [median_depth]
-
       else:
           gp = SequenceCoverage.create_object(name = name,
                        version = params.get('version', 'N/A'),
