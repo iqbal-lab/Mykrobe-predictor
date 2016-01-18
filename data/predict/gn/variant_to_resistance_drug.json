@@ -1075,6 +1075,11 @@
     ], 
     "ampc": [], 
     "ampcpromoter": [
+        "penicillin", 
+        "cephalexin", 
+        "cefuroxime", 
+        "amoxicillin", 
+        "ampicillin"
     ], 
     "ant2-ia": [
         "gentamicin", 

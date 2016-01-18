@@ -106,7 +106,10 @@ class GeneCollectionTyper(Typer):
             if gene.percent_coverage < current_best_gene.percent_coverage:
                 return current_best_gene
             else:
-                if gene.median_depth > current_best_gene.median_depth:
+                if gene.min_depth > current_best_gene.min_depth:
                     current_best_gene = gene
+                elif gene.min_depth == current_best_gene.min_depth:
+                    if gene.median_depth > current_best_gene.median_depth:
+                        current_best_gene = gene
         return current_best_gene
 

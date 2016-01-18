@@ -12,7 +12,8 @@ class SequenceCoverage(Document):
   name = StringField()
   version = IntField()
   percent_coverage = FloatField()
-  median_depth = StringField()
+  median_depth = IntField()
+  min_depth = IntField()
   alt_names = ListField(StringField())
   percent_coverage_threshold = IntField(default = 30)
   gt = StringField()
@@ -23,15 +24,18 @@ class SequenceCoverage(Document):
 
   @classmethod
   def create_object(cls, name, percent_coverage,
-                   median_depth, version = 1, alt_names = [],
+                   median_depth, min_depth = None, version = 1, alt_names = [],
                    percent_coverage_threshold = 30,
                    length = None):
     if not alt_names:
         alt_names = ["-".join([name, str(version)])]
+    if min_depth is None:
+        min_depth = median_depth
     return cls(name = name,
       version = version,
       percent_coverage = percent_coverage,
       median_depth = median_depth,
+      min_depth = min_depth,
       alt_names = alt_names,
       percent_coverage_threshold = percent_coverage_threshold,
       length = length)      
@@ -51,7 +55,8 @@ class SequenceCoverage(Document):
               "alt_name" : ",".join(self.alt_names),
               "gt" : self.gt,
               "covg" : {"percent_coverage" : self.percent_coverage, 
-                        "median_depth" : self.median_depth
+                        "median_depth" : self.median_depth,
+                        "min_depth" : self.min_depth
                         },
               "induced_resistance" : self.induced_resistance
             }

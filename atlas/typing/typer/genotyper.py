@@ -90,13 +90,13 @@ class CoverageParser(object):
       return panels
 
   def _parse_summary_covgs_row(self, row):
-      return row[0], int(row[2]), 100*float(row[3])
+      return row[0], int(row[2]), int(row[3]), 100*float(row[4])
 
   def _parse_covgs(self):
       with open(self.mc_cortex_runner.covg_tmp_file_path, 'r') as infile:
           self.reader = csv.reader(infile, delimiter = "\t")
           for row in self.reader:
-              allele, median_depth, percent_coverage = self._parse_summary_covgs_row(row)
+              allele, median_depth, min_depth, percent_coverage = self._parse_summary_covgs_row(row)
               allele_name = allele.split('?')[0]
               if self._is_variant_panel(allele_name):
                   self._parse_variant_panel(row)
@@ -112,7 +112,7 @@ class CoverageParser(object):
 
 
   def _parse_seq_panel(self, row):
-      allele, median_depth, percent_coverage = self._parse_summary_covgs_row(row)
+      allele, median_depth, min_depth, percent_coverage = self._parse_summary_covgs_row(row)
       allele_name = allele.split('?')[0]    
       params = get_params(allele)
       panel_type = params.get("panel_type", "presence")
@@ -139,6 +139,7 @@ class CoverageParser(object):
                        version = params.get('version', 'N/A'),
                        percent_coverage = percent_coverage,
                        median_depth = median_depth,
+                       min_depth = min_depth,
                        length = params.get("length")
                        )
           try:
@@ -148,13 +149,13 @@ class CoverageParser(object):
               self.covgs[panel_type][gp.name][gp.version] = gp
 
   def _parse_variant_panel(self, row):
-      allele, reference_median_depth, reference_percent_coverage = self._parse_summary_covgs_row(row)
+      allele, reference_median_depth, min_depth, reference_percent_coverage = self._parse_summary_covgs_row(row)
       allele_name = allele.split('?')[0].split('-')[1]
       params = get_params(allele)   
       num_alts = int(params.get("num_alts"))
       for i in range(num_alts):
           row = self.reader.next()
-          allele, alternate_median_depth, alternate_percent_coverage = self._parse_summary_covgs_row(row)
+          allele, alternate_median_depth, min_depth, alternate_percent_coverage = self._parse_summary_covgs_row(row)
           try:
               alt_name = "_".join([params["gene"], params["mut"]])
           except KeyError:
