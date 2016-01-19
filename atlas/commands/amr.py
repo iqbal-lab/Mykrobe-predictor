@@ -87,7 +87,7 @@ def run(parser, args):
                                        verbose = False,
                                        panel_name = panel_name)
     cp.run()
-    print (cp.covgs["species"])
+    # print (cp.covgs["species"])
     # Detect species
     species_predictor = AMRSpeciesPredictor(phylo_group_covgs = cp.covgs.get("phylo_group", {}),
                     species_covgs = cp.covgs["species"],

@@ -6,7 +6,6 @@ import argparse
 import sys
 import atlas.version
 import logging
-logging.basicConfig(level=logging.ERROR)
 
 def run_subtool(parser, args):
     if args.command == 'add':

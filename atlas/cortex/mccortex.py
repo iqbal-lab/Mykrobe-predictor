@@ -102,65 +102,7 @@ class McCortexRunner(object):
   def ctx_skeleton_filepath(self):
       return os.path.abspath("data/skeletons/%s_%i.ctx" % (self.panel_name, self.kmer))
 
-class McCortexQuery(object):
 
-  def __init__(self, port, seeds = []):
-      self.base_url = "http://localhost:%i/" % port
-      self.seeds = seeds
-
-  def query(self, kmer):
-      return McCortexQueryResult(kmer, requests.get(self.base_url + kmer).json(), seeds = self.seeds)
-
-class McCortexQueryResult(object):
-
-
-  def __init__(self, query_kmer, data, seeds = []):
-      self.query_kmer = query_kmer
-      self.data = data
-      self.seeds = seeds
-
-  def __str__(self):
-      return str(self.data)
-
-  def __repr__(self):
-      return str(self.data)
-
-  def forward(self):
-      forward_kmers = []
-      if self.complement:
-          for l in self.left:
-            forward_kmers.append(str(Seq(l + self.data["key"][:-1]).reverse_complement()))
-      else:
-          for r in self.right:
-            forward_kmers.append(str(self.data["key"][1:] + r))
-      if len(forward_kmers) > 1:
-          forward_kmers = [f for f in forward_kmers if f in self.seeds]
-      return forward_kmers
-
-  @property
-  def right(self):
-      return self.data["right"]
-
-  @property
-  def left(self):
-      return self.data["left"]     
-
-  @property
-  def kmer(self):
-      return self.data["key"]
-
-  @property
-  def depth(self):
-      try:
-          return int(self.data["edges"])
-      except ValueError:
-          try:
-              return int(self.data["edges"][-1])
-          except ValueError:
-              return 0
-  @property
-  def complement(self):
-      return self.kmer != self.query_kmer
 
         
 

@@ -1,9 +1,10 @@
 from __future__ import print_function
 import os
 import json
-from pprint import pprint
 import csv
 import glob
+import logging 
+LOGGER = logging.getLogger("logger")
 from mongoengine import connect
 from mongoengine import DoesNotExist
 import subprocess
@@ -90,7 +91,11 @@ class CoverageParser(object):
       return panels
 
   def _parse_summary_covgs_row(self, row):
-      return row[0], int(row[2]), int(row[3]), 100*float(row[4])
+      try:
+          return row[0], int(row[2]), int(row[3]), 100*float(row[4])
+      except ValueError:
+          LOGGER.warning("Failed to parse %s" % str(row))
+          return row[0],0,0,0.0
 
   def _parse_covgs(self):
       with open(self.mc_cortex_runner.covg_tmp_file_path, 'r') as infile:
