@@ -21,19 +21,9 @@ from atlas.vcf2db import CallSet
 
 from atlas.cortex import McCortexRunner
 
+from atlas.utils import get_params
 
-def get_params(url):
-    params = {}
-    try:
-        p_str = url.split("?")[1]
-    except IndexError:
-        return params
-    p_str = p_str.split(" ")[0]
-    p_str = p_str.split('&')
-    for p in p_str:
-        k,v = p.split("=")
-        params[k] = v
-    return params
+
 
 def max_pnz_threshold(vp):
     t =  max(100 - 2 * math.floor(float(max([len(alt) for alt in vp.alts])) / 100), 30)

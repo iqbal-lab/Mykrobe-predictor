@@ -98,7 +98,6 @@ def run(parser, args):
                     genotype_likelihood = get_genotype_likelihood(sample)
                     c = Call.create_object(variant = v, call_set = callset, genotype = sample['GT'], genotype_likelihood = genotype_likelihood)
                     calls.append(c)
-
     try:
         variant_ids =  [v.id for v in Variant.objects.insert(variants)]
     except (NotUniqueError) as e:

@@ -17,7 +17,6 @@ from subprocess import Popen, PIPE
 from http.server import BaseHTTPRequestHandler
 import socketserver
 import logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 from pprint import pprint
 import copy
@@ -48,6 +47,8 @@ def query_mccortex(proc,kmer):
     proc.stdin.flush()
     check_mccortex_alive(proc)
     line = proc.stdout.readline()
+    # Trim off prompt text
+    if line[0:2] == "> ": line = line[2:len(line)]    
     check_mccortex_alive(proc)
     return line
 
@@ -107,11 +108,11 @@ class WebServer(object):
         script_dir = os.path.dirname(os.path.realpath(__file__))
         # Adding two lists together appends one to the other
         try:
-            proc = Popen(["mccortex31", "server", "--single-line", "-q"] + self.args,
+            proc = Popen(["mccortex31", "server", "--single-line", "--coverages"] + self.args,
                           stdin=PIPE, stdout=PIPE, universal_newlines=True,
                           preexec_fn = preexec_function)
         except Exception as e:
-            logger.error("Couldn't start McCortex: %s " % str(e))
+            logger.error("Couldn't start McCortex is mccortex31 in path? : %s " % str(e))
             sys.exit(1)
 
         # Give test query to check it works
@@ -133,7 +134,12 @@ class McCortexQuery(object):
           self.base_url = "http://localhost:%i/" % port
 
     def query(self, kmer, known_kmers = []):
-        return McCortexQueryResult(kmer, requests.get(self.base_url + kmer).json(), known_kmers = known_kmers)
+        logger.debug(self.base_url + kmer)
+        _request = requests.get(self.base_url + kmer)
+        logger.debug (_request)
+        _json = _request.json()
+        logger.debug (_json)
+        return McCortexQueryResult(kmer, _json , known_kmers = known_kmers)
 
 class McCortexQueryResult(object):
 
@@ -157,8 +163,10 @@ class McCortexQueryResult(object):
           for r in self.right:
             forward_kmers.append(str(self.data["key"][1:] + r))
       if len(forward_kmers) > 1 and self.known_kmers:
-          forward_kmers = [f for f in forward_kmers if f in self.known_kmers]
-      assert len(forward_kmers) > 0
+          _forward_kmers = [f for f in forward_kmers if f in self.known_kmers]
+          if len(_forward_kmers) > 0 :
+            forward_kmers = _forward_kmers
+          assert len(forward_kmers) > 0
       return forward_kmers
 
     @property
@@ -176,12 +184,11 @@ class McCortexQueryResult(object):
     @property
     def depth(self):
       try:
-          return int(self.data["edges"])
+          return int(self.data["colours"][0])
       except ValueError:
-          try:
-              return int(self.data["edges"][-1])
-          except ValueError:
-              return 0
+          logger.error("parsing edges %s:%s " % (self.data["key"],self.data["edges"]) )
+          return None
+
     @property
     def complement(self):
       return self.kmer != self.query_kmer
@@ -194,8 +201,8 @@ class GraphWalker(object):
         self.kmer_size = kmer_size
 
     def breath_first_search(self, N, seed, end_kmers = [], known_kmers = []):
-        paths = {0 : { "dna" : seed[:self.kmer_size]}}
-        for _ in range(1000):
+        paths = {0 : { "dna" : seed[:self.kmer_size], "covg" : ""}}
+        for _ in range(N):
             for i in paths.keys():
                 if not paths[i]["dna"][-1] == "*":
                     k = paths[i]["dna"][-self.kmer_size:]
@@ -207,16 +214,19 @@ class GraphWalker(object):
                     except KeyError: 
                         try:
                             q =  self.mcq.query(k, known_kmers = known_kmers)
-                            data = q.data
                             self.queries[k] = q
-                        except ValueError:
-                            data = {}
+                        except ValueError, e:
+                            q = None
+                            logging.error(str(e))
                             self.queries[k] = None
                             paths[i]["dna"] = paths[i]["dna"] + "*"
-                    if data.get("key") and q is not None and q.data.get("key"):
+                    if q is not None and q.data.get("key"):
                         kmers = q.forward()
-                        if len(kmers) > 1:
-                            kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > (q.depth * 0.1)]
+                        if q.depth is not None:
+                            paths[i]["covg"] += "%i-" % q.depth
+                            if len(kmers) > 1:
+                                depth = q.depth * 0.1
+                                kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > depth]
                         if len(kmers) < 1:
                             paths[i]["dna"] = paths[i]["dna"] + "*"
                         ## Create new paths
@@ -224,16 +234,16 @@ class GraphWalker(object):
                         for j, kmer in enumerate(kmers):
                             if j == 0:
                                 paths[i]["dna"] = paths[i]["dna"] + kmer[-1]
-                                if len(paths[i]["dna"]) % 3:
-                                     paths[i]["prot"] = str(Seq(paths[i]["dna"]).translate(11))
                             else:
                                 paths[sorted(paths.keys())[-j]]["dna"] = paths[sorted(paths.keys())[-j]]["dna"] + kmer[-1]
-            paths[i]["len_dna"] = len(paths[i]["dna"])
-            paths[i]["prot"] = str(Seq(paths[i]["dna"].replace("*","")).translate(11))            
-            paths[i]["len_prot"] = len(paths[i]["prot"])
+
+
         keep_paths = {}
         for k,v in paths.items():
-            if v["len_dna"] == N + 1:
+            v["len_dna"] = len(v["dna"])
+            v["prot"] = str(Seq(v["dna"].rstrip("*")).translate(11))
+            v["len_prot"] = len(v["prot"]) 
+            if v["len_dna"] == N + 1 and v["dna"][-1] == "*":
                  keep_paths[k] = v
         return keep_paths.values()
 

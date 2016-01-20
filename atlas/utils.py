@@ -28,3 +28,16 @@ def unique(l):
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
+
+def get_params(url):
+    params = {}
+    try:
+        p_str = url.split("?")[1]
+    except IndexError:
+        return params
+    p_str = p_str.split(" ")[0]
+    p_str = p_str.split('&')
+    for p in p_str:
+        k,v = p.split("=")
+        params[k] = v
+    return params
