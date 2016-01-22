@@ -154,20 +154,22 @@ class McCortexQueryResult(object):
     def __repr__(self):
       return str(self.data)
 
-    def forward(self):
-      forward_kmers = []
-      if self.complement:
-          for l in self.left:
-            forward_kmers.append(str(Seq(l + self.data["key"][:-1]).reverse_complement()))
-      else:
-          for r in self.right:
-            forward_kmers.append(str(self.data["key"][1:] + r))
-      if len(forward_kmers) > 1 and self.known_kmers:
-          _forward_kmers = [f for f in forward_kmers if f in self.known_kmers]
-          if len(_forward_kmers) > 0 :
-            forward_kmers = _forward_kmers
-          assert len(forward_kmers) > 0
-      return forward_kmers
+    def forward(self, suggested_kmer = None):
+        forward_kmers = []
+        if self.complement:
+            for l in self.left:
+                forward_kmers.append(str(Seq(l + self.data["key"][:-1]).reverse_complement()))
+        else:
+            for r in self.right:
+                forward_kmers.append(str(self.data["key"][1:] + r))
+        if suggested_kmer is not None and suggested_kmer in forward_kmers:
+            return [suggested_kmer]    
+        if len(forward_kmers) > 1 and self.known_kmers:
+            _forward_kmers = [f for f in forward_kmers if f in self.known_kmers]
+            if len(_forward_kmers) > 0 :
+                forward_kmers = _forward_kmers
+            assert len(forward_kmers) > 0
+        return forward_kmers
 
     @property
     def right(self):
@@ -200,12 +202,22 @@ class GraphWalker(object):
         self.queries = {}
         self.kmer_size = kmer_size
 
-    def breath_first_search(self, N, seed, end_kmers = [], known_kmers = []):
-        paths = {0 : { "dna" : seed[:self.kmer_size], "covg" : ""}}
+    def _count_k(self, k, count):
+        try:
+            count[k] += 1
+        except KeyError:
+            count[k] = 1
+        return count
+
+
+    def breath_first_search(self, N, seed, end_kmers = [], known_kmers = [], repeat_kmers = {}):
+        count = {}
+        paths = {0 : { "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
         for _ in range(N):
             for i in paths.keys():
                 if not paths[i]["dna"][-1] == "*":
                     k = paths[i]["dna"][-self.kmer_size:]
+                    count = self._count_k(k, count)
                     if k in end_kmers:
                          paths[i]["dna"] = paths[i]["dna"] + "*"
                          k = paths[i]["dna"][-self.kmer_size:]
@@ -221,16 +233,18 @@ class GraphWalker(object):
                             self.queries[k] = None
                             paths[i]["dna"] = paths[i]["dna"] + "*"
                     if q is not None and q.data.get("key"):
-                        kmers = q.forward()
+                        kmers = q.forward(suggested_kmer = repeat_kmers.get(k, {}).get(count[k]) )                      
                         if q.depth is not None:
-                            paths[i]["covg"] += "%i-" % q.depth
+                            # paths[i]["covg"] += "%i-" % q.depth
                             if len(kmers) > 1:
-                                depth = q.depth * 0.1
+                                depth = max(q.depth * 0.1, 10)
                                 kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > depth]
+                        if len(kmers) > 1:
+                            kmers = [k for k in kmers if not k in paths[i]["dna"]]                                
                         if len(kmers) < 1:
                             paths[i]["dna"] = paths[i]["dna"] + "*"
                         ## Create new paths
-                        paths = self.create_new_paths(paths, i, len(kmers) - 1)
+                        paths = self.create_new_paths(paths, i, kmers, origin = q.data.get("key"))
                         for j, kmer in enumerate(kmers):
                             if j == 0:
                                 paths[i]["dna"] = paths[i]["dna"] + kmer[-1]
@@ -241,16 +255,25 @@ class GraphWalker(object):
         keep_paths = {}
         for k,v in paths.items():
             v["len_dna"] = len(v["dna"])
-            v["prot"] = str(Seq(v["dna"].rstrip("*")).translate(11))
-            v["len_prot"] = len(v["prot"]) 
-            if v["len_dna"] == N + 1 and v["dna"][-1] == "*":
-                 keep_paths[k] = v
+            # v["prot"] = str(Seq(v["dna"].rstrip("*")).translate(11))
+            # v["len_prot"] = len(v["prot"]) 
+            # if v["len_dna"] == N + 1 and v["dna"][-1] == "*":
+            keep_paths[k] = v
         return keep_paths.values()
 
-    def create_new_paths(self,paths, i, num):
+    def create_new_paths(self,paths, i, kmers, origin):
+        num = len(kmers) - 1
         num_paths = max(paths.keys())
+        if num > 0:
+            print ("Branch point")
+            print ("Origin %s" % origin)
+            print ("Options ", kmers)
         for j in range(num):
             paths[num_paths + j + 1] = copy.copy(paths[i])
+            paths[num_paths + j + 1]["start_kmer"] = kmers[1]
+            # if kmers[1] in [d["start_kmer"] for d in paths.values()]:
+                # print (kmers, paths)
+                # raise ValueError("Going around in circles?")            
         return paths
 
 

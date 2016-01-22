@@ -12,26 +12,33 @@ import json
 from pprint import pprint
 import logging
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 from Bio import SeqIO
 
 import argparse
 parser = argparse.ArgumentParser(description='Add length argument to panel')
-parser.add_argument('ctx', metavar='ctx', type=str, help='cortex graph binary')
 parser.add_argument('dna_fasta', metavar='dna_fasta', type=str, help='dna_fasta')
-parser.add_argument('prot_fasta', metavar='prot_fasta', type=str, help='prot_fasta')
+parser.add_argument('--prot_fasta', metavar='prot_fasta', type=str, help='prot_fasta')
+parser.add_argument('-f', '--ctx', metavar='ctx', type=str, help='cortex graph binary')
 parser.add_argument('-k','--kmer_size', metavar='kmer_size', type=int,
                    help='kmer_size', default = 31)
+parser.add_argument('-p','--port', metavar='port', type=int,
+                   help='port', default = None)
 args = parser.parse_args()
 
+
+
 def get_open_port():
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind(("",0))
-        s.listen(1)
-        port = s.getsockname()[1]
-        s.close()
-        return port
+	if args.port:
+		return args.port
+	else:
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		s.bind(("",0))
+		s.listen(1)
+		port = s.getsockname()[1]
+		s.close()
+		return port
 
 class PathDetails(object):
 
@@ -50,11 +57,35 @@ skip_list = {"tem"  : ["191", "192"],
 			 "shv" : ["12", "6"]
 			}
 
+def get_repeat_kmers(record, k):
+	## Process repeat kmers
+	kmers = {}
+	kmers_seq = []
+	# repeat_kmers = {}
+	for i in range(len(record.seq) - k + 1):
+		_kmers = [str(record.seq[i:i+k]), str(record.seq[i:i+k].reverse_complement())]
+		for kmer in _kmers:
+			kmers_seq.append(kmers_seq)
+			if kmers.has_key(kmer):
+			  c = max(kmers[kmer].keys()) + 1
+			  kmers[kmer][c] = str(record.seq[i + 1 :i + k + 1])
+			else:
+			  kmers[kmer] = {}
+			  kmers[kmer][1] = str(record.seq[i + 1 :i + k + 1])
+	# repeat_kmers = {}
+	# for kmer, count in kmers.items():
+	# 	if len(count.keys()) > 1:
+	# 		repeat_kmers[kmer] = count
+	return kmers
+
+
+
 with open(args.dna_fasta, 'r') as infile:
 	for i, record in enumerate(SeqIO.parse(infile, "fasta")):
+		repeat_kmers = get_repeat_kmers(record, args.kmer_size)
 		params = get_params(record.id)
-		gene_name = params.get("name")
-		version = params.get("version")
+		gene_name = params.get("name", i)
+		version = params.get("version", i)
 		start_kmer = str(record.seq)[:args.kmer_size]
 		last_kmer = str(record.seq)[-args.kmer_size:]
 		if not version in skip_list.get(gene_name, []):
@@ -69,19 +100,28 @@ with open(args.dna_fasta, 'r') as infile:
 			else:
 				j = genes[gene_name]["pathdetails"].index(pd)
 				genes[gene_name]["pathdetails"][j].version += "-%s" % version
-
-
+		genes[gene_name]["repeat_kmers"] = repeat_kmers
 		genes[gene_name]["known_kmers"] += "%sN" % str(record.seq)
 
-port =  (get_open_port())
-logger.debug("Running server on port %i " % port)
-wb = WebServer(port, args = [ "-q",  args.ctx ] )
-logger.debug("Loading binary")
-wb.start()
-## Serve on a thread
-logger.debug("Starting sever")
-server = threading.Thread(target=wb.serve)
-server.start()
+with open("gene.tmp.json", "w") as outf:
+	json.dump(repeat_kmers, outf, sort_keys = False, indent = 4)
+
+wb = None
+if args.port is None:
+	if args.cts is None:
+		raise ValueError("Require either port or binary")
+		port =  (get_open_port())
+		logger.debug("Running server on port %i " % port)
+		wb = WebServer(port, args = [ "-q",  args.ctx ] )
+		logger.debug("Loading binary")
+		wb.start()
+		## Serve on a thread
+		logger.debug("Starting sever")
+		server = threading.Thread(target=wb.serve)
+		server.start()
+else:
+	port = args.port
+
 
 logger.debug("Walking the graph")
 out_dict = {}
@@ -92,7 +132,9 @@ def get_paths_for_gene(gene_name, gene_dict, gw):
 	for pd in gene_dict["pathdetails"]:
 		p = gw.breath_first_search(N = pd.length, seed = pd.start_kmer,
 		                            end_kmers = [pd.last_kmer],
-		                            known_kmers = gene_dict["known_kmers"])
+		                            known_kmers = gene_dict["known_kmers"], 
+		                            repeat_kmers = gene_dict["repeat_kmers"])
+		# print (p)
 		if p:
 			paths[pd.version] = p
 	return paths
@@ -101,7 +143,8 @@ for gene_name, gene_dict in genes.items():
 	out_dict[gene_name] = paths
 print (json.dumps(out_dict, sort_keys = False, indent = 4))
 logger.info("Cleaning up")
-wb.stop()
+if wb is not None:
+	wb.stop()
 
 
 
