@@ -135,11 +135,11 @@ class McCortexQuery(object):
           self.base_url = "http://localhost:%i/" % port
 
     def query(self, kmer, known_kmers = []):
-        logger.debug(self.base_url + kmer)
+        # logger.debug(self.base_url + kmer)
         _request = requests.get(self.base_url + kmer)
-        logger.debug (_request)
+        # logger.debug (_request)
         _json = _request.json()
-        logger.debug (_json)
+        # logger.debug (_json)
         return McCortexQueryResult(kmer, _json , known_kmers = known_kmers)
 
 class McCortexQueryResult(object):
@@ -293,23 +293,24 @@ class GraphWalker(object):
                 paths[sorted(paths.keys())[-j]]["dna"] = paths[sorted(paths.keys())[-j]]["dna"] + kmer[-1]
         return paths
 
-    def _init_paths(self, seed):
-        return {0 : { "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
+    def _init_paths(self, seed, N_left):
+        return {0 : { "N_left" : N_left, "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
 
     def breath_first_search(self, N, seed, end_kmers = [],
                              known_kmers = [], repeat_kmers = {},
                              N_left = 0):
-        paths = self._init_paths(seed)
+        paths = self._init_paths(seed, N_left)
         count = {} 
         for _ in range(N_left):
             k = self._get_next_kmer_left(paths, 0)
             q = self._make_query(k) 
             if self._query_is_valid(q):
                 kmers = self._get_next_kmers_left(0, q, k, paths, repeat_kmers, known_kmers, count)
-                if len(kmers) > 1:
+                if not len(kmers) == 1:
                     break
-                ## Add left
-                paths[0]["dna"] = kmers[0][0] + paths[0]["dna"]
+                else:
+                    ## Add left
+                    paths[0]["dna"] = kmers[0][0] + paths[0]["dna"]
         # 
         # 
         for _ in range(N - N_left):

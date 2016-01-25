@@ -4,3 +4,4 @@ Biopython
 mongoengine
 nose
 pyvcf
+requests
