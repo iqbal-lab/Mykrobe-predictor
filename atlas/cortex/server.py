@@ -172,6 +172,23 @@ class McCortexQueryResult(object):
             assert len(forward_kmers) > 0
         return forward_kmers
 
+    def reverse(self, suggested_kmer = None):
+        reverse_kmers = []
+        if self.complement:
+            for l in self.right:
+                reverse_kmers.append(str(Seq(self.data["key"][1:] + l).reverse_complement()))
+        else:
+            for r in self.left:
+                reverse_kmers.append(r + str(self.data["key"][:-1]))
+        if suggested_kmer is not None and suggested_kmer in reverse_kmers:
+            return [suggested_kmer]    
+        if len(reverse_kmers) > 1 and self.known_kmers:
+            _reverse_kmers = [f for f in reverse_kmers if f in self.known_kmers]
+            if len(_reverse_kmers) > 0 :
+                reverse_kmers = _reverse_kmers
+            assert len(reverse_kmers) > 0
+        return reverse_kmers        
+
     @property
     def right(self):
       return self.data["right"]
@@ -213,8 +230,11 @@ class GraphWalker(object):
     def _path_ended(self, paths, i):
         return paths[i]["dna"][-1] == "*"
 
-    def _get_next_kmer(self, paths, i):
+    def _get_next_kmer_right(self, paths, i):
         return paths[i]["dna"][-self.kmer_size:]
+
+    def _get_next_kmer_left(self, paths, i):
+        return paths[i]["dna"][:self.kmer_size]        
 
     def _reached_end_of_path(self, k, end_kmers):
         return k in end_kmers
@@ -223,7 +243,7 @@ class GraphWalker(object):
         paths[i]["dna"] = paths[i]["dna"] + "*"
         return paths
 
-    def _make_query(self, k, known_kmers):
+    def _make_query(self, k, known_kmers = []):
         try:
             q = self.queries[k]
         except KeyError: 
@@ -239,7 +259,7 @@ class GraphWalker(object):
     def _query_is_valid(self, q):
         return q is not None and q.data.get("key")
 
-    def _get_next_kmers(self, q, k, paths, repeat_kmers, known_kmers, count):
+    def _get_next_kmers_right(self, i, q, k, paths, repeat_kmers, known_kmers, count):
         kmers = q.forward(suggested_kmer = repeat_kmers.get(k, {}).get(count[k]) )                      
         if q.depth is not None:
             # paths[i]["covg"] += "%i-" % q.depth
@@ -249,6 +269,16 @@ class GraphWalker(object):
         if len(kmers) > 1:
             kmers = [k for k in kmers if not k in paths[i]["dna"]]             
         return kmers
+
+    def _get_next_kmers_left(self, i, q, k, paths, repeat_kmers, known_kmers = [], count = {}):
+        kmers = q.reverse() 
+        if q.depth is not None:
+            if len(kmers) > 1:
+                depth = max(q.depth * 0.1, 10)
+                kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > depth]
+        if len(kmers) > 1:
+            kmers = [k for k in kmers if not k in paths[i]["dna"]]             
+        return kmers        
 
     def _check_if_next_kmers_are_valid(self, kmers, paths, i):
         if len(kmers) < 1:
@@ -266,30 +296,44 @@ class GraphWalker(object):
     def _init_paths(self, seed):
         return {0 : { "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
 
-    def breath_first_search(self, N, seed, end_kmers = [], known_kmers = [], repeat_kmers = {}):
-        count = {}
-        paths = self._init_paths(seed) 
-        for _ in range(N):
+    def breath_first_search(self, N, seed, end_kmers = [],
+                             known_kmers = [], repeat_kmers = {},
+                             N_left = 0):
+        paths = self._init_paths(seed)
+        count = {} 
+        for _ in range(N_left):
+            k = self._get_next_kmer_left(paths, 0)
+            q = self._make_query(k) 
+            if self._query_is_valid(q):
+                kmers = self._get_next_kmers_left(0, q, k, paths, repeat_kmers, known_kmers, count)
+                if len(kmers) > 1:
+                    break
+                ## Add left
+                paths[0]["dna"] = kmers[0][0] + paths[0]["dna"]
+        # 
+        # 
+        for _ in range(N - N_left):
             for i in paths.keys():
                 if not self._path_ended(paths, i):
-                    k = self._get_next_kmer(paths, i)
+                    k = self._get_next_kmer_right(paths, i)
                     count = self._count_k(k, count)
                     if self._reached_end_of_path(k, end_kmers):
                         paths = self._mark_path_and_ended(paths, i)
                     else:
                         q = self._make_query(k, known_kmers)                            
                         if self._query_is_valid(q):
-                            kmers = self._get_next_kmers(q, k, paths, repeat_kmers, known_kmers, count)
+                            kmers = self._get_next_kmers_right(i, q, k, paths, repeat_kmers, known_kmers, count)
                             paths = self._check_if_next_kmers_are_valid(kmers, paths, i)
                             ## Create new paths
                             paths = self.create_new_paths(paths, i, kmers, origin = q.data.get("key"))
                             paths = self._split_paths(i, kmers, paths)
                         else:
                             paths = self._mark_path_and_ended(paths, i)
+
             ## DEBUG prints progress every N bps
-            if i % 250 == 0:
-                with open("/tmp/paths.json", "w") as outfile:
-                    json.dump(paths, outfile)
+            # if i % 250 == 0:
+            #     with open("/tmp/paths.json", "w") as outfile:
+            #         json.dump(paths, outfile)
             ### 
 
 
@@ -297,25 +341,25 @@ class GraphWalker(object):
         keep_paths = {}
         for k,v in paths.items():
             v["len_dna"] = len(v["dna"])
-            # v["prot"] = str(Seq(v["dna"].rstrip("*")).translate(11))
-            # v["len_prot"] = len(v["prot"]) 
-            # if v["len_dna"] == N + 1 and v["dna"][-1] == "*":
-            keep_paths[k] = v
+            v["prot"] = str(Seq(v["dna"].rstrip("*")).translate(11))
+            v["len_prot"] = len(v["prot"]) 
+            if v["len_dna"] == N + 1 and v["dna"][-1] == "*":
+                keep_paths[k] = v
         return keep_paths.values()
 
     def create_new_paths(self,paths, i, kmers, origin):
         num = len(kmers) - 1
         num_paths = max(paths.keys())
         if num > 0:
-            print ("Branch point")
-            print ("Origin %s" % origin)
-            print ("Options ", kmers)
+            logger.debug("Branch point")
+            logger.debug("Origin %s" % origin)
+            logger.debug("Options %s" % ",".join(kmers))
         for j in range(num):
             paths[num_paths + j + 1] = copy.copy(paths[i])
             paths[num_paths + j + 1]["start_kmer"] = kmers[1]
-            # if kmers[1] in [d["start_kmer"] for d in paths.values()]:
-                # print (kmers, paths)
-                # raise ValueError("Going around in circles?")            
+            if kmers[1] in [d["start_kmer"] for d in paths.values()]:
+                print (kmers, paths)
+                raise ValueError("Going around in circles?")            
         return paths
 
 

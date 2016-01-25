@@ -42,14 +42,22 @@ def get_open_port():
 
 class PathDetails(object):
 
-	def __init__(self, start_kmer, last_kmer, length, v = ""):
+	def __init__(self, start_kmer, last_kmer, length, skipped = 0, v = ""):
 		self.start_kmer = start_kmer
 		self.last_kmer = last_kmer
 		self.length = length
+		self.skipped = skipped
 		self.version = v
+		self.repeat_kmers = {}
 
 	def __eq__(self, pd):
-		return self.start_kmer == pd.start_kmer and self.last_kmer == pd.last_kmer and self.length == self.length
+		return self.start_kmer == pd.start_kmer and self.last_kmer == pd.last_kmer and self.length == pd.length and self.skipped == pd.skipped
+
+	def set_repeat_kmers(self, repeat_kmers):
+		if not self.repeat_kmers:
+			self.repeat_kmers = repeat_kmers
+		else:
+			raise ValueError("Already set repeat kmers")
 
 genes = {}
 skip_list = {"tem"  : ["191", "192"],
@@ -78,38 +86,21 @@ def get_repeat_kmers(record, k):
 	# 		repeat_kmers[kmer] = count
 	return kmers
 
-
-
-with open(args.dna_fasta, 'r') as infile:
-	for i, record in enumerate(SeqIO.parse(infile, "fasta")):
-		repeat_kmers = get_repeat_kmers(record, args.kmer_size)
-		params = get_params(record.id)
-		gene_name = params.get("name", i)
-		version = params.get("version", i)
-		start_kmer = str(record.seq)[:args.kmer_size]
-		last_kmer = str(record.seq)[-args.kmer_size:]
-		if not version in skip_list.get(gene_name, []):
-			if not gene_name in genes:
-				genes[gene_name] = {}
-				genes[gene_name]["pathdetails"] = []
-				genes[gene_name]["known_kmers"] = ""
-			pd = PathDetails(start_kmer, last_kmer, len(record.seq), v = version)
-			# print (gene_name, version, len(record.seq))
-			if pd not in genes[gene_name]["pathdetails"]:
-				genes[gene_name]["pathdetails"].append(pd)
-			else:
-				j = genes[gene_name]["pathdetails"].index(pd)
-				genes[gene_name]["pathdetails"][j].version += "-%s" % version
-		genes[gene_name]["repeat_kmers"] = repeat_kmers
-		genes[gene_name]["known_kmers"] += "%sN" % str(record.seq)
-
-with open("gene.tmp.json", "w") as outf:
-	json.dump(repeat_kmers, outf, sort_keys = False, indent = 4)
+def find_start_kmer(seq, mcq, k = args.kmer_size):
+	skipped = 0
+	for i in range(len(record.seq) - k + 1):
+		kmer = seq[i:i+k]
+		q = mcq.query(kmer)
+		if q.data and q.depth > 1:
+			return kmer, skipped
+		skipped += 1
+	return None, -1
 
 wb = None
 if args.port is None:
-	if args.cts is None:
-		raise ValueError("Require either port or binary")
+	if args.ctx is None:
+		raise ValueError("Require either port or binary. e.g. atlas contigs panel.fasta -f sample.ctx")
+	else:
 		port =  (get_open_port())
 		logger.debug("Running server on port %i " % port)
 		wb = WebServer(port, args = [ "-q",  args.ctx ] )
@@ -127,16 +118,67 @@ logger.debug("Walking the graph")
 out_dict = {}
 gw = GraphWalker(port = port, kmer_size = args.kmer_size)
 
+
+with open(args.dna_fasta, 'r') as infile:
+	for i, record in enumerate(SeqIO.parse(infile, "fasta")):
+		repeat_kmers = get_repeat_kmers(record, args.kmer_size)
+		params = get_params(record.id)
+		gene_name = params.get("name", i)
+		version = params.get("version", i)
+		# print (params, gene_name, version)
+
+		# start_kmer = str(record.seq)[:args.kmer_size]
+		last_kmer = str(record.seq)[-args.kmer_size:]
+		start_kmer, skipped = find_start_kmer(str(record.seq), gw.mcq, args.kmer_size)
+		if not version in skip_list.get(gene_name, []) and start_kmer:
+			if not gene_name in genes:
+				genes[gene_name] = {}
+				genes[gene_name]["pathdetails"] = []
+				genes[gene_name]["known_kmers"] = ""
+			pd = PathDetails(start_kmer, last_kmer, len(record.seq),
+							 skipped = skipped, v = version)
+			pd.set_repeat_kmers(repeat_kmers)
+			# print (gene_name, version, len(record.seq))
+			# if pd not in genes[gene_name]["pathdetails"]:
+			genes[gene_name]["pathdetails"].append(pd)
+			# else:
+				# j = genes[gene_name]["pathdetails"].index(pd)
+				# _pd = genes[gene_name]["pathdetails"][j]
+				# _pd.version += "-%s" % version
+				# _pd.set_repeat_kmers(repeat_kmers)
+
+
+		if gene_name in genes:
+			genes[gene_name]["known_kmers"] += "%sN" % str(record.seq)
+
+
+# logger.debug(len(genes.get("blaZ",{}).get("pathdetails")))
+# with open("gene.tmp.json", "w") as outf:
+# 	json.dump(genes, outf, sort_keys = False, indent = 4)
+
+
+
 def get_paths_for_gene(gene_name, gene_dict, gw):
 	paths = {}
+	current_prots = []
 	for pd in gene_dict["pathdetails"]:
-		p = gw.breath_first_search(N = pd.length, seed = pd.start_kmer,
+		path_for_pd = gw.breath_first_search(N = pd.length, seed = pd.start_kmer,
 		                            end_kmers = [pd.last_kmer],
 		                            known_kmers = gene_dict["known_kmers"], 
-		                            repeat_kmers = gene_dict["repeat_kmers"])
-		print (p)
-		if p:
-			paths[pd.version] = p
+		                            repeat_kmers = pd.repeat_kmers, 
+		                            N_left = pd.skipped)
+		# print (p)
+		if path_for_pd:
+			keep_p = []
+			for p in path_for_pd:
+				if p["prot"] not in current_prots:
+					keep_p.append(p)
+					current_prots.append(p["prot"])
+			# print (current_prots)
+			# print (p)
+			# if _p["prot"] not in current_prots:
+			if keep_p:
+				paths[pd.version] = keep_p
 	return paths
 for gene_name, gene_dict in genes.items():
 	paths = get_paths_for_gene(gene_name, gene_dict, gw)
