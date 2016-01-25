@@ -134,7 +134,7 @@ def get_paths_for_gene(gene_name, gene_dict, gw):
 		                            end_kmers = [pd.last_kmer],
 		                            known_kmers = gene_dict["known_kmers"], 
 		                            repeat_kmers = gene_dict["repeat_kmers"])
-		# print (p)
+		print (p)
 		if p:
 			paths[pd.version] = p
 	return paths

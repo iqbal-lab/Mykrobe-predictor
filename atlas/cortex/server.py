@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import os
 import sys
+import json
 import time
 import signal
 import requests
@@ -209,47 +210,88 @@ class GraphWalker(object):
             count[k] = 1
         return count
 
+    def _path_ended(self, paths, i):
+        return paths[i]["dna"][-1] == "*"
+
+    def _get_next_kmer(self, paths, i):
+        return paths[i]["dna"][-self.kmer_size:]
+
+    def _reached_end_of_path(self, k, end_kmers):
+        return k in end_kmers
+
+    def _mark_path_and_ended(self, paths, i):
+        paths[i]["dna"] = paths[i]["dna"] + "*"
+        return paths
+
+    def _make_query(self, k, known_kmers):
+        try:
+            q = self.queries[k]
+        except KeyError: 
+            try:
+                q =  self.mcq.query(k, known_kmers = known_kmers)
+                self.queries[k] = q
+            except ValueError, e:
+                q = None
+                logging.error(str(e))
+                self.queries[k] = None
+        return q       
+
+    def _query_is_valid(self, q):
+        return q is not None and q.data.get("key")
+
+    def _get_next_kmers(self, q, k, paths, repeat_kmers, known_kmers, count):
+        kmers = q.forward(suggested_kmer = repeat_kmers.get(k, {}).get(count[k]) )                      
+        if q.depth is not None:
+            # paths[i]["covg"] += "%i-" % q.depth
+            if len(kmers) > 1:
+                depth = max(q.depth * 0.1, 10)
+                kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > depth]
+        if len(kmers) > 1:
+            kmers = [k for k in kmers if not k in paths[i]["dna"]]             
+        return kmers
+
+    def _check_if_next_kmers_are_valid(self, kmers, paths, i):
+        if len(kmers) < 1:
+            paths = self._mark_path_and_ended(paths, i)
+        return paths
+
+    def _split_paths(self, i, kmers, paths):
+        for j, kmer in enumerate(kmers):
+            if j == 0:
+                paths[i]["dna"] = paths[i]["dna"] + kmer[-1]
+            else:
+                paths[sorted(paths.keys())[-j]]["dna"] = paths[sorted(paths.keys())[-j]]["dna"] + kmer[-1]
+        return paths
+
+    def _init_paths(self, seed):
+        return {0 : { "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
 
     def breath_first_search(self, N, seed, end_kmers = [], known_kmers = [], repeat_kmers = {}):
         count = {}
-        paths = {0 : { "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
+        paths = self._init_paths(seed) 
         for _ in range(N):
             for i in paths.keys():
-                if not paths[i]["dna"][-1] == "*":
-                    k = paths[i]["dna"][-self.kmer_size:]
+                if not self._path_ended(paths, i):
+                    k = self._get_next_kmer(paths, i)
                     count = self._count_k(k, count)
-                    if k in end_kmers:
-                         paths[i]["dna"] = paths[i]["dna"] + "*"
-                         k = paths[i]["dna"][-self.kmer_size:]
-                    try:
-                        q = self.queries[k]
-                    except KeyError: 
-                        try:
-                            q =  self.mcq.query(k, known_kmers = known_kmers)
-                            self.queries[k] = q
-                        except ValueError, e:
-                            q = None
-                            logging.error(str(e))
-                            self.queries[k] = None
-                            paths[i]["dna"] = paths[i]["dna"] + "*"
-                    if q is not None and q.data.get("key"):
-                        kmers = q.forward(suggested_kmer = repeat_kmers.get(k, {}).get(count[k]) )                      
-                        if q.depth is not None:
-                            # paths[i]["covg"] += "%i-" % q.depth
-                            if len(kmers) > 1:
-                                depth = max(q.depth * 0.1, 10)
-                                kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > depth]
-                        if len(kmers) > 1:
-                            kmers = [k for k in kmers if not k in paths[i]["dna"]]                                
-                        if len(kmers) < 1:
-                            paths[i]["dna"] = paths[i]["dna"] + "*"
-                        ## Create new paths
-                        paths = self.create_new_paths(paths, i, kmers, origin = q.data.get("key"))
-                        for j, kmer in enumerate(kmers):
-                            if j == 0:
-                                paths[i]["dna"] = paths[i]["dna"] + kmer[-1]
-                            else:
-                                paths[sorted(paths.keys())[-j]]["dna"] = paths[sorted(paths.keys())[-j]]["dna"] + kmer[-1]
+                    if self._reached_end_of_path(k, end_kmers):
+                        paths = self._mark_path_and_ended(paths, i)
+                    else:
+                        q = self._make_query(k, known_kmers)                            
+                        if self._query_is_valid(q):
+                            kmers = self._get_next_kmers(q, k, paths, repeat_kmers, known_kmers, count)
+                            paths = self._check_if_next_kmers_are_valid(kmers, paths, i)
+                            ## Create new paths
+                            paths = self.create_new_paths(paths, i, kmers, origin = q.data.get("key"))
+                            paths = self._split_paths(i, kmers, paths)
+                        else:
+                            paths = self._mark_path_and_ended(paths, i)
+            ## DEBUG prints progress every N bps
+            if i % 250 == 0:
+                with open("/tmp/paths.json", "w") as outfile:
+                    json.dump(paths, outfile)
+            ### 
+
 
 
         keep_paths = {}
