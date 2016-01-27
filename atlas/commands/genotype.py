@@ -6,7 +6,7 @@ import json
 def run(parser, args):
     args = parser.parse_args()
     check_args(args)  
-    cp = CoverageParser(args, panels = ["gn-plasmids"], verbose = False)
+    cp = CoverageParser(args, panels = ["staph-amr-genes"], verbose = False)
     cp.run()    
     gt = Genotyper(args, depths = [100],
                 variant_covgs = cp.covgs["variant"],

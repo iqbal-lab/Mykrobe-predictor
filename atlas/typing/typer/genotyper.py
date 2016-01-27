@@ -146,7 +146,7 @@ class CoverageParser(object):
       allele, reference_median_depth, min_depth, reference_percent_coverage = self._parse_summary_covgs_row(row)
       allele_name = allele.split('?')[0].split('-')[1]
       params = get_params(allele)   
-      num_alts = int(params.get("num_alts"))
+      num_alts = int(params.get("num_alts", 0))
       for i in range(num_alts):
           row = self.reader.next()
           allele, alternate_median_depth, min_depth, alternate_percent_coverage = self._parse_summary_covgs_row(row)

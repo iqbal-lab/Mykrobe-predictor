@@ -17,7 +17,7 @@ STAPH_PANELS = ["Coagneg",
                 "Sepidermidis", 
                 "Shaemolyticus",
                 "Sother",
-                "staph_amr_genes",
+                "staph-amr-genes",
                 "staph-amr-mutations"]
 GN_PANELS = ["gn-amr-genes","Escherichia_coli", "Klebsiella_pneumoniae","gn-amr-genes-extended"]
 TB_PANELS = ["MTBC", "NTM",
@@ -111,7 +111,7 @@ def run(parser, args):
             depths = [species_predictor.out_json["phylogenetics"]["species"]["Klebsiella_pneumoniae"]["median_depth"]]
         except KeyError:
             depths = [species_predictor.out_json["phylogenetics"]["species"]["Escherichia_coli"]["median_depth"]]
-    pprint (species_predictor.out_json["phylogenetics"]["species"])
+    # pprint (species_predictor.out_json["phylogenetics"]["species"])
     ## Genotype
     q = args.quiet
     args.quiet = True

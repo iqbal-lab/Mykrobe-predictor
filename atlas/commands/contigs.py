@@ -116,7 +116,7 @@ else:
 
 logger.debug("Walking the graph")
 out_dict = {}
-gw = GraphWalker(port = port, kmer_size = args.kmer_size)
+gw = GraphWalker(port = port, kmer_size = args.kmer_size, print_depths = True)
 
 
 with open(args.dna_fasta, 'r') as infile:
@@ -156,7 +156,16 @@ with open(args.dna_fasta, 'r') as infile:
 # with open("gene.tmp.json", "w") as outf:
 # 	json.dump(genes, outf, sort_keys = False, indent = 4)
 
-
+def choose_best_assembly(paths):
+    paths.sort(key=lambda x: x["min_depth"], reverse=True)
+    current_best = paths[0]	
+    for path in paths[1:]:
+        if path["min_depth"] < current_best["min_depth"]:
+            return current_best
+        elif path["min_depth"]  ==  current_best["min_depth"]:
+            if path["median_depth"] > current_best["median_depth"]:
+                current_best = path
+    return current_best   	
 
 def get_paths_for_gene(gene_name, gene_dict, gw):
 	paths = {}
@@ -174,15 +183,25 @@ def get_paths_for_gene(gene_name, gene_dict, gw):
 				if p["prot"] not in current_prots:
 					keep_p.append(p)
 					current_prots.append(p["prot"])
-			# print (current_prots)
-			# print (p)
-			# if _p["prot"] not in current_prots:
 			if keep_p:
-				paths[pd.version] = keep_p
+				if len(keep_p) > 1:
+					raise NotImplementedError()
+				else:
+					paths[pd.version] = keep_p[0]
 	return paths
+
+
+
 for gene_name, gene_dict in genes.items():
 	paths = get_paths_for_gene(gene_name, gene_dict, gw)
-	out_dict[gene_name] = paths
+	if len(paths.keys()) > 1:
+		## choose best version
+		best_path = choose_best_assembly(paths.values())
+	elif len(paths.keys()) == 1:
+		best_path = paths[0]
+	else:
+		best_path = {}	
+	out_dict[gene_name] = best_path
 print (json.dumps(out_dict, sort_keys = False, indent = 4))
 logger.info("Cleaning up")
 if wb is not None:

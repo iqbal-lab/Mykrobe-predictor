@@ -11,7 +11,7 @@ import time
 import signal
 import requests
 from Bio.Seq import Seq
-
+from atlas.utils import median
 from subprocess import Popen, PIPE
 
 # These should work on python2 after 'pip install --user future'
@@ -215,10 +215,11 @@ class McCortexQueryResult(object):
 
 class GraphWalker(object):
 
-    def __init__(self, port, kmer_size = 31):
+    def __init__(self, port, kmer_size = 31, print_depths = False):
         self.mcq =  McCortexQuery(port)
         self.queries = {}
         self.kmer_size = kmer_size
+        self.print_depths = print_depths
 
     def _count_k(self, k, count):
         try:
@@ -262,7 +263,8 @@ class GraphWalker(object):
     def _get_next_kmers_right(self, i, q, k, paths, repeat_kmers, known_kmers, count):
         kmers = q.forward(suggested_kmer = repeat_kmers.get(k, {}).get(count[k]) )                      
         if q.depth is not None:
-            # paths[i]["covg"] += "%i-" % q.depth
+            if self.print_depths:
+                paths[i]["depth"].append(q.depth)
             if len(kmers) > 1:
                 depth = max(q.depth * 0.1, 10)
                 kmers = [k for k in kmers if self.mcq.query(k, known_kmers = known_kmers).depth > depth]
@@ -294,7 +296,10 @@ class GraphWalker(object):
         return paths
 
     def _init_paths(self, seed, N_left):
-        return {0 : { "N_left" : N_left, "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "covg" : ""}}
+        if self.print_depths:
+            return {0 : { "N_left" : N_left, "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size],  "depth" : []}}
+        else:
+            return {0 : { "N_left" : N_left, "dna" : seed[:self.kmer_size], "start_kmer" : seed[:self.kmer_size]}}
 
     def breath_first_search(self, N, seed, end_kmers = [],
                              known_kmers = [], repeat_kmers = {},
@@ -344,6 +349,12 @@ class GraphWalker(object):
             v["len_dna"] = len(v["dna"])
             v["prot"] = str(Seq(v["dna"].rstrip("*")).translate(11))
             v["len_prot"] = len(v["prot"]) 
+            if self.print_depths:
+                paths[i]["median_depth"] = median(paths[i]["depth"])
+                paths[i]["min_depth"] = min(paths[i]["depth"])
+                paths[i]["depth"] = "-".join([str(x) for x in paths[i]["depth"]])
+
+
             if v["len_dna"] == N + 1 and v["dna"][-1] == "*":
                 keep_paths[k] = v
         return keep_paths.values()
