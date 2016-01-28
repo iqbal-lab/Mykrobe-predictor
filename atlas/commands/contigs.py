@@ -166,11 +166,11 @@ with open(args.dna_fasta, 'r') as infile:
 		# start_kmer = str(record.seq)[:args.kmer_size]
 		last_kmer = str(record.seq)[-args.kmer_size:]
 		start_kmer, skipped = find_start_kmer(str(record.seq), gw.mcq, args.kmer_size)
+		if not gene_name in genes:
+			genes[gene_name] = {}
+			genes[gene_name]["pathdetails"] = []
+			genes[gene_name]["known_kmers"] = ""		
 		if not version in skip_list.get(gene_name, []) and start_kmer:
-			if not gene_name in genes:
-				genes[gene_name] = {}
-				genes[gene_name]["pathdetails"] = []
-				genes[gene_name]["known_kmers"] = ""
 			pd = PathDetails(start_kmer, last_kmer, len(record.seq),
 							 skipped = skipped, v = version)
 			pd.set_repeat_kmers(repeat_kmers)
@@ -191,10 +191,6 @@ with open(args.dna_fasta, 'r') as infile:
 # logger.debug(len(genes.get("blaZ",{}).get("pathdetails")))
 # with open("gene.tmp.json", "w") as outf:
 # 	json.dump(genes, outf, sort_keys = False, indent = 4)
-
-
-
-
 
 for gene_name, gene_dict in genes.items():
 	paths = get_paths_for_gene(gene_name, gene_dict, gw)
