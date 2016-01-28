@@ -65,6 +65,7 @@ class WebServer(object):
         self.port = port
         self.args = args
         self.mccortex = None
+        self.httpd = None
         
 
     def start(self):
@@ -72,6 +73,7 @@ class WebServer(object):
 
     def serve(self):
         mccortex = self.mccortex
+        logger.debug("Starting server")
         class McCortexHTTPServer(BaseHTTPRequestHandler):
 
             def log_message(self, format, *args):
@@ -101,7 +103,8 @@ class WebServer(object):
             logger.info("Exited server") 
 
     def stop(self):
-        self.httpd.server_close()
+        if self.httpd:
+            self.httpd.server_close()
         self._stop_mccortex()
         logger.info("Closed succesfully.")   
 
@@ -131,16 +134,18 @@ class WebServer(object):
 
 class McCortexQuery(object):
 
-    def __init__(self, port):
-          self.base_url = "http://localhost:%i/" % port
+    def __init__(self, proc):
+          # self.base_url = "http://localhost:%i/" % port
+          self.proc = proc
 
     def query(self, kmer, known_kmers = []):
-        # logger.debug(self.base_url + kmer)
-        _request = requests.get(self.base_url + kmer)
-        # logger.debug (_request)
-        _json = _request.json()
-        # logger.debug (_json)
-        return McCortexQueryResult(kmer, _json , known_kmers = known_kmers)
+        return McCortexQueryResult(kmer, json.loads(query_mccortex( self.proc, kmer)) , known_kmers = known_kmers)
+        # # logger.debug(self.base_url + kmer)
+        # _request = requests.get(self.base_url + kmer)
+        # # logger.debug (_request)
+        # _json = _request.json()
+        # # logger.debug (_json)
+        # return McCortexQueryResult(kmer, _json , known_kmers = known_kmers)
 
 class McCortexQueryResult(object):
 
@@ -215,8 +220,8 @@ class McCortexQueryResult(object):
 
 class GraphWalker(object):
 
-    def __init__(self, port, kmer_size = 31, print_depths = False):
-        self.mcq =  McCortexQuery(port)
+    def __init__(self, proc, kmer_size = 31, print_depths = False):
+        self.mcq =  McCortexQuery(proc)
         self.queries = {}
         self.kmer_size = kmer_size
         self.print_depths = print_depths

@@ -5,9 +5,10 @@ sys.path.append('/home/phelimb/git/atlas-core')
 from atlas.cortex.server import WebServer
 from atlas.cortex.server import McCortexQuery
 from atlas.cortex.server import GraphWalker
+from atlas.cortex.server import query_mccortex
 from atlas.utils import get_params
 import socket
-import threading
+# import multiprocessing
 import json
 from pprint import pprint
 import logging
@@ -29,16 +30,16 @@ args = parser.parse_args()
 
 
 
-def get_open_port():
-	if args.port:
-		return args.port
-	else:
-		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.bind(("",0))
-		s.listen(1)
-		port = s.getsockname()[1]
-		s.close()
-		return port
+# def get_open_port():
+# 	if args.port:
+# 		return args.port
+# 	else:
+# 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# 		s.bind(("",0))
+# 		s.listen(1)
+# 		port = s.getsockname()[1]
+# 		s.close()
+# 		return port
 
 class PathDetails(object):
 
@@ -96,27 +97,62 @@ def find_start_kmer(seq, mcq, k = args.kmer_size):
 		skipped += 1
 	return None, -1
 
+def choose_best_assembly(paths):
+    paths.sort(key=lambda x: x["min_depth"], reverse=True)
+    current_best = paths[0]	
+    for path in paths[1:]:
+        if path["min_depth"] < current_best["min_depth"]:
+            return current_best
+        elif path["min_depth"]  ==  current_best["min_depth"]:
+            if path["median_depth"] > current_best["median_depth"]:
+                current_best = path
+    return current_best   	
+
+def get_paths_for_gene(gene_name, gene_dict, gw):
+	paths = {}
+	current_prots = []
+	for pd in gene_dict["pathdetails"]:
+		path_for_pd = gw.breath_first_search(N = pd.length, seed = pd.start_kmer,
+		                            end_kmers = [pd.last_kmer],
+		                            known_kmers = gene_dict["known_kmers"], 
+		                            repeat_kmers = pd.repeat_kmers, 
+		                            N_left = pd.skipped)
+		# print (p)
+		if path_for_pd:
+			keep_p = []
+			for p in path_for_pd:
+				if p["prot"] not in current_prots:
+					keep_p.append(p)
+					current_prots.append(p["prot"])
+			if keep_p:
+				if len(keep_p) > 1:
+					raise NotImplementedError()
+				else:
+					paths[pd.version] = keep_p[0]
+	return paths
+
+
 wb = None
 if args.port is None:
 	if args.ctx is None:
 		raise ValueError("Require either port or binary. e.g. atlas contigs panel.fasta -f sample.ctx")
 	else:
-		port =  (get_open_port())
-		logger.debug("Running server on port %i " % port)
-		wb = WebServer(port, args = [ "-q",  args.ctx ] )
+		# port =  (get_open_port())
+		# logger.debug("Running server on port %i " % port)
+		wb = WebServer(port = 0, args = [  args.ctx ] )
 		logger.debug("Loading binary")
 		wb.start()
 		## Serve on a thread
-		logger.debug("Starting sever")
-		server = threading.Thread(target=wb.serve)
-		server.start()
+		# logger.debug("Starting sever")
+		# server = multiprocessing.Process(target=wb.serve, args = (1000,))
+		# server.start()
 else:
 	port = args.port
 
-
 logger.debug("Walking the graph")
 out_dict = {}
-gw = GraphWalker(port = port, kmer_size = args.kmer_size, print_depths = True)
+gw = GraphWalker(proc = wb.mccortex, kmer_size = args.kmer_size, print_depths = True)
+
 
 
 with open(args.dna_fasta, 'r') as infile:
@@ -156,39 +192,7 @@ with open(args.dna_fasta, 'r') as infile:
 # with open("gene.tmp.json", "w") as outf:
 # 	json.dump(genes, outf, sort_keys = False, indent = 4)
 
-def choose_best_assembly(paths):
-    paths.sort(key=lambda x: x["min_depth"], reverse=True)
-    current_best = paths[0]	
-    for path in paths[1:]:
-        if path["min_depth"] < current_best["min_depth"]:
-            return current_best
-        elif path["min_depth"]  ==  current_best["min_depth"]:
-            if path["median_depth"] > current_best["median_depth"]:
-                current_best = path
-    return current_best   	
 
-def get_paths_for_gene(gene_name, gene_dict, gw):
-	paths = {}
-	current_prots = []
-	for pd in gene_dict["pathdetails"]:
-		path_for_pd = gw.breath_first_search(N = pd.length, seed = pd.start_kmer,
-		                            end_kmers = [pd.last_kmer],
-		                            known_kmers = gene_dict["known_kmers"], 
-		                            repeat_kmers = pd.repeat_kmers, 
-		                            N_left = pd.skipped)
-		# print (p)
-		if path_for_pd:
-			keep_p = []
-			for p in path_for_pd:
-				if p["prot"] not in current_prots:
-					keep_p.append(p)
-					current_prots.append(p["prot"])
-			if keep_p:
-				if len(keep_p) > 1:
-					raise NotImplementedError()
-				else:
-					paths[pd.version] = keep_p[0]
-	return paths
 
 
 
@@ -198,7 +202,7 @@ for gene_name, gene_dict in genes.items():
 		## choose best version
 		best_path = choose_best_assembly(paths.values())
 	elif len(paths.keys()) == 1:
-		best_path = paths[0]
+		best_path = paths.values()[0]
 	else:
 		best_path = {}	
 	out_dict[gene_name] = best_path

@@ -46,7 +46,8 @@ class SpeciesPredictor(object):
             _median = covg_collection.get("median", [0])
             aggregate_percent_covg = bases_covered/total_bases
             # print (aggregate_percent_covg)
-            if aggregate_percent_covg >= self.threshold.get(node, DEFAULT_THRESHOLD):
+            # if aggregate_percent_covg >= self.threshold.get(node, DEFAULT_THRESHOLD):
+            if len(_median) > 5:
                 covgs[node] = {"percent_coverage" : bases_covered/total_bases, "median_depth" : median(_median)}
             else:
                 del_nodes.append(node)
