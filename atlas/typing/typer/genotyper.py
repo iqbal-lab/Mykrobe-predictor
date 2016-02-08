@@ -113,22 +113,7 @@ class CoverageParser(object):
       panel_type = params.get("panel_type", "presence")
       name = params.get('name')
       # print (allele)
-      if panel_type in ["phylo_group", "species", "lineage"]:
-          l = int(params["length"])
-          try:
-              self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
-              self.covgs[panel_type][name]["total_bases"] += l
-              if percent_coverage > 50 and median_depth > 0:
-                  self.covgs[panel_type][name]["median"].append(median_depth)
-          except KeyError:
-              if not panel_type  in self.covgs:
-                  self.covgs[panel_type] = {}
-              self.covgs[panel_type][name] = {}
-              self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
-              self.covgs[panel_type][name]["total_bases"] = l
-              if percent_coverage > 50 and median_depth > 0:
-                  self.covgs[panel_type][name]["median"] = [median_depth]
-      else:
+      if panel_type in ["variant", "presence"]:
           gp = SequenceCoverage.create_object(name = name,
                        version = params.get('version', 'N/A'),
                        percent_coverage = percent_coverage,
@@ -141,6 +126,25 @@ class CoverageParser(object):
           except KeyError:
               self.covgs[panel_type][gp.name] = {}
               self.covgs[panel_type][gp.name][gp.version] = gp
+
+      else:
+          l = int(params.get("length", -1))
+          try:
+              self.covgs[panel_type][name]["total_bases"] += l
+              if percent_coverage > 75 and median_depth > 0:
+                  self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
+                  self.covgs[panel_type][name]["median"].append(median_depth)
+          except KeyError:
+              if not panel_type  in self.covgs:
+                  self.covgs[panel_type] = {}
+              self.covgs[panel_type][name] = {}
+              self.covgs[panel_type][name]["total_bases"] = l
+              if percent_coverage > 75 and median_depth > 0:
+                  self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
+                  self.covgs[panel_type][name]["median"] = [median_depth]
+              else:
+                  self.covgs[panel_type][name]["bases_covered"] = 0
+                  self.covgs[panel_type][name]["median"] = []                
 
   def _parse_variant_panel(self, row):
       allele, reference_median_depth, min_depth, reference_percent_coverage = self._parse_summary_covgs_row(row)

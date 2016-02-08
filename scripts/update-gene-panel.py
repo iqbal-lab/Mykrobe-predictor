@@ -32,7 +32,7 @@ for json_assem in args.json:
 			pass
 		else:
 			for gene_name, d in data.items():
-				seq = d.get("dna").rstrip("*")
+				seq = d.get("dna","").rstrip("*")
 				if seq:
 					if seq in seq_panel[gene_name].values():
 						print("Already have version")

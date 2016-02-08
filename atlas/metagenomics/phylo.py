@@ -6,8 +6,9 @@ from atlas.utils import median
 
 class SpeciesPredictor(object):
 
-    def __init__(self, phylo_group_covgs, species_covgs, lineage_covgs, base_json):
+    def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs, base_json):
         self.phylo_group_covgs = phylo_group_covgs
+        self.sub_complex_covgs = sub_complex_covgs
         self.species_covgs = species_covgs
         self.lineage_covgs = lineage_covgs
         self.out_json = base_json
@@ -28,13 +29,16 @@ class SpeciesPredictor(object):
 
     def _aggregate_all(self):
         self._aggregate(self.phylo_group_covgs)
+        self._aggregate(self.sub_complex_covgs)
         self._aggregate(self.species_covgs)
         self._aggregate(self.lineage_covgs)
         self.out_json["phylogenetics"] = {}
         self.out_json["phylogenetics"]["phylo_group"] = self.phylo_group_covgs
+        self.out_json["phylogenetics"]["sub_complex"] = self.sub_complex_covgs
         self.out_json["phylogenetics"]["species"] = self.species_covgs
         self.out_json["phylogenetics"]["lineage"] = self.lineage_covgs
         self._add_unknown_where_empty(self.phylo_group_covgs)
+        self._add_unknown_where_empty(self.sub_complex_covgs)
         self._add_unknown_where_empty(self.species_covgs)
         self._add_unknown_where_empty(self.lineage_covgs)
 
@@ -56,9 +60,9 @@ class SpeciesPredictor(object):
 
 class AMRSpeciesPredictor(SpeciesPredictor):
 
-    def __init__(self, phylo_group_covgs, species_covgs, lineage_covgs,
+    def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
                  base_json):
-        super(AMRSpeciesPredictor, self).__init__(phylo_group_covgs, species_covgs, lineage_covgs,
+        super(AMRSpeciesPredictor, self).__init__(phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
                  base_json)
 
     def is_saureus_present(self):

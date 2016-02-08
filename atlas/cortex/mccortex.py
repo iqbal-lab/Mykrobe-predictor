@@ -40,14 +40,16 @@ class McCortexRunner(object):
               os.remove(self.ctx_skeleton_filepath)
           ## panel  
           seq_list = self._create_sequence_list() 
-          cmd = ["/home/phelimb/git/mccortex/bin/mccortex31", "build", "-q",
-                   "-k", str(self.kmer)] + seq_list + [self.ctx_skeleton_filepath]
+          cmd = ["/home/phelimb/git/mccortex/bin/mccortex31", "build",
+                   "-m 30GB","-k",  str(self.kmer)] + seq_list + [self.ctx_skeleton_filepath]
           # print (cmd)
           subprocess.check_output(cmd)
+
   def _create_sequence_list(self):
       seq_list = []
+      seq_list.extend(["-s", "%s" % self.panel_name[:100]])
       for panel in self.panels:
-         seq_list.extend(["-s", "%s" % panel.name, "-1", panel.filepath])
+         seq_list.extend(["-1", panel.filepath])
       return seq_list
 
 
@@ -83,7 +85,7 @@ class McCortexRunner(object):
   @property
   def panel_name(self):
       if self._panel_name is None:
-          self._panel_name = "-".join([p.name for p in self.panels])
+          self._panel_name = "-".join([p.name.replace('/','-') for p in self.panels])
       return self._panel_name
 
   @property 
@@ -100,7 +102,7 @@ class McCortexRunner(object):
 
   @property 
   def ctx_skeleton_filepath(self):
-      return os.path.abspath("data/skeletons/%s_%i.ctx" % (self.panel_name, self.kmer))
+      return os.path.abspath("/data2/users/phelim/data/tb/atlas/skeletons/%s_%i.ctx" % (self.panel_name.replace("/", "-")[:100], self.kmer))
 
 
 
