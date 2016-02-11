@@ -128,11 +128,13 @@ class CoverageParser(object):
               self.covgs[panel_type][gp.name][gp.version] = gp
 
       else:
+          ## Species panels are treated differently
           l = int(params.get("length", -1))
           try:
               self.covgs[panel_type][name]["total_bases"] += l
               if percent_coverage > 75 and median_depth > 0:
-                  self.covgs[panel_type][name]["bases_covered"] += percent_coverage * l
+                  self.covgs[panel_type][name]["percent_coverage"].append(percent_coverage)
+                  self.covgs[panel_type][name]["length"].append(l)
                   self.covgs[panel_type][name]["median"].append(median_depth)
           except KeyError:
               if not panel_type  in self.covgs:
@@ -140,10 +142,12 @@ class CoverageParser(object):
               self.covgs[panel_type][name] = {}
               self.covgs[panel_type][name]["total_bases"] = l
               if percent_coverage > 75 and median_depth > 0:
-                  self.covgs[panel_type][name]["bases_covered"] = percent_coverage * l
+                  self.covgs[panel_type][name]["percent_coverage"] = [percent_coverage]
+                  self.covgs[panel_type][name]["length"] = [l]
                   self.covgs[panel_type][name]["median"] = [median_depth]
               else:
-                  self.covgs[panel_type][name]["bases_covered"] = 0
+                  self.covgs[panel_type][name]["percent_coverage"] = []
+                  self.covgs[panel_type][name]["length"] = []
                   self.covgs[panel_type][name]["median"] = []                
 
   def _parse_variant_panel(self, row):

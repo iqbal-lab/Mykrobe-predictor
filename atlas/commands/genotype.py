@@ -11,7 +11,7 @@ def run(parser, args):
     args = parser.parse_args()
     check_args(args)  
 
-    panels = ["tb-species-extended"]
+    panels = ["tb-species-extended4"]
 
     verbose = True
     cp = CoverageParser(args, panels = panels, verbose = verbose)

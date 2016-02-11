@@ -3,6 +3,7 @@ import json
 DEFAULT_THRESHOLD = 30
 
 from atlas.utils import median
+from atlas.stats import percent_coverage_from_expected_coverage
 
 class SpeciesPredictor(object):
 
@@ -27,7 +28,18 @@ class SpeciesPredictor(object):
         with open("data/predict/taxon_coverage_threshold.json", "r") as infile:
             self.threshold = json.load(infile)
 
+    def calc_expected_depth(self):
+        ## Get all of the panels with % coverage > 30
+        _median = []
+        for phylo_group, coverage_dict in self.phylo_group_covgs.items():
+            _median.extend(coverage_dict["median"])
+        return median(_median)
+
+
+
     def _aggregate_all(self):
+        ## Calculate expected coverage
+        self.expected_depth = self.calc_expected_depth()
         self._aggregate(self.phylo_group_covgs)
         self._aggregate(self.sub_complex_covgs)
         self._aggregate(self.species_covgs)
@@ -42,21 +54,34 @@ class SpeciesPredictor(object):
         self._add_unknown_where_empty(self.species_covgs)
         self._add_unknown_where_empty(self.lineage_covgs)
 
+    def _bases_covered(self, percent_coverage, length):
+        return sum([percent_coverage[i] * length[i] for i in range(len(length)) ])        
+
     def _aggregate(self, covgs):
-        del_nodes = []
-        for node, covg_collection  in covgs.items():
-            bases_covered = covg_collection["bases_covered"]
-            total_bases = covg_collection["total_bases"]
-            _median = covg_collection.get("median", [0])
-            aggregate_percent_covg = bases_covered/total_bases
-            # print (aggregate_percent_covg)
-            # if aggregate_percent_covg >= self.threshold.get(node, DEFAULT_THRESHOLD):
-            if len(_median) > 5:
-                covgs[node] = {"percent_coverage" : bases_covered/total_bases, "median_depth" : median(_median)}
+        del_phylo_groups = []
+        for phylo_group, covg_dict  in covgs.items():
+            percent_coverage = covg_dict["percent_coverage"]
+            length = covg_dict["length"]
+            bases_covered = self._bases_covered(percent_coverage, length )
+            total_bases = covg_dict["total_bases"]
+            total_percent_covered = round(bases_covered/total_bases,3)
+            _median = covg_dict.get("median", [0])
+            minimum_percentage_coverage_required =  percent_coverage_from_expected_coverage(self.expected_depth) * self.threshold.get(phylo_group, DEFAULT_THRESHOLD)
+            if total_percent_covered < minimum_percentage_coverage_required:
+                ## Remove low coverage nodes
+                _index = [i for i,d in enumerate(_median) if d > 0.1 * self.expected_depth]
+                percent_coverage = [percent_coverage[i] for i in _index]
+                length = [length[i] for i in _index]
+                bases_covered = self._bases_covered(percent_coverage, length )
+                _median = [_median[i] for i in _index]
+                total_percent_covered = round(bases_covered/total_bases,3)
+
+            if total_percent_covered > 5:
+                covgs[phylo_group] = {"percent_coverage" : total_percent_covered, "median_depth" : median(_median)}
             else:
-                del_nodes.append(node)
-        for node in del_nodes:
-            del covgs[node]
+                del_phylo_groups.append(phylo_group)
+        for phylo_group in del_phylo_groups:
+            del covgs[phylo_group]
 
 class AMRSpeciesPredictor(SpeciesPredictor):
 
