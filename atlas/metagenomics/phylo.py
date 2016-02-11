@@ -129,7 +129,7 @@ class SpeciesPredictor(object):
             best_species = self._get_present_phylo_groups(species_to_consider, mix_threshold = 90)
             species.update(best_species)
         phylogenetics["species"] = species
-
+        ## For each species, get the best sub species where applicable
         sub_species = {}
         for s in species.keys():
             allowed_sub_species = self.hierarchy.get_children(s)
@@ -137,12 +137,6 @@ class SpeciesPredictor(object):
             best_sub_species = self._get_present_phylo_groups(sub_species_to_consider, mix_threshold = 90)
             sub_species.update(best_sub_species)
         phylogenetics["lineage"] = sub_species
-        
-#            print (pg, allowed_species)
-
-        # ## For each species, get the best sub species where applicable
-        # for species in phylo_groups.keys():
-        #     allowed_sub_species = flatten([self.hierarchy[pg]["children"][subc]["children"].keys() for subc in self.hierarchy[pg]["children"].keys()])
         return phylogenetics
 
     def _get_present_phylo_groups(self, phylo_groups, mix_threshold = 50):
@@ -159,7 +153,10 @@ class SpeciesPredictor(object):
 
     def _get_best_coverage_dict(self, coverage_dict):
         sorted_coverage_dict = sorted(coverage_dict.items(), key=lambda x: x[1]["percent_coverage"], reverse = True)
-        return {sorted_coverage_dict[0][0] : sorted_coverage_dict[0][1]}
+        if  (sorted_coverage_dict[0][1]["percent_coverage"]) > 0:
+            return {sorted_coverage_dict[0][0] : sorted_coverage_dict[0][1]}
+        else:
+            return {}
 
 class AMRSpeciesPredictor(SpeciesPredictor):
 
