@@ -30,4 +30,4 @@ def run(parser, args):
     #             base_json = cp.out_json,
     #             contamination_depths = [])
     # gt.run()
-    print(json.dumps(species_predictor.out_json["phylogenetics"], indent = 4))    
+    print(json.dumps(cp.out_json, indent = 4))    

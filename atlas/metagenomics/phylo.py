@@ -8,6 +8,30 @@ from atlas.utils import load_json
 from atlas.utils import flatten
 from atlas.stats import percent_coverage_from_expected_coverage
 
+class Hierarchy(object):
+
+    def __init__(self, _dict):
+        self.dict = _dict
+
+    def get_children(self, target_species):
+        phylo_group = self.get_phylo_group(target_species)
+        return phylo_group.get("children", {})
+
+    def get_phylo_group(self, target_species):
+        phylo_group = []
+        for k,v in self.dict.items():
+            if k == target_species:
+                return  v
+            for k2,v2 in v["children"].items():
+                if k2 == target_species:
+                    return  v2
+                for k3,v3 in v2["children"].items():
+                    if k3 == target_species:
+                        return  v3
+                    for k4,v4 in v3["children"].items():
+                        if k4 == target_species:
+                            return  v4
+
 class SpeciesPredictor(object):
 
     def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs, base_json, verbose = False, hierarchy_json_file = "/data2/users/phelim/ana/tb/NTM-species-probes/data/truth/hierarchy.json"):
@@ -18,7 +42,7 @@ class SpeciesPredictor(object):
         self.out_json = base_json
         self.threshold = {}
         self.verbose = verbose
-        self.hierarchy = load_json(hierarchy_json_file)
+        self.hierarchy = Hierarchy(load_json(hierarchy_json_file))
 
     def run(self):
         self._load_taxon_thresholds()
@@ -47,7 +71,7 @@ class SpeciesPredictor(object):
         ## Calculate expected coverage
         self.expected_depth = self.calc_expected_depth()
         self._aggregate(self.phylo_group_covgs)
-        self._aggregate(self.sub_complex_covgs)
+        self._aggregate(self.sub_complex_covgs, threshold = 50)
         self._aggregate(self.species_covgs)
         self._aggregate(self.lineage_covgs)
         self.out_json["phylogenetics"] = {}
@@ -55,17 +79,17 @@ class SpeciesPredictor(object):
         self.out_json["phylogenetics"]["sub_complex"] = self.sub_complex_covgs
         self.out_json["phylogenetics"]["species"] = self.species_covgs
         self.out_json["phylogenetics"]["lineage"] = self.lineage_covgs
-        self._add_unknown_where_empty(self.phylo_group_covgs)
-        self._add_unknown_where_empty(self.sub_complex_covgs)
-        self._add_unknown_where_empty(self.species_covgs)
-        self._add_unknown_where_empty(self.lineage_covgs)
         if not self.verbose:
             self.out_json["phylogenetics"] = self.choose_best(self.out_json["phylogenetics"])
+        self._add_unknown_where_empty(self.out_json["phylogenetics"]["phylo_group"])
+        self._add_unknown_where_empty(self.out_json["phylogenetics"]["sub_complex"])
+        self._add_unknown_where_empty(self.out_json["phylogenetics"]["species"])
+        self._add_unknown_where_empty(self.out_json["phylogenetics"]["lineage"])            
 
     def _bases_covered(self, percent_coverage, length):
         return sum([percent_coverage[i] * length[i] for i in range(len(length)) ])        
 
-    def _aggregate(self, covgs):
+    def _aggregate(self, covgs, threshold = 5 ):
         del_phylo_groups = []
         for phylo_group, covg_dict  in covgs.items():
             percent_coverage = covg_dict["percent_coverage"]
@@ -84,8 +108,7 @@ class SpeciesPredictor(object):
                 bases_covered = self._bases_covered(percent_coverage, length )
                 _median = [_median[i] for i in _index]
                 total_percent_covered = round(bases_covered/total_bases,3)
-
-            if total_percent_covered > 5:
+            if total_percent_covered > threshold:
                 covgs[phylo_group] = {"percent_coverage" : total_percent_covered, "median_depth" : median(_median)}
             else:
                 del_phylo_groups.append(phylo_group)
@@ -96,23 +119,36 @@ class SpeciesPredictor(object):
         ## Get all the phylo_groups present.
         phylo_groups = self._get_present_phylo_groups(phylogenetics["phylo_group"])
         phylogenetics["phylo_group"] = phylo_groups
+        sub_complexes = self._get_present_phylo_groups(phylogenetics["sub_complex"])
+        phylogenetics["sub_complex"] = sub_complexes        
         ## for each phylo_group, get the best species in the phylo_group (using sub_complex info where possible)
         species = {}
         for pg in phylo_groups.keys():
-            allowed_species = flatten([self.hierarchy[pg]["children"][subc]["children"].keys() for subc in self.hierarchy[pg]["children"].keys()])
+            allowed_species = flatten([self.hierarchy.dict[pg]["children"][subc]["children"].keys() for subc in self.hierarchy.dict[pg]["children"].keys() if subc is not "Unknown"])
             species_to_consider = { k: phylogenetics["species"].get(k, {"percent_coverage" : 0}) for k in allowed_species } 
             best_species = self._get_present_phylo_groups(species_to_consider, mix_threshold = 90)
             species.update(best_species)
         phylogenetics["species"] = species
-        return phylogenetics
+
+        sub_species = {}
+        for s in species.keys():
+            allowed_sub_species = self.hierarchy.get_children(s)
+            sub_species_to_consider = { k: phylogenetics["lineage"].get(k, {"percent_coverage" : 0}) for k in allowed_sub_species } 
+            best_sub_species = self._get_present_phylo_groups(sub_species_to_consider, mix_threshold = 90)
+            sub_species.update(best_sub_species)
+        phylogenetics["lineage"] = sub_species
+        
 #            print (pg, allowed_species)
 
         # ## For each species, get the best sub species where applicable
         # for species in phylo_groups.keys():
         #     allowed_sub_species = flatten([self.hierarchy[pg]["children"][subc]["children"].keys() for subc in self.hierarchy[pg]["children"].keys()])
+        return phylogenetics
 
     def _get_present_phylo_groups(self, phylo_groups, mix_threshold = 50):
         ## If there are more than one pg, if there are more that one above high conf threshold return both
+        if not phylo_groups:
+            return phylo_groups
         high_confidence_phylo_groups = [pg for pg,d in phylo_groups.items() if d["percent_coverage"] > mix_threshold ]
         if len(high_confidence_phylo_groups) > 1:
             return { k: phylo_groups.get(k, {"percent_coverage" : 0}) for k in high_confidence_phylo_groups }  #high_confidence_phylo_groups
