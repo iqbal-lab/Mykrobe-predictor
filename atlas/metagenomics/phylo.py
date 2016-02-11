@@ -1,19 +1,24 @@
 from __future__ import print_function
 import json
+import operator
 DEFAULT_THRESHOLD = 30
 
 from atlas.utils import median
+from atlas.utils import load_json
+from atlas.utils import flatten
 from atlas.stats import percent_coverage_from_expected_coverage
 
 class SpeciesPredictor(object):
 
-    def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs, base_json):
+    def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs, base_json, verbose = False, hierarchy_json_file = "/data2/users/phelim/ana/tb/NTM-species-probes/data/truth/hierarchy.json"):
         self.phylo_group_covgs = phylo_group_covgs
         self.sub_complex_covgs = sub_complex_covgs
         self.species_covgs = species_covgs
         self.lineage_covgs = lineage_covgs
         self.out_json = base_json
         self.threshold = {}
+        self.verbose = verbose
+        self.hierarchy = load_json(hierarchy_json_file)
 
     def run(self):
         self._load_taxon_thresholds()
@@ -33,9 +38,10 @@ class SpeciesPredictor(object):
         _median = []
         for phylo_group, coverage_dict in self.phylo_group_covgs.items():
             _median.extend(coverage_dict["median"])
-        return median(_median)
-
-
+        if _median:
+            return median(_median)
+        else:
+            return 0
 
     def _aggregate_all(self):
         ## Calculate expected coverage
@@ -53,6 +59,8 @@ class SpeciesPredictor(object):
         self._add_unknown_where_empty(self.sub_complex_covgs)
         self._add_unknown_where_empty(self.species_covgs)
         self._add_unknown_where_empty(self.lineage_covgs)
+        if not self.verbose:
+            self.out_json["phylogenetics"] = self.choose_best(self.out_json["phylogenetics"])
 
     def _bases_covered(self, percent_coverage, length):
         return sum([percent_coverage[i] * length[i] for i in range(len(length)) ])        
@@ -67,6 +75,7 @@ class SpeciesPredictor(object):
             total_percent_covered = round(bases_covered/total_bases,3)
             _median = covg_dict.get("median", [0])
             minimum_percentage_coverage_required =  percent_coverage_from_expected_coverage(self.expected_depth) * self.threshold.get(phylo_group, DEFAULT_THRESHOLD)
+            # print (minimum_percentage_coverage_required, self.expected_depth, percent_coverage_from_expected_coverage(self.expected_depth))
             if total_percent_covered < minimum_percentage_coverage_required:
                 ## Remove low coverage nodes
                 _index = [i for i,d in enumerate(_median) if d > 0.1 * self.expected_depth]
@@ -83,6 +92,39 @@ class SpeciesPredictor(object):
         for phylo_group in del_phylo_groups:
             del covgs[phylo_group]
 
+    def choose_best(self, phylogenetics):
+        ## Get all the phylo_groups present.
+        phylo_groups = self._get_present_phylo_groups(phylogenetics["phylo_group"])
+        phylogenetics["phylo_group"] = phylo_groups
+        ## for each phylo_group, get the best species in the phylo_group (using sub_complex info where possible)
+        species = {}
+        for pg in phylo_groups.keys():
+            allowed_species = flatten([self.hierarchy[pg]["children"][subc]["children"].keys() for subc in self.hierarchy[pg]["children"].keys()])
+            species_to_consider = { k: phylogenetics["species"].get(k, {"percent_coverage" : 0}) for k in allowed_species } 
+            best_species = self._get_present_phylo_groups(species_to_consider, mix_threshold = 90)
+            species.update(best_species)
+        phylogenetics["species"] = species
+        return phylogenetics
+#            print (pg, allowed_species)
+
+        # ## For each species, get the best sub species where applicable
+        # for species in phylo_groups.keys():
+        #     allowed_sub_species = flatten([self.hierarchy[pg]["children"][subc]["children"].keys() for subc in self.hierarchy[pg]["children"].keys()])
+
+    def _get_present_phylo_groups(self, phylo_groups, mix_threshold = 50):
+        ## If there are more than one pg, if there are more that one above high conf threshold return both
+        high_confidence_phylo_groups = [pg for pg,d in phylo_groups.items() if d["percent_coverage"] > mix_threshold ]
+        if len(high_confidence_phylo_groups) > 1:
+            return { k: phylo_groups.get(k, {"percent_coverage" : 0}) for k in high_confidence_phylo_groups }  #high_confidence_phylo_groups
+        else:
+            ## Otherwise return best hit
+            return self._get_best_coverage_dict(phylo_groups)
+
+
+    def _get_best_coverage_dict(self, coverage_dict):
+        sorted_coverage_dict = sorted(coverage_dict.items(), key=lambda x: x[1]["percent_coverage"], reverse = True)
+        return {sorted_coverage_dict[0][0] : sorted_coverage_dict[0][1]}
+
 class AMRSpeciesPredictor(SpeciesPredictor):
 
     def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
@@ -94,7 +136,10 @@ class AMRSpeciesPredictor(SpeciesPredictor):
         return "Staphaureus" in self.out_json["phylogenetics"]["phylo_group"]
 
     def is_mtbc_present(self):
-        return "MTBC" in self.out_json["phylogenetics"]["phylo_group"]
+        return "Mycobacterium_tuberculosis_complex" in self.out_json["phylogenetics"]["phylo_group"]
+
+    def is_ntm_present(self):
+        return "Non_tuberculosis_mycobacterium_complex" in self.out_json["phylogenetics"]["phylo_group"]
 
     def is_gram_neg_present(self):
         return self.is_klebsiella_pneumoniae_present() or self.is_escherichia_coli_present()

@@ -1,6 +1,7 @@
 import os
 import hashlib
 import re
+import json
 
 def check_args(args):
     if args.db_name is None:
@@ -51,3 +52,7 @@ def median(lst):
         return sortedLst[index]
     else:
         return (sortedLst[index] + sortedLst[index + 1])/2.0
+
+def load_json(f):
+    with open(f, 'r') as infile:
+        return json.load(infile)        
