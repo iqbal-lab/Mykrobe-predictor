@@ -71,9 +71,9 @@ class SpeciesPredictor(object):
         ## Calculate expected coverage
         self.expected_depth = self.calc_expected_depth()
         self._aggregate(self.phylo_group_covgs)
-        self._aggregate(self.sub_complex_covgs, threshold = 50)
+        self._aggregate(self.sub_complex_covgs, threshold = 80)
         self._aggregate(self.species_covgs)
-        self._aggregate(self.lineage_covgs)
+        self._aggregate(self.lineage_covgs, threshold = 90)
         self.out_json["phylogenetics"] = {}
         self.out_json["phylogenetics"]["phylo_group"] = self.phylo_group_covgs
         self.out_json["phylogenetics"]["sub_complex"] = self.sub_complex_covgs
@@ -119,7 +119,7 @@ class SpeciesPredictor(object):
         ## Get all the phylo_groups present.
         phylo_groups = self._get_present_phylo_groups(phylogenetics["phylo_group"])
         phylogenetics["phylo_group"] = phylo_groups
-        sub_complexes = self._get_present_phylo_groups(phylogenetics["sub_complex"])
+        sub_complexes = self._get_present_phylo_groups(phylogenetics["sub_complex"], mix_threshold = 90)
         phylogenetics["sub_complex"] = sub_complexes        
         ## for each phylo_group, get the best species in the phylo_group (using sub_complex info where possible)
         species = {}
@@ -134,7 +134,7 @@ class SpeciesPredictor(object):
         for s in species.keys():
             allowed_sub_species = self.hierarchy.get_children(s)
             sub_species_to_consider = { k: phylogenetics["lineage"].get(k, {"percent_coverage" : 0}) for k in allowed_sub_species } 
-            best_sub_species = self._get_present_phylo_groups(sub_species_to_consider, mix_threshold = 90)
+            best_sub_species = self._get_best_coverage_dict(sub_species_to_consider)
             sub_species.update(best_sub_species)
         phylogenetics["lineage"] = sub_species
         return phylogenetics
