@@ -4,7 +4,6 @@ import json
 import csv
 import glob
 import logging
-LOGGER = logging.getLogger("logger")
 from mongoengine import connect
 from mongoengine import DoesNotExist
 import subprocess
@@ -22,6 +21,8 @@ from atlas.variants import CallSet
 from atlas.cortex import McCortexRunner
 
 from atlas.utils import get_params
+
+LOGGER = logging.getLogger("logger")
 
 
 def max_pnz_threshold(vp):
@@ -149,7 +150,7 @@ class CoverageParser(object):
                     self.covgs[panel_type][name]["length"].append(l)
                     self.covgs[panel_type][name]["median"].append(median_depth)
             except KeyError:
-                if not panel_type in self.covgs:
+                if panel_type not in self.covgs:
                     self.covgs[panel_type] = {}
                 self.covgs[panel_type][name] = {}
                 self.covgs[panel_type][name]["total_bases"] = l

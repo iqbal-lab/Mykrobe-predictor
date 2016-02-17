@@ -1,23 +1,24 @@
 from __future__ import print_function
-# Using seed kmers from a gene panel return a DFS through the graph
 import sys
-sys.path.append('/home/phelimb/git/atlas-core')
 from atlas.cortex.server import WebServer
 from atlas.cortex.server import McCortexQuery
 from atlas.cortex.server import GraphWalker
 from atlas.cortex.server import query_mccortex
 from atlas.utils import get_params
 import socket
-# import multiprocessing
 import json
 from pprint import pprint
 import logging
+from Bio import SeqIO
+import argparse
+
+sys.path.append('/home/phelimb/git/atlas-core')
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
-from Bio import SeqIO
 
-import argparse
+# Using seed kmers from a gene panel return a DFS through the graph
+
 parser = argparse.ArgumentParser(description='Add length argument to panel')
 parser.add_argument(
     'dna_fasta',
@@ -191,7 +192,7 @@ with open(args.dna_fasta, 'r') as infile:
             genes[gene_name] = {}
             genes[gene_name]["pathdetails"] = []
             genes[gene_name]["known_kmers"] = ""
-        if not version in skip_list.get(gene_name, []) and start_kmer:
+        if version not in skip_list.get(gene_name, []) and start_kmer:
             pd = PathDetails(start_kmer, last_kmer, len(record.seq),
                              skipped=skipped, v=version)
             pd.set_repeat_kmers(repeat_kmers)

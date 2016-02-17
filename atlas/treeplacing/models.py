@@ -1,12 +1,12 @@
 import sys
 import os
 from os import path
-sys.path.append(path.abspath("../"))
 from atlas.variants import Variant
 from atlas.variants import VariantSet
 from atlas.variants import CallSet
-
 from atlas.typing import TypedVariant
+
+sys.path.append(path.abspath("../"))
 
 
 class Placer(object):

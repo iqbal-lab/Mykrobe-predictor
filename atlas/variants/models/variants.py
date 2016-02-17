@@ -231,9 +231,9 @@ class Variant(Document, CreateAndSaveMixin):
 
     @property
     def calls(self):
-      # The variant calls for this particular variant. Each one represents the
-      # determination of genotype with respect to this variant. `Call`s in this array
-      # are implicitly associated with this `Variant`.
+        # The variant calls for this particular variant. Each one represents the
+        # determination of genotype with respect to this variant. `Call`s in this array
+        # are implicitly associated with this `Variant`.
         return Call.objects(variant=self)
 
     # @classmethod

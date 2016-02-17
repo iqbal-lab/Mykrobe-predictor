@@ -1,12 +1,13 @@
 from __future__ import print_function
 import json
 import operator
-DEFAULT_THRESHOLD = 30
-
 from atlas.utils import median
 from atlas.utils import load_json
 from atlas.utils import flatten
 from atlas.stats import percent_coverage_from_expected_coverage
+
+
+DEFAULT_THRESHOLD = 30
 
 
 class Hierarchy(object):

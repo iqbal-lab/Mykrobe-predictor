@@ -1,24 +1,21 @@
-"""Adds variants to the database"""
-
 import logging
-LOGGER = logging.getLogger("logger")
 import os
 import csv
-
 import vcf
-
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
 from pymongo import MongoClient
-client = MongoClient()
-
 from atlas.variants.models import CallSet
 from atlas.variants.models import Reference
 from atlas.variants.models import Variant
 from atlas.variants.models import VariantSet
 from atlas.variants.models import Call
 from atlas.utils import check_args
+"""Adds variants to the database"""
+
+LOGGER = logging.getLogger("logger")
+client = MongoClient()
 
 
 def is_record_valid(record):

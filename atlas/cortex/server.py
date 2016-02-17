@@ -1,10 +1,4 @@
-#!/usr/bin/env python
-
-# Adapted from
-# https://github.com/mcveanlab/mccortex/blob/master/scripts/mccortex-server.py
-
 from __future__ import print_function
-
 import os
 import sys
 import json
@@ -14,14 +8,13 @@ import requests
 from Bio.Seq import Seq
 from atlas.utils import median
 from subprocess import Popen, PIPE
-
-# These should work on python2 after 'pip install --user future'
 from http.server import BaseHTTPRequestHandler
 import socketserver
 import logging
-logger = logging.getLogger(__name__)
 from pprint import pprint
 import copy
+logger = logging.getLogger(__name__)
+
 logging.getLogger('requests.packages.urllib3.util').setLevel(logging.WARNING)
 logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(
     logging.WARNING)
@@ -34,6 +27,8 @@ logging.getLogger('requests').setLevel(logging.WARNING)
 logging.getLogger('requests.packages.urllib3.poolmanager').setLevel(
     logging.WARNING)
 
+# Adapted from
+# https://github.com/mcveanlab/mccortex/blob/master/scripts/mccortex-server.py
 # Start server on port 2306, with link and graph files:
 #   python mccortex-server.py 2306 --coverages --edges -p l.ctp.gz a.ctx b.ctx
 # Query a kmer:
@@ -318,7 +313,7 @@ class GraphWalker(object):
                         k,
                         known_kmers=known_kmers).depth > depth]
         if len(kmers) > 1:
-            kmers = [k for k in kmers if not k in paths[i]["dna"]]
+            kmers = [k for k in kmers if k not in paths[i]["dna"]]
         return kmers
 
     def _get_next_kmers_left(
@@ -339,7 +334,7 @@ class GraphWalker(object):
                         k,
                         known_kmers=known_kmers).depth > depth]
         if len(kmers) > 1:
-            kmers = [k for k in kmers if not k in paths[i]["dna"]]
+            kmers = [k for k in kmers if k not in paths[i]["dna"]]
         return kmers
 
     def _check_if_next_kmers_are_valid(self, kmers, paths, i):

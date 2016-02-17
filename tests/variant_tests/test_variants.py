@@ -66,7 +66,7 @@ class TestVariants(BaseTest):
         assert v1.end == 1
         assert v1.alt == "TA"
         assert v1.is_insertion
-        assert v1.is_deletion == False
+        assert v1.is_deletion is False
         assert v1.is_indel
         assert v1._length is None
         assert v1.length == 1
@@ -81,7 +81,7 @@ class TestVariants(BaseTest):
         assert v1.end == 1
         assert v1.alt == "A"
         assert v1.reference_bases == "AA"
-        assert v1.is_insertion == False
+        assert v1.is_insertion is False
         assert v1.is_deletion
         assert v1.is_indel
         assert v1.length == 1

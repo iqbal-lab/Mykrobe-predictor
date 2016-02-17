@@ -271,9 +271,9 @@ class AlleleGenerator(object):
         nov1 = []
         nov2 = []
         for x in context:
-            if not x is v1:
+            if x is not v1:
                 nov1.append(x)
-            if not x is v2:
+            if x is not v2:
                 nov2.append(x)
         return [nov1, nov2]
 

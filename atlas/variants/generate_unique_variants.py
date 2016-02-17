@@ -1,10 +1,10 @@
 #! /usr/bin/env python
-from mongoengine import connect
-connect('atlas')
 from models import Variant
 from models import VariantFreq
 from models import VariantSet
+from mongoengine import connect
 
+connect('atlas')
 total_samples = VariantSet.objects.count()
 results = Variant.objects().aggregate(
     {

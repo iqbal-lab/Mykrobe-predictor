@@ -39,7 +39,7 @@ class TestNodes(BaseTest):
         node = Node()
         assert node.children == []
         assert node.num_samples == 0
-        assert node.is_leaf == False
+        assert node.is_leaf is False
 
     def test_node_triplet(self):
         node1 = Leaf(sample='C1')
