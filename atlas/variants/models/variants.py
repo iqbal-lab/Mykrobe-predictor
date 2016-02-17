@@ -16,7 +16,9 @@ from atlas.variants.models.base import CreateAndSaveMixin
 from atlas.utils import make_hash
 from atlas.utils import split_var_name
 
-## Based on ga4gh Variant schema http://ga4gh.org/#/schemas feb 2016 with ocassional changes
+# Based on ga4gh Variant schema http://ga4gh.org/#/schemas feb 2016 with
+# ocassional changes
+
 
 class VariantSetMetadata(Document, CreateAndSaveMixin):
     key = StringField()
@@ -30,71 +32,79 @@ class VariantSetMetadata(Document, CreateAndSaveMixin):
     variant_set = ReferenceField("VariantSet")
 
     @classmethod
-    def create(cls, name, dataset_id = None, reference_set_id= None):
-        c = cls(name = name)
-        return c.save()    
+    def create(cls, name, dataset_id=None, reference_set_id=None):
+        c = cls(name=name)
+        return c.save()
+
 
 class VariantSet(Document, CreateAndSaveMixin):
+
     """
     `Variant` and `CallSet` both belong to a `VariantSet`.
     `VariantSet` belongs to a `Dataset`.
     The variant set is equivalent to a VCF file.
     """
-    name = StringField(required = True, unique = True)
+    name = StringField(required=True, unique=True)
     dataset = ReferenceField('Dataset')
-    reference_set = ReferenceField('ReferenceSet', required = True)
+    reference_set = ReferenceField('ReferenceSet', required=True)
 
     @classmethod
-    def create(cls, name, reference_set= None, dataset = None):
-        c = cls(name = name, reference_set = reference_set, dataset = dataset)
-        return c.save() 
+    def create(cls, name, reference_set=None, dataset=None):
+        c = cls(name=name, reference_set=reference_set, dataset=dataset)
+        return c.save()
 
     # Optional metadata associated with this variant set.
     # This array can be used to store information about the variant set, such as information found
-    # in VCF header fields, that isn't already available in first class fields such as "name".
+    # in VCF header fields, that isn't already available in first class fields
+    # such as "name".
     @property
     def metadata(self):
-        return VariantSetMetadata.objects(variant_set = self)
+        return VariantSetMetadata.objects(variant_set=self)
 
 
 class CallSet(Document, CreateAndSaveMixin):
+
     """
          A `CallSet` is a collection of variant calls for a particular sample.
          It belongs to a `VariantSet`. This is simillar to one column in VCF.
 
 
     """
-    name = StringField(required = True, default = None)
-    sample_id = StringField(required = True)
-    created_at = DateTimeField(default = datetime.datetime.now)
-    updated_at = DateTimeField(required = True, default=datetime.datetime.now)
-    variant_sets = ListField(ReferenceField('VariantSet')) ## Break from ga4gh schema -
-    ## When can a call set exist in multiple variant sets? If you have a set of
-    ## calls that you want to add to multiple variant sets. I think this demands
-    ## that a variant can exist in multiple variant sets, something not allowed by ga4gh schema.
+    name = StringField(required=True, default=None)
+    sample_id = StringField(required=True)
+    created_at = DateTimeField(default=datetime.datetime.now)
+    updated_at = DateTimeField(required=True, default=datetime.datetime.now)
+    # Break from ga4gh schema -
+    variant_sets = ListField(ReferenceField('VariantSet'))
+    # When can a call set exist in multiple variant sets? If you have a set of
+    # calls that you want to add to multiple variant sets. I think this demands
+    # that a variant can exist in multiple variant sets, something not allowed
+    # by ga4gh schema.
     info = DictField()
 
     @classmethod
-    def create(cls, name, variant_sets, sample_id = None, info = {}):
-        c = cls(name = name, variant_sets = variant_sets, sample_id = sample_id,
-                info = info)
-        return c.save() 
+    def create(cls, name, variant_sets, sample_id=None, info={}):
+        c = cls(name=name, variant_sets=variant_sets, sample_id=sample_id,
+                info=info)
+        return c.save()
+
 
 def convert_string_gt_to_list_int_gt(variant, genotype):
     allowed_gt = ["0/0", "0/1", "1/0", "1/1"]
     if genotype not in allowed_gt:
         raise ValueError("genotype must be one of %s" % ",".join(allowed_gt))
 
+
 class Call(Document, CreateAndSaveMixin):
     meta = {'indexes': [
-                {
-                    'fields' : ['call_set']
-                },
-                {
-                    'fields' : ['variant']
-                }                                                  
-                ]
-            }  
+        {
+            'fields': ['call_set']
+        },
+        {
+            'fields': ['variant']
+        }
+    ]
+    }
     """
     A `Call` represents the determination of genotype with respect to a
     particular `Variant`.
@@ -109,8 +119,8 @@ class Call(Document, CreateAndSaveMixin):
     the ordering of the calls on this `Variant`.
     The number of results will also be the same.
     """
-    variant = ReferenceField('Variant', required = True) # Not in ga4gh    
-    call_set = ReferenceField('CallSet', required = True)
+    variant = ReferenceField('Variant', required=True)  # Not in ga4gh
+    call_set = ReferenceField('CallSet', required=True)
     """
     The genotype of this variant call.
 
@@ -130,25 +140,26 @@ class Call(Document, CreateAndSaveMixin):
     # If this field is not null, this variant call's genotype ordering implies
     # the phase of the bases and is consistent with any other variant calls on
     # the same contig which have the same phaseset string.
-    phaseset = GenericReferenceField(default = None)
+    phaseset = GenericReferenceField(default=None)
     info = DictField()
 
-
     @classmethod
-    def create(cls, variant, call_set, genotype, genotype_likelihood = None,
-                      phaseset = None, info = {}):
-        if type(genotype) is str:
+    def create(cls, variant, call_set, genotype, genotype_likelihood=None,
+               phaseset=None, info={}):
+        if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(variant, genotype)
-        return cls(variant = variant, call_set = call_set, genotype = genotype,
-                   genotype_likelihood = genotype_likelihood, phaseset = phaseset, 
-                   info = info)
+        return cls(variant=variant, call_set=call_set, genotype=genotype,
+                   genotype_likelihood=genotype_likelihood, phaseset=phaseset,
+                   info=info)
 
-    @property 
+    @property
     def call_set_name(self):
         return self.call_set.name
 
+
 def lazyprop(fn):
     attr_name = '_' + fn.__name__
+
     @property
     def _lazyprop(self):
         if not getattr(self, attr_name):
@@ -157,65 +168,73 @@ def lazyprop(fn):
         return getattr(self, attr_name)
     return _lazyprop
 
+
 class Variant(Document, CreateAndSaveMixin):
     meta = {'indexes': [
-                {
-                    'fields' : ['start']
-                },
-                {
-                    'fields' : ['var_hash']
-                },
-                {
-                    'fields' : ['variant_sets']
-                }                                                               
-                ]
-            }    
-    """A `Variant` represents a change in DNA sequence relative to some reference. 
+        {
+            'fields': ['start']
+        },
+        {
+            'fields': ['var_hash']
+        },
+        {
+            'fields': ['variant_sets']
+        }
+    ]
+    }
+    """A `Variant` represents a change in DNA sequence relative to some reference.
        For example, a variant could represent a SNP or an insertion.
       Variants belong to a `VariantSet`. This is simillar to a row in VCF.
 
-      However, breaking from ga4gh we're allowing a variant belong to multiple 
+      However, breaking from ga4gh we're allowing a variant belong to multiple
       VariantSets to allow a Variant to belong to multiple "Sets" of variants.
       """
-    ## Here, we've broken from ga4gh as they demand every variant belongs to a 
-    ## single variant set. See CallSet.       
-    variant_sets = ListField(ReferenceField('VariantSet'), required = True) 
-    ## The var_hash is a unique description on a variant. We use the hash of "ref+pos+alt".
-    var_hash = StringField(required = True)
+    # Here, we've broken from ga4gh as they demand every variant belongs to a
+    # single variant set. See CallSet.
+    variant_sets = ListField(ReferenceField('VariantSet'), required=True)
+    # The var_hash is a unique description on a variant. We use the hash of
+    # "ref+pos+alt".
+    var_hash = StringField(required=True)
     names = ListField(StringField())
-    created_at = DateTimeField(required = True, default=datetime.datetime.now)
-    updated_at = DateTimeField(required = True, default=datetime.datetime.now)
-    start = IntField(required = True) #(0-based)
-    end = IntField(required = False) #  The end position (exclusive), resulting in [start, end) closed-open interval.
-    reference_bases = StringField(required = True)
-    alternate_bases = ListField(StringField(), required = True)
+    created_at = DateTimeField(required=True, default=datetime.datetime.now)
+    updated_at = DateTimeField(required=True, default=datetime.datetime.now)
+    start = IntField(required=True)  # (0-based)
+    # The end position (exclusive), resulting in [start, end) closed-open
+    # interval.
+    end = IntField(required=False)
+    reference_bases = StringField(required=True)
+    alternate_bases = ListField(StringField(), required=True)
     info = DictField()
 
-    ## Each variant is defined against a single reference. 
-    ## We can't have the same variant more than once i
-    reference = ReferenceField("Reference", required = True, unique_with = "var_hash")
+    # Each variant is defined against a single reference.
+    # We can't have the same variant more than once i
+    reference = ReferenceField(
+        "Reference",
+        required=True,
+        unique_with="var_hash")
 
-    _length = IntField(required = False, default = None)  
+    _length = IntField(required=False, default=None)
 
     @classmethod
-    def create(cls, variant_sets, start,  reference_bases,
-                    alternate_bases, reference, end = None,
-                    names = []):
-        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        return cls(variant_sets = variant_sets,
-                   start = start,
-                   end = end,
-                   reference_bases = reference_bases,
-                   alternate_bases = alternate_bases,
-                   reference = reference,
-                   var_hash = make_hash(name))
+    def create(cls, variant_sets, start, reference_bases,
+               alternate_bases, reference, end=None,
+               names=[]):
+        name = "".join(
+            [reference_bases, str(start), "/".join(alternate_bases)])
+        return cls(variant_sets=variant_sets,
+                   start=start,
+                   end=end,
+                   reference_bases=reference_bases,
+                   alternate_bases=alternate_bases,
+                   reference=reference,
+                   var_hash=make_hash(name))
 
     @property
     def calls(self):
       # The variant calls for this particular variant. Each one represents the
       # determination of genotype with respect to this variant. `Call`s in this array
       # are implicitly associated with this `Variant`.
-       return Call.objects(variant = self)        
+        return Call.objects(variant=self)
 
     # @classmethod
     # def create(cls, variant_set, start,  reference_bases, alternate_bases,
@@ -229,12 +248,13 @@ class Variant(Document, CreateAndSaveMixin):
 
     @property
     def var_name(self):
-        return "".join([reference_bases,str(start),"/".join(alternate_bases)])
+        return "".join(
+            [reference_bases, str(start), "/".join(alternate_bases)])
 
-
-    @lazyprop 
+    @lazyprop
     def length(self):
-        return abs(len(self.reference_bases) - max([len(a) for a in self.alternate_bases]))
+        return abs(len(self.reference_bases) -
+                   max([len(a) for a in self.alternate_bases]))
 
     def __str__(self):
         return self.name
@@ -245,7 +265,7 @@ class Variant(Document, CreateAndSaveMixin):
     def __eq__(self, other):
         return self.name_hash == other.name_hash
 
-    @property 
+    @property
     def alt(self):
         if len(self.alternate_bases) == 1:
             return "".join(self.alternate_bases)
@@ -281,12 +301,12 @@ class Variant(Document, CreateAndSaveMixin):
             else:
                 return False
         else:
-            return False 
+            return False
 
-    @property 
+    @property
     def is_insertion(self):
         if len(self.alternate_bases) > 1:
-            return False  
+            return False
         if self.is_indel:
             # just one alt allele
             alt_allele = self.alternate_bases[0]
@@ -297,4 +317,4 @@ class Variant(Document, CreateAndSaveMixin):
             else:
                 return False
         else:
-            return False                   
+            return False
