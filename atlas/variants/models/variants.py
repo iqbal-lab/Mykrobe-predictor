@@ -1,8 +1,7 @@
 import datetime
 import json
 
-from atlas.utils import make_hash
-from atlas.utils import split_var_name
+
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -13,9 +12,13 @@ from mongoengine import FloatField
 from mongoengine import DictField
 from mongoengine import GenericReferenceField
 
+from atlas.variants.models.base import CreateAndSaveMixin
+from atlas.utils import make_hash
+from atlas.utils import split_var_name
 
-## Based on ga4gh Variant schema http://ga4gh.org/#/schemas
-class VariantSetMetadata(Document):
+## Based on ga4gh Variant schema http://ga4gh.org/#/schemas feb 2016 with ocassional changes
+
+class VariantSetMetadata(Document, CreateAndSaveMixin):
     key = StringField()
     value = StringField()
     type = StringField()
@@ -31,18 +34,18 @@ class VariantSetMetadata(Document):
         c = cls(name = name)
         return c.save()    
 
-class VariantSet(Document):
+class VariantSet(Document, CreateAndSaveMixin):
     """
     `Variant` and `CallSet` both belong to a `VariantSet`.
     `VariantSet` belongs to a `Dataset`.
     The variant set is equivalent to a VCF file.
     """
     name = StringField(required = True, unique = True)
-    dataset_id = ReferenceField('Dataset')
-    reference_set_id = ReferenceField('ReferenceSetId')
+    dataset = ReferenceField('Dataset')
+    reference = ReferenceField('ReferenceSet')
 
     @classmethod
-    def create(cls, name, dataset_id = None, reference_set_id= None):
+    def create(cls, name, dataset = None, reference_set= None):
         c = cls(name = name)
         return c.save() 
 
@@ -54,16 +57,22 @@ class VariantSet(Document):
         return VariantSetMetadata.objects(variant_set = self)
 
 
-class CallSet(Document):
+class CallSet(Document, CreateAndSaveMixin):
     """
          A `CallSet` is a collection of variant calls for a particular sample.
-         It belongs to a `VariantSet`. This is equivalent to one column in VCF.
+         It belongs to a `VariantSet`. This is simillar to one column in VCF.
+
+
     """
     name = StringField(required = True, default = None)
     sample_id = StringField(required = True)
     created_at = DateTimeField(default = datetime.datetime.now)
     updated_at = DateTimeField(required = True, default=datetime.datetime.now)
-    variant_sets = ListField(ReferenceField('VariantSet'))
+    variant_sets = ListField(ReferenceField('VariantSet')) ## Break from ga4gh schema -
+    ## When can a call set exist in multiple variant sets? If you have a set of
+    ## calls that you want to add to multiple variant sets. I think this demands
+    ## that a variant can exist in multiple variant sets, something not allowed by ga4gh schema.
+
     info = DictField()
 
     @classmethod
@@ -71,7 +80,7 @@ class CallSet(Document):
         c = cls(name = name, sample_id = sample_id)
         return c.save() 
 
-class Call(Document):
+class Call(Document, CreateAndSaveMixin):
     meta = {'indexes': [
                 {
                     'fields' : ['call_set']
@@ -136,25 +145,31 @@ def lazyprop(fn):
         return getattr(self, attr_name)
     return _lazyprop
 
-class Variant(Document):
+class Variant(Document, CreateAndSaveMixin):
     meta = {'indexes': [
                 {
                     'fields' : ['start']
                 },
                 {
-                    'fields' : ['_id']
+                    'fields' : ['var_hash']
                 },
                 {
-                    'fields' : ['variant_set']
+                    'fields' : ['variant_sets']
                 }                                                               
                 ]
             }    
-    """A `Variant` represents a change in DNA sequence relative to some reference. For example, a variant could represent a SNP or an insertion.
-      Variants belong to a `VariantSet`. This is equivalent to a row in VCF."""
-    # variant_sets = ListField(ReferenceField('VariantSet', required = True)) ## Here, we've broken from ga4gh as they demand every variant belongs to a single variant set
-    variant_set =  ReferenceField('VariantSet', required = True) # TODO, what are the implications of having multiple variant sets per variant
-    data_set = ReferenceField('Dataset')
-    _id = StringField(unique_with = "variant_set")
+    """A `Variant` represents a change in DNA sequence relative to some reference. 
+       For example, a variant could represent a SNP or an insertion.
+      Variants belong to a `VariantSet`. This is simillar to a row in VCF.
+
+      However, breaking from ga4gh we're allowing a variant belong to multiple 
+      VariantSets to allow a Variant to belong to multiple "Sets" of variants.
+      """
+    ## Here, we've broken from ga4gh as they demand every variant belongs to a 
+    ## single variant set. See CallSet.       
+    variant_sets = ListField(ReferenceField('VariantSet'), required = True) 
+    ## The var_hash is a unique description on a variant. We use the hash of "ref+pos+alt".
+    var_hash = StringField(required = True)
     names = ListField(StringField())
     created_at = DateTimeField(required = True, default=datetime.datetime.now)
     updated_at = DateTimeField(required = True, default=datetime.datetime.now)
@@ -163,38 +178,46 @@ class Variant(Document):
     reference_bases = StringField(required = True)
     alternate_bases = ListField(StringField(), required = True)
     info = DictField()
-    reference = ReferenceField("Reference")
+
+    ## Each variant is defined against a single reference. 
+    ## We can't have the same variant more than once i
+    reference = ReferenceField("Reference", required = True, unique_with = "var_hash")
 
     _length = IntField(required = False, default = None)  
+
+    @classmethod
+    def create(cls, variant_sets, start,  reference_bases,
+                      alternate_bases, reference, end = None, names = []):
+        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
+        return cls(variant_sets = variant_sets,
+                   start = start,
+                   end = end,
+                   reference_bases = reference_bases,
+                   alternate_bases = alternate_bases,
+                   reference = reference,
+                   var_hash = make_hash(name))
 
     @property
     def calls(self):
       # The variant calls for this particular variant. Each one represents the
       # determination of genotype with respect to this variant. `Call`s in this array
       # are implicitly associated with this `Variant`.
-       return Call.objects(variant = self)
+       return Call.objects(variant = self)        
 
-    @classmethod
-    def create_object(cls, variant_set, start,  reference_bases,
-                      alternate_bases, reference, end = None):
-        name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
-        return cls(variant_set = variant_set,
-                   start = start, end = end,
-                   reference_bases = reference_bases,
-                   alternate_bases = alternate_bases,
-                   reference = reference,
-                   name = name,
-                   _id = make_hash(name))
+    # @classmethod
+    # def create(cls, variant_set, start,  reference_bases, alternate_bases,
+    #                  reference, end = None):
+    #     return cls().create_object(variant_set = variant_set,
+    #                         start = start,
+    #                         reference_bases = reference_bases,
+    #                         alternate_bases = alternate_bases,
+    #                         reference = reference,
+    #                         end = end).save()
 
-    @classmethod
-    def create(cls, variant_set, start,  reference_bases, alternate_bases,
-                     reference, end = None):
-        return cls().create_object(variant_set = variant_set,
-                            start = start,
-                            reference_bases = reference_bases,
-                            alternate_bases = alternate_bases,
-                            reference = reference,
-                            end = end).save()
+    @property
+    def long_name(self):
+        return "".join([reference_bases,str(start),"/".join(alternate_bases)])
+
 
     @lazyprop 
     def length(self):
