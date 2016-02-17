@@ -13,7 +13,7 @@ DB = connect('atlas-test')
 class BaseTest():
 
     def setUp(self):
-        pass
+        DB.drop_database('atlas-test')
 
     def teardown(self):
         DB.drop_database('atlas-test')
@@ -22,6 +22,7 @@ class BaseTest():
 class TestVariantSets(BaseTest):
 
     def setUp(self):
+        DB.drop_database('atlas-test')
         self.reference_set = ReferenceSet().create_and_save(name="ref_set")
 
     def test_create_new_variant(self):
@@ -36,6 +37,7 @@ class TestVariantSets(BaseTest):
 class TestVariants(BaseTest):
 
     def setUp(self):
+        DB.drop_database('atlas-test')
         self.reference_set = ReferenceSet().create_and_save(name="ref_set")
         self.variant_set = VariantSet.create_and_save(
             name="this_vcf_file",
@@ -121,41 +123,3 @@ class TestVariants(BaseTest):
         assert pos == -54
         assert a == "T"
 
-
-class TestCallSet(BaseTest):
-
-    def setUp(self):
-        self.reference_set = ReferenceSet().create_and_save(name="ref_set")
-        self.variant_set = VariantSet.create_and_save(
-            name="this_vcf_file",
-            reference_set=self.reference_set)
-        self.variant_sets = [self.variant_set]
-
-    def test_create_call_set(self):
-        call_set = CallSet.create_and_save(name="call_set",
-                                           sample_id="C00123",
-                                           variant_sets=self.variant_sets)
-        cs = CallSet.objects.get(name="call_set")
-        assert call_set == cs
-        assert cs.name == "call_set"
-        assert cs.variant_sets[0].reference_set.name == "ref_set"
-
-
-# class TestCall(BaseTest):
-
-#     def setup(self):
-#         self.reference_set =  ReferenceSet().create_and_save(name = "ref_set")
-#         self.variant_set = VariantSet.create_and_save(name = "this_vcf_file", reference_set = self.reference_set)
-#         self.variant_sets = [self.variant_set]
-#         self.reference =  Reference().create_and_save(name = "ref", md5checksum = "sre", reference_sets = [self.reference_set])
-#         self.call_set = CallSet.create(sample_id = "C00123", name = "C00123")
-
-
-#     def test_create_SNP_call(self):
-#         c1 = Call.create(variant = self.v1, call_set = self.cs, genotype = "0/1", genotype_likelihood = 0.91)
-#         assert c1.call_set_name == "C00123"
-#         assert self.v1.call == c1
-#         assert c1.genotype == [0, 1]
-
-
-#

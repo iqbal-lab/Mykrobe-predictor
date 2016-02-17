@@ -90,9 +90,8 @@ class CallSet(Document, CreateAndSaveMixin):
 
 
 def convert_string_gt_to_list_int_gt(variant, genotype):
-    allowed_gt = ["0/0", "0/1", "1/0", "1/1"]
-    if genotype not in allowed_gt:
-        raise ValueError("genotype must be one of %s" % ",".join(allowed_gt))
+    return [int(i) for i in genotype.split('/')]
+
 
 
 class Call(Document, CreateAndSaveMixin):
@@ -136,7 +135,21 @@ class Call(Document, CreateAndSaveMixin):
     """
 
     genotype = ListField(IntField())
-    genotype_likelihood = ListField(FloatField())
+    """
+    The genotype likelihoods for this variant call. Each array entry
+    represents how likely a specific genotype is for this call as
+    log10(P(data | genotype)), analogous to the GL tag in the VCF spec. The
+    value ordering is defined by the GL tag in the VCF spec (below)
+
+    GL : genotype likelihoods comprised of comma separated floating point log10-scaled likelihoods for all possible
+    genotypes given the set of alleles defined in the REF and ALT fields. In presence of the GT field the same
+    ploidy is expected and the canonical order is used; without GT field, diploidy is assumed. If A is the allele in
+    REF and B,C,... are the alleles as ordered in ALT, the ordering of genotypes for the likelihoods is given by:
+    F(j/k) = (k*(k+1)/2)+j. In other words, for biallelic sites the ordering is: AA,AB,BB; for triallelic sites the
+    ordering is: AA,AB,BB,AC,BC,CC, etc. For example: GT:GL 0/1:-323.03,-99.29,-802.53 (Floats)
+
+    """   
+    genotype_likelihoods = ListField(FloatField())
     # If this field is not null, this variant call's genotype ordering implies
     # the phase of the bases and is consistent with any other variant calls on
     # the same contig which have the same phaseset string.
@@ -144,13 +157,25 @@ class Call(Document, CreateAndSaveMixin):
     info = DictField()
 
     @classmethod
-    def create(cls, variant, call_set, genotype, genotype_likelihood=None,
+    def create(cls, variant, call_set, genotype, genotype_likelihoods=[],
                phaseset=None, info={}):
         if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(variant, genotype)
+        cls._check_genotype_likelihood_length(genotype_likelihoods, variant)
         return cls(variant=variant, call_set=call_set, genotype=genotype,
-                   genotype_likelihood=genotype_likelihood, phaseset=phaseset,
+                   genotype_likelihoods=genotype_likelihoods, phaseset=phaseset,
                    info=info)
+
+    @classmethod
+    def _check_genotype_likelihood_length(cls, genotype_likelihood, variant):
+        if len(variant.alternate_bases) == 1:
+            if not len(genotype_likelihood) == 3:
+                raise ValueError("Biallelic sites should have 3 genotype likelihoods. AA,AB,BB")
+        elif len(variant.alternate_bases) == 2:
+            if not len(genotype_likelihood) == 6:
+                raise ValueError("Biallelic sites should have 6 genotype likelihoods. AA,AB,BB,AC,BC,CC, etc")            
+        else:
+            raise NotImplementedError("Haven't implemented check for > triallelic sites")
 
     @property
     def call_set_name(self):
@@ -235,16 +260,6 @@ class Variant(Document, CreateAndSaveMixin):
         # determination of genotype with respect to this variant. `Call`s in this array
         # are implicitly associated with this `Variant`.
         return Call.objects(variant=self)
-
-    # @classmethod
-    # def create(cls, variant_set, start,  reference_bases, alternate_bases,
-    #                  reference, end = None):
-    #     return cls().create_object(variant_set = variant_set,
-    #                         start = start,
-    #                         reference_bases = reference_bases,
-    #                         alternate_bases = alternate_bases,
-    #                         reference = reference,
-    #                         end = end).save()
 
     @property
     def var_name(self):
