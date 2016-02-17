@@ -42,11 +42,11 @@ class VariantSet(Document, CreateAndSaveMixin):
     """
     name = StringField(required = True, unique = True)
     dataset = ReferenceField('Dataset')
-    reference = ReferenceField('ReferenceSet')
+    reference_set = ReferenceField('ReferenceSet', required = True)
 
     @classmethod
-    def create(cls, name, dataset = None, reference_set= None):
-        c = cls(name = name)
+    def create(cls, name, reference_set= None, dataset = None):
+        c = cls(name = name, reference_set = reference_set, dataset = dataset)
         return c.save() 
 
     # Optional metadata associated with this variant set.
@@ -72,13 +72,18 @@ class CallSet(Document, CreateAndSaveMixin):
     ## When can a call set exist in multiple variant sets? If you have a set of
     ## calls that you want to add to multiple variant sets. I think this demands
     ## that a variant can exist in multiple variant sets, something not allowed by ga4gh schema.
-
     info = DictField()
 
     @classmethod
-    def create(cls, name, sample_id = None):
-        c = cls(name = name, sample_id = sample_id)
+    def create(cls, name, variant_sets, sample_id = None, info = {}):
+        c = cls(name = name, variant_sets = variant_sets, sample_id = sample_id,
+                info = info)
         return c.save() 
+
+def convert_string_gt_to_list_int_gt(variant, genotype):
+    allowed_gt = ["0/0", "0/1", "1/0", "1/1"]
+    if genotype not in allowed_gt:
+        raise ValueError("genotype must be one of %s" % ",".join(allowed_gt))
 
 class Call(Document, CreateAndSaveMixin):
     meta = {'indexes': [
@@ -104,7 +109,22 @@ class Call(Document, CreateAndSaveMixin):
     the ordering of the calls on this `Variant`.
     The number of results will also be the same.
     """
+    variant = ReferenceField('Variant', required = True) # Not in ga4gh    
     call_set = ReferenceField('CallSet', required = True)
+    """
+    The genotype of this variant call.
+
+    A 0 value represents the reference allele of the associated `Variant`. Any
+    other value is a 1-based index into the alternate alleles of the associated
+    `Variant`.
+
+    If a variant had a referenceBases field of "T", an alternateBases
+    value of ["A", "C"], and the genotype was [2, 1], that would mean the call
+    represented the heterozygous value "CA" for this variant. If the genotype
+    was instead [0, 1] the represented value would be "TA". Ordering of the
+    genotype values is important if the phaseset field is present.
+    """
+
     genotype = ListField(IntField())
     genotype_likelihood = ListField(FloatField())
     # If this field is not null, this variant call's genotype ordering implies
@@ -112,24 +132,16 @@ class Call(Document, CreateAndSaveMixin):
     # the same contig which have the same phaseset string.
     phaseset = GenericReferenceField(default = None)
     info = DictField()
-    variant = ReferenceField('Variant', required = True) # Not in ga4gh
 
 
     @classmethod
-    def create_object(cls, variant, call_set, genotype, genotype_likelihood ):
+    def create(cls, variant, call_set, genotype, genotype_likelihood = None,
+                      phaseset = None, info = {}):
         if type(genotype) is str:
-            genotype = [int(g) for g in genotype.split('/')]
-        return {"call_set" : call_set.id,
-        "genotype" : genotype,
-        "genotype_likelihood" : genotype_likelihood}
-
-    @classmethod
-    def create(cls, variant, call_set, genotype, genotype_likelihood ):
-        if type(genotype) is str:
-            genotype = [int(g) for g in genotype.split('/')]        
-        c = cls(variant = variant, call_set = call_set, genotype = genotype,
-                 genotype_likelihood = genotype_likelihood ).save()
-        return c
+            genotype = convert_string_gt_to_list_int_gt(variant, genotype)
+        return cls(variant = variant, call_set = call_set, genotype = genotype,
+                   genotype_likelihood = genotype_likelihood, phaseset = phaseset, 
+                   info = info)
 
     @property 
     def call_set_name(self):
@@ -187,7 +199,8 @@ class Variant(Document, CreateAndSaveMixin):
 
     @classmethod
     def create(cls, variant_sets, start,  reference_bases,
-                      alternate_bases, reference, end = None, names = []):
+                    alternate_bases, reference, end = None,
+                    names = []):
         name = "".join([reference_bases,str(start),"/".join(alternate_bases)])
         return cls(variant_sets = variant_sets,
                    start = start,
@@ -215,7 +228,7 @@ class Variant(Document, CreateAndSaveMixin):
     #                         end = end).save()
 
     @property
-    def long_name(self):
+    def var_name(self):
         return "".join([reference_bases,str(start),"/".join(alternate_bases)])
 
 
