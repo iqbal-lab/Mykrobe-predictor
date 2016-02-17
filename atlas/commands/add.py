@@ -13,11 +13,11 @@ from mongoengine import OperationError
 from pymongo import MongoClient
 client = MongoClient()
 
-from atlas.vcf2db.models import CallSet
-from atlas.vcf2db.models  import Reference
-from atlas.vcf2db.models  import Variant
-from atlas.vcf2db.models  import VariantSet
-from atlas.vcf2db.models  import Call
+from atlas.variants.models import CallSet
+from atlas.variants.models  import Reference
+from atlas.variants.models  import Variant
+from atlas.variants.models  import VariantSet
+from atlas.variants.models  import Call
 from atlas.utils import check_args
 
 def is_record_valid(record):

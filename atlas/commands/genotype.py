@@ -11,7 +11,7 @@ def run(parser, args):
     args = parser.parse_args()
     check_args(args)  
 
-    panels = ["tb-species-extended4"]
+    panels = ["tb-species-extended"]
 
     verbose = True
     cp = CoverageParser(args, panels = panels, verbose = verbose)
@@ -20,7 +20,8 @@ def run(parser, args):
                                             sub_complex_covgs = cp.covgs.get("sub-complex",{}),
                                             species_covgs = cp.covgs["species"],
                                             lineage_covgs = cp.covgs.get("sub-species", {}),
-                                            base_json = cp.out_json[args.sample])
+                                            base_json = cp.out_json[args.sample],
+                                            verbose = False)
     species_predictor.run()
     # pprint (species_predictor.out_json["phylogenetics"]["species"])       
     # gt = Genotyper(args, depths = [100],

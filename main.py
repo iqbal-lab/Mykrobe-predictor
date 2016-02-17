@@ -27,7 +27,7 @@ class ArgumentParserWithDefaults(argparse.ArgumentParser):
                         action="store_true",
                         dest="quiet")
 
-DEFAULT_KMER_SIZE = os.environ.get("KMER_SIZE", 15)
+DEFAULT_KMER_SIZE = os.environ.get("KMER_SIZE", 21)
 DEFAULT_DB_NAME = os.environ.get("DB_NAME", "atlas")
 def main():
     #########################################

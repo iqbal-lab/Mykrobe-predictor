@@ -20,52 +20,7 @@ STAPH_PANELS = ["Coagneg",
                 "staph-amr-genes",
                 "staph-amr-mutations"]
 GN_PANELS = ["gn-amr-genes","Escherichia_coli", "Klebsiella_pneumoniae","gn-amr-genes-extended"]
-TB_PANELS = ["MTBC", "NTM",
-            "panel-tb-21",
-            "abscessus",
-            "africanum",
-            "aromaticivorans",
-            "avium",
-            "bovis",
-            "branderi",
-            "caprae",
-            "chelonae",
-            "chlorophenolicum",
-            "chubuense",
-            "colombiense",
-            "crocinum",
-            "flavescens",
-            "fluoranthenivorans",
-            "fortuitum",
-            "gilvum",
-            "gordonae",
-            "hodleri",
-            "interjectum",
-            "intracellulare",
-            "kansasii",
-            "lentiflavum",
-            "leprae",
-            "malmoense",
-            "marinum",
-            "mucogenicum",
-            "pallens",
-            "peregrinum",
-            "phage",
-            "pyrenivorans",
-            "rhodesiae",
-            "rufum",
-            "rutilum",
-            "scrofulaceum",
-            "senegalense",
-            "smegmatis",
-            "sphagni",
-            "szulgai",
-            "triplex",
-            "tuberculosis",
-            "tusciae",
-            "ulcerans",
-            "vaccae",
-            "xenopi"]
+TB_PANELS = ["tb-species-extended", "panel-tb-21"]
 
 def run(parser, args):
     args = parser.parse_args()
@@ -83,16 +38,15 @@ def run(parser, args):
         panels = GN_PANELS
         panel_name = "gn-amr"                
     ## Run Cortex
-    cp = CoverageParser(args, panels = panels, 
-                                       verbose = False,
-                                       panel_name = panel_name)
+    cp = CoverageParser(args, panels = panels, verbose = False, panel_name = panel_name)
     cp.run()
     # print (cp.covgs["species"])
     # Detect species
-    species_predictor = AMRSpeciesPredictor(phylo_group_covgs = cp.covgs.get("phylo_group", {}),
-                    species_covgs = cp.covgs["species"],
-                    lineage_covgs = cp.covgs.get("lineage", {}),
-                    base_json = cp.out_json[args.sample])
+    species_predictor = AMRSpeciesPredictor(phylo_group_covgs = cp.covgs.get("complex", {}),
+                                            sub_complex_covgs = cp.covgs.get("sub-complex", {}),
+                                            species_covgs = cp.covgs["species"],
+                                            lineage_covgs = cp.covgs.get("sub-species", {}),
+                                            base_json = cp.out_json[args.sample])
     species_predictor.run()
 
     # ## AMR prediction
@@ -103,7 +57,7 @@ def run(parser, args):
         depths = [species_predictor.out_json["phylogenetics"]["phylo_group"]["Staphaureus"]["median_depth"]]
         Predictor = StaphPredictor
     elif species_predictor.is_mtbc_present():
-        depths = [species_predictor.out_json["phylogenetics"]["phylo_group"]["MTBC"]["median_depth"]]
+        depths = [species_predictor.out_json["phylogenetics"]["phylo_group"]["Mycobacterium_tuberculosis_complex"]["median_depth"]]
         Predictor = TBPredictor
     elif species_predictor.is_gram_neg_present():
         Predictor = GramNegPredictor

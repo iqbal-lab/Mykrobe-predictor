@@ -71,9 +71,9 @@ class SpeciesPredictor(object):
         ## Calculate expected coverage
         self.expected_depth = self.calc_expected_depth()
         self._aggregate(self.phylo_group_covgs)
-        self._aggregate(self.sub_complex_covgs, threshold = 80)
+        self._aggregate(self.sub_complex_covgs, threshold = 50)
         self._aggregate(self.species_covgs)
-        self._aggregate(self.lineage_covgs, threshold = 90)
+        self._aggregate(self.lineage_covgs)
         self.out_json["phylogenetics"] = {}
         self.out_json["phylogenetics"]["phylo_group"] = self.phylo_group_covgs
         self.out_json["phylogenetics"]["sub_complex"] = self.sub_complex_covgs
@@ -152,6 +152,9 @@ class SpeciesPredictor(object):
 
 
     def _get_best_coverage_dict(self, coverage_dict):
+        ## If there are more than one pg, if there are more that one above high conf threshold return both
+        if not coverage_dict:
+            return coverage_dict        
         sorted_coverage_dict = sorted(coverage_dict.items(), key=lambda x: x[1]["percent_coverage"], reverse = True)
         if  (sorted_coverage_dict[0][1]["percent_coverage"]) > 0:
             return {sorted_coverage_dict[0][0] : sorted_coverage_dict[0][1]}
@@ -161,9 +164,9 @@ class SpeciesPredictor(object):
 class AMRSpeciesPredictor(SpeciesPredictor):
 
     def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
-                 base_json):
+                 base_json, verbose = False):
         super(AMRSpeciesPredictor, self).__init__(phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
-                 base_json)
+                 base_json, verbose = verbose)
 
     def is_saureus_present(self):
         return "Staphaureus" in self.out_json["phylogenetics"]["phylo_group"]

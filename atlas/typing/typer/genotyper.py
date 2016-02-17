@@ -16,8 +16,8 @@ from atlas.typing import Panel
 from atlas.typing.typer.presence import GeneCollectionTyper
 from atlas.typing.typer.variant import VariantTyper
 
-from atlas.vcf2db import VariantPanel
-from atlas.vcf2db import CallSet
+from atlas.variants import VariantPanel
+from atlas.variants import CallSet
 
 from atlas.cortex import McCortexRunner
 

@@ -41,7 +41,7 @@ class McCortexRunner(object):
           ## panel  
           seq_list = self._create_sequence_list() 
           cmd = ["/home/phelimb/git/mccortex/bin/mccortex31", "build",
-                   "-m 30GB","-k",  str(self.kmer)] + seq_list + [self.ctx_skeleton_filepath]
+                   "-m 5GB","-k",  str(self.kmer)] + seq_list + [self.ctx_skeleton_filepath]
           # print (cmd)
           subprocess.check_output(cmd)
 

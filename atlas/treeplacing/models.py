@@ -2,9 +2,9 @@ import sys
 import os
 from os import path
 sys.path.append(path.abspath("../"))
-from atlas.vcf2db import Variant
-from atlas.vcf2db import VariantSet
-from atlas.vcf2db import CallSet
+from atlas.variants import Variant
+from atlas.variants import VariantSet
+from atlas.variants import CallSet
 
 from atlas.typing import TypedVariant
 

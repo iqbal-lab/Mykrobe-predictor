@@ -4,7 +4,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Data import CodonTable 
 import itertools
-from atlas.vcf2db import split_var_name
+from atlas.variants import split_var_name
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
