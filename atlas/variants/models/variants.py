@@ -13,8 +13,8 @@ from mongoengine import DictField
 from mongoengine import GenericReferenceField
 
 from atlas.variants.models.base import CreateAndSaveMixin
-from atlas.utils import make_hash
 from atlas.utils import split_var_name
+from atlas.utils import make_var_hash
 
 # Based on ga4gh Variant schema http://ga4gh.org/#/schemas feb 2016 with
 # ocassional changes
@@ -78,7 +78,7 @@ class CallSet(Document, CreateAndSaveMixin):
 
 
     """
-    name = StringField(required=True, default=None)
+    name = StringField(required=True, default=None, unique = True)
     sample_id = StringField(required=True)
     created_at = DateTimeField(default=datetime.datetime.now)
     updated_at = DateTimeField(required=True, default=datetime.datetime.now)
@@ -258,15 +258,14 @@ class Variant(Document, CreateAndSaveMixin):
     def create(cls, variant_sets, start, reference_bases,
                alternate_bases, reference, end=None,
                names=[]):
-        name = "".join(
-            [reference_bases, str(start), "/".join(alternate_bases)])
+        
         return cls(variant_sets=variant_sets,
                    start=start,
                    end=end,
                    reference_bases=reference_bases,
                    alternate_bases=alternate_bases,
                    reference=reference,
-                   var_hash=make_hash(name))
+                   var_hash=make_var_hash(reference_bases, start, alternate_bases))
 
     @property
     def calls(self):

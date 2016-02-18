@@ -23,6 +23,10 @@ def check_args(args):
 def make_hash(s):
     return hashlib.sha256(s.encode("ascii", errors="ignore")).hexdigest()
 
+def make_var_hash(ref, pos, alts):
+    var = "".join(
+            [ref, str(pos), "/".join(alts)])
+    return make_hash(var)
 
 def split_var_name(name):
     items = re.match(r"([A-Z]+)([-0-9]+)([A-Z/]+)", name, re.I).groups()
