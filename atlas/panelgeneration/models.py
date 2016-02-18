@@ -14,6 +14,7 @@ def unique(seq):
     seen_add = seen.add
     return [x for x in seq if x not in seen and not seen_add(x)]
 
+
 class VariantPanel(Document):
 
     meta = {'indexes': [
@@ -50,7 +51,7 @@ class VariantPanel(Document):
     def __repr__(self):
         return "PANAL %s" % self._name
 
-        
+
 class Variant(object):
 
     def __init__(self, ref, pos, alt):

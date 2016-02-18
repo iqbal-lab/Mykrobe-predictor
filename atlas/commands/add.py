@@ -51,7 +51,6 @@ def run(parser, args):
     vcf = VCF(args.vcf)
     vcf.add_to_database()
 
-
     vcf_reader = vcf.Reader(open(args.vcf, 'r'))
     assert len(vcf_reader.samples) == 1
 

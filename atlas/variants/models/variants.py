@@ -32,9 +32,17 @@ class VariantSetMetadata(Document, CreateAndSaveMixin):
     variant_set = ReferenceField("VariantSet")
 
     @classmethod
-    def create(cls, key, value, type, variant_set, number = None, description = None, info = None):
+    def create(
+            cls,
+            key,
+            value,
+            type,
+            variant_set,
+            number=None,
+            description=None,
+            info=None):
         return cls(key=key, value=value, type=type, description=description,
-                info=info, variant_set = variant_set)
+                   info=info, variant_set=variant_set)
 
 
 class VariantSet(Document, CreateAndSaveMixin):
