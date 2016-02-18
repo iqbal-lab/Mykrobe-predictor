@@ -1,16 +1,11 @@
 import logging
 import os
 import csv
-import vcf
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
 from pymongo import MongoClient
-from atlas.variants.models import CallSet
-from atlas.variants.models import Reference
-from atlas.variants.models import Variant
-from atlas.variants.models import VariantSet
-from atlas.variants.models import Call
+
 from atlas.utils import check_args
 """Adds variants to the database"""
 
@@ -49,10 +44,13 @@ def run(parser, args):
         LOGGER.setLevel(logging.ERROR)
     else:
         LOGGER.setLevel(logging.INFO)
-    DBNAME = 'atlas-%s-%i' % (args.db_name, args.kmer)
+    DBNAME = 'atlas-%s' % (args.db_name)
     db = client[DBNAME]
     connect(DBNAME)
     LOGGER.debug("Using DB %s" % DBNAME)
+    vcf = VCF(args.vcf)
+    vcf.add_to_database()
+
 
     vcf_reader = vcf.Reader(open(args.vcf, 'r'))
     assert len(vcf_reader.samples) == 1
@@ -67,11 +65,6 @@ def run(parser, args):
         callset = CallSet.create(name=variant_set_name, sample_id=sample)
     except NotUniqueError:
         callset = CallSet.objects.get(name=variant_set_name)
-
-    try:
-        variant_set = VariantSet.create(name=variant_set_name)
-    except NotUniqueError:
-        variant_set = VariantSet.objects.get(name=variant_set_name)
 
     try:
         reference = Reference.create(name="R00000022")

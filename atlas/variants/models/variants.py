@@ -32,9 +32,9 @@ class VariantSetMetadata(Document, CreateAndSaveMixin):
     variant_set = ReferenceField("VariantSet")
 
     @classmethod
-    def create(cls, name, dataset_id=None, reference_set_id=None):
-        c = cls(name=name)
-        return c.save()
+    def create(cls, key, value, type, variant_set, number = None, description = None, info = None):
+        return cls(key=key, value=value, type=type, description=description,
+                info=info, variant_set = variant_set)
 
 
 class VariantSet(Document, CreateAndSaveMixin):
@@ -93,7 +93,6 @@ def convert_string_gt_to_list_int_gt(variant, genotype):
     return [int(i) for i in genotype.split('/')]
 
 
-
 class Call(Document, CreateAndSaveMixin):
     meta = {'indexes': [
         {
@@ -148,7 +147,7 @@ class Call(Document, CreateAndSaveMixin):
     F(j/k) = (k*(k+1)/2)+j. In other words, for biallelic sites the ordering is: AA,AB,BB; for triallelic sites the
     ordering is: AA,AB,BB,AC,BC,CC, etc. For example: GT:GL 0/1:-323.03,-99.29,-802.53 (Floats)
 
-    """   
+    """
     genotype_likelihoods = ListField(FloatField())
     # If this field is not null, this variant call's genotype ordering implies
     # the phase of the bases and is consistent with any other variant calls on
@@ -162,20 +161,27 @@ class Call(Document, CreateAndSaveMixin):
         if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(variant, genotype)
         cls._check_genotype_likelihood_length(genotype_likelihoods, variant)
-        return cls(variant=variant, call_set=call_set, genotype=genotype,
-                   genotype_likelihoods=genotype_likelihoods, phaseset=phaseset,
-                   info=info)
+        return cls(
+            variant=variant,
+            call_set=call_set,
+            genotype=genotype,
+            genotype_likelihoods=genotype_likelihoods,
+            phaseset=phaseset,
+            info=info)
 
     @classmethod
     def _check_genotype_likelihood_length(cls, genotype_likelihood, variant):
         if len(variant.alternate_bases) == 1:
             if not len(genotype_likelihood) == 3:
-                raise ValueError("Biallelic sites should have 3 genotype likelihoods. AA,AB,BB")
+                raise ValueError(
+                    "Biallelic sites should have 3 genotype likelihoods. AA,AB,BB")
         elif len(variant.alternate_bases) == 2:
             if not len(genotype_likelihood) == 6:
-                raise ValueError("Biallelic sites should have 6 genotype likelihoods. AA,AB,BB,AC,BC,CC, etc")            
+                raise ValueError(
+                    "Biallelic sites should have 6 genotype likelihoods. AA,AB,BB,AC,BC,CC, etc")
         else:
-            raise NotImplementedError("Haven't implemented check for > triallelic sites")
+            raise NotImplementedError(
+                "Haven't implemented check for > triallelic sites")
 
     @property
     def call_set_name(self):

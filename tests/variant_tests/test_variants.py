@@ -122,4 +122,3 @@ class TestVariants(BaseTest):
         assert r == "C"
         assert pos == -54
         assert a == "T"
-

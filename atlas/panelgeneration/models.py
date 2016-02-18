@@ -14,7 +14,43 @@ def unique(seq):
     seen_add = seen.add
     return [x for x in seq if x not in seen and not seen_add(x)]
 
+class VariantPanel(Document):
 
+    meta = {'indexes': [
+        {
+            'fields': ['variant']
+        },
+        {
+            'fields': ['name_hash']
+        }
+    ]
+    }
+
+    variant = ReferenceField('VariantFreq')
+    ref = StringField()
+    alts = ListField(StringField())
+    name = StringField(default=None)
+    name_hash = StringField(unique=True)
+
+    @classmethod
+    def create(cls, variant, vf, ref, alts):
+        return cls(
+            variant=vf,
+            ref=ref,
+            alts=alts,
+            name=variant.name,
+            name_hash=variant.name_hash
+        )
+
+    def update(self, ref, alts):
+        self.ref = ref
+        self.alts = alts
+        return self.save()
+
+    def __repr__(self):
+        return "PANAL %s" % self._name
+
+        
 class Variant(object):
 
     def __init__(self, ref, pos, alt):
