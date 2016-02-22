@@ -7,10 +7,11 @@ from nose.tools import assert_raises
 from mongoengine import connect
 DB = connect('atlas-test')
 
+
 class TestSNPAlleleGenerator():
 
     def setUp(self):
-        DB.drop_database('atlas-test')        
+        DB.drop_database('atlas-test')
         self.pg = AlleleGenerator(reference_filepath="data/BX571856.1.fasta")
         self.reference_set = ReferenceSet().create_and_save(name="ref_set")
         self.variant_set = VariantSet.create_and_save(
@@ -21,14 +22,19 @@ class TestSNPAlleleGenerator():
             name="ref",
             md5checksum="sre",
             reference_sets=[
-                self.reference_set])        # print self.pg.ref_length
+                self.reference_set])        
 
     def test_panel_generator(self):
         pg = AlleleGenerator(reference_filepath="data/BX571856.1.fasta")
         assert pg.ref is not None
 
     def test_simple_variant(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 31, alternate_bases = [ "T"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=31,
+     alternate_bases=["T"])
         panel = self.pg.create(v)
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert panel.alts == [
@@ -37,7 +43,12 @@ class TestSNPAlleleGenerator():
         assert v.is_indel is False
 
     def test_simple_variant2(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = [ "T"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=32,
+     alternate_bases=["T"])
         panel = self.pg.create(v)
         assert panel.ref == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert panel.alts == [
@@ -45,32 +56,62 @@ class TestSNPAlleleGenerator():
 
     def test_simple_variant_invalid(self):
         with assert_raises(ValueError) as cm:
-            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 31, alternate_bases = [ "T"])
+            v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="T",
+    start=31,
+     alternate_bases=["T"])
             panel = self.pg.create(v)
 
     def test_simple_variant_start(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 1, alternate_bases = [ "T"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=1,
+     alternate_bases=["T"])
         panel = self.pg.create(v)
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert panel.alts == [
             "TGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"]
 
     def test_simple_variant_end(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 2902618, alternate_bases = [ "T"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=2902618,
+     alternate_bases=["T"])
         panel = self.pg.create(v)
         assert panel.ref == "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
         assert panel.alts == [
             "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTTT"]
 
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 2902616, alternate_bases = [ "C"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="T",
+    start=2902616,
+     alternate_bases=["C"])
         panel = self.pg.create(v)
         assert panel.ref == "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTTTAT"
         assert panel.alts == [
             "TAACAAAATCCTTTTTATAACGCAAGTTCATTTTATACTACTGCTCAATTTTTTTACTTCTAT"]
 
     def test_simple_variant_with_nearby_snp(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 31, alternate_bases = [ "T"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = [ "T"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=31,
+     alternate_bases=["T"])
+        v2 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=32,
+     alternate_bases=["T"])
         panel = self.pg.create(v, context=[v2])
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert panel.alts == [
@@ -78,13 +119,27 @@ class TestSNPAlleleGenerator():
             "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT"]
 
     def test_simple_variant_with_multiple_nearby_snps(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 31, alternate_bases = [ "T"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = [ "T"])
-        v3 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 30, alternate_bases = [ "G"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=31,
+     alternate_bases=["T"])
+        v2 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=32,
+     alternate_bases=["T"])
+        v3 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=30,
+     alternate_bases=["G"])
 
         panel = self.pg.create(v, context=[v2, v3])
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        print (panel.alts)
         assert panel.alts == [
             "CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
             "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",
@@ -92,11 +147,36 @@ class TestSNPAlleleGenerator():
             "CGATTAAAGATAGAAATACACGATGCGAGGTTTCAAATTTCATAACATCACCATGAGTTTGAT"]
 
     def test_simple_variant_with_multiple_nearby_snps2(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 31, alternate_bases = [ "T"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = [ "T"])
-        v3 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 30, alternate_bases = [ "G"])
-        v4 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 30, alternate_bases = [ "T"])
-        v5 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 30, alternate_bases = [ "A"])
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=31,
+     alternate_bases=["T"])
+        v2 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=32,
+     alternate_bases=["T"])
+        v3 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=30,
+     alternate_bases=["G"])
+        v4 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=30,
+     alternate_bases=["T"])
+        v5 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=30,
+     alternate_bases=["A"])
         assert sorted(self.pg._split_context([v, v3, v4])) == sorted(
             [[v, v4], [v, v3]])
         assert (self.pg._split_context([v3, v4])) == [[v4], [v3]]
@@ -117,24 +197,46 @@ class TestSNPAlleleGenerator():
                 "CGATTAAAGATAGAAATACACGATGCGAGATTTCAAATTTCATAACATCACCATGAGTTTGAT"])
 
     def test_simple_variant_with_multiple_nearby_snps(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 31, alternate_bases = [ "T"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = [ "T"])
-        v5 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = [ "G"])
-        v3 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 30, alternate_bases = [ "G"])
-        v4 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 30, alternate_bases = [ "T"])
-
+        v = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=31,
+     alternate_bases=["T"])
+        v2 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=32,
+     alternate_bases=["T"])
+        v5 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="A",
+    start=32,
+     alternate_bases=["G"])
+        v3 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=30,
+     alternate_bases=["G"])
+        v4 = Variant.create(
+    variant_sets=self.variant_sets,
+    reference=self.reference,
+    reference_bases="C",
+    start=30,
+     alternate_bases=["T"])
         panel = self.pg.create(v, context=[v2, v3, v4, v5])
-                                                                                      [v3, v2]])
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
-        assert sorted(
-            panel.alts) == sorted(
-            [
-                "CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGGTATCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGGTTTCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGTTATCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGTTTTCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGCTGTCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGGTGTCAAATTTCATAACATCACCATGAGTTTGAT",
-                "CGATTAAAGATAGAAATACACGATGCGAGTTGTCAAATTTCATAACATCACCATGAGTTTGAT"])
+        assert sorted(panel.alts) == sorted(
+        [
+            "CGATTAAAGATAGAAATACACGATGCGAGCTATCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGCTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGGTATCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGGTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGTTATCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGTTTTCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGCTGTCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGGTGTCAAATTTCATAACATCACCATGAGTTTGAT",
+            "CGATTAAAGATAGAAATACACGATGCGAGTTGTCAAATTTCATAACATCACCATGAGTTTGAT"])

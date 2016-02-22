@@ -397,9 +397,10 @@ class Variant(Document, CreateAndSaveMixin):
 
     def overlapping(self, other):
         """Do these variants overlap in the reference"""
-        return (other.start in self.ref_range) or (self.start in other.ref_range)
+        return (
+            other.start in self.ref_range) or (
+            self.start in other.ref_range)
 
     @property
     def ref_range(self):
-        return range(self.start, self.start + len(self.reference_bases))           
-
+        return range(self.start, self.start + len(self.reference_bases))

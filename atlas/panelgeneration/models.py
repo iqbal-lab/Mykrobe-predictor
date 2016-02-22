@@ -66,8 +66,10 @@ class AlleleGenerator(object):
     def _check_valid_variant(self, v):
         index = v.start - 1
         if not len(v.alternate_bases) == 1:
-            raise NotImplementedError("Probes can only be built for homozygous variants at this time")
-        if "".join(self.ref[index:(index + len(v.reference_bases))]) != v.reference_bases:
+            raise NotImplementedError(
+                "Probes can only be built for homozygous variants at this time")
+        if "".join(
+                self.ref[index:(index + len(v.reference_bases))]) != v.reference_bases:
             raise ValueError("""Cannot create alleles as ref at pos %i is not %s
                                 (it's %s) are you sure you're using one-based
                                 co-ordinates?
@@ -135,9 +137,12 @@ class AlleleGenerator(object):
             alternate = copy(background)
             i -= self._calculate_length_delta_from_variant_list(
                 [c for c in context_combo if c.start <= v.start and c.is_indel])
-            if not "".join(alternate[i:(i + len(v.reference_bases))]) == v.reference_bases:
-                raise ValueError("Could not process context combo %s. %s != %s " % (",".join(
-                    [c.name for c in context_combo] + [v.name]), "".join(alternate[i:(i + len(v.reference_bases))]), v.reference_bases))
+            if not "".join(
+                    alternate[i:(i + len(v.reference_bases))]) == v.reference_bases:
+                raise ValueError("Could not process context combo %s. %s != %s " %
+                                 (",".join([c.name for c in context_combo] +
+                                           [v.name]), "".join(alternate[i:(i +
+                                                                           len(v.reference_bases))]), v.reference_bases))
             else:
                 for alt in v.alternate_bases:
                     alternate[i: i + len(v.reference_bases)] = alt
@@ -172,7 +177,8 @@ class AlleleGenerator(object):
                     [c for c in variants_added if c.start <= variant.start and c.is_indel])
                 if j <= len(new_background) and j >= 0:
                     if j + len(variant.reference_bases) > len(new_background):
-                        hang = j + len(variant.reference_bases) - len(new_background)
+                        hang = j + \
+                            len(variant.reference_bases) - len(new_background)
                         assert "".join(
                             new_background[
                                 j: len(new_background)]) == variant.reference_bases[
@@ -180,14 +186,27 @@ class AlleleGenerator(object):
                                 variant.reference_bases) -
                             hang]
                         new_background[
-                            j: j + len(variant.reference_bases)] = variant.alt[:len(variant.reference_bases) - hang]
+                            j: j +
+                            len(
+                                variant.reference_bases)] = variant.alt[
+                            :len(
+                                variant.reference_bases) -
+                            hang]
                     else:
                         if not "".join(
                                 new_background[j: j + len(variant.reference_bases)]) == variant.reference_bases:
-                            raise ValueError("Could not process variant %s. %s != %s " % (
-                                variant.name, "".join(new_background[j: j + len(variant.reference_bases)]), variant.reference_bases))
+                            raise ValueError(
+                                "Could not process variant %s. %s != %s " %
+                                (variant.name,
+                                 "".join(
+                                     new_background[
+                                         j: j +
+                                         len(
+                                             variant.reference_bases)]),
+                                    variant.reference_bases))
                         else:
-                            new_background[j: j + len(variant.reference_bases)] = alt
+                            new_background[
+                                j: j + len(variant.reference_bases)] = alt
                     variants_added.append(variant)
                 else:
                     del context[e]
