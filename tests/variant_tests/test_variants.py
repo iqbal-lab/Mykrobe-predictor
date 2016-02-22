@@ -56,7 +56,7 @@ class TestVariants(BaseTest):
                             reference=self.reference)
         assert v1.start == 0
         assert v1.end == 1
-        assert v1.alt == "T"
+        assert v1.alternate_bases == ["T"]
         assert v1.length == 0
 
     def test_create_insertion(self):
@@ -66,13 +66,11 @@ class TestVariants(BaseTest):
                             reference=self.reference)
         assert v1.start == 0
         assert v1.end == 1
-        assert v1.alt == "TA"
+        assert v1.alternate_bases == ["TA"]
         assert v1.is_insertion
         assert v1.is_deletion is False
         assert v1.is_indel
-        assert v1._length is None
         assert v1.length == 1
-        assert v1._length == 1
 
     def test_create_deletion(self):
         v1 = Variant.create(variant_sets=self.variant_sets,
@@ -81,7 +79,7 @@ class TestVariants(BaseTest):
                             reference=self.reference)
         assert v1.start == 0
         assert v1.end == 1
-        assert v1.alt == "A"
+        assert v1.alternate_bases == ["A"]
         assert v1.reference_bases == "AA"
         assert v1.is_insertion is False
         assert v1.is_deletion
