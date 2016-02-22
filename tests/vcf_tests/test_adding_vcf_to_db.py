@@ -66,7 +66,7 @@ class TestAddNewCallSet(BaseTest):
         assert CallSet.objects().count() == 1
         assert CallSet.objects()[0].created_at <= datetime.datetime.now()
         assert len(CallSet.objects()[0].variant_sets) == 2
- 
+
 
 class TestVariantsAndCalls(BaseTest):
 
@@ -107,3 +107,23 @@ class TestAddSecondVCF(BaseTest):
         assert CallSet.objects().count() == 2
         assert Call.objects().count() == 42
         assert Variant.objects().count() == 22
+
+
+class TestAddVCFwithIndels(BaseTest):
+
+    def test_add_second_vcf_variant_set(self):
+        # This VCF only has one Variant which is not in the first VCF
+        vcf = VCF(
+            f="tests/vcf_tests/test3.vcf",
+            reference_set_id=self.reference_set.id,
+            method="CORTEX")
+        vcf.add_to_database()
+        assert VariantSet.objects().count() == 2
+        assert CallSet.objects().count() == 1
+        assert Call.objects().count() == 106
+        assert Variant.objects().count() == 106        
+        assert Variant.snps().count() == 89
+        assert Variant.indels().count() == 17
+        assert Variant.insertions().count() == 8
+        assert Variant.deletions().count() == 8
+        assert Variant.objects.count(is_indel = True, is_insertion= False, is_deletion = Fals

@@ -1,7 +1,6 @@
 import datetime
 import json
 
-
 from mongoengine import Document
 from mongoengine import StringField
 from mongoengine import DateTimeField
@@ -11,6 +10,8 @@ from mongoengine import ListField
 from mongoengine import FloatField
 from mongoengine import DictField
 from mongoengine import GenericReferenceField
+from mongoengine import BooleanField
+from mongoengine import queryset_manager
 
 from atlas.variants.models.base import CreateAndSaveMixin
 from atlas.utils import split_var_name
@@ -207,6 +208,63 @@ def lazyprop(fn):
         return getattr(self, attr_name)
     return _lazyprop
 
+def is_indel(reference_bases, alternate_bases):
+    """ Return whether or not the variant is an INDEL """
+    if len(reference_bases) > 1:
+        return True
+    for alt in alternate_bases:
+        if alt is None:
+            return True
+        elif len(alt) != len(reference_bases):
+            return True
+    return False
+
+def is_snp(reference_bases, alternate_bases):
+    """ Return whether or not the variant is a SNP """
+    if len(reference_bases) > 1:
+        return False
+    for alt in alternate_bases:
+        if alt is None:
+            return False
+        if alt not in ['A', 'C', 'G', 'T', 'N', '*']:
+            return False
+    return True    
+
+def is_deletion(reference_bases, alternate_bases):
+    """ Return whether or not the INDEL is a deletion """
+    # if multiple alts, it is unclear if we have a transition
+    if len(alternate_bases) > 1:
+        return False
+
+    if is_indel(reference_bases, alternate_bases):
+        # just one alt allele
+        alt_allele = alternate_bases[0]
+        if alt_allele is None:
+            return True
+        if len(reference_bases) > len(alt_allele):
+            return True
+        else:
+            return False
+    else:
+        return False 
+
+def is_insertion(reference_bases, alternate_bases):
+    if len(alternate_bases) > 1:
+        return False
+    if is_indel(reference_bases, alternate_bases):
+        # just one alt allele
+        alt_allele = alternate_bases[0]
+        if alt_allele is None:
+            return False
+        if len(alt_allele) > len(reference_bases):
+            return True
+        else:
+            return False
+    else:
+        return False 
+          
+def var_length(reference_bases, alternate_bases):
+    return abs(len(reference_bases) - max([len(a) for a in alternate_bases]))    
 
 class Variant(Document, CreateAndSaveMixin):
     meta = {'indexes': [
@@ -252,7 +310,12 @@ class Variant(Document, CreateAndSaveMixin):
         required=True,
         unique_with="var_hash")
 
-    _length = IntField(required=False, default=None)
+    length = IntField(required=False, default=None)
+    is_snp = BooleanField(required=True)
+    is_indel = BooleanField(required=True)
+    is_deletion = BooleanField(required=True)
+    is_insertion = BooleanField(required=True)
+
 
     @classmethod
     def create(cls, variant_sets, start, reference_bases,
@@ -269,7 +332,13 @@ class Variant(Document, CreateAndSaveMixin):
             var_hash=make_var_hash(
                 reference_bases,
                 start,
-                alternate_bases))
+                alternate_bases),
+            length = var_length(reference_bases, alternate_bases),
+            is_snp = is_snp(reference_bases, alternate_bases),
+            is_indel = is_indel(reference_bases, alternate_bases),
+            is_deletion = is_deletion(reference_bases, alternate_bases),
+            is_insertion = is_insertion(reference_bases, alternate_bases)
+            )
 
     @property
     def calls(self):
@@ -281,72 +350,29 @@ class Variant(Document, CreateAndSaveMixin):
     @property
     def var_name(self):
         return "".join(
-            [reference_bases, str(start), "/".join(alternate_bases)])
-
-    @lazyprop
-    def length(self):
-        return abs(len(self.reference_bases) -
-                   max([len(a) for a in self.alternate_bases]))
+            [self.reference_bases, str(self.start), "/".join(self.alternate_bases)])
 
     def __str__(self):
-        return self.name
+        return self.var_name
 
     def __repr__(self):
-        return self.name
+        return self.var_name
 
     def __eq__(self, other):
         return self.name_hash == other.name_hash
 
-    @property
-    def alt(self):
-        if len(self.alternate_bases) == 1:
-            return "".join(self.alternate_bases)
-        else:
-            return self.alternate_bases
+    @queryset_manager
+    def snps(doc_cls, queryset):
+        return queryset.filter(is_snp=True)
 
-    @property
-    def is_indel(self):
-        """ Return whether or not the variant is an INDEL """
-        if len(self.reference_bases) > 1:
-            return True
-        for alt in self.alternate_bases:
-            if alt is None:
-                return True
-            elif len(alt) != len(self.reference_bases):
-                return True
-        return False
+    @queryset_manager
+    def indels(doc_cls, queryset):
+        return queryset.filter(is_indel=True)
 
-    @property
-    def is_deletion(self):
-        """ Return whether or not the INDEL is a deletion """
-        # if multiple alts, it is unclear if we have a transition
-        if len(self.alternate_bases) > 1:
-            return False
+    @queryset_manager
+    def deletions(doc_cls, queryset):
+        return queryset.filter(is_deletion=True)
 
-        if self.is_indel:
-            # just one alt allele
-            alt_allele = self.alternate_bases[0]
-            if alt_allele is None:
-                return True
-            if len(self.reference_bases) > len(alt_allele):
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    @property
-    def is_insertion(self):
-        if len(self.alternate_bases) > 1:
-            return False
-        if self.is_indel:
-            # just one alt allele
-            alt_allele = self.alternate_bases[0]
-            if alt_allele is None:
-                return False
-            if len(alt_allele) > len(self.reference_bases):
-                return True
-            else:
-                return False
-        else:
-            return False
+    @queryset_manager
+    def insertions(doc_cls, queryset):
+        return queryset.filter(is_insertion=True)        
