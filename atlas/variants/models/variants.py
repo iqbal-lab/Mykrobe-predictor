@@ -364,7 +364,13 @@ class Variant(Document, CreateAndSaveMixin):
         return self.var_name
 
     def __eq__(self, other):
-        return self.name_hash == other.name_hash
+        return self.var_hash == other.var_hash
+
+    def __gt__(self, other):
+        return self.start > other.start
+
+    def __lt__(self, other):
+        return self.start < other.start
 
     @queryset_manager
     def snps(doc_cls, queryset):
@@ -384,5 +390,16 @@ class Variant(Document, CreateAndSaveMixin):
 
     @queryset_manager
     def ph_snps(doc_cls, queryset):
-        return queryset.filter(is_indel=True, is_deletion = False, is_insertion = False)
+        return queryset.filter(
+            is_indel=True,
+            is_deletion=False,
+            is_insertion=False)
+
+    def overlapping(self, other):
+        """Do these variants overlap in the reference"""
+        return (other.start in self.ref_range) or (self.start in other.ref_range)
+
+    @property
+    def ref_range(self):
+        return range(self.start, self.start + len(self.reference_bases))           
 

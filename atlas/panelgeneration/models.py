@@ -1,3 +1,5 @@
+from mongoengine import Document
+from mongoengine import ReferenceField
 from Bio import SeqIO
 from Bio.Seq import Seq
 from copy import copy
@@ -20,112 +22,20 @@ class VariantPanel(Document):
     meta = {'indexes': [
         {
             'fields': ['variant']
-        },
-        {
-            'fields': ['name_hash']
         }
     ]
     }
 
-    variant = ReferenceField('VariantFreq')
-    ref = StringField()
-    alts = ListField(StringField())
-    name = StringField(default=None)
-    name_hash = StringField(unique=True)
+    variant = ReferenceField('Variant')
 
     @classmethod
-    def create(cls, variant, vf, ref, alts):
+    def create(cls, variant):
         return cls(
-            variant=vf,
-            ref=ref,
-            alts=alts,
-            name=variant.name,
-            name_hash=variant.name_hash
+            variant=vf
         )
 
-    def update(self, ref, alts):
-        self.ref = ref
-        self.alts = alts
-        return self.save()
-
     def __repr__(self):
-        return "PANAL %s" % self._name
-
-
-class Variant(object):
-
-    def __init__(self, ref, pos, alt):
-        self.ref = ref
-        self.pos = pos
-        self.alt = alt
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return self.name
-
-    def __gt__(self, other):
-        return self.pos > other.pos
-
-    def __lt__(self, other):
-        return self.pos < other.pos
-
-    def overlapping(self, other):
-        return (other.pos in self.ref_range) or (self.pos in other.ref_range)
-
-    @property
-    def name(self):
-        return "%s%i%s" % (self.ref, self.pos, self.alt)
-
-    @property
-    def name_hash(self):
-        return make_hash(self.name)
-
-    @property
-    def ref_range(self):
-        return range(self.pos, self.pos + len(self.ref))
-
-    @property
-    def length(self):
-        return abs(len(self.ref) - len(self.alt))
-
-    @property
-    def is_indel(self):
-        """ Return whether or not the variant is an INDEL """
-        if len(self.ref) > 1:
-            return True
-        if self.alt is None:
-            return True
-        elif len(self.alt) != len(self.ref):
-            return True
-        return False
-
-    @property
-    def is_deletion(self):
-        """ Return whether or not the INDEL is a deletion """
-        if self.is_indel:
-            # just one alt allele
-            if self.alt is None:
-                return True
-            if len(self.ref) > len(self.alt):
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    @property
-    def is_insertion(self):
-        if self.is_indel:
-            if self.alt is None:
-                return False
-            if len(self.alt) > len(self.ref):
-                return True
-            else:
-                return False
-        else:
-            return False
+        return "VariantPanel %s" % self._name
 
 
 class AlleleGenerator(object):
@@ -151,16 +61,18 @@ class AlleleGenerator(object):
         context = self._remove_contexts_not_within_k(v, context)
         wild_type_reference = self._get_wildtype_reference(v)
         alternates = self._generate_alternates_on_all_backgrounds(v, context)
-        return Panel(wild_type_reference, v.pos, alternates)
+        return Panel(wild_type_reference, v.start, alternates)
 
     def _check_valid_variant(self, v):
-        index = v.pos - 1
-        if "".join(self.ref[index:(index + len(v.ref))]) != v.ref:
+        index = v.start - 1
+        if not len(v.alternate_bases) == 1:
+            raise NotImplementedError("Probes can only be built for homozygous variants at this time")
+        if "".join(self.ref[index:(index + len(v.reference_bases))]) != v.reference_bases:
             raise ValueError("""Cannot create alleles as ref at pos %i is not %s
                                 (it's %s) are you sure you're using one-based
                                 co-ordinates?
-                             """ % (v.pos, v.ref, "".join(self.ref[index: (index + len(v.ref))])))
-        if v.pos <= 0:
+                             """ % (v.start, v.reference_bases, "".join(self.ref[index: (index + len(v.reference_bases))])))
+        if v.start <= 0:
             raise ValueError("Position should be 1 based")
 
     def _remove_overlapping_contexts(self, v, context):
@@ -172,12 +84,12 @@ class AlleleGenerator(object):
         new_context = []
         for c in context:
             if c.is_insertion:
-                effective_pos = c.pos - c.length
+                effective_pos = c.start - c.length
             elif c.is_deletion:
-                effective_pos = c.pos + c.length
+                effective_pos = c.start + c.length
             else:
-                effective_pos = c.pos
-            if abs(v.pos - effective_pos) < self.kmer:
+                effective_pos = c.start
+            if abs(v.start - effective_pos) < self.kmer:
                 new_context.append(c)
         return new_context
 
@@ -222,13 +134,14 @@ class AlleleGenerator(object):
                 raise ValueError("\n".join([m, str(e)]))
             alternate = copy(background)
             i -= self._calculate_length_delta_from_variant_list(
-                [c for c in context_combo if c.pos <= v.pos and c.is_indel])
-            if not "".join(alternate[i:(i + len(v.ref))]) == v.ref:
+                [c for c in context_combo if c.start <= v.start and c.is_indel])
+            if not "".join(alternate[i:(i + len(v.reference_bases))]) == v.reference_bases:
                 raise ValueError("Could not process context combo %s. %s != %s " % (",".join(
-                    [c.name for c in context_combo] + [v.name]), "".join(alternate[i:(i + len(v.ref))]), v.ref))
+                    [c.name for c in context_combo] + [v.name]), "".join(alternate[i:(i + len(v.reference_bases))]), v.reference_bases))
             else:
-                alternate[i: i + len(v.ref)] = v.alt
-                alternates.append(alternate)
+                for alt in v.alternate_bases:
+                    alternate[i: i + len(v.reference_bases)] = alt
+                    alternates.append(alternate)
         return alternates
 
     def _get_all_context_combinations(self, context):
@@ -253,30 +166,31 @@ class AlleleGenerator(object):
 
         variants_added = []
         for e, variant in enumerate(context):
-            j = i + variant.pos - v.pos
-            j -= self._calculate_length_delta_from_variant_list(
-                [c for c in variants_added if c.pos <= variant.pos and c.is_indel])
-            if j <= len(new_background) and j >= 0:
-                if j + len(variant.ref) > len(new_background):
-                    hang = j + len(variant.ref) - len(new_background)
-                    assert "".join(
+            for alt in variant.alternate_bases:
+                j = i + variant.start - v.start
+                j -= self._calculate_length_delta_from_variant_list(
+                    [c for c in variants_added if c.start <= variant.start and c.is_indel])
+                if j <= len(new_background) and j >= 0:
+                    if j + len(variant.reference_bases) > len(new_background):
+                        hang = j + len(variant.reference_bases) - len(new_background)
+                        assert "".join(
+                            new_background[
+                                j: len(new_background)]) == variant.reference_bases[
+                            :len(
+                                variant.reference_bases) -
+                            hang]
                         new_background[
-                            j: len(new_background)]) == variant.ref[
-                        :len(
-                            variant.ref) -
-                        hang]
-                    new_background[
-                        j: j + len(variant.ref)] = variant.alt[:len(variant.ref) - hang]
-                else:
-                    if not "".join(
-                            new_background[j: j + len(variant.ref)]) == variant.ref:
-                        raise ValueError("Could not process variant %s. %s != %s " % (
-                            variant.name, "".join(new_background[j: j + len(variant.ref)]), variant.ref))
+                            j: j + len(variant.reference_bases)] = variant.alt[:len(variant.reference_bases) - hang]
                     else:
-                        new_background[j: j + len(variant.ref)] = variant.alt
-                variants_added.append(variant)
-            else:
-                del context[e]
+                        if not "".join(
+                                new_background[j: j + len(variant.reference_bases)]) == variant.reference_bases:
+                            raise ValueError("Could not process variant %s. %s != %s " % (
+                                variant.name, "".join(new_background[j: j + len(variant.reference_bases)]), variant.reference_bases))
+                        else:
+                            new_background[j: j + len(variant.reference_bases)] = alt
+                    variants_added.append(variant)
+                else:
+                    del context[e]
         return new_background
 
     def _create_multiple_contexts(self, context):
@@ -337,14 +251,14 @@ class AlleleGenerator(object):
         # Is large var
         shift = 0
         kmer = self.kmer
-        if len(v.ref) > 2 * kmer:
-            kmer = int(math.ceil(float(len(v.ref)) / 2)) + 5
+        if len(v.reference_bases) > 2 * kmer:
+            kmer = int(math.ceil(float(len(v.reference_bases)) / 2)) + 5
         elif (v.length > 2 * kmer):
             kmer = int(math.ceil(float(v.length) / 2)) + 5
-        if len(v.ref) > kmer:
+        if len(v.reference_bases) > kmer:
             shift = int(
-                (kmer - 1) - math.floor(float((2 * kmer + 1) - len(v.ref)) / 2))
-        pos = v.pos
+                (kmer - 1) - math.floor(float((2 * kmer + 1) - len(v.reference_bases)) / 2))
+        pos = v.start
         start_delta = int(math.floor(float(delta) / 2))
         end_delta = int(math.ceil(float(delta) / 2))
         start_index = pos - kmer - start_delta
@@ -386,7 +300,7 @@ class AlleleGenerator(object):
 
 class Panel(object):
 
-    def __init__(self, ref, pos, alts):
+    def __init__(self, ref, start, alts):
         self.ref = "".join(ref)
-        self.pos = pos
+        self.start = start
         self.alts = unique(["".join(alt) for alt in alts])
