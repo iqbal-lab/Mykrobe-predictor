@@ -188,7 +188,7 @@ class AlleleGenerator(object):
                         new_background[
                             j: j +
                             len(
-                                variant.reference_bases)] = variant.alt[
+                                variant.reference_bases)] = alt[
                             :len(
                                 variant.reference_bases) -
                             hang]
