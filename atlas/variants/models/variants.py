@@ -208,6 +208,7 @@ def lazyprop(fn):
         return getattr(self, attr_name)
     return _lazyprop
 
+
 def is_indel(reference_bases, alternate_bases):
     """ Return whether or not the variant is an INDEL """
     if len(reference_bases) > 1:
@@ -219,6 +220,7 @@ def is_indel(reference_bases, alternate_bases):
             return True
     return False
 
+
 def is_snp(reference_bases, alternate_bases):
     """ Return whether or not the variant is a SNP """
     if len(reference_bases) > 1:
@@ -228,7 +230,8 @@ def is_snp(reference_bases, alternate_bases):
             return False
         if alt not in ['A', 'C', 'G', 'T', 'N', '*']:
             return False
-    return True    
+    return True
+
 
 def is_deletion(reference_bases, alternate_bases):
     """ Return whether or not the INDEL is a deletion """
@@ -246,7 +249,8 @@ def is_deletion(reference_bases, alternate_bases):
         else:
             return False
     else:
-        return False 
+        return False
+
 
 def is_insertion(reference_bases, alternate_bases):
     if len(alternate_bases) > 1:
@@ -261,10 +265,12 @@ def is_insertion(reference_bases, alternate_bases):
         else:
             return False
     else:
-        return False 
-          
+        return False
+
+
 def var_length(reference_bases, alternate_bases):
-    return abs(len(reference_bases) - max([len(a) for a in alternate_bases]))    
+    return abs(len(reference_bases) - max([len(a) for a in alternate_bases]))
+
 
 class Variant(Document, CreateAndSaveMixin):
     meta = {'indexes': [
@@ -316,7 +322,6 @@ class Variant(Document, CreateAndSaveMixin):
     is_deletion = BooleanField(required=True)
     is_insertion = BooleanField(required=True)
 
-
     @classmethod
     def create(cls, variant_sets, start, reference_bases,
                alternate_bases, reference, end=None,
@@ -333,12 +338,12 @@ class Variant(Document, CreateAndSaveMixin):
                 reference_bases,
                 start,
                 alternate_bases),
-            length = var_length(reference_bases, alternate_bases),
-            is_snp = is_snp(reference_bases, alternate_bases),
-            is_indel = is_indel(reference_bases, alternate_bases),
-            is_deletion = is_deletion(reference_bases, alternate_bases),
-            is_insertion = is_insertion(reference_bases, alternate_bases)
-            )
+            length=var_length(reference_bases, alternate_bases),
+            is_snp=is_snp(reference_bases, alternate_bases),
+            is_indel=is_indel(reference_bases, alternate_bases),
+            is_deletion=is_deletion(reference_bases, alternate_bases),
+            is_insertion=is_insertion(reference_bases, alternate_bases)
+        )
 
     @property
     def calls(self):
@@ -375,4 +380,4 @@ class Variant(Document, CreateAndSaveMixin):
 
     @queryset_manager
     def insertions(doc_cls, queryset):
-        return queryset.filter(is_insertion=True)        
+        return queryset.filter(is_insertion=True)
