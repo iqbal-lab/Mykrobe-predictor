@@ -45,7 +45,7 @@ class SpeciesPredictor(object):
             lineage_covgs,
             base_json,
             verbose=False,
-            hierarchy_json_file="/data2/users/phelim/ana/tb/NTM-species-probes/data/truth/hierarchy.json"):
+            hierarchy_json_file="data/phylo/mtbc_hierarchy.json"):
         self.phylo_group_covgs = phylo_group_covgs
         self.sub_complex_covgs = sub_complex_covgs
         self.species_covgs = species_covgs
@@ -116,7 +116,6 @@ class SpeciesPredictor(object):
             _median = covg_dict.get("median", [0])
             minimum_percentage_coverage_required = percent_coverage_from_expected_coverage(
                 self.expected_depth) * self.threshold.get(phylo_group, DEFAULT_THRESHOLD)
-            # print (minimum_percentage_coverage_required, self.expected_depth, percent_coverage_from_expected_coverage(self.expected_depth))
             if total_percent_covered < minimum_percentage_coverage_required:
                 # Remove low coverage nodes
                 _index = [

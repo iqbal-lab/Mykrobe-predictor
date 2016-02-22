@@ -18,10 +18,11 @@ from Bio.Seq import Seq
 from mongoengine import connect
 DB = connect('atlas-test')
 
+
 class TestRegions():
 
     def setUp(self):
-        DB.drop_database('atlas-test')      
+        DB.drop_database('atlas-test')
         with open("data/NC_000962.3.fasta", 'r') as infile:
             self.reference_seq = list(SeqIO.parse(infile, "fasta"))[0].seq
         self.gm = GeneAminoAcidChangeToDNAVariants(
@@ -35,8 +36,8 @@ class TestRegions():
         self.reference_id = Reference().create_and_save(
             name="ref",
             md5checksum="sre",
-            reference_sets=[   
-                self.reference_set])     
+            reference_sets=[
+                self.reference_set])
 
     def test_simple_gene(self):
         g = Gene(
@@ -192,7 +193,12 @@ class TestRegions():
         gene = self.gm.get_gene("rpoB")
         for var in self.gm.get_variant_names("rpoB", "D3A"):
             ref, start, alt = split_var_name(var)
-            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
+            v = Variant.create(
+                variant_sets=self.variant_sets,
+                reference=self.reference_id,
+                reference_bases=ref,
+                start=start,
+                alternate_bases=[alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq))
@@ -205,7 +211,12 @@ class TestRegions():
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "E3A"):
             ref, start, alt = split_var_name(var)
-            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
+            v = Variant.create(
+                variant_sets=self.variant_sets,
+                reference=self.reference_id,
+                reference_bases=ref,
+                start=start,
+                alternate_bases=[alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq.reverse_complement()))
@@ -218,7 +229,12 @@ class TestRegions():
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "S315L"):
             ref, start, alt = split_var_name(var)
-            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
+            v = Variant.create(
+                variant_sets=self.variant_sets,
+                reference=self.reference_id,
+                reference_bases=ref,
+                start=start,
+                alternate_bases=[alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq.reverse_complement()))
@@ -231,7 +247,12 @@ class TestRegions():
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "W90R"):
             ref, start, alt = split_var_name(var)
-            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
+            v = Variant.create(
+                variant_sets=self.variant_sets,
+                reference=self.reference_id,
+                reference_bases=ref,
+                start=start,
+                alternate_bases=[alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq.reverse_complement()))
@@ -244,7 +265,12 @@ class TestRegions():
         gene = self.gm.get_gene("gyrA")
         for var in self.gm.get_variant_names("gyrA", "D94X"):
             ref, start, alt = split_var_name(var)
-            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
+            v = Variant.create(
+                variant_sets=self.variant_sets,
+                reference=self.reference_id,
+                reference_bases=ref,
+                start=start,
+                alternate_bases=[alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq))
