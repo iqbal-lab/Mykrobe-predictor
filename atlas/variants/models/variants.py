@@ -21,7 +21,7 @@ from atlas.utils import make_var_hash
 
 
 class VariantSetMetadata(Document, CreateAndSaveMixin):
-    key = StringField()
+    key = StringField(unique_with="variant_set")
     value = StringField()
     type = StringField()
     # The number of values that can be included in a field described by this
@@ -78,7 +78,7 @@ class CallSet(Document, CreateAndSaveMixin):
 
 
     """
-    name = StringField(required=True, default=None, unique = True)
+    name = StringField(required=True, default=None, unique=True)
     sample_id = StringField(required=True)
     created_at = DateTimeField(default=datetime.datetime.now)
     updated_at = DateTimeField(required=True, default=datetime.datetime.now)
@@ -258,14 +258,18 @@ class Variant(Document, CreateAndSaveMixin):
     def create(cls, variant_sets, start, reference_bases,
                alternate_bases, reference, end=None,
                names=[]):
-        
-        return cls(variant_sets=variant_sets,
-                   start=start,
-                   end=end,
-                   reference_bases=reference_bases,
-                   alternate_bases=alternate_bases,
-                   reference=reference,
-                   var_hash=make_var_hash(reference_bases, start, alternate_bases))
+
+        return cls(
+            variant_sets=variant_sets,
+            start=start,
+            end=end,
+            reference_bases=reference_bases,
+            alternate_bases=alternate_bases,
+            reference=reference,
+            var_hash=make_var_hash(
+                reference_bases,
+                start,
+                alternate_bases))
 
     @property
     def calls(self):

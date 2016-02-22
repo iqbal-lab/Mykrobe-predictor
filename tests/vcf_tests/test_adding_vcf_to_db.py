@@ -33,9 +33,10 @@ class TestAddNewVariantSet(BaseTest):
         vcf = VCF(
             f="tests/vcf_tests/test.vcf",
             reference_set_id=self.reference_set.id,
-            method = "CORTEX")
+            method="CORTEX")
         vcf.add_to_database()
-        assert VariantSet.objects().count() == 1
+        # We create a global variant set as well as one for the individual VCF
+        assert VariantSet.objects().count() == 2
         vs = VariantSet.objects()[0]
         assert vs.name == "test.vcf"
 
@@ -46,10 +47,11 @@ class TestAddNewVariantSetMetaData(BaseTest):
         vcf = VCF(
             f="tests/vcf_tests/test.vcf",
             reference_set_id=self.reference_set.id,
-            method = "CORTEX")
+            method="CORTEX")
         vcf.add_to_database()
-        assert VariantSetMetadata.objects().count() >= 1
-        assert VariantSetMetadata.objects(key="KMER").count() == 1
+        assert VariantSetMetadata.objects().count() >= 2
+        assert VariantSetMetadata.objects(key="KMER").count() == 2
+
 
 class TestAddNewCallSet(BaseTest):
 
@@ -57,10 +59,14 @@ class TestAddNewCallSet(BaseTest):
         vcf = VCF(
             f="tests/vcf_tests/test.vcf",
             reference_set_id=self.reference_set.id,
-            method = "CORTEX")
+            method="CORTEX")
         vcf.add_to_database()
+        # Only one callset but the callset should belong to multiple variant
+        # sets
         assert CallSet.objects().count() == 1
         assert CallSet.objects()[0].created_at <= datetime.datetime.now()
+        assert len(CallSet.objects()[0].variant_sets) == 2
+
 
 class TestVariantsAndCalls(BaseTest):
 
@@ -68,9 +74,36 @@ class TestVariantsAndCalls(BaseTest):
         vcf = VCF(
             f="tests/vcf_tests/test.vcf",
             reference_set_id=self.reference_set.id,
-            method = "CORTEX")
+            method="CORTEX")
         vcf.add_to_database()
-        assert Call.objects().count() == 21	
+        assert Call.objects().count() == 21
         assert Variant.objects().count() == 21
 
 
+class TestAddSecondVCF(BaseTest):
+
+    def setUp(self):
+        DB.drop_database('atlas-test')
+        self.reference_set = ReferenceSet().create_and_save(name="ref_set")
+        self.reference = Reference().create_and_save(
+            name="NC_000962.3",
+            md5checksum="sre",
+            reference_sets=[
+                self.reference_set])
+        vcf = VCF(
+            f="tests/vcf_tests/test.vcf",
+            reference_set_id=self.reference_set.id,
+            method="CORTEX")
+        vcf.add_to_database()
+
+    def test_add_second_vcf_variant_set(self):
+        # This VCF only has one Variant which is not in the first VCF
+        vcf = VCF(
+            f="tests/vcf_tests/test2.vcf",
+            reference_set_id=self.reference_set.id,
+            method="CORTEX")
+        vcf.add_to_database()
+        assert VariantSet.objects().count() == 3
+        assert CallSet.objects().count() == 2
+        assert Call.objects().count() == 42
+        assert Variant.objects().count() == 22
