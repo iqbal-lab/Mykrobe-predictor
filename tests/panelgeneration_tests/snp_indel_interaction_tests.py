@@ -26,8 +26,18 @@ class TestINDELandSNPSAlleleGenerator():
                 self.reference_set])
 
     def test_ins_with_SNP_context(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 31, alternate_bases = ["ATTT"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = ["T"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=31,
+            alternate_bases=["ATTT"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=32,
+            alternate_bases=["T"])
         panel = self.pg.create(v, context=[v2])
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert sorted(
@@ -37,8 +47,18 @@ class TestINDELandSNPSAlleleGenerator():
                 "CGATTAAAGATAGAAATACACGATGCGAGCATTTTTCAAATTTCATAACATCACCATGAGTTTGAT"])
 
     def test_del_with_SNP_context1(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "AA", start = 31, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 33, alternate_bases = ["A"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="AA",
+            start=31,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=33,
+            alternate_bases=["A"])
         panel = self.pg.create(v, context=[v2])
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
         assert sorted(
@@ -48,8 +68,18 @@ class TestINDELandSNPSAlleleGenerator():
                 "CGATTAAAGATAGAAATACACGATGCGAGCAACAAATTTCATAACATCACCATGAGTTTGATC"])
 
     def test_del_with_SNP_context2(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "AA", start = 31, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 32, alternate_bases = ["T"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="AA",
+            start=31,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=32,
+            alternate_bases=["T"])
         panel = self.pg.create(v, context=[v2])
         assert self.pg._remove_overlapping_contexts(v, [v2]) == []
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
@@ -58,8 +88,18 @@ class TestINDELandSNPSAlleleGenerator():
             ["CGATTAAAGATAGAAATACACGATGCGAGCATCAAATTTCATAACATCACCATGAGTTTGATC"])
 
     def test_del_with_ins_context1(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "AAT", start = 31, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 4, alternate_bases = ["TTTT"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="AAT",
+            start=31,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=4,
+            alternate_bases=["TTTT"])
         panel = self.pg.create(v, context=[v2])
         assert self.pg._remove_overlapping_contexts(v, [v2]) == [v2]
         assert panel.ref == "CGATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGAT"
@@ -70,8 +110,18 @@ class TestINDELandSNPSAlleleGenerator():
                 "CGATTTTTAAAGATAGAAATACACGATGCGAGCACAAATTTCATAACATCACCATGAGTTTGAT"])
 
     def test_del_with_ins_context2(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATC", start = 32, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "C", start = 1, alternate_bases = ["CTTT"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATC",
+            start=32,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="C",
+            start=1,
+            alternate_bases=["CTTT"])
         panel = self.pg.create(v, context=[v2])
         assert self.pg._remove_overlapping_contexts(v, [v2]) == [v2]
         assert self.pg._remove_contexts_not_within_k(v, [v2]) == []
@@ -81,8 +131,18 @@ class TestINDELandSNPSAlleleGenerator():
             ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
     def test_del_with_ins_context3(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATC", start = 32, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 5, alternate_bases = ["TT"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATC",
+            start=32,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=5,
+            alternate_bases=["TT"])
         panel = self.pg.create(v, context=[v2])
         assert self.pg._remove_overlapping_contexts(v, [v2]) == [v2]
         assert panel.ref == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
@@ -93,9 +153,24 @@ class TestINDELandSNPSAlleleGenerator():
                 "GATTTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
     def test_del_with_ins_context4(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATC", start = 32, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 5, alternate_bases = ["TT"])
-        v3 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 5, alternate_bases = ["TG"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATC",
+            start=32,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=5,
+            alternate_bases=["TT"])
+        v3 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=5,
+            alternate_bases=["TG"])
         panel = self.pg.create(v, context=[v2, v3])
         assert self.pg._remove_overlapping_contexts(v, [v2, v3]) == [v2, v3]
         assert panel.ref == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
@@ -107,9 +182,24 @@ class TestINDELandSNPSAlleleGenerator():
                 "GATTGAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
     def test_del_with_ins_context5(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATC", start = 32, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 5, alternate_bases = ["TT"])
-        v3 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 6, alternate_bases = ["AG"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATC",
+            start=32,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=5,
+            alternate_bases=["TT"])
+        v3 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=6,
+            alternate_bases=["AG"])
         panel = self.pg.create(v, context=[v2, v3])
         assert self.pg._remove_overlapping_contexts(v, [v2, v3]) == [v2, v3]
         assert panel.ref == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
@@ -122,8 +212,18 @@ class TestINDELandSNPSAlleleGenerator():
                 "GATTTAGAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATC"])
 
     def test_del_with_ins_context_where_base_is_deleted(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATC", start = 32, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 33, alternate_bases = ["C"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATC",
+            start=32,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=33,
+            alternate_bases=["C"])
         panel = self.pg.create(v, context=[v2])
         assert self.pg._remove_overlapping_contexts(v, [v2]) == []
         assert panel.ref == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
@@ -132,9 +232,24 @@ class TestINDELandSNPSAlleleGenerator():
             ["CGATTAAAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
     def test_del_with_ins_context_where_base_is_deleted2(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATC", start = 32, alternate_bases = ["A"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "TAAA", start = 5, alternate_bases = ["T"])
-        v3 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 7, alternate_bases = ["AG"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATC",
+            start=32,
+            alternate_bases=["A"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="TAAA",
+            start=5,
+            alternate_bases=["T"])
+        v3 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=7,
+            alternate_bases=["AG"])
         panel = self.pg.create(v, context=[v2, v3])
         assert panel.ref == "GATTAAAGATAGAAATACACGATGCGAGCAATCAAATTTCATAACATCACCATGAGTTTGATC"
         assert sorted(
@@ -154,8 +269,18 @@ class TestINDELandSNPSAlleleGenerator():
                 "GATTAAGAGATAGAAATACACGATGCGAGCAAAAATTTCATAACATCACCATGAGTTTGATCC"])
 
     def test_snp_with_replace_context(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "G", start = 2338961, alternate_bases = ["A"])
-        v1 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "GGATG", start = 2338990, alternate_bases = ["CGATA"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="G",
+            start=2338961,
+            alternate_bases=["A"])
+        v1 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="GGATG",
+            start=2338990,
+            alternate_bases=["CGATA"])
         panel = self.pg2.create(v, context=[v1])
         assert panel.ref ==   \
             "CGACTAGCCACCATCGCGCATCAGTGCGAGGTCAAAAGCGACCAAAGCGAGCAAGTCGCGGAT"
@@ -164,9 +289,24 @@ class TestINDELandSNPSAlleleGenerator():
              "CGACTAGCCACCATCGCGCATCAGTGCGAGATCAAAAGCGACCAAAGCGAGCAAGTCGCCGAT"]
 
     def test_indel_snp_indel_context(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "TCGCGTGGC", start = 4021459, alternate_bases = ["GCGAGCAGA"])
-        v1 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 4021455, alternate_bases = ["ATCTAGCCGCAAG"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "T", start = 4021489, alternate_bases = ["G"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="TCGCGTGGC",
+            start=4021459,
+            alternate_bases=["GCGAGCAGA"])
+        v1 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=4021455,
+            alternate_bases=["ATCTAGCCGCAAG"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="T",
+            start=4021489,
+            alternate_bases=["G"])
         panel = self.pg2.create(v)  # , context = [v1, v2])
         assert panel.ref ==   \
             "ATCATGCGATTCTGCGTCTGCTCGCGAGGCTCGCGTGGCCGCCGGCGCTGGCGGGCGATCTCG"
@@ -180,9 +320,24 @@ class TestINDELandSNPSAlleleGenerator():
                 "ATCATGCGATTCTGCGTCTGCTCGCGATCTAGCCGCAAGGGCGCGAGCAGACGCCGGCGCTGGCGGGCGATCGCG"])
 
     def test_complex_context(self):
-        v = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "ATTT", start = 1503643, alternate_bases = ["A"])
-        v1 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "CCT", start = 1503615, alternate_bases = ["C"])
-        v2 = Variant.create(variant_sets = self.variant_sets, reference = self.reference, reference_bases = "A", start = 1503655, alternate_bases = ["ATGCCGCCGCC"])
+        v = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="ATTT",
+            start=1503643,
+            alternate_bases=["A"])
+        v1 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="CCT",
+            start=1503615,
+            alternate_bases=["C"])
+        v2 = Variant.create(
+            variant_sets=self.variant_sets,
+            reference=self.reference,
+            reference_bases="A",
+            start=1503655,
+            alternate_bases=["ATGCCGCCGCC"])
         panel = self.pg2.create(v, context=[v1, v2])
         assert panel.ref ==   \
             "ATCCTGGAGCCCACCAGCGGAAACACCGGCATTTCGCTGGCGATGGCGGCCCGGTTGAAGGGG"

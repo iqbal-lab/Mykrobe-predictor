@@ -5,29 +5,43 @@ from atlas.annotation.genes import Gene
 from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 
 from atlas.panelgeneration import AlleleGenerator
-from atlas.panelgeneration import Variant
-
-from atlas.vcf2db import split_var_name
+from atlas.variants import Variant
+from atlas.variants import VariantSet
+from atlas.references import Reference
+from atlas.references import ReferenceSet
+from atlas.utils import split_var_name
 
 from nose.tools import assert_raises
 
 from Bio import SeqIO
 from Bio.Seq import Seq
-
+from mongoengine import connect
+DB = connect('atlas-test')
 
 class TestRegions():
 
     def setUp(self):
+        DB.drop_database('atlas-test')      
         with open("data/NC_000962.3.fasta", 'r') as infile:
-            self.reference = list(SeqIO.parse(infile, "fasta"))[0].seq
+            self.reference_seq = list(SeqIO.parse(infile, "fasta"))[0].seq
         self.gm = GeneAminoAcidChangeToDNAVariants(
             reference="data/NC_000962.3.fasta",
             genbank="data/NC_000962.3.gb")
+        self.reference_set = ReferenceSet().create_and_save(name="ref_set")
+        self.variant_set = VariantSet.create_and_save(
+            name="this_vcf_file",
+            reference_set=self.reference_set)
+        self.variant_sets = [self.variant_set]
+        self.reference_id = Reference().create_and_save(
+            name="ref",
+            md5checksum="sre",
+            reference_sets=[   
+                self.reference_set])     
 
     def test_simple_gene(self):
         g = Gene(
             name="rpoB",
-            reference=self.reference,
+            reference=self.reference_seq,
             start=759807,
             end=763325)
         assert g.name == "rpoB"
@@ -39,7 +53,7 @@ class TestRegions():
     def test_reverse_gene(self):
         g = Gene(
             name="gidB",
-            reference=self.reference,
+            reference=self.reference_seq,
             start=4407528,
             end=4408202,
             forward=False)
@@ -52,7 +66,7 @@ class TestRegions():
     def test_reverse_gene2(self):
         g = Gene(
             name="katG",
-            reference=self.reference,
+            reference=self.reference_seq,
             start=2153889,
             end=2156111,
             forward=False)
@@ -65,7 +79,7 @@ class TestRegions():
     def test_get_codon(self):
         g = Gene(
             name="rpoB",
-            reference=self.reference,
+            reference=self.reference_seq,
             start=759807,
             end=763325)
         with assert_raises(ValueError):
@@ -73,13 +87,13 @@ class TestRegions():
         assert g.get_codon(2) == "GCA"
         assert g.get_codon(3) == "GAT"
         assert g.get_reference_position(1) == 759807
-        assert g.seq[0] == self.reference[759806]
+        assert g.seq[0] == self.reference_seq[759806]
         assert g.get_reference_position(-1) == 759806
 
     def test_get_codon_reverse(self):
         g = Gene(
             name="gidB",
-            reference=self.reference,
+            reference=self.reference_seq,
             start=4407528,
             end=4408202,
             forward=False)
@@ -178,7 +192,7 @@ class TestRegions():
         gene = self.gm.get_gene("rpoB")
         for var in self.gm.get_variant_names("rpoB", "D3A"):
             ref, start, alt = split_var_name(var)
-            v = Variant(ref, start, alt)
+            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq))
@@ -191,7 +205,7 @@ class TestRegions():
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "E3A"):
             ref, start, alt = split_var_name(var)
-            v = Variant(ref, start, alt)
+            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq.reverse_complement()))
@@ -204,7 +218,7 @@ class TestRegions():
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "S315L"):
             ref, start, alt = split_var_name(var)
-            v = Variant(ref, start, alt)
+            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq.reverse_complement()))
@@ -217,7 +231,7 @@ class TestRegions():
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "W90R"):
             ref, start, alt = split_var_name(var)
-            v = Variant(ref, start, alt)
+            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq.reverse_complement()))
@@ -230,7 +244,7 @@ class TestRegions():
         gene = self.gm.get_gene("gyrA")
         for var in self.gm.get_variant_names("gyrA", "D94X"):
             ref, start, alt = split_var_name(var)
-            v = Variant(ref, start, alt)
+            v = Variant.create(variant_sets = self.variant_sets, reference = self.reference_id, reference_bases = ref, start = start, alternate_bases = [alt])
             panel = ag.create(v)
             for alt in panel.alts:
                 seq = copy.copy(str(gene.seq))
