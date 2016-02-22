@@ -66,7 +66,7 @@ class TestAddNewCallSet(BaseTest):
         assert CallSet.objects().count() == 1
         assert CallSet.objects()[0].created_at <= datetime.datetime.now()
         assert len(CallSet.objects()[0].variant_sets) == 2
-
+ 
 
 class TestVariantsAndCalls(BaseTest):
 
