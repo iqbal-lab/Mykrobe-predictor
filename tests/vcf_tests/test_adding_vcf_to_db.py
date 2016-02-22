@@ -126,7 +126,4 @@ class TestAddVCFwithIndels(BaseTest):
         assert Variant.indels().count() == 17
         assert Variant.insertions().count() == 8
         assert Variant.deletions().count() == 8
-        assert Variant.objects.count(
-            is_indel=True,
-            is_insertion=False,
-            is_deletion=False) == 1
+        assert Variant.ph_snps.count() == 1

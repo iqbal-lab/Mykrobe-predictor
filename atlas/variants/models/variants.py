@@ -381,3 +381,8 @@ class Variant(Document, CreateAndSaveMixin):
     @queryset_manager
     def insertions(doc_cls, queryset):
         return queryset.filter(is_insertion=True)
+
+    @queryset_manager
+    def ph_snps(doc_cls, queryset):
+        return queryset.filter(is_indel=True, is_deletion = False, is_insertion = False)
+
