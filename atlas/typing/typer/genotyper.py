@@ -8,14 +8,14 @@ from mongoengine import connect
 from mongoengine import DoesNotExist
 import subprocess
 
-from atlas.typing import TypedVariant
+from atlas.variants import Variant
 from atlas.typing import SequenceCoverage
 from atlas.typing import Panel
 
 from atlas.typing.typer.presence import GeneCollectionTyper
 from atlas.typing.typer.variant import VariantTyper
 
-from atlas.variants import VariantPanel
+from atlas.panelgeneration import VariantPanel
 from atlas.variants import CallSet
 
 from atlas.cortex import McCortexRunner
@@ -178,19 +178,17 @@ class CoverageParser(object):
                 alt_name = "_".join([params["gene"], params["mut"]])
             except KeyError:
                 alt_name = ""
-            tv = TypedVariant.create_object(
-                name=allele_name,
-                call_set=self.call_set,
+            probe_coverage = ProbeCoverage(
                 reference_percent_coverage=reference_percent_coverage,
                 alternate_percent_coverage=alternate_percent_coverage,
                 reference_median_depth=reference_median_depth,
-                alternate_median_depth=alternate_median_depth,
-                alt_name=alt_name,
-                alt_index=i)
+                alternate_median_depth=alternate_median_depth, 
+                allele_name = allele_name,
+                params = params)
             try:
-                self.variant_covgs[allele_name].append(tv)
+                self.variant_covgs[allele_name].append(probe_coverage)
             except KeyError:
-                self.variant_covgs[allele_name] = [tv]
+                self.variant_covgs[allele_name] = [probe_coverage]
 
 
 class Genotyper(object):

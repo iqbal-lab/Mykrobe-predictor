@@ -8,46 +8,34 @@ DEFAULT_MINOR_FREQ = 0.1
 
 class VariantTyper(Typer):
 
-    def __init__(self, depths, contamination_depths=[],
+    def __init__(self, expected_depths, contamination_depths=[],
                  error_rate=DEFAULT_ERROR_RATE,
                  minor_freq=DEFAULT_MINOR_FREQ):
         super(
             VariantTyper,
             self).__init__(
-            depths,
+            expected_depths,
             contamination_depths,
             error_rate)
         self.method = "MAP"
         self.error_rate = error_rate
         self.minor_freq = minor_freq
 
-        if len(depths) > 1:
+        if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not handled yet")
 
-    def type(self, variants):
-        self._type_with_minor_model(variants)
-        return variants
-
-    def _type_with_minor_model(self, variants):
-        for variant_name, variants in variants.items():
-            for variant in variants:
-                self._type_individual(variant)
-        return variants
-
-    def _type_individual(self, variant):
-        hom_ref_likelihood = self._hom_ref_lik(variant)
-        hom_alt_likelihood = self._hom_alt_lik(variant)
+    def type(self, probe_coverage):
+        hom_ref_likelihood = self._hom_ref_lik(probe_coverage)
+        hom_alt_likelihood = self._hom_alt_lik(probe_coverage)
         if not self.has_contamination():
-            het_likelihood = self._het_lik(variant)
+            het_likelihood = self._het_lik(probe_coverage)
         else:
             het_likelihood = MIN_LLK
         gt = self.likelihoods_to_genotype(
             [hom_ref_likelihood, het_likelihood, hom_alt_likelihood])
-        variant.set_genotype(gt)
-        variant.set_copy_number(
-            float(
-                variant.alternate_median_depth) /
-            self.depths[0])
+        return {probe_coverage.allele_name : {"gt" : gt,
+                                        "coverage" : probe_coverage.coverage_dict,
+                                        "copy_number" : float(probe_coverage.alternate_median_depth) / self.expected_depths[0]}}
 
     def _hom_ref_lik(self, variant):
         if variant.reference_percent_coverage < 100:
@@ -55,7 +43,7 @@ class VariantTyper(Typer):
         else:
             hom_ref_likes = []
             # Either alt+cov or alt_covg + contam_covg
-            for expected_depth in self.depths:
+            for expected_depth in self.expected_depths:
                 hom_ref_likes.append(
                     log_lik_R_S_coverage(
                         variant.reference_median_depth,
@@ -79,7 +67,7 @@ class VariantTyper(Typer):
         else:
             hom_alt_liks = []
             # Either alt+cov or alt_covg + contam_covg
-            for expected_depth in self.depths:
+            for expected_depth in self.expected_depths:
                 hom_alt_liks.append(
                     log_lik_R_S_coverage(
                         variant.alternate_median_depth,
@@ -102,7 +90,7 @@ class VariantTyper(Typer):
             return MIN_LLK
         else:
             het_liks = []
-            for expected_depth in self.depths:
+            for expected_depth in self.expected_depths:
                 het_liks.append(
                     log_lik_R_S_coverage(
                         variant.alternate_median_depth,

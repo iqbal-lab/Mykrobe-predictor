@@ -4,8 +4,8 @@ MIN_LLK = -99999999
 
 class Typer(object):
 
-    def __init__(self, depths, contamination_depths=[], error_rate=0.05):
-        self.depths = depths
+    def __init__(self, expected_depths, contamination_depths=[], error_rate=0.05):
+        self.expected_depths = expected_depths
         self.contamination_depths = contamination_depths
         self.error_rate = error_rate
 
@@ -27,4 +27,4 @@ class Typer(object):
         return gt
 
     def has_contamination(self):
-        return self.contamination_depths or len(self.depths) > 1
+        return self.contamination_depths or len(self.expected_depths) > 1
