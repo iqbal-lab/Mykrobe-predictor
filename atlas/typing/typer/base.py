@@ -4,7 +4,11 @@ MIN_LLK = -99999999
 
 class Typer(object):
 
-    def __init__(self, expected_depths, contamination_depths=[], error_rate=0.05):
+    def __init__(
+            self,
+            expected_depths,
+            contamination_depths=[],
+            error_rate=0.05):
         self.expected_depths = expected_depths
         self.contamination_depths = contamination_depths
         self.error_rate = error_rate

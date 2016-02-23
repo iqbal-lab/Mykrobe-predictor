@@ -6,8 +6,8 @@ from atlas.typing import PresenceTyper
 class PresenceTyperTest(TestCase):
 
     def setUp(self):
-        self.pt = PresenceTyper(depths=[100])
-        self.pt_10 = PresenceTyper(depths=[10])
+        self.pt = PresenceTyper(expected_depths=[100])
+        self.pt_10 = PresenceTyper(expected_depths=[10])
 
     def teardown(self):
         pass
@@ -68,9 +68,9 @@ class PresenceTyperTest(TestCase):
 class PresenceTyperTestWithContaim(TestCase):
 
     def setUp(self):
-        self.pt_no_contaim = PresenceTyper(depths=[100])
+        self.pt_no_contaim = PresenceTyper(expected_depths=[100])
         self.pt_contaim = PresenceTyper(
-            depths=[100],
+            expected_depths=[100],
             contamination_depths=[10])
 
     def teardown(self):
@@ -89,8 +89,8 @@ class PresenceTyperTestWithContaim(TestCase):
         assert s.gt == "0/0"
 
     def test_genotyping_gene_11(self):
-        pt_no_contaim = PresenceTyper(depths=[20])
-        pt_contaim = PresenceTyper(depths=[20], contamination_depths=[10])
+        pt_no_contaim = PresenceTyper(expected_depths=[20])
+        pt_contaim = PresenceTyper(expected_depths=[20], contamination_depths=[10])
         s = SequenceCoverage.create_object(name="A123T",
                                            percent_coverage=100,
                                            median_depth=10,

@@ -33,9 +33,13 @@ class VariantTyper(Typer):
             het_likelihood = MIN_LLK
         gt = self.likelihoods_to_genotype(
             [hom_ref_likelihood, het_likelihood, hom_alt_likelihood])
-        return {probe_coverage.allele_name : {"gt" : gt,
-                                        "coverage" : probe_coverage.coverage_dict,
-                                        "copy_number" : float(probe_coverage.alternate_median_depth) / self.expected_depths[0]}}
+        return {
+            probe_coverage.allele_name: {
+                "gt": gt,
+                "coverage": probe_coverage.coverage_dict,
+                "copy_number": float(
+                    probe_coverage.alternate_median_depth) /
+                self.expected_depths[0]}}
 
     def _hom_ref_lik(self, variant):
         if variant.reference_percent_coverage < 100:

@@ -182,9 +182,9 @@ class CoverageParser(object):
                 reference_percent_coverage=reference_percent_coverage,
                 alternate_percent_coverage=alternate_percent_coverage,
                 reference_median_depth=reference_median_depth,
-                alternate_median_depth=alternate_median_depth, 
-                allele_name = allele_name,
-                params = params)
+                alternate_median_depth=alternate_median_depth,
+                allele_name=allele_name,
+                params=params)
             try:
                 self.variant_covgs[allele_name].append(probe_coverage)
             except KeyError:

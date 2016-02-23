@@ -10,9 +10,9 @@ class PresenceTyper(Typer):
 
     "Initiated with expected depths and contamination depths"
 
-    def __init__(self, depths, contamination_depths=[]):
-        super(PresenceTyper, self).__init__(depths, contamination_depths)
-        if len(depths) > 1:
+    def __init__(self, expected_depths, contamination_depths=[]):
+        super(PresenceTyper, self).__init__(expected_depths, contamination_depths)
+        if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not supported")
 
     def genotype(self, sequence_coverage):
@@ -24,7 +24,7 @@ class PresenceTyper(Typer):
         hom_alt_likelihoods = []
         het_likelihoods = []
         hom_ref_likelihoods = []
-        for expected_depth in self.depths:
+        for expected_depth in self.expected_depths:
             hom_alt_likelihoods.append(
                 self._hom_alt_likeihood(
                     median_depth=sequence_coverage.median_depth,
