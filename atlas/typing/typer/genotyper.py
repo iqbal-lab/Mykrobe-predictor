@@ -4,12 +4,11 @@ import json
 import csv
 import glob
 import logging
-from mongoengine import connect
-from mongoengine import DoesNotExist
 import subprocess
 
 from atlas.variants import Variant
-from atlas.typing import SequenceCoverage
+from atlas.typing import SequenceProbeCoverage
+from atlas.typing import ProbeCoverage
 from atlas.typing import Panel
 
 from atlas.typing.typer.presence import GeneCollectionTyper
@@ -49,28 +48,8 @@ class CoverageParser(object):
             self.panel_names = ["panel-%s-%i" % (args.db_name, args.kmer)]
 
     def run(self):
-        self._connect_to_db()
-        self._set_up_db()
         self._run_cortex()
         self._parse_covgs()
-
-    def _connect_to_db(self):
-        connect('atlas-%s-%i' % (self.args.db_name, self.args.kmer))
-
-    def _set_up_db(self):
-        try:
-            self.call_set = CallSet.objects.get(
-                name=self.args.sample +
-                "_%s" %
-                self.args.name)
-        except DoesNotExist:
-            self.call_set = CallSet.create(
-                name=self.args.sample +
-                "_%s" %
-                self.args.name,
-                sample_id=self.args.sample)
-        # Clear any genotyped calls so far
-        TypedVariant.objects(call_set=self.call_set).delete()
 
     def _run_cortex(self):
         self.mc_cortex_runner = McCortexRunner(sample=self.args.sample,
@@ -122,13 +101,12 @@ class CoverageParser(object):
         params = get_params(allele)
         panel_type = params.get("panel_type", "presence")
         name = params.get('name')
-        # print (allele)
         if panel_type in ["variant", "presence"]:
             gp = SequenceCoverage.create_object(
                 name=name,
                 version=params.get(
                     'version',
-                    'N/A'),
+                    'NA'),
                 percent_coverage=percent_coverage,
                 median_depth=median_depth,
                 min_depth=min_depth,
@@ -167,28 +145,27 @@ class CoverageParser(object):
     def _parse_variant_panel(self, row):
         allele, reference_median_depth, min_depth, reference_percent_coverage = self._parse_summary_covgs_row(
             row)
-        allele_name = allele.split('?')[0].split('-')[1]
+        var_name = allele.split('?')[0].split('-')[1]
         params = get_params(allele)
         num_alts = int(params.get("num_alts", 0))
+        reference_coverage=SequenceCoverage(percent_coverage = reference_percent_coverage, 
+                                                median_depth = reference_median_depth,
+                                                min_depth = min_depth)
+        alternate_coverages = []
         for i in range(num_alts):
             row = self.reader.next()
             allele, alternate_median_depth, min_depth, alternate_percent_coverage = self._parse_summary_covgs_row(
                 row)
-            try:
-                alt_name = "_".join([params["gene"], params["mut"]])
-            except KeyError:
-                alt_name = ""
-            probe_coverage = ProbeCoverage(
-                reference_percent_coverage=reference_percent_coverage,
-                alternate_percent_coverage=alternate_percent_coverage,
-                reference_median_depth=reference_median_depth,
-                alternate_median_depth=alternate_median_depth,
-                allele_name=allele_name,
-                params=params)
-            try:
-                self.variant_covgs[allele_name].append(probe_coverage)
-            except KeyError:
-                self.variant_covgs[allele_name] = [probe_coverage]
+            alternate_coverages.append(SequenceCoverage(min_depth = min_depth, percent_coverage = alternate_percent_coverage, median_depth = alternate_median_depth))
+        probe_coverage = VariantProbeCoverage(
+            reference_coverage = reference_coverage,
+            alternate_coverages=alternate_coverages,
+            var_name=var_name,
+            params=params)     
+        try:
+            self.variant_covgs[allele].append(probe_coverage)
+        except KeyError:
+            self.variant_covgs[allele] = [probe_coverage]               
 
 
 class Genotyper(object):
@@ -198,7 +175,7 @@ class Genotyper(object):
     def __init__(
             self,
             args,
-            depths,
+            expected_depths,
             variant_covgs,
             gene_presence_covgs,
             contamination_depths=[],
@@ -209,7 +186,7 @@ class Genotyper(object):
         self.gene_presence_covgs = gene_presence_covgs
         self.out_json = base_json
         self.verbose = verbose
-        self.depths = depths
+        self.expected_depths = expected_depths
         self.contamination_depths = contamination_depths
 
     def run(self):
@@ -217,7 +194,6 @@ class Genotyper(object):
         if not self.args.quiet:
             print(json.dumps(self.out_json,
                              indent=4, separators=(',', ': ')))
-        # self._insert_to_db()
 
     def _type(self):
         self._type_genes()
@@ -225,29 +201,25 @@ class Genotyper(object):
 
     def _type_genes(self):
         gt = GeneCollectionTyper(
-            depths=self.depths,
+            expected_depths=self.expected_depths,
             contamination_depths=self.contamination_depths)
         gene_presence_covgs_out = {}
         for gene_name, gene_collection in self.gene_presence_covgs.items():
             self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
-            if self.verbose or self.gene_presence_covgs[
-                    gene_name].gt not in ["0/0", "-/-"]:
-                gene_presence_covgs_out[
-                    gene_name] = self.gene_presence_covgs[gene_name].to_dict()
+            gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
         self.out_json[self.args.sample][
             "typed_presence"] = gene_presence_covgs_out
 
     def _type_variants(self):
         gt = VariantTyper(
-            depths=self.depths,
+            expected_depths=self.expected_depths,
             contamination_depths=self.contamination_depths)
         typed_variants = gt.type(self.variant_covgs)
         self.out_json[self.args.sample]["typed_variants"] = {}
         out_json = self.out_json[self.args.sample]["typed_variants"]
         for name, tvs in typed_variants.items():
             for tv in tvs:
-                if self.verbose or tv.gt not in ["0/0", "-/-"]:
-                    try:
-                        out_json[name].append(tv.to_dict())
-                    except KeyError:
-                        out_json[name] = [tv.to_dict()]
+                try:
+                    out_json[name].append(tv.to_dict())
+                except KeyError:
+                    out_json[name] = [tv.to_dict()]

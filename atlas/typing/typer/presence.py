@@ -11,7 +11,11 @@ class PresenceTyper(Typer):
     "Initiated with expected depths and contamination depths"
 
     def __init__(self, expected_depths, contamination_depths=[]):
-        super(PresenceTyper, self).__init__(expected_depths, contamination_depths)
+        super(
+            PresenceTyper,
+            self).__init__(
+            expected_depths,
+            contamination_depths)
         if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not supported")
 

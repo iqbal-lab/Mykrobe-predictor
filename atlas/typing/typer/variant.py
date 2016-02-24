@@ -2,6 +2,8 @@ from atlas.typing.typer.base import Typer
 from atlas.stats import log_lik_R_S_coverage
 from atlas.typing.typer.base import MIN_LLK
 
+from atlas.variants import Call
+
 DEFAULT_ERROR_RATE = 0.05
 DEFAULT_MINOR_FREQ = 0.1
 
@@ -31,15 +33,20 @@ class VariantTyper(Typer):
             het_likelihood = self._het_lik(probe_coverage)
         else:
             het_likelihood = MIN_LLK
+        likelihoods = [hom_ref_likelihood, het_likelihood, hom_alt_likelihood]
+        print likelihoods
         gt = self.likelihoods_to_genotype(
-            [hom_ref_likelihood, het_likelihood, hom_alt_likelihood])
-        return {
-            probe_coverage.allele_name: {
-                "gt": gt,
-                "coverage": probe_coverage.coverage_dict,
-                "copy_number": float(
-                    probe_coverage.alternate_median_depth) /
-                self.expected_depths[0]}}
+            likelihoods
+            )
+        return Call.create(variant = None, call_set = None, genotype = gt, genotype_likelihoods = likelihoods, info = {"coverage": probe_coverage.coverage_dict})
+        # return {
+        #     probe_coverage.var_name: {
+        #         "gt": gt,
+        #         ,
+        #         "likelihoods" : [round(l, 4) for l in likelihoods],
+        #         "copy_number": float(
+        #             probe_coverage.alternate_median_depth) /
+        #         self.expected_depths[0]}}
 
     def _hom_ref_lik(self, variant):
         if variant.reference_percent_coverage < 100:

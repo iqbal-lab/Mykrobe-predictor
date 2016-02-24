@@ -1,6 +1,7 @@
 #! /usr/bin/env python 
 from __future__ import print_function
 
+
 import os
 import argparse
 import sys
@@ -8,7 +9,7 @@ import atlas.version
 import logging
 
 def run_subtool(parser, args):
-    if args.command == 'add':
+    if args.command == 'add': 
         import atlas.commands.add as submodule
     elif args.command == "genotype":
         import atlas.commands.genotype as submodule
