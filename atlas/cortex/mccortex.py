@@ -2,9 +2,6 @@ from __future__ import print_function
 
 import os
 import subprocess
-import requests
-import json
-from Bio.Seq import Seq
 
 
 class McCortexRunner(object):
