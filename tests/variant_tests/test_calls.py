@@ -29,9 +29,10 @@ class TestCallSet(BaseTest):
         self.variant_sets = [self.variant_set]
 
     def test_create_call_set(self):
-        call_set = VariantCallSet.create_and_save(name="call_set",
-                                           sample_id="C00123",
-                                           variant_sets=self.variant_sets)
+        call_set = VariantCallSet.create_and_save(
+            name="call_set",
+            sample_id="C00123",
+            variant_sets=self.variant_sets)
         cs = VariantCallSet.objects.get(name="call_set")
         assert call_set == cs
         assert cs.name == "call_set"
@@ -51,8 +52,10 @@ class TestCall(BaseTest):
             md5checksum="sre",
             reference_sets=[
                 self.reference_set])
-        self.call_set = VariantCallSet.create(sample_id="C00123", name="C00123",
-                                       variant_sets=self.variant_sets)
+        self.call_set = VariantCallSet.create(
+            sample_id="C00123",
+            name="C00123",
+            variant_sets=self.variant_sets)
         self.variant_snp = Variant.create(variant_sets=self.variant_sets,
                                           start=0, end=1, reference_bases="A",
                                           alternate_bases=["T"],

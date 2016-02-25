@@ -382,7 +382,10 @@ class Variant(Document, CreateAndSaveMixin):
     def create(cls, variant_sets, start, reference_bases,
                alternate_bases, reference, end=None,
                names=[]):
-
+        var_name = "".join(
+        [reference_bases, str(start), "/".join(alternate_bases)])
+        if not var_name in names:
+            names.append(var_name)
         return cls(
             variant_sets=variant_sets,
             start=start,
@@ -394,6 +397,7 @@ class Variant(Document, CreateAndSaveMixin):
                 reference_bases,
                 start,
                 alternate_bases),
+            names  = names,
             length=var_length(reference_bases, alternate_bases),
             is_snp=is_snp(reference_bases, alternate_bases),
             is_indel=is_indel(reference_bases, alternate_bases),

@@ -4,9 +4,14 @@ import csv
 from mongoengine import connect
 from mongoengine import NotUniqueError
 from mongoengine import OperationError
+from mongoengine import DoesNotExist
 from pymongo import MongoClient
 
 from atlas.utils import check_args
+from atlas.schema import ReferenceSet
+from atlas.schema import Reference
+from atlas.vcf import VCF
+
 """Adds variants to the database"""
 
 LOGGER = logging.getLogger("logger")
@@ -48,61 +53,14 @@ def run(parser, args):
     db = client[DBNAME]
     connect(DBNAME)
     LOGGER.debug("Using DB %s" % DBNAME)
-    vcf = VCF(args.vcf)
+    try:
+        reference_set = ReferenceSet.objects.get(name = args.reference_set)
+    except DoesNotExist:
+        reference_set = ReferenceSet.create_and_save(name = args.reference_set)
+        ## Hack
+    try:
+        reference = Reference.create_and_save(name = args.reference_set, reference_sets = [reference_set], md5checksum = "NA")
+    except:
+        pass
+    vcf = VCF(args.vcf, reference_set.id, method = args.method, force = args.force)
     vcf.add_to_database()
-
-    vcf_reader = vcf.Reader(open(args.vcf, 'r'))
-    assert len(vcf_reader.samples) == 1
-
-    variant_set_name = os.path.splitext(os.path.basename(args.vcf))[0]
-    if args.sample is None:
-        sample = vcf_reader.samples[0]
-    else:
-        sample = args.sample
-
-    try:
-        callset = CallSet.create(name=variant_set_name, sample_id=sample)
-    except NotUniqueError:
-        callset = CallSet.objects.get(name=variant_set_name)
-
-    try:
-        reference = Reference.create(name="R00000022")
-    except NotUniqueError:
-        reference = Reference.objects.get(name="R00000022")
-
-    variants = []
-    calls = []
-    for record in vcf_reader:
-        if not record.FILTER and is_record_valid(record) and record.is_snp:
-            for sample in record.samples:
-                try:
-                    v = Variant.create_object(
-                        variant_set=variant_set,
-                        start=record.POS,
-                        reference_bases=record.REF,
-                        alternate_bases=[
-                            str(a) for a in record.ALT],
-                        reference=reference)
-                except (OperationError, ValueError) as e:
-                    print e
-                    print record.POS
-                    print record
-                else:
-                    variants.append(v)
-                    genotype_likelihood = get_genotype_likelihood(sample)
-                    c = VariantCall.create_object(
-                        variant=v,
-                        call_set=callset,
-                        genotype=sample['GT'],
-                        genotype_likelihood=genotype_likelihood)
-                    calls.append(c)
-    try:
-        variant_ids = [v.id for v in Variant.objects.insert(variants)]
-    except (NotUniqueError) as e:
-        LOGGER.error(str(e))
-        LOGGER.error("Variants must be unique within a given VCF")
-    else:
-        LOGGER.info("Uploaded %i variants to database" % len(variant_ids))
-        for i, _id in enumerate(variant_ids):
-            calls[i]["variant"] = _id
-        db.call.insert(calls)

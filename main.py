@@ -62,26 +62,15 @@ def main():
     parser_add = subparsers.add_parser(
         'add',
         help='Adds a set of variants to the atlas')
-    parser_add.add_argument('-s', '--sample', type=str, help='sample id')
-    parser_add.add_argument(
-        '-f',
-        '--vcf',
-        metavar='vcf',
-        type=str,
-        help='a vcf file',
-        required=True)
+    parser_add.add_argument('vcf', type=str, help='a vcf file')
+    parser_add.add_argument('reference_set', type=str, help='reference set')
+    parser_add.add_argument('-m','--method', type=str, help='variant caller method (e.g. CORTEX)', default = "NotSpecified")
+    parser_add.add_argument('-f','--force',  action='store_true', help='Force recreate VariantSet')
     parser_add.add_argument(
         '--db_name',
         metavar='db_name',
         type=str,
         help='db_name',
-        default=None)
-    parser_add.add_argument(
-        '-k',
-        '--kmer',
-        metavar='kmer',
-        type=int,
-        help='kmer length',
         default=None)
     parser_add.set_defaults(func=run_subtool)
 
