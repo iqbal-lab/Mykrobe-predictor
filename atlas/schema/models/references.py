@@ -6,7 +6,7 @@ from mongoengine import BooleanField
 from mongoengine import FloatField
 from mongoengine import ReferenceField
 
-from atlas.variants.models.base import CreateAndSaveMixin
+from atlas.schema.models.base import CreateAndSaveMixin
 
 
 class Reference(Document, CreateAndSaveMixin):

@@ -1,9 +1,9 @@
 # import sys
 # import os
 # from os import path
-# from atlas.variants import Variant
-# from atlas.variants import VariantSet
-# from atlas.variants import CallSet
+# from atlas.schema import Variant
+# from atlas.schema import VariantSet
+# from atlas.schema import VariantCallSet
 
 # sys.path.append(path.abspath("../"))
 

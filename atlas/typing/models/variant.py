@@ -15,7 +15,9 @@ class VariantProbeCoverage(object):
         self.best_alternate_coverage = self._choose_best_alternate_coverage()
 
     def _choose_best_alternate_coverage(self):
-        self.alternate_coverages.sort(key=lambda x: x.percent_coverage, reverse=True)
+        self.alternate_coverages.sort(
+            key=lambda x: x.percent_coverage,
+            reverse=True)
         current_best = self.alternate_coverages[0]
         for probe_coverage in self.alternate_coverages[1:]:
             if probe_coverage.percent_coverage < current_best.percent_coverage:

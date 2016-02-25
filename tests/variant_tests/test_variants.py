@@ -1,7 +1,7 @@
-from atlas.variants import Variant
-from atlas.variants import VariantSet
-from atlas.variants import Call
-from atlas.variants import CallSet
+from atlas.schema import Variant
+from atlas.schema import VariantSet
+from atlas.schema import VariantCall
+from atlas.schema import VariantCallSet
 from atlas.references import Reference
 from atlas.references import ReferenceSet
 

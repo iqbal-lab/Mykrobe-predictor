@@ -1,127 +1,168 @@
 from unittest import TestCase
+from atlas.typing import ProbeCoverage
 from atlas.typing import SequenceProbeCoverage
 from atlas.typing import PresenceTyper
 
 
-# class PresenceTyperTest(TestCase):
+class PresenceTyperTest(TestCase):
 
-#     def setUp(self):
-#         self.pt = PresenceTyper(expected_depths=[100])
-#         self.pt_10 = PresenceTyper(expected_depths=[10])
+    def setUp(self):
+        self.pt = PresenceTyper(expected_depths=[100])
+        self.pt_10 = PresenceTyper(expected_depths=[10])
 
-#     def teardown(self):
-#         pass
+    def teardown(self):
+        pass
 
-#     def test_base_case_no_coverage(self):
-#         s1 = SequenceProbeCoverage.create_object(name="A123T",
-#                                             percent_coverage=0,
-#                                             median_depth=0
-#                                             )
-#         vs = self.pt.genotype(s1)
-#         assert vs.gt == "0/0"
+    def test_base_case_no_coverage(self):
+        pc = ProbeCoverage(min_depth=0,
+                     percent_coverage=0,
+                     median_depth=0)
+        s1 = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc
+                                            )
+        call = self.pt.type(s1)
+        assert call.genotype == [0, 0]
+        assert call.info.get('coverage') == {
+            'percent_coverage': 0,
+            'median_depth': 0,
+            'min_depth': 0}        
 
-#     def test_genotyping_gene_11(self):
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=100,
-#                                            median_depth=100,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = self.pt.genotype(s)
-#         assert s.gt == "1/1"
+    def test_genotyping_gene_11(self):
 
-#     def test_genotyping_gene_01(self):
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=82,
-#                                            median_depth=2,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = self.pt.genotype(s)
-#         assert s.gt == "0/1"
+        pc = ProbeCoverage(min_depth=100,
+                     percent_coverage=100,
+                     median_depth=100)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
 
-#     def test_resistotype_gene_at_high_CN(self):
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=100,
-#                                            median_depth=1000,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = self.pt.genotype(s)
-#         assert s.gt == "1/1"
+                                            )
+        call = self.pt.type(s)
+        assert call.genotype == [1,1]
 
-#     def test_low_coverage(self):
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=16,
-#                                            median_depth=16,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = self.pt_10.genotype(s)
-#         assert s.gt == "0/0"
+    def test_genotyping_gene_01(self):
 
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=80,
-#                                            median_depth=16,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = self.pt_10.genotype(s)
-#         assert s.gt == "1/1"
+        pc = ProbeCoverage(min_depth=100,
+                     percent_coverage=82,
+                     median_depth=2)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
+
+                                            )
+        call = self.pt.type(s)
+        assert call.genotype == [0,1]
+
+    def test_resistotype_gene_at_high_CN(self):
+
+        pc = ProbeCoverage(min_depth=100,
+                     percent_coverage=100,
+                     median_depth=1000)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
+
+                                            )
+        call = self.pt.type(s)
+        assert call.genotype == [1,1]
+
+    def test_low_coverage(self):
+
+        pc = ProbeCoverage(min_depth=100,
+                     percent_coverage=16,
+                     median_depth=16)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
+
+                                            )
+        call = self.pt_10.type(s)
+        assert call.genotype == [0,0]
 
 
-# class PresenceTyperTestWithContaim(TestCase):
+        pc = ProbeCoverage(min_depth=100,
+                     percent_coverage=80,
+                     median_depth=16)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
 
-#     def setUp(self):
-#         self.pt_no_contaim = PresenceTyper(expected_depths=[100])
-#         self.pt_contaim = PresenceTyper(
-#             expected_depths=[100],
-#             contamination_depths=[10])
+                                            )
+        call = self.pt_10.type(s)
+        assert call.genotype == [1,1]
 
-#     def teardown(self):
-#         pass
 
-#     def test_genotyping_gene_01(self):
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=100,
-#                                            median_depth=10,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = self.pt_no_contaim.genotype(s)
-#         assert s.gt == "0/1"
 
-#         s = self.pt_contaim.genotype(s)
-#         assert s.gt == "0/0"
+class PresenceTyperTestWithContaim(TestCase):
 
-#     def test_genotyping_gene_11(self):
-#         pt_no_contaim = PresenceTyper(expected_depths=[20])
-#         pt_contaim = PresenceTyper(
-#             expected_depths=[20],
-#             contamination_depths=[10])
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=100,
-#                                            median_depth=10,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = pt_no_contaim.genotype(s)
-#         assert s.gt == "1/1"
+    def setUp(self):
+        self.pt_no_contaim = PresenceTyper(expected_depths=[100])
+        self.pt_contaim = PresenceTyper(
+            expected_depths=[100],
+            contamination_depths=[10])
 
-#         s = pt_contaim.genotype(s)
-#         assert s.gt == "0/0"
+    def teardown(self):
+        pass
 
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=100,
-#                                            median_depth=30,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = pt_no_contaim.genotype(s)
-#         assert s.gt == "1/1"
+    def test_genotyping_gene_01(self):
 
-#         s = pt_contaim.genotype(s)
-#         assert s.gt == "1/1"
+        pc = ProbeCoverage(min_depth=10,
+                     percent_coverage=100,
+                     median_depth=10)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
 
-#         s = SequenceProbeCoverage.create_object(name="A123T",
-#                                            percent_coverage=100,
-#                                            median_depth=20,
-#                                            percent_coverage_threshold=80,
-#                                            )
-#         s = pt_no_contaim.genotype(s)
-#         assert s.gt == "1/1"
+                                            )
+        call = self.pt_no_contaim.type(s)
+        assert call.genotype == [0,1]
+        call = self.pt_contaim.type(s)
+        assert call.genotype == [0,0]        
 
-#         s = pt_contaim.genotype(s)
-#         assert s.gt == "1/1"
+    def test_genotyping_gene_11(self):
+        pt_no_contaim = PresenceTyper(expected_depths=[20])
+        pt_contaim = PresenceTyper(
+            expected_depths=[20],
+            contamination_depths=[10])
+
+        pc = ProbeCoverage(min_depth=10,
+                     percent_coverage=100,
+                     median_depth=10)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
+
+                                            )
+        call = pt_no_contaim.type(s)
+        assert call.genotype == [1,1]
+
+        call = pt_contaim.type(s)
+        assert call.genotype == [0,0]        
+
+        pc = ProbeCoverage(min_depth=10,
+                     percent_coverage=100,
+                     median_depth=30)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
+
+                                            )
+        call = pt_no_contaim.type(s)
+        assert call.genotype == [1,1]
+
+        call = pt_contaim.type(s)
+        assert call.genotype == [1,1]
+
+        pc = ProbeCoverage(min_depth=10,
+                     percent_coverage=100,
+                     median_depth=20)
+        s = SequenceProbeCoverage(name="A123T",
+                                            probe_coverage = pc,
+                               percent_coverage_threshold = 80
+
+                                            )
+        call = pt_no_contaim.type(s)
+        assert call.genotype == [1,1]
+
+        call = pt_contaim.type(s)
+        assert call.genotype == [1,1]

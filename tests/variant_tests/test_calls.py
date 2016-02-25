@@ -1,7 +1,7 @@
-from atlas.variants import Variant
-from atlas.variants import VariantSet
-from atlas.variants import Call
-from atlas.variants import CallSet
+from atlas.schema import Variant
+from atlas.schema import VariantSet
+from atlas.schema import VariantCall
+from atlas.schema import VariantCallSet
 from atlas.references import Reference
 from atlas.references import ReferenceSet
 
@@ -69,7 +69,7 @@ class TestCall(BaseTest):
             reference=self.reference)
 
     def test_create_SNP_het_call(self):
-        c1 = Call.create(variant=self.variant_snp,
+        c1 = VariantCall.create(variant=self.variant_snp,
                          call_set=self.call_set,
                          genotype=[0, 1],
                          genotype_likelihoods=[0.1, 0.9, 0.12])
@@ -79,7 +79,7 @@ class TestCall(BaseTest):
         c1.save()
         assert c1 in self.variant_snp.calls
 
-        c2 = Call.create(variant=self.variant_snp,
+        c2 = VariantCall.create(variant=self.variant_snp,
                          call_set=self.call_set,
                          genotype="1/1",
                          genotype_likelihoods=[0.01, 0.1, 0.9])
@@ -90,7 +90,7 @@ class TestCall(BaseTest):
         assert c2 in self.variant_snp.calls
 
     def test_create_complex_call(self):
-        c1 = Call.create(variant=self.variant_snp_mult_alts,
+        c1 = VariantCall.create(variant=self.variant_snp_mult_alts,
                          call_set=self.call_set,
                          genotype="2/1",
                          genotype_likelihoods=[0.01, 0.1, 0.9, 0.1, 0.2, 0.6])

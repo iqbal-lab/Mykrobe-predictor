@@ -2,7 +2,7 @@ from atlas.typing.typer.base import Typer
 from atlas.stats import log_lik_R_S_coverage
 from atlas.typing.typer.base import MIN_LLK
 
-from atlas.variants import Call
+from atlas.schema import VariantCall
 
 DEFAULT_ERROR_RATE = 0.05
 DEFAULT_MINOR_FREQ = 0.1
@@ -27,17 +27,18 @@ class VariantTyper(Typer):
             raise NotImplementedError("Mixed samples not handled yet")
 
     def type(self, variant_probe_coverages):
-        """ 
+        """
             Takes a list of VariantProbeCoverages and returns a Call for the Variant.
-            Note, in the simplest case the list will be of length one. However, we may be typing the 
-            Variant on multiple backgrouds leading to multiple VariantProbes for a single Variant. 
+            Note, in the simplest case the list will be of length one. However, we may be typing the
+            Variant on multiple backgrouds leading to multiple VariantProbes for a single Variant.
 
         """
         if not isinstance(variant_probe_coverages, list):
-            variant_probe_coverages  = [variant_probe_coverages]
+            variant_probe_coverages = [variant_probe_coverages]
         calls = []
         for variant_probe_coverage in variant_probe_coverages:
-            calls.append(self._type_variant_probe_coverages(variant_probe_coverage))
+            calls.append(
+                self._type_variant_probe_coverages(variant_probe_coverage))
         hom_alt_calls = [c for c in calls if sum(c.genotype) > 1]
         het_calls = [c for c in calls if sum(c.genotype) == 1]
         if hom_alt_calls:
@@ -50,7 +51,6 @@ class VariantTyper(Typer):
             calls.sort(key=lambda x: x.genotype_conf, reverse=True)
             return calls[0]
 
-
     def _type_variant_probe_coverages(self, variant_probe_coverage):
         hom_ref_likelihood = self._hom_ref_lik(variant_probe_coverage)
         hom_alt_likelihood = self._hom_alt_lik(variant_probe_coverage)
@@ -62,15 +62,15 @@ class VariantTyper(Typer):
         gt = self.likelihoods_to_genotype(
             likelihoods
         )
-        return Call.create(
+        return VariantCall.create(
             variant=None,
             call_set=None,
             genotype=gt,
             genotype_likelihoods=likelihoods,
             info={
                 "coverage": variant_probe_coverage.coverage_dict,
-                "expected_depths" : self.expected_depths, 
-                "contamination_depths" : self.contamination_depths})
+                "expected_depths": self.expected_depths,
+                "contamination_depths": self.contamination_depths})
 
     def _hom_ref_lik(self, variant):
         if variant.reference_percent_coverage < 100:

@@ -1,13 +1,13 @@
 import datetime
 from atlas.vcf import VCF
-from atlas.variants import VariantSet
-from atlas.variants import VariantSetMetadata
-from atlas.variants import Variant
-from atlas.variants import CallSet
-from atlas.variants import Call
+from atlas.schema import VariantSet
+from atlas.schema import VariantSetMetadata
+from atlas.schema import Variant
+from atlas.schema import VariantCallSet
+from atlas.schema import VariantCall
 from mongoengine import connect
-from atlas.references import ReferenceSet
-from atlas.references import Reference
+from atlas.schema import ReferenceSet
+from atlas.schema import Reference
 
 DB = connect('atlas-test')
 
@@ -63,9 +63,9 @@ class TestAddNewCallSet(BaseTest):
         vcf.add_to_database()
         # Only one callset but the callset should belong to multiple variant
         # sets
-        assert CallSet.objects().count() == 1
-        assert CallSet.objects()[0].created_at <= datetime.datetime.now()
-        assert len(CallSet.objects()[0].variant_sets) == 2
+        assert VariantCallSet.objects().count() == 1
+        assert VariantCallSet.objects()[0].created_at <= datetime.datetime.now()
+        assert len(VariantCallSet.objects()[0].variant_sets) == 2
 
 
 class TestVariantsAndCalls(BaseTest):
@@ -76,7 +76,7 @@ class TestVariantsAndCalls(BaseTest):
             reference_set_id=self.reference_set.id,
             method="CORTEX")
         vcf.add_to_database()
-        assert Call.objects().count() == 21
+        assert VariantCall.objects().count() == 21
         assert Variant.objects().count() == 21
 
 
@@ -104,8 +104,8 @@ class TestAddSecondVCF(BaseTest):
             method="CORTEX")
         vcf.add_to_database()
         assert VariantSet.objects().count() == 3
-        assert CallSet.objects().count() == 2
-        assert Call.objects().count() == 42
+        assert VariantCallSet.objects().count() == 2
+        assert VariantCall.objects().count() == 42
         assert Variant.objects().count() == 22
 
 
@@ -119,8 +119,8 @@ class TestAddVCFwithIndels(BaseTest):
             method="CORTEX")
         vcf.add_to_database()
         assert VariantSet.objects().count() == 2
-        assert CallSet.objects().count() == 1
-        assert Call.objects().count() == 106
+        assert VariantCallSet.objects().count() == 1
+        assert VariantCall.objects().count() == 106
         assert Variant.objects().count() == 106
         assert Variant.snps().count() == 89
         assert Variant.indels().count() == 17

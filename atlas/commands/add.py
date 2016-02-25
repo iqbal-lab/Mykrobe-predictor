@@ -90,7 +90,7 @@ def run(parser, args):
                 else:
                     variants.append(v)
                     genotype_likelihood = get_genotype_likelihood(sample)
-                    c = Call.create_object(
+                    c = VariantCall.create_object(
                         variant=v,
                         call_set=callset,
                         genotype=sample['GT'],

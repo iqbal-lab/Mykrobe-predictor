@@ -6,7 +6,7 @@ import glob
 import logging
 import subprocess
 
-from atlas.variants import Variant
+from atlas.schema import Variant
 from atlas.typing import SequenceProbeCoverage
 from atlas.typing import ProbeCoverage
 from atlas.typing import Panel
@@ -15,7 +15,7 @@ from atlas.typing.typer.presence import GeneCollectionTyper
 from atlas.typing.typer.variant import VariantTyper
 
 from atlas.panelgeneration import VariantPanel
-from atlas.variants import CallSet
+from atlas.schema import VariantCallSet
 
 from atlas.cortex import McCortexRunner
 

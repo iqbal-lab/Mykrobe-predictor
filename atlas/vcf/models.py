@@ -2,13 +2,13 @@ import vcf
 import os.path
 from mongoengine import DoesNotExist
 from mongoengine import NotUniqueError
-from atlas.variants import CallSet
-from atlas.variants import Reference
-from atlas.variants import Variant
-from atlas.variants import VariantSet
-from atlas.variants import VariantSetMetadata
-from atlas.variants import Call
-from atlas.references import ReferenceSet
+from atlas.schema import VariantCallSet
+from atlas.schema import Variant
+from atlas.schema import VariantSet
+from atlas.schema import VariantSetMetadata
+from atlas.schema import VariantCall
+from atlas.schema import Reference
+from atlas.schema import ReferenceSet
 from atlas.utils import make_var_hash
 
 GLOBAL_VARIANT_SET_NAME = "global_atlas"
@@ -47,13 +47,13 @@ class VCF(object):
                 v = self._get_or_create_variant(record)
                 for call in record.samples:
                     genotype_likelihoods = self._get_genotype_likelihoods(call)
-                    c = Call.create(
+                    c = VariantCall.create(
                         variant=v,
                         call_set=self.call_sets[call.sample],
                         genotype=call['GT'],
                         genotype_likelihoods=genotype_likelihoods)
                     self.calls.append(c)
-        Call.objects.insert(self.calls)
+        VariantCall.objects.insert(self.calls)
 
     def _get_or_create_variant(self, record):
         try:
@@ -87,7 +87,7 @@ class VCF(object):
     def _create_call_sets(self):
         for sample in self.vcf_reader.samples:
             try:
-                cs = CallSet.create_and_save(
+                cs = VariantCallSet.create_and_save(
                     name="_".join(
                         [
                             sample,

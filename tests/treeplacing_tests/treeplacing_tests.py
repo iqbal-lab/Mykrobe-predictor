@@ -8,8 +8,8 @@ from nose.tools import assert_raises
 from atlas.vcf2db import Reference
 from atlas.vcf2db import VariantSet
 from atlas.vcf2db import Variant
-from atlas.vcf2db import CallSet
-from atlas.vcf2db import Call
+from atlas.vcf2db import VariantCallSet
+from atlas.vcf2db import VariantCall
 from atlas.typing import TypedVariant
 
 from mongoengine import connect
@@ -116,27 +116,27 @@ class TestMultiNode(TestNodes):
                                  alternate_bases=["T"],
                                  reference=self.ref.id)
 
-        Call.create(
+        VariantCall.create(
             variant=self.v1.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v2.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v3.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v4.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v5.id,
             call_set=cs1.id,
             genotype="0/1",
@@ -258,27 +258,27 @@ class TestMultiNodeHomoplasy(TestNodes):
                                  alternate_bases=["T"],
                                  reference=self.ref.id)
 
-        Call.create(
+        VariantCall.create(
             variant=self.v1.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v2.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v3.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v4.id,
             call_set=cs1.id,
             genotype="0/1",
             genotype_likelihood=0.91)
-        Call.create(
+        VariantCall.create(
             variant=self.v5.id,
             call_set=cs1.id,
             genotype="0/1",

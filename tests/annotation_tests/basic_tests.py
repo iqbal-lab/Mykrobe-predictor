@@ -5,8 +5,8 @@ from atlas.annotation.genes import Gene
 from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 
 from atlas.panelgeneration import AlleleGenerator
-from atlas.variants import Variant
-from atlas.variants import VariantSet
+from atlas.schema import Variant
+from atlas.schema import VariantSet
 from atlas.references import Reference
 from atlas.references import ReferenceSet
 from atlas.utils import split_var_name

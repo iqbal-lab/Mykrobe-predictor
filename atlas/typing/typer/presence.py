@@ -1,6 +1,6 @@
 from atlas.typing.typer.base import Typer
 from atlas.typing.typer.base import MIN_LLK
-
+from atlas.schema import SequenceCall
 from atlas.stats import log_lik_depth
 from atlas.stats import percent_coverage_from_expected_coverage
 from math import log
@@ -19,63 +19,68 @@ class PresenceTyper(Typer):
         if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not supported")
 
-    def genotype(self, sequence_coverage):
+    def type(self, sequence_probe_coverage):
         "Takes a single SequenceCoverage object (or child) and returns genotype"
-        self._type(sequence_coverage)
-        return sequence_coverage
+        call = self._type(sequence_probe_coverage)
+        return call
 
-    def _type(self, sequence_coverage):
+    def _type(self, sequence_probe_coverage):
         hom_alt_likelihoods = []
         het_likelihoods = []
         hom_ref_likelihoods = []
         for expected_depth in self.expected_depths:
             hom_alt_likelihoods.append(
                 self._hom_alt_likeihood(
-                    median_depth=sequence_coverage.median_depth,
+                    median_depth=sequence_probe_coverage.median_depth,
                     expected_depth=expected_depth))
             if not self.has_contamination():
                 het_likelihoods.append(
                     self._het_likelihood(
-                        median_depth=sequence_coverage.median_depth,
+                        median_depth=sequence_probe_coverage.median_depth,
                         expected_depth=expected_depth))
             else:
                 het_likelihoods.append(MIN_LLK)
 
             hom_ref_likelihoods.append(
                 self._hom_ref_likelihood(
-                    median_depth=sequence_coverage.median_depth,
+                    median_depth=sequence_probe_coverage.median_depth,
                     expected_depth=expected_depth))
 
             for contamination_depth in self.contamination_depths:
                 hom_alt_likelihoods.append(
                     self._hom_alt_likeihood(
-                        median_depth=sequence_coverage.median_depth,
+                        median_depth=sequence_probe_coverage.median_depth,
                         expected_depth=expected_depth +
                         contamination_depth))
                 # NOTE : _HOM_ALT_LIKEIHOOD is not a typo
                 hom_ref_likelihoods.append(
                     self._hom_alt_likeihood(
-                        median_depth=sequence_coverage.median_depth,
+                        median_depth=sequence_probe_coverage.median_depth,
                         expected_depth=contamination_depth))
             # Posterior
         hom_ref_likelihood = self._log_post_hom_ref(max(hom_ref_likelihoods))
         hom_alt_likelihood = self._log_post_het_or_alt(
             max(hom_alt_likelihoods),
             expected_depth * 0.75,
-            sequence_coverage)
+            sequence_probe_coverage)
         het_likelihood = self._log_post_het_or_alt(
             max(het_likelihoods),
             expected_depth *
             self.minimum_detectable_frequency,
-            sequence_coverage)
-        gt = self.likelihoods_to_genotype([hom_ref_likelihood,
-                                           het_likelihood,
-                                           hom_alt_likelihood])
-        sequence_coverage.set_genotype(gt)
-        sequence_coverage.set_copy_number(
-            float(
-                sequence_coverage.median_depth) /
-            expected_depth)
+            sequence_probe_coverage)
+        likelihoods = [hom_ref_likelihood,het_likelihood, hom_alt_likelihood]
+        gt = self.likelihoods_to_genotype(likelihoods)
+        return SequenceCall.create(
+            sequence=None,
+            call_set=None,
+            genotype=gt,
+            genotype_likelihoods=likelihoods,
+            info={
+                "copy_number" : float(
+                sequence_probe_coverage.median_depth) /  expected_depth,
+                "coverage": sequence_probe_coverage.coverage_dict,
+                "expected_depths": self.expected_depths,
+                "contamination_depths": self.contamination_depths})
 
     def _hom_alt_likeihood(self, median_depth, expected_depth):
         return log_lik_depth(median_depth, expected_depth * 0.75)

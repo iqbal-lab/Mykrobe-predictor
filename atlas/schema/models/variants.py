@@ -13,7 +13,7 @@ from mongoengine import GenericReferenceField
 from mongoengine import BooleanField
 from mongoengine import queryset_manager
 
-from atlas.variants.models.base import CreateAndSaveMixin
+from atlas.schema.models.base import CreateAndSaveMixin
 from atlas.utils import split_var_name
 from atlas.utils import make_var_hash
 
@@ -72,6 +72,7 @@ class VariantSet(Document, CreateAndSaveMixin):
 
 
 class CallSet(Document, CreateAndSaveMixin):
+    meta = {'allow_inheritance': True}
 
     """
          A `CallSet` is a collection of variant calls for a particular sample.
@@ -83,20 +84,28 @@ class CallSet(Document, CreateAndSaveMixin):
     sample_id = StringField(required=True)
     created_at = DateTimeField(default=datetime.datetime.now)
     updated_at = DateTimeField(required=True, default=datetime.datetime.now)
+
+    info = DictField()
+
+    @classmethod
+    def create(cls):
+        raise NotImplementedError("Use VariantCallSet")
+
+class VariantCallSet(CallSet):
+
     # Break from ga4gh schema -
-    variant_sets = ListField(ReferenceField('VariantSet'))
     # When can a call set exist in multiple variant sets? If you have a set of
     # calls that you want to add to multiple variant sets. I think this demands
     # that a variant can exist in multiple variant sets, something not allowed
     # by ga4gh schema.
-    info = DictField()
+
+    variant_sets = ListField(ReferenceField('VariantSet'))
 
     @classmethod
     def create(cls, name, variant_sets, sample_id=None, info={}):
         c = cls(name=name, variant_sets=variant_sets, sample_id=sample_id,
                 info=info)
-        return c.save()
-
+        return c.save()    
 
 def convert_string_gt_to_list_int_gt(variant, genotype):
     try:
@@ -106,12 +115,10 @@ def convert_string_gt_to_list_int_gt(variant, genotype):
 
 
 class Call(Document, CreateAndSaveMixin):
-    meta = {'indexes': [
+    meta = {'allow_inheritance': True,
+        'indexes': [
         {
             'fields': ['call_set']
-        },
-        {
-            'fields': ['variant']
         }
     ]
     }
@@ -129,7 +136,6 @@ class Call(Document, CreateAndSaveMixin):
     the ordering of the calls on this `Variant`.
     The number of results will also be the same.
     """
-    variant = ReferenceField('Variant', required=True)  # Not in ga4gh
     call_set = ReferenceField('CallSet', required=True)
     """
     The genotype of this variant call.
@@ -161,11 +167,39 @@ class Call(Document, CreateAndSaveMixin):
 
     """
     genotype_likelihoods = ListField(FloatField())
+
+    info = DictField()
+
+    @classmethod
+    def create(cls):
+        raise NotImplementedError("Use VariantCall")
+
+    @property
+    def call_set_name(self):
+        return self.call_set.name
+
+    @property
+    def genotype_conf(self):
+        # Returns the difference between the max and 2nd max liklihoods
+        genotype_likelihoods = sorted(self.genotype_likelihoods, reverse=True)
+        return genotype_likelihoods[0] - genotype_likelihoods[1]
+
+class VariantCall(Call):
+
+    meta = {'indexes': [
+        {
+            'fields': ['call_set']
+        },
+        {
+            'fields': ['variant']
+        }
+    ]
+    }
+    variant = ReferenceField('Variant', required=True)  # Not in ga4gh
     # If this field is not null, this variant call's genotype ordering implies
     # the phase of the bases and is consistent with any other variant calls on
     # the same contig which have the same phaseset string.
     phaseset = GenericReferenceField(default=None)
-    info = DictField()
 
     @classmethod
     def create(cls, variant, call_set, genotype, genotype_likelihoods=[],
@@ -173,7 +207,9 @@ class Call(Document, CreateAndSaveMixin):
         if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(variant, genotype)
         if variant:
-            cls._check_genotype_likelihood_length(genotype_likelihoods, variant)
+            cls._check_genotype_likelihood_length(
+                genotype_likelihoods,
+                variant)
         return cls(
             variant=variant,
             call_set=call_set,
@@ -196,16 +232,21 @@ class Call(Document, CreateAndSaveMixin):
             raise NotImplementedError(
                 "Haven't implemented check for > triallelic sites")
 
-    @property
-    def call_set_name(self):
-        return self.call_set.name
+class SequenceCall(Call):
 
-    @property
-    def genotype_conf(self):
-        ## Returns the difference between the max and 2nd max liklihoods
-        genotype_likelihoods = sorted(self.genotype_likelihoods, reverse = True)
-        return genotype_likelihoods[0] - genotype_likelihoods[1]
-
+    sequence = ReferenceField('Sequence', required=True)  
+    
+    @classmethod
+    def create(cls, sequence, call_set, genotype, genotype_likelihoods=[],
+                info={}):
+        if isinstance(genotype, str):
+            genotype = convert_string_gt_to_list_int_gt(sequence, genotype)
+        return cls(
+            sequence=sequence,
+            call_set=call_set,
+            genotype=genotype,
+            genotype_likelihoods=genotype_likelihoods,
+            info=info)
 
 def lazyprop(fn):
     attr_name = '_' + fn.__name__
@@ -360,7 +401,7 @@ class Variant(Document, CreateAndSaveMixin):
         # The variant calls for this particular variant. Each one represents the
         # determination of genotype with respect to this variant. `Call`s in this array
         # are implicitly associated with this `Variant`.
-        return Call.objects(variant=self)
+        return VariantCall.objects(variant=self)
 
     @property
     def var_name(self):

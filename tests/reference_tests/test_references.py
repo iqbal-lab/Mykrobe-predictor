@@ -1,5 +1,5 @@
-from atlas.references.models import Reference
-from atlas.references.models import ReferenceSet
+from atlas.schema.models.references import Reference
+from atlas.schema.models.references import ReferenceSet
 from mongoengine import connect
 DB = connect('atlas-test')
 
