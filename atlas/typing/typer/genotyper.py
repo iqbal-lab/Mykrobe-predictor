@@ -148,24 +148,29 @@ class CoverageParser(object):
         var_name = allele.split('?')[0].split('-')[1]
         params = get_params(allele)
         num_alts = int(params.get("num_alts", 0))
-        reference_coverage=SequenceCoverage(percent_coverage = reference_percent_coverage, 
-                                                median_depth = reference_median_depth,
-                                                min_depth = min_depth)
+        reference_coverage = SequenceCoverage(
+            percent_coverage=reference_percent_coverage,
+            median_depth=reference_median_depth,
+            min_depth=min_depth)
         alternate_coverages = []
         for i in range(num_alts):
             row = self.reader.next()
             allele, alternate_median_depth, min_depth, alternate_percent_coverage = self._parse_summary_covgs_row(
                 row)
-            alternate_coverages.append(SequenceCoverage(min_depth = min_depth, percent_coverage = alternate_percent_coverage, median_depth = alternate_median_depth))
+            alternate_coverages.append(
+                SequenceCoverage(
+                    min_depth=min_depth,
+                    percent_coverage=alternate_percent_coverage,
+                    median_depth=alternate_median_depth))
         probe_coverage = VariantProbeCoverage(
-            reference_coverage = reference_coverage,
+            reference_coverage=reference_coverage,
             alternate_coverages=alternate_coverages,
             var_name=var_name,
-            params=params)     
+            params=params)
         try:
             self.variant_covgs[allele].append(probe_coverage)
         except KeyError:
-            self.variant_covgs[allele] = [probe_coverage]               
+            self.variant_covgs[allele] = [probe_coverage]
 
 
 class Genotyper(object):
@@ -206,7 +211,8 @@ class Genotyper(object):
         gene_presence_covgs_out = {}
         for gene_name, gene_collection in self.gene_presence_covgs.items():
             self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
-            gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[gene_name].to_dict()
+            gene_presence_covgs_out[
+                gene_name] = self.gene_presence_covgs[gene_name].to_dict()
         self.out_json[self.args.sample][
             "typed_presence"] = gene_presence_covgs_out
 

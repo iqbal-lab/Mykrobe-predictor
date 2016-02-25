@@ -148,7 +148,7 @@ else:
         panels = make_panels(var)
         for name, variant_panel in panels:
             if mut.gene:
-                sys.stdout.write(">ref-%s?num_alts=%i&gene=%s&mut=%s\n" % (name, len(variant_panel.alts), mut.gene.name, mut.mut ))
+                sys.stdout.write(">ref-%s?num_alts=%i&gene=%s&mut=%s&ref=%s\n" % (name, len(variant_panel.alts), mut.gene.name, mut.mut, os.path.basename(args.reference_filepath).split('.')[0]))
             else:
                 sys.stdout.write(">ref-%s?num_alts=%i\n" % (name, len(variant_panel.alts)))
             sys.stdout.write("%s\n" % variant_panel.ref)

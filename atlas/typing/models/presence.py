@@ -1,9 +1,8 @@
 
 
-
 class SequenceProbeCoverage(object):
 
-    def __init__(self, name, probe_coverage, version = 1):
+    def __init__(self, name, probe_coverage, version=1):
         self.name = name
         self.probe_coverage = probe_coverage
         self.version = version
@@ -31,7 +30,7 @@ class SequenceProbeCoverage(object):
 #         if not alt_names:
 #             alt_names = ["-".join([name, str(version)])]
 #         if median_depth is None:
-#             median_depth = 0                    
+#             median_depth = 0
 #         if min_depth is None:
 #             min_depth = median_depth
 

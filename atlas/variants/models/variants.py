@@ -99,7 +99,10 @@ class CallSet(Document, CreateAndSaveMixin):
 
 
 def convert_string_gt_to_list_int_gt(variant, genotype):
-    return [int(i) for i in genotype.split('/')]
+    try:
+        return [int(i) for i in genotype.split('/')]
+    except ValueError:
+        return []
 
 
 class Call(Document, CreateAndSaveMixin):
@@ -169,7 +172,8 @@ class Call(Document, CreateAndSaveMixin):
                phaseset=None, info={}):
         if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(variant, genotype)
-        cls._check_genotype_likelihood_length(genotype_likelihoods, variant)
+        if variant:
+            cls._check_genotype_likelihood_length(genotype_likelihoods, variant)
         return cls(
             variant=variant,
             call_set=call_set,
@@ -195,6 +199,12 @@ class Call(Document, CreateAndSaveMixin):
     @property
     def call_set_name(self):
         return self.call_set.name
+
+    @property
+    def genotype_conf(self):
+        ## Returns the difference between the max and 2nd max liklihoods
+        genotype_likelihoods = sorted(self.genotype_likelihoods, reverse = True)
+        return genotype_likelihoods[0] - genotype_likelihoods[1]
 
 
 def lazyprop(fn):

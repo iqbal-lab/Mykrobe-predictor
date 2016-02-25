@@ -26,27 +26,51 @@ class VariantTyper(Typer):
         if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not handled yet")
 
-    def type(self, probe_coverage):
-        hom_ref_likelihood = self._hom_ref_lik(probe_coverage)
-        hom_alt_likelihood = self._hom_alt_lik(probe_coverage)
+    def type(self, variant_probe_coverages):
+        """ 
+            Takes a list of VariantProbeCoverages and returns a Call for the Variant.
+            Note, in the simplest case the list will be of length one. However, we may be typing the 
+            Variant on multiple backgrouds leading to multiple VariantProbes for a single Variant. 
+
+        """
+        if not isinstance(variant_probe_coverages, list):
+            variant_probe_coverages  = [variant_probe_coverages]
+        calls = []
+        for variant_probe_coverage in variant_probe_coverages:
+            calls.append(self._type_variant_probe_coverages(variant_probe_coverage))
+        hom_alt_calls = [c for c in calls if sum(c.genotype) > 1]
+        het_calls = [c for c in calls if sum(c.genotype) == 1]
+        if hom_alt_calls:
+            hom_alt_calls.sort(key=lambda x: x.genotype_conf, reverse=True)
+            return hom_alt_calls[0]
+        elif het_calls:
+            het_calls.sort(key=lambda x: x.genotype_conf, reverse=True)
+            return het_calls[0]
+        else:
+            calls.sort(key=lambda x: x.genotype_conf, reverse=True)
+            return calls[0]
+
+
+    def _type_variant_probe_coverages(self, variant_probe_coverage):
+        hom_ref_likelihood = self._hom_ref_lik(variant_probe_coverage)
+        hom_alt_likelihood = self._hom_alt_lik(variant_probe_coverage)
         if not self.has_contamination():
-            het_likelihood = self._het_lik(probe_coverage)
+            het_likelihood = self._het_lik(variant_probe_coverage)
         else:
             het_likelihood = MIN_LLK
         likelihoods = [hom_ref_likelihood, het_likelihood, hom_alt_likelihood]
-        print likelihoods
         gt = self.likelihoods_to_genotype(
             likelihoods
-            )
-        return Call.create(variant = None, call_set = None, genotype = gt, genotype_likelihoods = likelihoods, info = {"coverage": probe_coverage.coverage_dict})
-        # return {
-        #     probe_coverage.var_name: {
-        #         "gt": gt,
-        #         ,
-        #         "likelihoods" : [round(l, 4) for l in likelihoods],
-        #         "copy_number": float(
-        #             probe_coverage.alternate_median_depth) /
-        #         self.expected_depths[0]}}
+        )
+        return Call.create(
+            variant=None,
+            call_set=None,
+            genotype=gt,
+            genotype_likelihoods=likelihoods,
+            info={
+                "coverage": variant_probe_coverage.coverage_dict,
+                "expected_depths" : self.expected_depths, 
+                "contamination_depths" : self.contamination_depths})
 
     def _hom_ref_lik(self, variant):
         if variant.reference_percent_coverage < 100:
