@@ -17,14 +17,15 @@ class McCortexRunner(object):
             db_name,
             kmer=31,
             force=False,
-            panel_name=None):
+            panel_name=None,
+            skeleton_dir = "/tmp/"):
         self.sample = sample
         self.panels = panels
         self.seq = seq
-        self.db_name = db_name
         self.kmer = kmer
         self.force = force
         self._panel_name = panel_name
+        self.skeleton_dir = skeleton_dir
 
     def run(self):
         if self.force or not os.path.exists(self.covg_tmp_file_path):
@@ -96,7 +97,7 @@ class McCortexRunner(object):
 
     @property
     def sample_name(self):
-        return "-".join([self.sample, self.db_name, str(self.kmer)])
+        return "-".join([self.sample, str(self.kmer)])
 
     @property
     def panel_name(self):
@@ -111,17 +112,17 @@ class McCortexRunner(object):
 
     @property
     def ctx_tmp_filepath(self):
-        return "/tmp/%s.ctx" % self.sample_panel_name
+        return "%s/%s.ctx" % (self.skeleton_dir, self.sample_panel_name)
 
     @property
     def covg_tmp_file_path(self):
-        return "/tmp/%s.covgs" % self.sample_panel_name
+        return "%s/%s.covgs" % (self.skeleton_dir, self.sample_panel_name)
 
     @property
     def ctx_skeleton_filepath(self):
         return os.path.abspath(
-            "/data2/users/phelim/data/tb/atlas/skeletons/%s_%i.ctx" %
-            (self.panel_name.replace(
+            "%s/%s_%i.ctx" %
+            (self.skeleton_dir, self.panel_name.replace(
                 "/",
                 "-")[
                 :100],

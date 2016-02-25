@@ -120,9 +120,9 @@ class GeneCollectionTyper(Typer):
     """Types a collection of genes returning only the most likely version
         in the collection"""
 
-    def __init__(self, depths, contamination_depths=[]):
-        super(GeneCollectionTyper, self).__init__(depths, contamination_depths)
-        self.presence_typer = PresenceTyper(depths, contamination_depths)
+    def __init__(self, expected_depths, contamination_depths=[]):
+        super(GeneCollectionTyper, self).__init__(expected_depths, contamination_depths)
+        self.presence_typer = PresenceTyper(expected_depths, contamination_depths)
 
     def genotype(self, sequence_coverage_collection):
         """Types a collection of genes returning the most likely gene version

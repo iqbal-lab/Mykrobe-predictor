@@ -21,10 +21,7 @@ class SequenceProbeCoverage(object):
 
     @property
     def coverage_dict(self):
-        return {"percent_coverage": self.percent_coverage,
-                "median_depth": self.median_depth,
-                "min_depth": self.min_depth,
-                }
+        return probe_coverage.coverage_dict
 
 
 #     "Summary of kmer coverage of sequence. e.g output of color covearges"

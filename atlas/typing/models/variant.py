@@ -32,12 +32,8 @@ class VariantProbeCoverage(object):
 
     @property
     def coverage_dict(self):
-        return {"reference_percent_coverage": self.reference_percent_coverage,
-                "alternate_percent_coverage": self.alternate_percent_coverage,
-                "reference_median_depth": self.reference_median_depth,
-                "alternate_median_depth": self.alternate_median_depth,
-                "reference_min_depth": self.reference_min_depth,
-                "alternate_min_depth": self.alternate_min_depth,
+        return {"reference": self.reference_coverage.coverage_dict,
+                "alternate": self.best_alternate_coverage.coverage_dict
                 }
 
     @property

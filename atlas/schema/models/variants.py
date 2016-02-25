@@ -419,10 +419,10 @@ class Variant(Document, CreateAndSaveMixin):
 
     def add_to_variant_sets(self, variant_sets):
         for vs in variant_sets:
-            if not vs in self.variant_sets:
+            if vs not in self.variant_sets:
                 self.variant_sets.append(vs)
         self.save()
-        
+
     def __str__(self):
         return self.var_name
 
@@ -470,3 +470,18 @@ class Variant(Document, CreateAndSaveMixin):
     @property
     def ref_range(self):
         return range(self.start, self.start + len(self.reference_bases))
+
+    def split(self):
+        if len(self.alternate_bases) == 1:
+            return [self]        
+        variants = []
+        for alt in self.alternate_bases:
+            var = Variant.create( variant_sets = self.variant_sets, start = self.start, reference_bases = self.reference_bases,
+               alternate_bases = [alt], reference = self.reference, end=self.end)
+            variants.append(var)
+        return variants
+
+    def seen_in_samples(self):
+        variant_call_sets = self.calls.distinct('call_set')
+        return [variant_call_set.sample_id for variant_call_set in variant_call_sets]
+

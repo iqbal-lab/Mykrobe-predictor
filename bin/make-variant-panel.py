@@ -13,11 +13,9 @@ from collections import Counter
 from Bio.Data import CodonTable
 from Bio.Seq import Seq
 from atlas.panelgeneration import AlleleGenerator
-from atlas.panelgeneration import Variant
 
-from atlas.vcf2db import split_var_name
-from atlas.vcf2db import VariantFreq
-from atlas.vcf2db import Variant as CalledVariant
+from atlas.utils import split_var_name
+from atlas.schema import Variant
 
 from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 
@@ -120,7 +118,7 @@ else:
 
 def get_context(pos):
     context = []
-    for vft in VariantFreq.objects(
+    for vft in Variant.objects(
             start__ne=pos,
             start__gt=pos -
             args.kmer,
@@ -138,12 +136,12 @@ def seen_together(variants):
     # sets)
     variant_name_hashes = [v.name_hash for v in variants]
     variant_set_counter = Counter(
-        [v.variant_set.id for v in CalledVariant.objects(name_hash__in=variant_name_hashes)])
+        [v.variant_set.id for v in Variant.objects(name_hash__in=variant_name_hashes)])
     variant_sets = [k for k, v in variant_set_counter.iteritems() if v > 1]
     contexts = []
     for vs in variant_sets:
         vars_together = [
-            v for v in CalledVariant.objects(
+            v for v in Variant.objects(
                 name_hash__in=variant_name_hashes,
                 variant_set=vs)]
         if vars_together not in contexts:

@@ -1,5 +1,6 @@
 from mongoengine import Document
 from mongoengine import ReferenceField
+from mongoengine import StringField
 from Bio import SeqIO
 from Bio.Seq import Seq
 from copy import copy
@@ -9,6 +10,7 @@ import logging
 import datetime
 import math
 from atlas.utils import make_hash
+from atlas.schema.models.base import CreateAndSaveMixin
 
 
 def unique(seq):
@@ -17,21 +19,27 @@ def unique(seq):
     return [x for x in seq if x not in seen and not seen_add(x)]
 
 
-class VariantPanel(Document):
+class VariantPanel(Document, CreateAndSaveMixin):
 
     meta = {'indexes': [
         {
             'fields': ['variant']
+        },
+        {
+            'fields': ['var_hash']
         }
+
     ]
     }
 
     variant = ReferenceField('Variant')
+    var_hash = StringField()
 
     @classmethod
     def create(cls, variant):
         return cls(
-            variant=vf
+            variant=variant,
+            var_hash = variant.var_hash
         )
 
     def __repr__(self):
@@ -61,7 +69,7 @@ class AlleleGenerator(object):
         context = self._remove_contexts_not_within_k(v, context)
         wild_type_reference = self._get_wildtype_reference(v)
         alternates = self._generate_alternates_on_all_backgrounds(v, context)
-        return Panel(wild_type_reference, v.start, alternates)
+        return Panel(v, wild_type_reference, v.start, alternates)
 
     def _check_valid_variant(self, v):
         index = v.start - 1
@@ -319,7 +327,8 @@ class AlleleGenerator(object):
 
 class Panel(object):
 
-    def __init__(self, ref, start, alts):
+    def __init__(self, variant, ref, start, alts):
+        self.variant = variant
         self.ref = "".join(ref)
         self.start = start
         self.alts = unique(["".join(alt) for alt in alts])

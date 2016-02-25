@@ -8,6 +8,7 @@ import subprocess
 
 from atlas.schema import Variant
 from atlas.typing import SequenceProbeCoverage
+from atlas.typing import VariantProbeCoverage
 from atlas.typing import ProbeCoverage
 from atlas.typing import Panel
 
@@ -32,20 +33,19 @@ def max_pnz_threshold(vp):
 
 class CoverageParser(object):
 
-    def __init__(self, args, panels=None, verbose=True, panel_name=None):
+    def __init__(self, args, panel_file_paths, panels=None, verbose=True, skeleton_dir = '/tmp/'):
         self.args = args
         self.covgs = {"variant": {}, "presence": {}}
         self.variant_covgs = self.covgs["variant"]
         self.gene_presence_covgs = self.covgs["presence"]
-        self.out_json = {self.args.sample: {}}
         self.mc_cortex_runner = None
         self.verbose = verbose
-        self.panel_name = panel_name
-
-        if panels:
-            self.panel_names = panels
-        else:
-            self.panel_names = ["panel-%s-%i" % (args.db_name, args.kmer)]
+        self.skeleton_dir = skeleton_dir
+        self.panel_file_paths = panel_file_paths
+        self.panels = []
+        for panel_file_path in self.panel_file_paths:
+            panel = Panel(panel_file_path)
+            self.panels.append(panel)
 
     def run(self):
         self._run_cortex()
@@ -58,15 +58,13 @@ class CoverageParser(object):
                                                db_name=self.args.db_name,
                                                kmer=self.args.kmer,
                                                force=self.args.force,
-                                               panel_name=self.panel_name)
+                                               panel_name=self.panel_name,
+                                               skeleton_dir = self.skeleton_dir)
         self.mc_cortex_runner.run()
 
     @property
-    def panels(self):
-        panels = []
-        for panel in self.panel_names:
-            panels.append(Panel(panel))
-        return panels
+    def panel_name(self):
+        return "-".join([panel.name for panel in self.panels])
 
     def _parse_summary_covgs_row(self, row):
         try:
@@ -148,29 +146,29 @@ class CoverageParser(object):
         var_name = allele.split('?')[0].split('-')[1]
         params = get_params(allele)
         num_alts = int(params.get("num_alts", 0))
-        reference_coverage = SequenceCoverage(
+        reference_coverage = ProbeCoverage(
             percent_coverage=reference_percent_coverage,
             median_depth=reference_median_depth,
             min_depth=min_depth)
         alternate_coverages = []
         for i in range(num_alts):
             row = self.reader.next()
-            allele, alternate_median_depth, min_depth, alternate_percent_coverage = self._parse_summary_covgs_row(
+            alt_allele, alternate_median_depth, min_depth, alternate_percent_coverage = self._parse_summary_covgs_row(
                 row)
             alternate_coverages.append(
-                SequenceCoverage(
+                ProbeCoverage(
                     min_depth=min_depth,
                     percent_coverage=alternate_percent_coverage,
                     median_depth=alternate_median_depth))
-        probe_coverage = VariantProbeCoverage(
+        variant_probe_coverage = VariantProbeCoverage(
             reference_coverage=reference_coverage,
             alternate_coverages=alternate_coverages,
             var_name=var_name,
             params=params)
         try:
-            self.variant_covgs[allele].append(probe_coverage)
+            self.variant_covgs[allele].append(variant_probe_coverage)
         except KeyError:
-            self.variant_covgs[allele] = [probe_coverage]
+            self.variant_covgs[allele] = [variant_probe_coverage]
 
 
 class Genotyper(object):
@@ -217,15 +215,22 @@ class Genotyper(object):
             "typed_presence"] = gene_presence_covgs_out
 
     def _type_variants(self):
+        self.out_json[self.args.sample]["typed_variants"] = {}        
+        out_json = self.out_json[self.args.sample]["typed_variants"]
         gt = VariantTyper(
             expected_depths=self.expected_depths,
             contamination_depths=self.contamination_depths)
-        typed_variants = gt.type(self.variant_covgs)
-        self.out_json[self.args.sample]["typed_variants"] = {}
-        out_json = self.out_json[self.args.sample]["typed_variants"]
-        for name, tvs in typed_variants.items():
-            for tv in tvs:
-                try:
-                    out_json[name].append(tv.to_dict())
-                except KeyError:
-                    out_json[name] = [tv.to_dict()]
+
+        for variant, probe_coverages in self.variant_covgs.items():
+            call = gt.type(probe_coverages)
+            if sum(call.genotype) > 0:
+                out_json[variant] = call.to_mongo().to_dict()
+        # typed_variants = gt.type(self.variant_covgs)
+        # self.out_json[self.args.sample]["typed_variants"] = {}
+        
+        # for name, tvs in typed_variants.items():
+        #     for tv in tvs:
+        #         try:
+        #             out_json[name].append(tv.to_dict())
+        #         except KeyError:
+        #             out_json[name] = [tv.to_dict()]

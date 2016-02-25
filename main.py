@@ -11,16 +11,16 @@ import logging
 
 def run_subtool(parser, args):
     if args.command == 'add':
-        import atlas.commands.add as submodule
+        from atlas.commands.add import run
     elif args.command == "genotype":
-        import atlas.commands.genotype as submodule
+        from atlas.commands.genotype import run
     elif args.command == "dump":
-        import dump as submodule
+        from dump import run
     elif args.command == "amr":
-        import atlas.commands.amr as submodule
+        from atlas.commands.amr import run
 
     # run the chosen submodule.
-    submodule.run(parser, args)
+    run(parser, args)
 
 
 class ArgumentParserWithDefaults(argparse.ArgumentParser):
@@ -101,12 +101,11 @@ def main():
         nargs='+',
         required=True)
     parser_geno.add_argument(
-        '--panels',
+        'panels',
         metavar='panels',
         type=str,
         nargs='+',
-        help='panels',
-        default=None)
+        help='panels')
     parser_geno.add_argument(
         '--name',
         metavar='name',
@@ -120,22 +119,25 @@ def main():
         help='db_name',
         default=None)
     parser_geno.add_argument(
-        '-k',
-        '--kmer',
+        'kmer',
         metavar='kmer',
         type=int,
-        help='kmer size',
-        default=None)
+        help='kmer size')
     parser_geno.add_argument(
         '--all',
         help='Store ref GT aswell as alt',
         default=False,
         action="store_true")
     parser_geno.add_argument(
+        '-f',
         '--force',
         help='Force rebuilding of binaries',
         default=False,
         action="store_true")
+    parser_geno.add_argument(
+        '--tmp',
+        help='directory for skeleton binaries',
+        default="/tmp/")    
     parser_geno.set_defaults(func=run_subtool)
 
     # ##########
