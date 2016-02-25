@@ -54,13 +54,16 @@ def run(parser, args):
     connect(DBNAME)
     LOGGER.debug("Using DB %s" % DBNAME)
     try:
-        reference_set = ReferenceSet.objects.get(name = args.reference_set)
+        reference_set = ReferenceSet.objects.get(name=args.reference_set)
     except DoesNotExist:
-        reference_set = ReferenceSet.create_and_save(name = args.reference_set)
-        ## Hack
+        reference_set = ReferenceSet.create_and_save(name=args.reference_set)
+        # Hack
     try:
-        reference = Reference.create_and_save(name = args.reference_set, reference_sets = [reference_set], md5checksum = "NA")
+        reference = Reference.create_and_save(
+            name=args.reference_set,
+            reference_sets=[reference_set],
+            md5checksum="NA")
     except:
         pass
-    vcf = VCF(args.vcf, reference_set.id, method = args.method, force = args.force)
+    vcf = VCF(args.vcf, reference_set.id, method=args.method, force=args.force)
     vcf.add_to_database()

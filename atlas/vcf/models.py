@@ -16,7 +16,12 @@ GLOBAL_VARIANT_SET_NAME = "global_atlas"
 
 class VCF(object):
 
-    def __init__(self, f, reference_set_id, method = "NotSpecified", force = False):
+    def __init__(
+            self,
+            f,
+            reference_set_id,
+            method="NotSpecified",
+            force=False):
         self.f = f
         self.reference_set = ReferenceSet.objects.get(id=reference_set_id)
         self.references = self._create_reference_lookup()
@@ -60,7 +65,8 @@ class VCF(object):
         try:
             var_hash = make_var_hash(record.REF, record.POS, [
                 str(a) for a in record.ALT])
-            return Variant.objects.get(var_hash=var_hash)
+            v = Variant.objects.get(var_hash=var_hash)
+            v.add_to_variant_sets(self.variant_sets)
         except DoesNotExist:
             try:
                 reference = self.references[record.CHROM]
@@ -77,26 +83,32 @@ class VCF(object):
                     str(a) for a in record.ALT],
                 reference=reference,
                 names=[record.ID])
-            return v
+        return v
 
     def _create_new_variant_set(self):
         variant_set_name = os.path.basename(
-                self.f)
-        if VariantSet.objects(name = variant_set_name, reference_set = self.reference_set):
+            self.f)
+        if VariantSet.objects(
+                name=variant_set_name,
+                reference_set=self.reference_set):
             if not self.force:
-                raise NotUniqueError("VariantSet %s already exists. Rerun with -f to recreate." % variant_set_name)
+                raise NotUniqueError(
+                    "VariantSet %s already exists. Rerun with -f to recreate." %
+                    variant_set_name)
             else:
-                vs = VariantSet.objects.get(name = variant_set_name, reference_set = self.reference_set)
-                for call_set in VariantCallSet.objects(variant_sets = vs):
+                vs = VariantSet.objects.get(
+                    name=variant_set_name,
+                    reference_set=self.reference_set)
+                for call_set in VariantCallSet.objects(variant_sets=vs):
                     call_set.variant_sets.remove(vs)
                     call_set.save()
-                    ## Remove calls from callsets that only have this variantset
+                    # Remove calls from callsets that only have this variantset
                     if len(call_set.variant_sets) < 2:
-                        VariantCall.objects(call_set = call_set).delete()
+                        VariantCall.objects(call_set=call_set).delete()
                         call_set.delete()
-                ## Remove variants that are ONLY from this variant set
-                Variant.objects(variant_sets = vs, variant_sets__size = 2).delete()
-                VariantSetMetadata.objects(variant_set = vs).delete()
+                # Remove variants that are ONLY from this variant set
+                Variant.objects(variant_sets=vs, variant_sets__size=2).delete()
+                VariantSetMetadata.objects(variant_set=vs).delete()
                 vs.delete()
         self.vcf_variant_set = VariantSet.create_and_save(
             name=variant_set_name,

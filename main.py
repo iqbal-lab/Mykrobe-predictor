@@ -64,8 +64,17 @@ def main():
         help='Adds a set of variants to the atlas')
     parser_add.add_argument('vcf', type=str, help='a vcf file')
     parser_add.add_argument('reference_set', type=str, help='reference set')
-    parser_add.add_argument('-m','--method', type=str, help='variant caller method (e.g. CORTEX)', default = "NotSpecified")
-    parser_add.add_argument('-f','--force',  action='store_true', help='Force recreate VariantSet')
+    parser_add.add_argument(
+        '-m',
+        '--method',
+        type=str,
+        help='variant caller method (e.g. CORTEX)',
+        default="NotSpecified")
+    parser_add.add_argument(
+        '-f',
+        '--force',
+        action='store_true',
+        help='Force recreate VariantSet')
     parser_add.add_argument(
         '--db_name',
         metavar='db_name',

@@ -108,6 +108,7 @@ class TestAddSecondVCF(BaseTest):
         assert VariantCallSet.objects().count() == 2
         assert VariantCall.objects().count() == 42
         assert Variant.objects().count() == 22
+        assert len(Variant.objects.get(names = "UNION_BC_k31_var_147").variant_sets) == 3
 
 
 class TestAddVCFwithIndels(BaseTest):

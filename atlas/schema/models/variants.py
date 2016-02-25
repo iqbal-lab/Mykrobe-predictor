@@ -383,8 +383,8 @@ class Variant(Document, CreateAndSaveMixin):
                alternate_bases, reference, end=None,
                names=[]):
         var_name = "".join(
-        [reference_bases, str(start), "/".join(alternate_bases)])
-        if not var_name in names:
+            [reference_bases, str(start), "/".join(alternate_bases)])
+        if var_name not in names:
             names.append(var_name)
         return cls(
             variant_sets=variant_sets,
@@ -397,7 +397,7 @@ class Variant(Document, CreateAndSaveMixin):
                 reference_bases,
                 start,
                 alternate_bases),
-            names  = names,
+            names=names,
             length=var_length(reference_bases, alternate_bases),
             is_snp=is_snp(reference_bases, alternate_bases),
             is_indel=is_indel(reference_bases, alternate_bases),
@@ -414,9 +414,15 @@ class Variant(Document, CreateAndSaveMixin):
 
     @property
     def var_name(self):
-        return "".join(
-            [self.reference_bases, str(self.start), "/".join(self.alternate_bases)])
+        return "".join([self.reference_bases, str(
+            self.start), "/".join(self.alternate_bases)])
 
+    def add_to_variant_sets(self, variant_sets):
+        for vs in variant_sets:
+            if not vs in self.variant_sets:
+                self.variant_sets.append(vs)
+        self.save()
+        
     def __str__(self):
         return self.var_name
 
