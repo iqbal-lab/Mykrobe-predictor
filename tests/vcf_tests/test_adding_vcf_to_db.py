@@ -64,7 +64,8 @@ class TestAddNewCallSet(BaseTest):
         # Only one callset but the callset should belong to multiple variant
         # sets
         assert VariantCallSet.objects().count() == 1
-        assert VariantCallSet.objects()[0].created_at <= datetime.datetime.now()
+        assert VariantCallSet.objects()[
+            0].created_at <= datetime.datetime.now()
         assert len(VariantCallSet.objects()[0].variant_sets) == 2
 
 

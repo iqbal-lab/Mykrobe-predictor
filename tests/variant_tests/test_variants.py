@@ -2,8 +2,8 @@ from atlas.schema import Variant
 from atlas.schema import VariantSet
 from atlas.schema import VariantCall
 from atlas.schema import VariantCallSet
-from atlas.references import Reference
-from atlas.references import ReferenceSet
+from atlas.schema import Reference
+from atlas.schema import ReferenceSet
 
 from atlas.utils import split_var_name
 from mongoengine import connect

@@ -7,8 +7,8 @@ from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 from atlas.panelgeneration import AlleleGenerator
 from atlas.schema import Variant
 from atlas.schema import VariantSet
-from atlas.references import Reference
-from atlas.references import ReferenceSet
+from atlas.schema import Reference
+from atlas.schema import ReferenceSet
 from atlas.utils import split_var_name
 
 from nose.tools import assert_raises

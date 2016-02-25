@@ -68,7 +68,7 @@ class PresenceTyper(Typer):
             expected_depth *
             self.minimum_detectable_frequency,
             sequence_probe_coverage)
-        likelihoods = [hom_ref_likelihood,het_likelihood, hom_alt_likelihood]
+        likelihoods = [hom_ref_likelihood, het_likelihood, hom_alt_likelihood]
         gt = self.likelihoods_to_genotype(likelihoods)
         return SequenceCall.create(
             sequence=None,
@@ -76,8 +76,8 @@ class PresenceTyper(Typer):
             genotype=gt,
             genotype_likelihoods=likelihoods,
             info={
-                "copy_number" : float(
-                sequence_probe_coverage.median_depth) /  expected_depth,
+                "copy_number": float(
+                    sequence_probe_coverage.median_depth) / expected_depth,
                 "coverage": sequence_probe_coverage.coverage_dict,
                 "expected_depths": self.expected_depths,
                 "contamination_depths": self.contamination_depths})

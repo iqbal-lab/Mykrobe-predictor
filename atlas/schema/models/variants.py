@@ -91,6 +91,7 @@ class CallSet(Document, CreateAndSaveMixin):
     def create(cls):
         raise NotImplementedError("Use VariantCallSet")
 
+
 class VariantCallSet(CallSet):
 
     # Break from ga4gh schema -
@@ -105,7 +106,8 @@ class VariantCallSet(CallSet):
     def create(cls, name, variant_sets, sample_id=None, info={}):
         c = cls(name=name, variant_sets=variant_sets, sample_id=sample_id,
                 info=info)
-        return c.save()    
+        return c.save()
+
 
 def convert_string_gt_to_list_int_gt(variant, genotype):
     try:
@@ -116,12 +118,12 @@ def convert_string_gt_to_list_int_gt(variant, genotype):
 
 class Call(Document, CreateAndSaveMixin):
     meta = {'allow_inheritance': True,
-        'indexes': [
-        {
-            'fields': ['call_set']
-        }
-    ]
-    }
+            'indexes': [
+                {
+                    'fields': ['call_set']
+                }
+            ]
+            }
     """
     A `Call` represents the determination of genotype with respect to a
     particular `Variant`.
@@ -184,6 +186,7 @@ class Call(Document, CreateAndSaveMixin):
         genotype_likelihoods = sorted(self.genotype_likelihoods, reverse=True)
         return genotype_likelihoods[0] - genotype_likelihoods[1]
 
+
 class VariantCall(Call):
 
     meta = {'indexes': [
@@ -232,13 +235,14 @@ class VariantCall(Call):
             raise NotImplementedError(
                 "Haven't implemented check for > triallelic sites")
 
+
 class SequenceCall(Call):
 
-    sequence = ReferenceField('Sequence', required=True)  
-    
+    sequence = ReferenceField('Sequence', required=True)
+
     @classmethod
     def create(cls, sequence, call_set, genotype, genotype_likelihoods=[],
-                info={}):
+               info={}):
         if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(sequence, genotype)
         return cls(
@@ -247,6 +251,7 @@ class SequenceCall(Call):
             genotype=genotype,
             genotype_likelihoods=genotype_likelihoods,
             info=info)
+
 
 def lazyprop(fn):
     attr_name = '_' + fn.__name__

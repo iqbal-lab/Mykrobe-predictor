@@ -2,8 +2,8 @@ from atlas.schema import Variant
 from atlas.schema import VariantSet
 from atlas.schema import VariantCall
 from atlas.schema import VariantCallSet
-from atlas.references import Reference
-from atlas.references import ReferenceSet
+from atlas.schema import Reference
+from atlas.schema import ReferenceSet
 
 from atlas.utils import split_var_name
 from mongoengine import connect
@@ -29,10 +29,10 @@ class TestCallSet(BaseTest):
         self.variant_sets = [self.variant_set]
 
     def test_create_call_set(self):
-        call_set = CallSet.create_and_save(name="call_set",
+        call_set = VariantCallSet.create_and_save(name="call_set",
                                            sample_id="C00123",
                                            variant_sets=self.variant_sets)
-        cs = CallSet.objects.get(name="call_set")
+        cs = VariantCallSet.objects.get(name="call_set")
         assert call_set == cs
         assert cs.name == "call_set"
         assert cs.variant_sets[0].reference_set.name == "ref_set"
@@ -51,7 +51,7 @@ class TestCall(BaseTest):
             md5checksum="sre",
             reference_sets=[
                 self.reference_set])
-        self.call_set = CallSet.create(sample_id="C00123", name="C00123",
+        self.call_set = VariantCallSet.create(sample_id="C00123", name="C00123",
                                        variant_sets=self.variant_sets)
         self.variant_snp = Variant.create(variant_sets=self.variant_sets,
                                           start=0, end=1, reference_bases="A",
@@ -70,9 +70,9 @@ class TestCall(BaseTest):
 
     def test_create_SNP_het_call(self):
         c1 = VariantCall.create(variant=self.variant_snp,
-                         call_set=self.call_set,
-                         genotype=[0, 1],
-                         genotype_likelihoods=[0.1, 0.9, 0.12])
+                                call_set=self.call_set,
+                                genotype=[0, 1],
+                                genotype_likelihoods=[0.1, 0.9, 0.12])
         assert c1.call_set_name == "C00123"
         assert c1.genotype == [0, 1]
         self.variant_snp.save()
@@ -80,9 +80,9 @@ class TestCall(BaseTest):
         assert c1 in self.variant_snp.calls
 
         c2 = VariantCall.create(variant=self.variant_snp,
-                         call_set=self.call_set,
-                         genotype="1/1",
-                         genotype_likelihoods=[0.01, 0.1, 0.9])
+                                call_set=self.call_set,
+                                genotype="1/1",
+                                genotype_likelihoods=[0.01, 0.1, 0.9])
         assert c2.call_set_name == "C00123"
         assert c2.genotype == [1, 1]
 
@@ -90,10 +90,17 @@ class TestCall(BaseTest):
         assert c2 in self.variant_snp.calls
 
     def test_create_complex_call(self):
-        c1 = VariantCall.create(variant=self.variant_snp_mult_alts,
-                         call_set=self.call_set,
-                         genotype="2/1",
-                         genotype_likelihoods=[0.01, 0.1, 0.9, 0.1, 0.2, 0.6])
+        c1 = VariantCall.create(
+            variant=self.variant_snp_mult_alts,
+            call_set=self.call_set,
+            genotype="2/1",
+            genotype_likelihoods=[
+                0.01,
+                0.1,
+                0.9,
+                0.1,
+                0.2,
+                0.6])
         self.variant_snp.save()
         self.variant_snp_mult_alts.save()
         c1.save()

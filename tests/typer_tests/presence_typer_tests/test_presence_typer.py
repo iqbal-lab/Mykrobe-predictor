@@ -15,82 +15,80 @@ class PresenceTyperTest(TestCase):
 
     def test_base_case_no_coverage(self):
         pc = ProbeCoverage(min_depth=0,
-                     percent_coverage=0,
-                     median_depth=0)
+                           percent_coverage=0,
+                           median_depth=0)
         s1 = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc
-                                            )
+                                   probe_coverage=pc
+                                   )
         call = self.pt.type(s1)
         assert call.genotype == [0, 0]
         assert call.info.get('coverage') == {
             'percent_coverage': 0,
             'median_depth': 0,
-            'min_depth': 0}        
+            'min_depth': 0}
 
     def test_genotyping_gene_11(self):
 
         pc = ProbeCoverage(min_depth=100,
-                     percent_coverage=100,
-                     median_depth=100)
+                           percent_coverage=100,
+                           median_depth=100)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = self.pt.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
 
     def test_genotyping_gene_01(self):
 
         pc = ProbeCoverage(min_depth=100,
-                     percent_coverage=82,
-                     median_depth=2)
+                           percent_coverage=82,
+                           median_depth=2)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = self.pt.type(s)
-        assert call.genotype == [0,1]
+        assert call.genotype == [0, 1]
 
     def test_resistotype_gene_at_high_CN(self):
 
         pc = ProbeCoverage(min_depth=100,
-                     percent_coverage=100,
-                     median_depth=1000)
+                           percent_coverage=100,
+                           median_depth=1000)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = self.pt.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
 
     def test_low_coverage(self):
 
         pc = ProbeCoverage(min_depth=100,
-                     percent_coverage=16,
-                     median_depth=16)
+                           percent_coverage=16,
+                           median_depth=16)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = self.pt_10.type(s)
-        assert call.genotype == [0,0]
-
+        assert call.genotype == [0, 0]
 
         pc = ProbeCoverage(min_depth=100,
-                     percent_coverage=80,
-                     median_depth=16)
+                           percent_coverage=80,
+                           median_depth=16)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = self.pt_10.type(s)
-        assert call.genotype == [1,1]
-
+        assert call.genotype == [1, 1]
 
 
 class PresenceTyperTestWithContaim(TestCase):
@@ -107,17 +105,17 @@ class PresenceTyperTestWithContaim(TestCase):
     def test_genotyping_gene_01(self):
 
         pc = ProbeCoverage(min_depth=10,
-                     percent_coverage=100,
-                     median_depth=10)
+                           percent_coverage=100,
+                           median_depth=10)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = self.pt_no_contaim.type(s)
-        assert call.genotype == [0,1]
+        assert call.genotype == [0, 1]
         call = self.pt_contaim.type(s)
-        assert call.genotype == [0,0]        
+        assert call.genotype == [0, 0]
 
     def test_genotyping_gene_11(self):
         pt_no_contaim = PresenceTyper(expected_depths=[20])
@@ -126,43 +124,43 @@ class PresenceTyperTestWithContaim(TestCase):
             contamination_depths=[10])
 
         pc = ProbeCoverage(min_depth=10,
-                     percent_coverage=100,
-                     median_depth=10)
+                           percent_coverage=100,
+                           median_depth=10)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = pt_no_contaim.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
 
         call = pt_contaim.type(s)
-        assert call.genotype == [0,0]        
+        assert call.genotype == [0, 0]
 
         pc = ProbeCoverage(min_depth=10,
-                     percent_coverage=100,
-                     median_depth=30)
+                           percent_coverage=100,
+                           median_depth=30)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = pt_no_contaim.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
 
         call = pt_contaim.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
 
         pc = ProbeCoverage(min_depth=10,
-                     percent_coverage=100,
-                     median_depth=20)
+                           percent_coverage=100,
+                           median_depth=20)
         s = SequenceProbeCoverage(name="A123T",
-                                            probe_coverage = pc,
-                               percent_coverage_threshold = 80
+                                  probe_coverage=pc,
+                                  percent_coverage_threshold=80
 
-                                            )
+                                  )
         call = pt_no_contaim.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
 
         call = pt_contaim.type(s)
-        assert call.genotype == [1,1]
+        assert call.genotype == [1, 1]
