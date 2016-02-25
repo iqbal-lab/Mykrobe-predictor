@@ -473,15 +473,19 @@ class Variant(Document, CreateAndSaveMixin):
 
     def split(self):
         if len(self.alternate_bases) == 1:
-            return [self]        
+            return [self]
         variants = []
         for alt in self.alternate_bases:
-            var = Variant.create( variant_sets = self.variant_sets, start = self.start, reference_bases = self.reference_bases,
-               alternate_bases = [alt], reference = self.reference, end=self.end)
+            var = Variant.create(
+                variant_sets=self.variant_sets,
+                start=self.start,
+                reference_bases=self.reference_bases,
+                alternate_bases=[alt],
+                reference=self.reference,
+                end=self.end)
             variants.append(var)
         return variants
 
     def seen_in_samples(self):
         variant_call_sets = self.calls.distinct('call_set')
         return [variant_call_set.sample_id for variant_call_set in variant_call_sets]
-

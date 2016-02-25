@@ -16,7 +16,7 @@ def run(parser, args):
 
     verbose = True
     cp = CoverageParser(args, panel_file_paths=args.panels, verbose=verbose,
-                skeleton_dir = args.tmp)
+                        skeleton_dir=args.tmp)
     cp.run()
     # species_predictor = AMRSpeciesPredictor(
     #     phylo_group_covgs=cp.covgs.get(
@@ -34,12 +34,12 @@ def run(parser, args):
     #     verbose=False)
     # species_predictor.run()
     # pprint (species_predictor.out_json["phylogenetics"]["species"])
-    base_json = {args.sample : {}}
-    gt = Genotyper(args, expected_depths = [100],
-                variant_covgs = cp.variant_covgs,
-                gene_presence_covgs = cp.covgs["presence"],
-                verbose = verbose,
-                base_json = base_json,
-                contamination_depths = [])
+    base_json = {args.sample: {}}
+    gt = Genotyper(args, expected_depths=[100],
+                   variant_covgs=cp.variant_covgs,
+                   gene_presence_covgs=cp.covgs["presence"],
+                   verbose=verbose,
+                   base_json=base_json,
+                   contamination_depths=[])
     gt.run()
     # print(json.dumps(cp.out_json, indent=4))

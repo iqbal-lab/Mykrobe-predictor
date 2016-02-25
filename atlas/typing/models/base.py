@@ -13,4 +13,3 @@ class ProbeCoverage(object):
                 "median_depth": self.median_depth,
                 "min_depth": self.min_depth,
                 }
-    	

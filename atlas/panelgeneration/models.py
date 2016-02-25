@@ -39,7 +39,7 @@ class VariantPanel(Document, CreateAndSaveMixin):
     def create(cls, variant):
         return cls(
             variant=variant,
-            var_hash = variant.var_hash
+            var_hash=variant.var_hash
         )
 
     def __repr__(self):
@@ -125,8 +125,7 @@ class AlleleGenerator(object):
         alternates = []
         for context_combo in context_combinations:
             ref_segment_length_delta = self._calculate_length_delta_from_indels(
-                v,
-                context_combo)
+                v, context_combo)
             i, start_index, end_index = self._get_start_end(
                 v, delta=ref_segment_length_delta)
             alternate_reference_segment = self._get_reference_segment(
@@ -201,8 +200,8 @@ class AlleleGenerator(object):
                                 variant.reference_bases) -
                             hang]
                     else:
-                        if not "".join(
-                                new_background[j: j + len(variant.reference_bases)]) == variant.reference_bases:
+                        if not "".join(new_background[
+                                j: j + len(variant.reference_bases)]) == variant.reference_bases:
                             raise ValueError(
                                 "Could not process variant %s. %s != %s " %
                                 (variant.name,

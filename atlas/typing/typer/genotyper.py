@@ -33,7 +33,13 @@ def max_pnz_threshold(vp):
 
 class CoverageParser(object):
 
-    def __init__(self, args, panel_file_paths, panels=None, verbose=True, skeleton_dir = '/tmp/'):
+    def __init__(
+            self,
+            args,
+            panel_file_paths,
+            panels=None,
+            verbose=True,
+            skeleton_dir='/tmp/'):
         self.args = args
         self.covgs = {"variant": {}, "presence": {}}
         self.variant_covgs = self.covgs["variant"]
@@ -59,7 +65,7 @@ class CoverageParser(object):
                                                kmer=self.args.kmer,
                                                force=self.args.force,
                                                panel_name=self.panel_name,
-                                               skeleton_dir = self.skeleton_dir)
+                                               skeleton_dir=self.skeleton_dir)
         self.mc_cortex_runner.run()
 
     @property
@@ -215,7 +221,7 @@ class Genotyper(object):
             "typed_presence"] = gene_presence_covgs_out
 
     def _type_variants(self):
-        self.out_json[self.args.sample]["typed_variants"] = {}        
+        self.out_json[self.args.sample]["typed_variants"] = {}
         out_json = self.out_json[self.args.sample]["typed_variants"]
         gt = VariantTyper(
             expected_depths=self.expected_depths,
@@ -227,7 +233,7 @@ class Genotyper(object):
                 out_json[variant] = call.to_mongo().to_dict()
         # typed_variants = gt.type(self.variant_covgs)
         # self.out_json[self.args.sample]["typed_variants"] = {}
-        
+
         # for name, tvs in typed_variants.items():
         #     for tv in tvs:
         #         try:

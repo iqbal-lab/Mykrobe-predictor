@@ -137,7 +137,7 @@ def main():
     parser_geno.add_argument(
         '--tmp',
         help='directory for skeleton binaries',
-        default="/tmp/")    
+        default="/tmp/")
     parser_geno.set_defaults(func=run_subtool)
 
     # ##########

@@ -18,7 +18,7 @@ class McCortexRunner(object):
             kmer=31,
             force=False,
             panel_name=None,
-            skeleton_dir = "/tmp/"):
+            skeleton_dir="/tmp/"):
         self.sample = sample
         self.panels = panels
         self.seq = seq
