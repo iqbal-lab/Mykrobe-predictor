@@ -210,7 +210,7 @@ class VCF(object):
 
     def _get_genotype_likelihoods(self, sample):
         try:
-            genotype_likelihoods = [float(i) for i in sample['GL'].split(",")]
+            genotype_likelihoods = [float(i) for i in sample['GL']]
         except:
             genotype_likelihoods = [0, 0, 0]
             genotype_likelihoods[

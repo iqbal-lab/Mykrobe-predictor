@@ -14,8 +14,8 @@ def run_subtool(parser, args):
         from atlas.commands.add import run
     elif args.command == "genotype":
         from atlas.commands.genotype import run
-    elif args.command == "dump":
-        from dump import run
+    elif args.command == "dump-probes":
+        from atlas.commands.dump import run
     elif args.command == "amr":
         from atlas.commands.amr import run
 
@@ -143,27 +143,27 @@ def main():
     # ##########
     # # Dump panel
     # ##########
-    parser_dump = subparsers.add_parser('dump',
+    parser_dump = subparsers.add_parser('dump-probes',
                                         help='Dump a panel of variant alleles')
     parser_dump.add_argument(
-        'ref',
-        metavar='ref',
+        'reference_filepath',
+        metavar='reference_filepath',
         type=str,
-        help='reference filepath')
+        help='reference_filepath')
     parser_dump.add_argument(
         '--db_name',
         metavar='db_name',
         type=str,
         help='db_name',
-        default=DEFAULT_DB_NAME)
+        default="tb")
     parser_dump.add_argument(
-        '-k',
         '--kmer',
         metavar='kmer',
         type=int,
         help='kmer length',
-        default=DEFAULT_KMER_SIZE)
+        default=31)
     parser_dump.add_argument('--force', default=False, action="store_true")
+    parser_dump.add_argument('-v', '--verbose', default=False, action="store_true")
     parser_dump.set_defaults(func=run_subtool)
 
     # ##########
