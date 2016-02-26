@@ -4,7 +4,6 @@ import sys
 import json
 import time
 import signal
-import requests
 from Bio.Seq import Seq
 from atlas.utils import median
 from subprocess import Popen, PIPE
@@ -15,17 +14,6 @@ from pprint import pprint
 import copy
 logger = logging.getLogger(__name__)
 
-logging.getLogger('requests.packages.urllib3.util').setLevel(logging.WARNING)
-logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(
-    logging.WARNING)
-logging.getLogger('requests.packages').setLevel(logging.WARNING)
-logging.getLogger('urllib3').setLevel(logging.WARNING)
-logging.getLogger('requests.packages.urllib3').setLevel(logging.WARNING)
-logging.getLogger('requests.packages.urllib3.util.retry').setLevel(
-    logging.WARNING)
-logging.getLogger('requests').setLevel(logging.WARNING)
-logging.getLogger('requests.packages.urllib3.poolmanager').setLevel(
-    logging.WARNING)
 
 # Adapted from
 # https://github.com/mcveanlab/mccortex/blob/master/scripts/mccortex-server.py
@@ -160,13 +148,6 @@ class McCortexQuery(object):
                     self.proc,
                     kmer)),
             known_kmers=known_kmers)
-        # # logger.debug(self.base_url + kmer)
-        # _request = requests.get(self.base_url + kmer)
-        # # logger.debug (_request)
-        # _json = _request.json()
-        # # logger.debug (_json)
-        # return McCortexQueryResult(kmer, _json , known_kmers = known_kmers)
-
 
 class McCortexQueryResult(object):
 
