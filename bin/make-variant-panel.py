@@ -5,18 +5,14 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import csv
-
 from mongoengine import connect
-
-from collections import Counter
-
 from Bio.Data import CodonTable
 from Bio.Seq import Seq
-from atlas.panelgeneration import AlleleGenerator
 
-from atlas.utils import split_var_name
 from atlas.schema import Variant
-
+from atlas.panelgeneration import AlleleGenerator
+from atlas.panelgeneration import make_variant_probe
+from atlas.utils import split_var_name
 from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 
 import argparse
@@ -57,7 +53,7 @@ parser.add_argument('-q', '--quiet', default=False, action="store_true")
 parser.add_argument('--mykrobe', default=False, action="store_true")
 args = parser.parse_args()
 
-DB_NAME = 'atlas-%s-%i' % (args.db_name, args.kmer)
+DB_NAME = 'atlas-%s' % (args.db_name)
 connect(DB_NAME)
 
 mutations = []
@@ -66,13 +62,14 @@ mutations = []
 
 class Mutation(object):
 
-    def __init__(self, dna_var, gene=None, mut=None):
-        self.dna_var = dna_var
+    def __init__(self, var_name, gene=None, mut=None, reference = os.path.basename(args.reference_filepath).split('.')[0]):
+        self.var_name = var_name
         self.gene = gene
         if mut:
-            tmp, self.location, tmp = split_var_name(mut)
-        self.ref, tmp, self.alt = split_var_name(dna_var)
+            tmp, self.start, tmp = split_var_name(mut)
+        self.ref, tmp, self.alt = split_var_name(var_name)
         self.standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
+        self.reference = reference
 
     @property
     def mut(self):
@@ -84,132 +81,82 @@ class Mutation(object):
             alt = str(Seq(self.alt).reverse_complement())
         r = self.standard_table.forward_table.get(ref, ref)
         a = self.standard_table.forward_table.get(alt, alt)
-        return "".join([r, str(self.location), a])
+        return "".join([r, str(self.start), a])
 
-if args.genbank:
-    aa2dna = GeneAminoAcidChangeToDNAVariants(
-        args.reference_filepath,
-        args.genbank)
-    if args.file:
-        with open(args.file, 'r') as infile:
-            reader = csv.reader(infile, delimiter="\t")
-            for row in reader:
-                gene, mutation = row
-                for dna_var in aa2dna.get_variant_names(gene, mutation):
-                    mutations.append(
-                        Mutation(
-                            dna_var,
-                            gene=aa2dna.get_gene(gene),
-                            mut=mutation))
+    @property
+    def variant(self):
+        ref, start, alt = split_var_name(self.var_name)
+        return Variant.create(variant_sets=None, start=int(start),
+                            end = 0, reference_bases=ref,
+                            alternate_bases=[alt],
+                            reference=self.reference)
+    
+
+def run(parser, args):
+    if args.genbank:
+        aa2dna = GeneAminoAcidChangeToDNAVariants(
+            args.reference_filepath,
+            args.genbank)
+        if args.file:
+            with open(args.file, 'r') as infile:
+                reader = csv.reader(infile, delimiter="\t")
+                for row in reader:
+                    gene, mutation = row
+                    for var_name in aa2dna.get_variant_names(gene, mutation):
+                        mutations.append(
+                            Mutation(
+                                var_name,
+                                gene=aa2dna.get_gene(gene),
+                                mut=mutation))
+        else:
+            for variant in args.variant:
+                gene, mutation = variant.split("_")
+                for var_name in aa2dna.get_variant_names(gene, mutation):
+                    mutations.append(Mutation(var_name, gene=gene, mut=mutation))
     else:
-        for variant in args.variant:
-            gene, mutation = variant.split("_")
-            for dna_var in aa2dna.get_variant_names(gene, mutation):
-                mutations.append(Mutation(dna_var, gene=gene, mut=mutation))
-else:
-    if args.file:
-        with open(args.file, 'r') as infile:
-            reader = csv.reader(infile)
-            for row in reader:
-                mutations.append(Mutation(dna_var=row[0]))
-    else:
-        mutations.extend(Mutation(v) for v in args.variants)
+        if args.file:
+            with open(args.file, 'r') as infile:
+                reader = csv.reader(infile)
+                for row in reader:
+                    mutations.append(Mutation(var_name=row[0]))
+        else:
+            mutations.extend(Mutation(v) for v in args.variants)
 
-
-def get_context(pos):
-    context = []
-    for vft in Variant.objects(
-            start__ne=pos,
-            start__gt=pos -
-            args.kmer,
-            start__lt=pos +
-            args.kmer):
-        for alt in vft.alternate_bases:
-            context.append(Variant(vft.reference_bases, vft.start, alt))
-    return context
-
-
-def seen_together(variants):
-    # Takes a list of variants.
-    # Returns a list of variants that appear together (in the same variant set)
-    # TODO - would be better if seen in same sample (accross several variant
-    # sets)
-    variant_name_hashes = [v.name_hash for v in variants]
-    variant_set_counter = Counter(
-        [v.variant_set.id for v in Variant.objects(name_hash__in=variant_name_hashes)])
-    variant_sets = [k for k, v in variant_set_counter.iteritems() if v > 1]
-    contexts = []
-    for vs in variant_sets:
-        vars_together = [
-            v for v in Variant.objects(
-                name_hash__in=variant_name_hashes,
-                variant_set=vs)]
-        if vars_together not in contexts:
-            contexts.append(
-                called_variant_list_to_panel_generated_variant_list(vars_together))
-            variants = [var for var in variants if var not in vars_together]
-    for var in variants:
-        contexts.append([var])
-    if not contexts:
-        return [[]]
-    else:
-        return contexts
-
-
-def make_panels(var):
-    reference_bases, start, alt = split_var_name(var)
-    alternate_bases = alt.split('/')
-    context = get_context(start)
-    panels = []
-    contexts_seen_together = seen_together(context)
-    for alt in alternate_bases:
-        variant = Variant(reference_bases, start, alt)
-        for context in contexts_seen_together:
-            if len(context) <= 5:
-                try:
-                    panel = al.create(variant, context)
-                except ValueError as e:
-                    sys.stderr.write(str(e))
-                    panel = al.create(variant)
-                vo = "".join([reference_bases, str(start), alt])
-                panels.append((vo, panel))
-    return panels
-
-al = AlleleGenerator(
-    reference_filepath=args.reference_filepath,
-    kmer=args.kmer)
-if args.mykrobe:
-    for mut in mutations:
-        var = mut.dna_var
-        panels = make_panels(var)
-        for name, variant_panel in panels:
-            sys.stdout.write(
-                ">ref_%s_sub-%i-%s\n" %
-                (mut.mut, len(
-                    variant_panel.alts), mut.gene.name))
-            sys.stdout.write("%s\n" % variant_panel.ref)
-            for i, a in enumerate(variant_panel.alts):
+    al = AlleleGenerator(
+        reference_filepath=args.reference_filepath,
+        kmer=args.kmer)
+    if args.mykrobe:
+        for mut in mutations:
+            variant = mut.variant
+            panels = make_variant_probe(al, variant, args.kmer)
+            for name, variant_panel in panels:
                 sys.stdout.write(
-                    ">alt_%s_alt-%i-%s\n" %
-                    (mut.mut, i + 1, mut.gene))
-                sys.stdout.write("%s\n" % a)
-else:
-    for mut in mutations:
-        var = mut.dna_var
-        panels = make_panels(var)
-        for name, variant_panel in panels:
+                    ">ref_%s_sub-%i-%s\n" %
+                    (mut.mut, len(
+                        variant_panel.alts), mut.gene.name))
+                sys.stdout.write("%s\n" % variant_panel.ref)
+                for i, a in enumerate(variant_panel.alts):
+                    sys.stdout.write(
+                        ">alt_%s_alt-%i-%s\n" %
+                        (mut.mut, i + 1, mut.gene))
+                    sys.stdout.write("%s\n" % a)
+    else:
+        for mut in mutations:
+            variant_panel = make_variant_probe(al, mut.variant, args.kmer)
+            # for name, variant_panel in panels:
             if mut.gene:
                 sys.stdout.write(
                     ">ref-%s?num_alts=%i&gene=%s&mut=%s&ref=%s\n" %
-                    (name, len(
+                    (mut.variant.var_name, len(
                         variant_panel.alts), mut.gene.name, mut.mut, os.path.basename(
                         args.reference_filepath).split('.')[0]))
             else:
                 sys.stdout.write(
                     ">ref-%s?num_alts=%i\n" %
-                    (name, len(
+                    (mut.variant.var_name, len(
                         variant_panel.alts)))
             sys.stdout.write("%s\n" % variant_panel.ref)
             for a in variant_panel.alts:
-                sys.stdout.write(">alt-%s\n" % name)
+                sys.stdout.write(">alt-%s\n" % mut.mut)
                 sys.stdout.write("%s\n" % a)
+run(parser, args)
