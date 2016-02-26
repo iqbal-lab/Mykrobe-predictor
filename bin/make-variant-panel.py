@@ -62,7 +62,13 @@ mutations = []
 
 class Mutation(object):
 
-    def __init__(self, var_name, gene=None, mut=None, reference = os.path.basename(args.reference_filepath).split('.')[0]):
+    def __init__(
+            self,
+            var_name,
+            gene=None,
+            mut=None,
+            reference=os.path.basename(
+            args.reference_filepath).split('.')[0]):
         self.var_name = var_name
         self.gene = gene
         if mut:
@@ -87,10 +93,10 @@ class Mutation(object):
     def variant(self):
         ref, start, alt = split_var_name(self.var_name)
         return Variant.create(variant_sets=None, start=int(start),
-                            end = 0, reference_bases=ref,
-                            alternate_bases=[alt],
-                            reference=self.reference)
-    
+                              end=0, reference_bases=ref,
+                              alternate_bases=[alt],
+                              reference=self.reference)
+
 
 def run(parser, args):
     if args.genbank:
@@ -112,7 +118,11 @@ def run(parser, args):
             for variant in args.variant:
                 gene, mutation = variant.split("_")
                 for var_name in aa2dna.get_variant_names(gene, mutation):
-                    mutations.append(Mutation(var_name, gene=gene, mut=mutation))
+                    mutations.append(
+                        Mutation(
+                            var_name,
+                            gene=gene,
+                            mut=mutation))
     else:
         if args.file:
             with open(args.file, 'r') as infile:
