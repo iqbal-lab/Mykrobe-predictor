@@ -8,6 +8,7 @@ from atlas.utils import unique
 from atlas.panelgeneration import AlleleGenerator
 from atlas.schema import VariantSet
 
+
 def get_context(pos, kmer):
     context = []
     for variant in Variant.objects(
@@ -29,7 +30,7 @@ def seen_together(variants):
     samples_counter = Counter(flatten(variant_to_samples.values()))
     samples_seen_more_than_once = [
         k for k,
-        v in samples_counter.iteritems() if v > 1]  
+        v in samples_counter.iteritems() if v > 1]
     contexts = []
     for sample in samples_seen_more_than_once:
         vars_together = []
@@ -44,7 +45,7 @@ def seen_together(variants):
     return contexts + [[]]
 
 
-def make_variant_probe(al, variant, kmer ):
+def make_variant_probe(al, variant, kmer):
     context = get_context(variant.start, kmer)
     variant_probe = None
     contexts_seen_together = seen_together(context)

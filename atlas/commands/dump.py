@@ -19,7 +19,7 @@ def run(parser, args):
     if args.verbose:
         LOGGER.setLevel(level=logging.DEBUG)
     else:
-        LOGGER.setLevel(level=logging.ERROR)    
+        LOGGER.setLevel(level=logging.ERROR)
     al = AlleleGenerator(
         reference_filepath=args.reference_filepath,
         kmer=args.kmer)

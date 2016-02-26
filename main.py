@@ -163,7 +163,11 @@ def main():
         help='kmer length',
         default=31)
     parser_dump.add_argument('--force', default=False, action="store_true")
-    parser_dump.add_argument('-v', '--verbose', default=False, action="store_true")
+    parser_dump.add_argument(
+        '-v',
+        '--verbose',
+        default=False,
+        action="store_true")
     parser_dump.set_defaults(func=run_subtool)
 
     # ##########
