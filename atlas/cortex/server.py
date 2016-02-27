@@ -149,6 +149,7 @@ class McCortexQuery(object):
                     kmer)),
             known_kmers=known_kmers)
 
+
 class McCortexQueryResult(object):
 
     def __init__(self, query_kmer, data, known_kmers=[]):

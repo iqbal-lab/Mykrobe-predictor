@@ -2,7 +2,6 @@ import vcf
 import os.path
 from mongoengine import DoesNotExist
 from mongoengine import NotUniqueError
-<<<<<<< HEAD
 from atlas.schema import VariantCallSet
 from atlas.schema import Variant
 from atlas.schema import VariantSet
@@ -10,15 +9,6 @@ from atlas.schema import VariantSetMetadata
 from atlas.schema import VariantCall
 from atlas.schema import Reference
 from atlas.schema import ReferenceSet
-=======
-from atlas.variants import CallSet
-from atlas.variants import Variant
-from atlas.variants import VariantSet
-from atlas.variants import VariantSetMetadata
-from atlas.variants import Call
-from atlas.references import ReferenceSet
-from atlas.references import Reference
->>>>>>> cbeee84246ad88b8eed0c0902313dfc366fdd024
 from atlas.utils import make_var_hash
 
 GLOBAL_VARIANT_SET_NAME = "global_atlas"

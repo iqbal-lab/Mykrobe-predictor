@@ -204,7 +204,7 @@ class AlleleGenerator(object):
                                 j: j + len(variant.reference_bases)]) == variant.reference_bases:
                             raise ValueError(
                                 "Could not process variant %s. %s != %s " %
-                                (variant.name,
+                                (variant.var_name,
                                  "".join(
                                      new_background[
                                          j: j +

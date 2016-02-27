@@ -1,3 +1,5 @@
+from __future__ import print_function
+import sys
 from collections import Counter
 from mongoengine import connect
 
@@ -62,7 +64,7 @@ def make_variant_probe(al, variant, kmer):
                 else:
                     variant_probe = panel
             except ValueError as e:
-                print e
+                sys.stderr.write("WARNING: %s \n" % str(r))
                 build_success = False
     variant_probe.alts = unique(variant_probe.alts)
     return variant_probe

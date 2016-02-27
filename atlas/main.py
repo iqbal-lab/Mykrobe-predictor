@@ -16,7 +16,7 @@ def run_subtool(parser, args):
         from atlas.commands.genotype import run
     elif args.command == "dump-probes":
         from atlas.commands.dump import run
-    elif args.command == "amr":
+    elif args.command == "predict":
         from atlas.commands.amr import run
 
     # run the chosen submodule.
@@ -43,9 +43,9 @@ def main():
     # create the top-level parser
     #########################################
     parser = argparse.ArgumentParser(
-        prog='atlas',
+        prog='mykrobe',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--version", help="Installed atlas version",
+    parser.add_argument("--version", help="Installed mykrobe version",
                         action="version",
                         version="%(prog)s " + str(atlas.version.__version__))
     subparsers = parser.add_subparsers(
@@ -173,7 +173,7 @@ def main():
     # ##########
     # # AMR predict
     # ##########
-    parser_amr = subparsers.add_parser('amr',
+    parser_amr = subparsers.add_parser('predict',
                                        help="Predict the sample's antibiogram")
     parser_amr.add_argument(
         '-s',
