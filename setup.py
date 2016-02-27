@@ -18,5 +18,5 @@ setup(
         'console_scripts': [
             'mykrobe = atlas.main:main',
         ]},
-    package_data={'atlas': ['data/*']}        
+    package_data={'atlas': ['data/*']}
 )
