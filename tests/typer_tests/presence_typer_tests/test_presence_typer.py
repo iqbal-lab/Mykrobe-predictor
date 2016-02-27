@@ -22,10 +22,6 @@ class PresenceTyperTest(TestCase):
                                    )
         call = self.pt.type(s1)
         assert call.genotype == [0, 0]
-        assert call.info.get('coverage') == {
-            'percent_coverage': 0,
-            'median_depth': 0,
-            'min_depth': 0}
 
     def test_genotyping_gene_11(self):
 

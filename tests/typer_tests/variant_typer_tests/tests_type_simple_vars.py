@@ -28,13 +28,6 @@ class VariantTyperTest(TestCase):
                                   )
         call = self.vt.type([v1])
         assert call.genotype == [0, 0]
-        assert call.info.get('coverage') == {
-            'reference_median_depth': 100,
-            'alternate_percent_coverage': 3,
-            'reference_percent_coverage': 100,
-            'alternate_median_depth': 100,
-            'reference_min_depth': 100,
-            'alternate_min_depth': 100}
         assert call.info.get('expected_depths') == [100]
 
     def test_alt_vars(self):
@@ -173,11 +166,4 @@ class VariantTyperWithMultipleProbeCoverages(TestCase):
                                   )
 
         call = self.vt_no_contaim.type([v1, v2])
-        assert call.genotype == [1, 1]
-        assert call.info.get('coverage') == {
-            'reference_median_depth': 80,
-            'alternate_percent_coverage': 100,
-            'reference_percent_coverage': 80,
-            'alternate_median_depth': 80,
-            'reference_min_depth': 100,
-            'alternate_min_depth': 100}
+        assert call.genotype == [1, 1]     
