@@ -3,8 +3,8 @@ import json
 from atlas.utils import unique
 from atlas.utils import flatten
 
-from atlas.typing import SequenceCoverage
-from atlas.typing import TypedVariant
+from atlas.schema import VariantCall
+from atlas.schema import SequenceCall
 
 from pprint import pprint
 
@@ -118,17 +118,17 @@ class BasePredictor(object):
             return "I"
 
     def _coverage_greater_than_threshold(self, variant_or_gene):
-        if isinstance(variant_or_gene, SequenceCoverage):
+        if isinstance(variant_or_gene, SequenceCall):
             return variant_or_gene.copy_number > self._coveage_threshold.get(
                 variant_or_gene.name,
                 DEFAULT_MIN_GENE_CN)
-        elif isinstance(variant_or_gene, TypedVariant):
+        elif isinstance(variant_or_gene, VariantCall):
             return variant_or_gene.copy_number > self._coveage_threshold.get(
                 variant_or_gene.name,
                 DEFAULT_MIN_VARIANT_CN)
         else:
             raise TypeError(
-                "Must be either SequenceCoverage or TypedVariant object")
+                "Must be either ProbeCoverage or TypedVariant object")
 
     def run(self):
         self.predict_antibiogram()
