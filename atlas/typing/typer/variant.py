@@ -26,7 +26,7 @@ class VariantTyper(Typer):
         if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not handled yet")
 
-    def type(self, variant_probe_coverages):
+    def type(self, variant_probe_coverages, variant = None):
         """
             Takes a list of VariantProbeCoverages and returns a Call for the Variant.
             Note, in the simplest case the list will be of length one. However, we may be typing the
@@ -38,7 +38,7 @@ class VariantTyper(Typer):
         calls = []
         for variant_probe_coverage in variant_probe_coverages:
             calls.append(
-                self._type_variant_probe_coverages(variant_probe_coverage))
+                self._type_variant_probe_coverages(variant_probe_coverage, variant))
         hom_alt_calls = [c for c in calls if sum(c.genotype) > 1]
         het_calls = [c for c in calls if sum(c.genotype) == 1]
         if hom_alt_calls:
@@ -51,7 +51,7 @@ class VariantTyper(Typer):
             calls.sort(key=lambda x: x.genotype_conf, reverse=True)
             return calls[0]
 
-    def _type_variant_probe_coverages(self, variant_probe_coverage):
+    def _type_variant_probe_coverages(self, variant_probe_coverage, variant = None):
         hom_ref_likelihood = self._hom_ref_lik(variant_probe_coverage)
         hom_alt_likelihood = self._hom_alt_lik(variant_probe_coverage)
         if not self.has_contamination():
@@ -63,8 +63,7 @@ class VariantTyper(Typer):
             likelihoods
         )
         return VariantCall.create(
-            variant=None,
-            call_set=None,
+            variant=variant,
             genotype=gt,
             genotype_likelihoods=likelihoods,
             info={

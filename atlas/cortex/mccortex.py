@@ -11,7 +11,6 @@ class McCortexRunner(object):
             sample,
             panels,
             seq,
-            db_name,
             kmer=31,
             force=False,
             panel_name=None,

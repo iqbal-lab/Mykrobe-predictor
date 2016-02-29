@@ -5,7 +5,7 @@ import csv
 import glob
 import logging
 import subprocess
-
+from copy import copy
 from atlas.schema import Variant
 from atlas.typing import SequenceProbeCoverage
 from atlas.typing import VariantProbeCoverage
@@ -21,6 +21,7 @@ from atlas.schema import VariantCallSet
 from atlas.cortex import McCortexRunner
 
 from atlas.utils import get_params
+from atlas.utils import split_var_name
 
 logger = logging.getLogger(__name__)
 
@@ -35,12 +36,18 @@ class CoverageParser(object):
 
     def __init__(
             self,
-            args,
+            sample,
             panel_file_paths,
+            seq,
+            kmer,
+            force,
             panels=None,
             verbose=True,
             skeleton_dir='/tmp/'):
-        self.args = args
+        self.sample = sample
+        self.seq = seq
+        self.kmer = kmer
+        self.force = force
         self.covgs = {"variant": {}, "presence": {}}
         self.variant_covgs = self.covgs["variant"]
         self.gene_presence_covgs = self.covgs["presence"]
@@ -58,12 +65,11 @@ class CoverageParser(object):
         self._parse_covgs()
 
     def _run_cortex(self):
-        self.mc_cortex_runner = McCortexRunner(sample=self.args.sample,
+        self.mc_cortex_runner = McCortexRunner(sample=self.sample,
                                                panels=self.panels,
-                                               seq=self.args.seq,
-                                               db_name=self.args.db_name,
-                                               kmer=self.args.kmer,
-                                               force=self.args.force,
+                                               seq=self.seq,
+                                               kmer=self.kmer,
+                                               force=self.force,
                                                panel_name=self.panel_name,
                                                skeleton_dir=self.skeleton_dir)
         self.mc_cortex_runner.run()
@@ -183,26 +189,25 @@ class Genotyper(object):
 
     def __init__(
             self,
-            args,
+            sample,
             expected_depths,
             variant_covgs,
             gene_presence_covgs,
             contamination_depths=[],
-            verbose=False,
-            base_json={}):
-        self.args = args
+            base_json={},
+            include_hom_alt_calls = False):
+        self.sample = sample
         self.variant_covgs = variant_covgs
         self.gene_presence_covgs = gene_presence_covgs
         self.out_json = base_json
-        self.verbose = verbose
         self.expected_depths = expected_depths
         self.contamination_depths = contamination_depths
+        self.variant_calls = {}
+        self.sequence_calls = {}
+        self.include_hom_alt_calls = include_hom_alt_calls
 
     def run(self):
         self._type()
-        if not self.args.quiet:
-            print(json.dumps(self.out_json,
-                             indent=4, separators=(',', ': ')))
 
     def _type(self):
         self._type_genes()
@@ -217,26 +222,32 @@ class Genotyper(object):
             self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
             gene_presence_covgs_out[
                 gene_name] = self.gene_presence_covgs[gene_name].to_dict()
-        self.out_json[self.args.sample][
+        self.out_json[self.sample][
             "typed_presence"] = gene_presence_covgs_out
 
     def _type_variants(self):
-        self.out_json[self.args.sample]["typed_variants"] = {}
-        out_json = self.out_json[self.args.sample]["typed_variants"]
+        self.out_json[self.sample]["typed_variants"] = {}
+        out_json = self.out_json[self.sample]["typed_variants"]
         gt = VariantTyper(
             expected_depths=self.expected_depths,
             contamination_depths=self.contamination_depths)
 
-        for variant, probe_coverages in self.variant_covgs.items():
-            call = gt.type(probe_coverages)
-            if sum(call.genotype) > 0:
-                out_json[variant] = call.to_mongo().to_dict()
-        # typed_variants = gt.type(self.variant_covgs)
-        # self.out_json[self.args.sample]["typed_variants"] = {}
+        for probe_name, probe_coverages in self.variant_covgs.items():
+            variant = self._create_variant(probe_name)
+            call = gt.type(probe_coverages, variant = variant)
+            if sum(call.genotype) > 0 or self.include_hom_alt_calls:
+                self.variant_calls[probe_name] = call
+                tmp_var = copy(call.variant)
+                call.variant = None        
+                out_json["-".join(tmp_var.names)] = call.to_mongo().to_dict()
+                self.variant_calls[probe_name].variant = tmp_var
 
-        # for name, tvs in typed_variants.items():
-        #     for tv in tvs:
-        #         try:
-        #             out_json[name].append(tv.to_dict())
-        #         except KeyError:
-        #             out_json[name] = [tv.to_dict()]
+    def _create_variant(self, probe_name):
+        names = []
+        params = get_params(probe_name)
+        if params.get("mut"):
+            names.append("_".join([params.get("gene"), params.get("mut")]))
+        var_name = probe_name.split('?')[0].split('-')[1]
+        names.append(var_name)
+        ref,start,alt = split_var_name(var_name)
+        return Variant.create(start = start, reference_bases = ref, alternate_bases = [alt], names = names, info = params)        
