@@ -27,9 +27,9 @@ Add new variants to atlas (requires mongod running in background)
 
 ### Make panels
 
-	./bin/make-variant-panel.py -f example-data/staph-panel.txt -g BX571856.1.gb BX571856.1.fasta
+	atlas make-probes -f example-data/staph-panel.txt -g BX571856.1.gb BX571856.1.fasta
 
-	./bin/make-variant-panel.py -f example-data/TBFullPanel.txt -g NC_000962.3.gb NC_000962.3.fasta > tb-amr-probes.fasta
+	atlas make-probes -f example-data/tb-extended-panel.txt -g data/NC_000962.3.gb data/NC_000962.3.fasta
 
 ### Dump variant probes (requires mongod running in background)
 

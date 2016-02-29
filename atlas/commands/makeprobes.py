@@ -43,7 +43,6 @@ def run(parser, args):
                         protein_coding_var = False
                     else:
                         protein_coding_var = True
-                    print (row)
                     for var_name in aa2dna.get_variant_names(
                             gene, mutation, protein_coding_var):
                         mutations.append(
