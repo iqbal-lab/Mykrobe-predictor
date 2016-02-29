@@ -20,7 +20,7 @@ def run_subtool(parser, args):
     elif args.command == "dump-probes":
         from atlas.commands.dump import run
     elif args.command == "make-probes":
-        from atlas.commands.makeprobes import run        
+        from atlas.commands.makeprobes import run
     elif args.command == "predict":
         from atlas.commands.amr import run
 
@@ -179,8 +179,8 @@ def main():
     ### Make Probes ##
     ##################
 
-    parser_make_probes = subparsers.add_parser('make-probes',
-        description='Make probes from a list of variants')
+    parser_make_probes = subparsers.add_parser(
+        'make-probes', description='Make probes from a list of variants')
     parser_make_probes.add_argument(
         'reference_filepath',
         metavar='reference_filepath',
@@ -209,7 +209,12 @@ def main():
         type=str,
         help='db_name',
         default="tb")
-    parser_make_probes.add_argument('-k', '--kmer', type=int, help='kmer length', default=31)
+    parser_make_probes.add_argument(
+        '-k',
+        '--kmer',
+        type=int,
+        help='kmer length',
+        default=31)
     parser_make_probes.set_defaults(func=run_subtool)
 
     # ##########

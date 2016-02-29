@@ -15,6 +15,7 @@ from atlas.schema import VariantSet
 logger = logging.getLogger(__name__)
 logger.setLevel(level=logging.DEBUG)
 
+
 def get_context(pos, kmer):
     context = []
     for variant in Variant.objects(
@@ -51,14 +52,15 @@ def seen_together(variants):
     return contexts + [[]]
 
 
-def make_variant_probe(al, variant, kmer, DB = None):
+def make_variant_probe(al, variant, kmer, DB=None):
     if DB is not None:
         try:
-           context = get_context(variant.start, kmer)
+            context = get_context(variant.start, kmer)
         except (ServerSelectionTimeoutError, ConnectionError):
             DB = None
             context = []
-            logger.warning("Could not connect to database. Continuing without using genetic backgrounds")
+            logger.warning(
+                "Could not connect to database. Continuing without using genetic backgrounds")
     else:
         context = []
     variant_probe = None
@@ -80,9 +82,3 @@ def make_variant_probe(al, variant, kmer, DB = None):
                 build_success = False
     variant_probe.alts = unique(variant_probe.alts)
     return variant_probe
-
-
-
-
-
-    

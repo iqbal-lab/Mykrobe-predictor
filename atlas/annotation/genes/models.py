@@ -173,7 +173,7 @@ class GeneAminoAcidChangeToDNAVariants():
             dna_pos = (3 * (pos))
         return gene.get_reference_position(dna_pos)
 
-    def get_variant_names(self, gene, mutation, protein_coding_var = True):
+    def get_variant_names(self, gene, mutation, protein_coding_var=True):
         ref, start, alt = split_var_name(mutation)
         gene = self.get_gene(gene)
         if start < 0 or not protein_coding_var:

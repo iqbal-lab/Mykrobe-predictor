@@ -24,7 +24,7 @@ def run(parser, args):
         reference_filepath=args.reference_filepath,
         kmer=args.kmer)
     for variant in Variant.snps():
-        variant_panel = make_variant_probe(al, variant, args.kmer, DB = DB)
+        variant_panel = make_variant_probe(al, variant, args.kmer, DB=DB)
         sys.stdout.write(
             ">ref-%s?num_alts=%i&ref=%s\n" %
             (variant_panel.variant.var_hash, len(

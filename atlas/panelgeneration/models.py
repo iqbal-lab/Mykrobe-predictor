@@ -336,6 +336,7 @@ class Panel(object):
         self.start = start
         self.alts = unique(["".join(alt) for alt in alts])
 
+
 class Mutation(object):
 
     def __init__(
@@ -370,4 +371,4 @@ class Mutation(object):
         return Variant.create(variant_sets=None, start=int(start),
                               end=0, reference_bases=ref,
                               alternate_bases=[alt],
-                              reference=self.reference)        
+                              reference=self.reference)

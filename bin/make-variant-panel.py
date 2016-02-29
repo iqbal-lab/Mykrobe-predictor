@@ -14,5 +14,3 @@ connect(DB_NAME)
 
 mutations = []
 # Check if variants are in aminoacid space
-
-
