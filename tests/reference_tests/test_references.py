@@ -7,7 +7,7 @@ DB = connect('atlas-test')
 class BaseTest():
 
     def setUp(self):
-        pass
+        DB.drop_database('atlas-test')
 
     def teardown(self):
         DB.drop_database('atlas-test')
@@ -30,7 +30,7 @@ class TestReference(BaseTest):
     def test_create_reference(self):
         reference = Reference().create_and_save(
             name="ref2",
-            md5checksum="sre",
+            md5checksum="sre32",
             reference_sets=[
                 self.reference_set])
         assert reference.name == "ref2"
