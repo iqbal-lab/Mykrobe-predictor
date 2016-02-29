@@ -29,11 +29,11 @@ class TestReference(BaseTest):
 
     def test_create_reference(self):
         reference = Reference().create_and_save(
-            name="ref",
+            name="ref2",
             md5checksum="sre",
             reference_sets=[
                 self.reference_set])
-        assert reference.name == "ref"
-        r = Reference.objects.get(name="ref")
+        assert reference.name == "ref2"
+        r = Reference.objects.get(name="ref2")
         assert r == reference
         assert r.reference_sets[0].name == "ref_set"
