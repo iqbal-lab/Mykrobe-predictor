@@ -205,7 +205,7 @@ class VariantCall(Call):
     phaseset = GenericReferenceField(default=None)
 
     @classmethod
-    def create(cls, variant, genotype,call_set = None,  genotype_likelihoods=[],
+    def create(cls, variant, genotype, call_set=None, genotype_likelihoods=[],
                phaseset=None, info={}):
         if isinstance(genotype, str):
             genotype = convert_string_gt_to_list_int_gt(variant, genotype)
@@ -216,7 +216,7 @@ class VariantCall(Call):
         return cls(
             variant=variant,
             genotype=genotype,
-            call_set=call_set,            
+            call_set=call_set,
             genotype_likelihoods=genotype_likelihoods,
             phaseset=phaseset,
             info=info)
@@ -379,8 +379,8 @@ class Variant(Document, CreateAndSaveMixin):
     is_insertion = BooleanField(required=True)
 
     @classmethod
-    def create(cls,  start, reference_bases,
-               alternate_bases, variant_sets = None, reference=None, end=None,
+    def create(cls, start, reference_bases,
+               alternate_bases, variant_sets=None, reference=None, end=None,
                names=[], info={}):
         var_name = "".join(
             [reference_bases, str(start), "/".join(alternate_bases)])

@@ -13,6 +13,7 @@ from pprint import pprint
 DEFAULT_MIN_GENE_CN = 0.03
 DEFAULT_MIN_VARIANT_CN = 0.1
 
+
 def copy_number(variant_call):
     coverage = variant_call.info.get("coverage")
 
@@ -45,7 +46,8 @@ class BasePredictor(object):
         }
 
     def _create_initial_resistance_prediction(self):
-        self.resistance_predictions = dict((k, {"predict": "I"}) for k in self.drugs)
+        self.resistance_predictions = dict(
+            (k, {"predict": "I"}) for k in self.drugs)
 
     def _get_drug_list_from_variant_to_resistance_drug(self):
         return unique(
@@ -53,7 +55,7 @@ class BasePredictor(object):
                 self.variant_or_gene_name_to_resistance_drug.values()))
 
     def predict_antibiogram(self):
-        for allele_name,variant_call in self.variant_calls.items():
+        for allele_name, variant_call in self.variant_calls.items():
             self._update_resistance_prediction(allele_name, variant_call)
         # for name, gene in self.called_genes.items():
         #     self._update_resistance_prediction(gene)
@@ -62,21 +64,25 @@ class BasePredictor(object):
         variant_names = self._get_names(allele_name)
         for name in variant_names:
             drugs = self._get_drugs(name)
-            resistance_prediction = self._resistance_prediction(variant_or_gene)
+            resistance_prediction = self._resistance_prediction(
+                variant_or_gene)
             for drug in drugs:
-                current_resistance_prediction = self.resistance_predictions[drug]["predict"]
+                current_resistance_prediction = self.resistance_predictions[
+                    drug]["predict"]
                 assert resistance_prediction is not None
                 if current_resistance_prediction in ["I", "N"]:
-                    self.resistance_predictions[drug]["predict"] = resistance_prediction
+                    self.resistance_predictions[drug][
+                        "predict"] = resistance_prediction
                 elif current_resistance_prediction == "S":
                     if resistance_prediction in ["r", "R"]:
-                        self.resistance_predictions[drug]["predict"] = resistance_prediction
+                        self.resistance_predictions[drug][
+                            "predict"] = resistance_prediction
                         self.resistance_predictions[drug]["called_by"] = name
                 elif current_resistance_prediction == "r":
                     if resistance_prediction == "R":
-                        self.resistance_predictions[drug]["predict"] = resistance_prediction
+                        self.resistance_predictions[drug][
+                            "predict"] = resistance_prediction
                         self.resistance_predictions[drug]["called_by"] = name
-
 
     def _get_names(self, allele_name):
         names = []
@@ -136,7 +142,8 @@ class BasePredictor(object):
             coveage_threshold = DEFAULT_MIN_VARIANT_CN
             for name in variant_or_gene.variant.names:
                 if name in self._coveage_threshold:
-                    coveage_threshold = self._coveage_threshold.get(name, DEFAULT_MIN_VARIANT_CN)
+                    coveage_threshold = self._coveage_threshold.get(
+                        name, DEFAULT_MIN_VARIANT_CN)
             return copy_number(variant_or_gene) > coveage_threshold
         else:
             raise TypeError(

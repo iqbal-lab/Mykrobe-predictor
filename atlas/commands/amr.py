@@ -24,7 +24,9 @@ GN_PANELS = [
     "Escherichia_coli",
     "Klebsiella_pneumoniae",
     "gn-amr-genes-extended"]
-TB_PANELS = ["data/panels/tb-species-160227.fasta", "data/panels/tb-amr-extended.fasta"]
+TB_PANELS = [
+    "data/panels/tb-species-160227.fasta",
+    "data/panels/tb-amr-extended.fasta"]
 
 
 def run(parser, args):
@@ -45,12 +47,12 @@ def run(parser, args):
         panel_name = "gn-amr"
     # Run Cortex
     cp = CoverageParser(
-        sample = args.sample,
-        panel_file_paths = panels,
+        sample=args.sample,
+        panel_file_paths=panels,
         seq=args.seq,
         kmer=args.kmer,
         force=args.force,
-        verbose=False   )
+        verbose=False)
     cp.run()
     # print (cp.covgs["species"])
     # Detect species
@@ -93,12 +95,12 @@ def run(parser, args):
     q = args.quiet
     args.quiet = True
     if depths:
-        gt = Genotyper(sample = args.sample, expected_depths=depths,
-                   variant_covgs=cp.variant_covgs,
-                   gene_presence_covgs=cp.covgs["presence"],
-                   base_json=base_json,
-                   contamination_depths=[],
-                   include_hom_alt_calls = True)
+        gt = Genotyper(sample=args.sample, expected_depths=depths,
+                       variant_covgs=cp.variant_covgs,
+                       gene_presence_covgs=cp.covgs["presence"],
+                       base_json=base_json,
+                       contamination_depths=[],
+                       include_hom_alt_calls=True)
         gt.run()
     args.quiet = q
     if Predictor is not None:

@@ -195,7 +195,7 @@ class Genotyper(object):
             gene_presence_covgs,
             contamination_depths=[],
             base_json={},
-            include_hom_alt_calls = False):
+            include_hom_alt_calls=False):
         self.sample = sample
         self.variant_covgs = variant_covgs
         self.gene_presence_covgs = gene_presence_covgs
@@ -234,11 +234,11 @@ class Genotyper(object):
 
         for probe_name, probe_coverages in self.variant_covgs.items():
             variant = self._create_variant(probe_name)
-            call = gt.type(probe_coverages, variant = variant)
+            call = gt.type(probe_coverages, variant=variant)
             if sum(call.genotype) > 0 or self.include_hom_alt_calls:
                 self.variant_calls[probe_name] = call
                 tmp_var = copy(call.variant)
-                call.variant = None        
+                call.variant = None
                 out_json["-".join(tmp_var.names)] = call.to_mongo().to_dict()
                 self.variant_calls[probe_name].variant = tmp_var
 
@@ -249,5 +249,10 @@ class Genotyper(object):
             names.append("_".join([params.get("gene"), params.get("mut")]))
         var_name = probe_name.split('?')[0].split('-')[1]
         names.append(var_name)
-        ref,start,alt = split_var_name(var_name)
-        return Variant.create(start = start, reference_bases = ref, alternate_bases = [alt], names = names, info = params)        
+        ref, start, alt = split_var_name(var_name)
+        return Variant.create(
+            start=start,
+            reference_bases=ref,
+            alternate_bases=[alt],
+            names=names,
+            info=params)
