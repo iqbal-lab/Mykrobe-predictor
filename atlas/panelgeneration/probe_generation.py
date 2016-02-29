@@ -2,7 +2,9 @@ from __future__ import print_function
 import sys
 from collections import Counter
 from mongoengine import connect
-
+from mongoengine.connection import ConnectionError
+from pymongo.errors import ServerSelectionTimeoutError
+import logging
 from atlas.schema import Variant
 from atlas.utils import split_var_name
 from atlas.utils import flatten
@@ -10,6 +12,8 @@ from atlas.utils import unique
 from atlas.panelgeneration import AlleleGenerator
 from atlas.schema import VariantSet
 
+logger = logging.getLogger(__name__)
+logger.setLevel(level=logging.DEBUG)
 
 def get_context(pos, kmer):
     context = []
@@ -47,8 +51,16 @@ def seen_together(variants):
     return contexts + [[]]
 
 
-def make_variant_probe(al, variant, kmer):
-    context = get_context(variant.start, kmer)
+def make_variant_probe(al, variant, kmer, DB = None):
+    if DB is not None:
+        try:
+           context = get_context(variant.start, kmer)
+        except (ServerSelectionTimeoutError, ConnectionError):
+            DB = None
+            context = []
+            logger.warning("Could not connect to database. Continuing without using genetic backgrounds")
+    else:
+        context = []
     variant_probe = None
     contexts_seen_together = seen_together(context)
     alts = []
@@ -68,3 +80,9 @@ def make_variant_probe(al, variant, kmer):
                 build_success = False
     variant_probe.alts = unique(variant_probe.alts)
     return variant_probe
+
+
+
+
+
+    

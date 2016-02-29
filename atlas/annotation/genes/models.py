@@ -173,21 +173,27 @@ class GeneAminoAcidChangeToDNAVariants():
             dna_pos = (3 * (pos))
         return gene.get_reference_position(dna_pos)
 
-    def get_variant_names(self, gene, mutation):
+    def get_variant_names(self, gene, mutation, protein_coding_var = True):
         ref, start, alt = split_var_name(mutation)
         gene = self.get_gene(gene)
-        if start < 0:
-            return self._process_upstream_DNA_mutation(gene, ref, start, alt)
+        if start < 0 or not protein_coding_var:
+            return self._process_DNA_mutation(gene, ref, start, alt)
         elif start > 0:
             return self._process_coding_mutation(gene, ref, start, alt)
         else:
             raise ValueError(
                 "Variants are defined in 1-based coordinates. You can't have pos 0. ")
 
-    def _process_upstream_DNA_mutation(self, gene, ref, start, alt):
+    def _process_DNA_mutation(self, gene, ref, start, alt):
+        names = []
         pos = gene.get_reference_position(start)
-        name = "".join([ref, str(pos), alt])
-        return [name]
+        if alt == "X":
+            for a in ["A", "T", "C", "G"]:
+                if a != ref:
+                    names.append("".join([ref, str(pos), a]))
+            else:
+                names.append("".join([ref, str(pos), alt]))
+        return names
 
     def _process_coding_mutation(self, gene, ref, start, alt):
         if not gene.prot or start > len(gene.prot):

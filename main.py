@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 from __future__ import print_function
+import sys
+import os
 
 
 import os
@@ -7,6 +9,7 @@ import argparse
 import sys
 import atlas.version
 import logging
+sys.path.append("/..")
 
 
 def run_subtool(parser, args):
@@ -16,6 +19,8 @@ def run_subtool(parser, args):
         from atlas.commands.genotype import run
     elif args.command == "dump-probes":
         from atlas.commands.dump import run
+    elif args.command == "make-probes":
+        from atlas.commands.makeprobes import run        
     elif args.command == "predict":
         from atlas.commands.amr import run
 
@@ -169,6 +174,43 @@ def main():
         default=False,
         action="store_true")
     parser_dump.set_defaults(func=run_subtool)
+
+    ##################
+    ### Make Probes ##
+    ##################
+
+    parser_make_probes = subparsers.add_parser('make-probes',
+        description='Make probes from a list of variants')
+    parser_make_probes.add_argument(
+        'reference_filepath',
+        metavar='reference_filepath',
+        type=str,
+        help='reference_filepath')
+    parser_make_probes.add_argument(
+        '-v',
+        '--variant',
+        type=str,
+        action='append',
+        help='Variant in DNA positions e.g. A1234T',
+        default=[])
+    parser_make_probes.add_argument(
+        '-f',
+        '--file',
+        type=str,
+        help='File containing variants as rows A1234T')
+    parser_make_probes.add_argument(
+        '-g',
+        '--genbank',
+        type=str,
+        help='Genbank file containing genes as features')
+    parser_make_probes.add_argument(
+        '--db_name',
+        metavar='db_name',
+        type=str,
+        help='db_name',
+        default="tb")
+    parser_make_probes.add_argument('-k', '--kmer', type=int, help='kmer length', default=31)
+    parser_make_probes.set_defaults(func=run_subtool)
 
     # ##########
     # # AMR predict

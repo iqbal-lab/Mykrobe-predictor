@@ -1,8 +1,10 @@
+import os
 from mongoengine import Document
 from mongoengine import ReferenceField
 from mongoengine import StringField
 from Bio import SeqIO
 from Bio.Seq import Seq
+from Bio.Data import CodonTable
 from copy import copy
 import itertools
 from collections import Counter
@@ -10,7 +12,9 @@ import logging
 import datetime
 import math
 from atlas.utils import make_hash
+from atlas.utils import split_var_name
 from atlas.schema.models.base import CreateAndSaveMixin
+from atlas.schema import Variant
 
 
 def unique(seq):
@@ -331,3 +335,39 @@ class Panel(object):
         self.ref = "".join(ref)
         self.start = start
         self.alts = unique(["".join(alt) for alt in alts])
+
+class Mutation(object):
+
+    def __init__(
+            self,
+            var_name,
+            reference,
+            gene=None,
+            mut=None):
+        self.var_name = var_name
+        self.gene = gene
+        if mut:
+            tmp, self.start, tmp = split_var_name(mut)
+        self.ref, tmp, self.alt = split_var_name(var_name)
+        self.standard_table = CodonTable.unambiguous_dna_by_name["Standard"]
+        self.reference = reference
+
+    @property
+    def mut(self):
+        if self.gene.forward:
+            ref = self.ref
+            alt = self.alt
+        else:
+            ref = str(Seq(self.ref).reverse_complement())
+            alt = str(Seq(self.alt).reverse_complement())
+        r = self.standard_table.forward_table.get(ref, ref)
+        a = self.standard_table.forward_table.get(alt, alt)
+        return "".join([r, str(self.start), a])
+
+    @property
+    def variant(self):
+        ref, start, alt = split_var_name(self.var_name)
+        return Variant.create(variant_sets=None, start=int(start),
+                              end=0, reference_bases=ref,
+                              alternate_bases=[alt],
+                              reference=self.reference)        

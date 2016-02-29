@@ -22,7 +22,7 @@ from atlas.cortex import McCortexRunner
 
 from atlas.utils import get_params
 
-LOGGER = logging.getLogger("logger")
+logger = logging.getLogger(__name__)
 
 
 def max_pnz_threshold(vp):
@@ -76,7 +76,7 @@ class CoverageParser(object):
         try:
             return row[0], int(row[2]), int(row[3]), 100 * float(row[4])
         except ValueError:
-            LOGGER.warning("Failed to parse %s" % str(row))
+            logger.warning("Failed to parse %s" % str(row))
             return row[0], 0, 0, 0.0
 
     def _parse_covgs(self):

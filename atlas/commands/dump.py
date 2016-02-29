@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/..")
 import datetime
 import logging
-LOGGER = logging.getLogger("logger")
+logger = logging.getLogger(__name__)
 
 
 from mongoengine import connect
@@ -15,16 +15,16 @@ from atlas.panelgeneration import make_variant_probe
 
 
 def run(parser, args):
-    connect('atlas-%s' % (args.db_name))
+    DB = connect('atlas-%s' % (args.db_name))
     if args.verbose:
-        LOGGER.setLevel(level=logging.DEBUG)
+        logger.setLevel(level=logging.DEBUG)
     else:
-        LOGGER.setLevel(level=logging.ERROR)
+        logger.setLevel(level=logging.ERROR)
     al = AlleleGenerator(
         reference_filepath=args.reference_filepath,
         kmer=args.kmer)
     for variant in Variant.snps():
-        variant_panel = make_variant_probe(al, variant, args.kmer)
+        variant_panel = make_variant_probe(al, variant, args.kmer, DB = DB)
         sys.stdout.write(
             ">ref-%s?num_alts=%i&ref=%s\n" %
             (variant_panel.variant.var_hash, len(

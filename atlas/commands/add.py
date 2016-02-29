@@ -14,7 +14,7 @@ from atlas.vcf import VCF
 
 """Adds variants to the database"""
 
-LOGGER = logging.getLogger("logger")
+logger = logging.getLogger(__name__)
 client = MongoClient()
 
 
@@ -46,13 +46,13 @@ def run(parser, args):
     args = parser.parse_args()
     args = check_args(args)
     if args.quiet:
-        LOGGER.setLevel(logging.ERROR)
+        logger.setLevel(logging.ERROR)
     else:
-        LOGGER.setLevel(logging.INFO)
+        logger.setLevel(logging.INFO)
     DBNAME = 'atlas-%s' % (args.db_name)
     db = client[DBNAME]
     connect(DBNAME)
-    LOGGER.debug("Using DB %s" % DBNAME)
+    logger.debug("Using DB %s" % DBNAME)
     try:
         reference_set = ReferenceSet.objects.get(name=args.reference_set)
     except DoesNotExist:
