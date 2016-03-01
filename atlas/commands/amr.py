@@ -25,7 +25,6 @@ GN_PANELS = [
     "gn-amr-genes-extended"]
 
 
-
 def run(parser, args):
     base_json = {args.sample: {}}
     args = parser.parse_args()
@@ -38,8 +37,7 @@ def run(parser, args):
         elif args.panel == "walker-2015":
             TB_PANELS = [
                 "data/panels/tb-species-160227.fasta",
-                "data/panels/tb-amr-walker_2015.fasta"]            
-
+                "data/panels/tb-amr-walker_2015.fasta"]
 
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
@@ -52,7 +50,7 @@ def run(parser, args):
         panel_name = "tb-amr"
     elif args.species == "gn":
         panels = GN_PANELS
-        panel_name = "gn-amr"                         
+        panel_name = "gn-amr"
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
     base_json[args.sample]["panels"] = panels
     # Run Cortex

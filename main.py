@@ -240,8 +240,8 @@ def main():
         metavar='panel',
         type=str,
         help='panel',
-        choices=['bradley-2015', 'walker-2015'], 
-        default = 'walker-2015')
+        choices=['bradley-2015', 'walker-2015'],
+        default='walker-2015')
     parser_amr.add_argument(
         '-k',
         '--kmer',

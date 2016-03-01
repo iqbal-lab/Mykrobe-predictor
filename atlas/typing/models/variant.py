@@ -55,7 +55,7 @@ class VariantProbeCoverage(object):
     @alternate_percent_coverage.setter
     def alternate_percent_coverage(self, value):
         self.best_alternate_coverage.percent_coverage = value
-        
+
     @property
     def alternate_median_depth(self):
         return self.best_alternate_coverage.median_depth

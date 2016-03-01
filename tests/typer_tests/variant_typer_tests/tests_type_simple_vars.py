@@ -168,6 +168,7 @@ class VariantTyperWithMultipleProbeCoverages(TestCase):
         call = self.vt_no_contaim.type([v1, v2])
         assert call.genotype == [1, 1]
 
+
 class VariantTyperWithLowMinimum(TestCase):
 
     def setUp(self):
