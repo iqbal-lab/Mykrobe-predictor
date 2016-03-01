@@ -15,8 +15,8 @@ from atlas.utils import split_var_name
 from atlas.annotation.genes import GeneAminoAcidChangeToDNAVariants
 from atlas.panelgeneration.models import Mutation
 
-logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
+# logging = logging.getLogger(__name__)
+# logging.setLevel(level=logging.DEBUG)
 
 
 def run(parser, args):
@@ -26,7 +26,7 @@ def run(parser, args):
             Variant.objects()
         except (ServerSelectionTimeoutError, ConnectionError):
             DB = None
-            logger.warning(
+            logging.warning(
                 "Could not connect to database. Continuing without using genetic backgrounds")
     mutations = []
     reference = os.path.basename(args.reference_filepath).split('.fa')[0]
@@ -77,18 +77,22 @@ def run(parser, args):
         kmer=args.kmer)
     for mut in mutations:
         variant_panel = make_variant_probe(al, mut.variant, args.kmer, DB=DB)
-        # for name, variant_panel in panels:
-        if mut.gene:
-            sys.stdout.write(
-                ">ref-%s?num_alts=%i&gene=%s&mut=%s&ref=%s\n" %
-                (mut.variant.var_name, len(
-                    variant_panel.alts), mut.gene.name, mut.mut,  mut.reference))
+        if variant_panel is not None:
+            if mut.gene:
+                sys.stdout.write(
+                    ">ref-%s?num_alts=%i&gene=%s&mut=%s&ref=%s\n" %
+                    (mut.variant.var_name, len(
+                        variant_panel.alts), mut.gene.name, mut.mut, mut.reference))
+            else:
+                sys.stdout.write(
+                    ">ref-%s?num_alts=%i\n" %
+                    (mut.variant.var_name, len(
+                        variant_panel.alts)))
+            sys.stdout.write("%s\n" % variant_panel.ref)
+            for a in variant_panel.alts:
+                sys.stdout.write(">alt-%s\n" % mut.mut)
+                sys.stdout.write("%s\n" % a)
         else:
-            sys.stdout.write(
-                ">ref-%s?num_alts=%i\n" %
-                (mut.variant.var_name, len(
-                    variant_panel.alts)))
-        sys.stdout.write("%s\n" % variant_panel.ref)
-        for a in variant_panel.alts:
-            sys.stdout.write(">alt-%s\n" % mut.mut)
-            sys.stdout.write("%s\n" % a)
+            logging.warning(
+                "All variants failed for %s_%s - %s" %
+                (mut.gene, mut.mut, mut.variant))

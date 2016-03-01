@@ -12,8 +12,8 @@ from atlas.utils import unique
 from atlas.panelgeneration import AlleleGenerator
 from atlas.schema import VariantSet
 
-logger = logging.getLogger(__name__)
-logger.setLevel(level=logging.DEBUG)
+# logging = logging.getLogger(__name__)
+# logging.setLevel(level=logging.DEBUG)
 
 
 def get_context(pos, kmer):
@@ -59,7 +59,7 @@ def make_variant_probe(al, variant, kmer, DB=None):
         except (ServerSelectionTimeoutError, ConnectionError):
             DB = None
             context = []
-            logger.warning(
+            logging.warning(
                 "Could not connect to database. Continuing without using genetic backgrounds")
     else:
         context = []
@@ -67,12 +67,18 @@ def make_variant_probe(al, variant, kmer, DB=None):
     contexts_seen_together = seen_together(context)
     alts = []
     for context in contexts_seen_together:
-        panel = al.create(variant, context)
-        ref = panel.ref
-        panel.alts
-        if variant_probe is not None:
-            variant_probe.alts.extend(panel.alts)
+        try:
+            panel = al.create(variant, context)
+        except ValueError as e:
+            logging.warning("Failed to process variant:%s context:%s. %s" % (
+                variant, ",".join([str(c) for c in context]), str(e)))
         else:
-            variant_probe = panel
-    variant_probe.alts = unique(variant_probe.alts)
+            ref = panel.ref
+            panel.alts
+            if variant_probe is not None:
+                variant_probe.alts.extend(panel.alts)
+            else:
+                variant_probe = panel
+    if variant_probe:
+        variant_probe.alts = unique(variant_probe.alts)
     return variant_probe

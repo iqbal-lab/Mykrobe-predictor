@@ -82,10 +82,16 @@ class AlleleGenerator(object):
                 "Probes can only be built for homozygous variants at this time")
         if "".join(
                 self.ref[index:(index + len(v.reference_bases))]) != v.reference_bases:
-            raise ValueError("""Cannot create alleles as ref at pos %i is not %s
-                                (it's %s) are you sure you're using one-based
-                                co-ordinates?
-                             """ % (v.start, v.reference_bases, "".join(self.ref[index: (index + len(v.reference_bases))])))
+            raise ValueError(
+                "Cannot create alleles as ref at pos %i is not %s (it's %s) are you sure you're using one-based co-ordinates?" %
+                (v.start,
+                 v.reference_bases,
+                 "".join(
+                     self.ref[
+                         index: (
+                             index +
+                             len(
+                                 v.reference_bases))])))
         if v.start <= 0:
             raise ValueError("Position should be 1 based")
 
