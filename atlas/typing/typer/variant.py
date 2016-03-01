@@ -54,6 +54,7 @@ class VariantTyper(Typer):
 
     def _type_variant_probe_coverages(
             self, variant_probe_coverage, variant=None):
+        variant_probe_coverage = self._check_min_coverage(variant_probe_coverage)
         hom_ref_likelihood = self._hom_ref_lik(variant_probe_coverage)
         hom_alt_likelihood = self._hom_alt_lik(variant_probe_coverage)
         if not self.has_contamination():
@@ -72,6 +73,11 @@ class VariantTyper(Typer):
                 "coverage": variant_probe_coverage.coverage_dict,
                 "expected_depths": self.expected_depths,
                 "contamination_depths": self.contamination_depths})
+
+    def _check_min_coverage(self, variant_probe_coverage):
+        if variant_probe_coverage.alternate_min_depth < 0.1 * variant_probe_coverage.alternate_median_depth:
+            variant_probe_coverage.alternate_percent_coverage = variant_probe_coverage.alternate_percent_coverage * 0.9
+        return variant_probe_coverage
 
     def _hom_ref_lik(self, variant):
         if variant.reference_percent_coverage < 100:

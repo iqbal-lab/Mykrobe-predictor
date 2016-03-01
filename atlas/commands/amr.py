@@ -1,6 +1,5 @@
 from __future__ import print_function
-
-# Read the kmer counts into a hash
+import logging
 from atlas.utils import check_args
 from atlas.typing import CoverageParser
 from atlas.typing import Genotyper
@@ -24,14 +23,24 @@ GN_PANELS = [
     "Escherichia_coli",
     "Klebsiella_pneumoniae",
     "gn-amr-genes-extended"]
-TB_PANELS = [
-    "data/panels/tb-species-160227.fasta",
-    "data/panels/tb-amr-walker_2015.fasta"]
+
 
 
 def run(parser, args):
     base_json = {args.sample: {}}
     args = parser.parse_args()
+
+    if args.panel is not None:
+        if args.panel == "bradley-2015":
+            TB_PANELS = [
+                "data/panels/tb-species-160227.fasta",
+                "data/panels/tb-amr-bradley_2015.fasta"]
+        elif args.panel == "walker-2015":
+            TB_PANELS = [
+                "data/panels/tb-species-160227.fasta",
+                "data/panels/tb-amr-walker_2015.fasta"]            
+
+
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
         panel_name = "tb-gn-staph-amr"
@@ -43,7 +52,9 @@ def run(parser, args):
         panel_name = "tb-amr"
     elif args.species == "gn":
         panels = GN_PANELS
-        panel_name = "gn-amr"
+        panel_name = "gn-amr"                         
+    logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
+    base_json[args.sample]["panels"] = panels
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,

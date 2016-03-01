@@ -167,3 +167,41 @@ class VariantTyperWithMultipleProbeCoverages(TestCase):
 
         call = self.vt_no_contaim.type([v1, v2])
         assert call.genotype == [1, 1]
+
+class VariantTyperWithLowMinimum(TestCase):
+
+    def setUp(self):
+        self.vt_no_contaim = VariantTyper(
+            expected_depths=[100],
+            contamination_depths=[])
+
+    def teardown(self):
+        pass
+
+    def test_simple_case(self):
+        reference_coverage = ProbeCoverage(min_depth=100,
+                                           percent_coverage=100,
+                                           median_depth=100)
+        alt1 = ProbeCoverage(min_depth=80,
+                             percent_coverage=100,
+                             median_depth=100)
+        alternate_coverages = [alt1]
+        v1 = VariantProbeCoverage(var_name="A123T",
+                                  reference_coverage=reference_coverage,
+                                  alternate_coverages=alternate_coverages
+                                  )
+
+        call = self.vt_no_contaim.type(v1)
+        assert call.genotype == [0, 1]
+
+        alt1 = ProbeCoverage(min_depth=1,
+                             percent_coverage=100,
+                             median_depth=100)
+        alternate_coverages = [alt1]
+        v1 = VariantProbeCoverage(var_name="A123T",
+                                  reference_coverage=reference_coverage,
+                                  alternate_coverages=alternate_coverages
+                                  )
+
+        call = self.vt_no_contaim.type(v1)
+        assert call.genotype == [0, 0]
