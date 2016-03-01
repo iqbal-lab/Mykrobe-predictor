@@ -242,12 +242,6 @@ def main():
         help='panel',
         default=None)
     parser_amr.add_argument(
-        '--db_name',
-        metavar='db_name',
-        type=str,
-        help='db_name',
-        default=None)
-    parser_amr.add_argument(
         '-k',
         '--kmer',
         metavar='kmer',

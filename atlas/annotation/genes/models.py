@@ -191,8 +191,8 @@ class GeneAminoAcidChangeToDNAVariants():
             for a in ["A", "T", "C", "G"]:
                 if a != ref:
                     names.append("".join([ref, str(pos), a]))
-            else:
-                names.append("".join([ref, str(pos), alt]))
+        else:
+            names.append("".join([ref, str(pos), alt]))
         return names
 
     def _process_coding_mutation(self, gene, ref, start, alt):

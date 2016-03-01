@@ -26,13 +26,12 @@ GN_PANELS = [
     "gn-amr-genes-extended"]
 TB_PANELS = [
     "data/panels/tb-species-160227.fasta",
-    "data/panels/tb-amr-extended.fasta"]
+    "data/panels/tb-amr-walker_2015.fasta"]
 
 
 def run(parser, args):
     base_json = {args.sample: {}}
     args = parser.parse_args()
-    check_args(args)
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
         panel_name = "tb-gn-staph-amr"

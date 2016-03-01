@@ -82,8 +82,7 @@ def run(parser, args):
             sys.stdout.write(
                 ">ref-%s?num_alts=%i&gene=%s&mut=%s&ref=%s\n" %
                 (mut.variant.var_name, len(
-                    variant_panel.alts), mut.gene.name, mut.mut, os.path.basename(
-                    args.reference_filepath).split('.')[0]))
+                    variant_panel.alts), mut.gene.name, mut.mut,  mut.reference))
         else:
             sys.stdout.write(
                 ">ref-%s?num_alts=%i\n" %

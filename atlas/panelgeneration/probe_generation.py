@@ -66,19 +66,13 @@ def make_variant_probe(al, variant, kmer, DB=None):
     variant_probe = None
     contexts_seen_together = seen_together(context)
     alts = []
-    build_success = True
     for context in contexts_seen_together:
-        if len(context) <= 5:
-            try:
-                panel = al.create(variant, context)
-                ref = panel.ref
-                panel.alts
-                if variant_probe is not None:
-                    variant_probe.alts.extend(panel.alts)
-                else:
-                    variant_probe = panel
-            except ValueError as e:
-                sys.stderr.write("WARNING: %s \n" % str(r))
-                build_success = False
+        panel = al.create(variant, context)
+        ref = panel.ref
+        panel.alts
+        if variant_probe is not None:
+            variant_probe.alts.extend(panel.alts)
+        else:
+            variant_probe = panel
     variant_probe.alts = unique(variant_probe.alts)
     return variant_probe
