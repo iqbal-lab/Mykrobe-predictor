@@ -114,7 +114,7 @@ class BasePredictor(object):
                     else:
                         pass
                         # print ("Warning:NoEntry for %s" % name)
-
+        assert drugs is not None
         return drugs
 
     def _resistance_prediction(self, variant_or_gene):
