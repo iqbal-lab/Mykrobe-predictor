@@ -203,6 +203,7 @@ class SpeciesPredictor(object):
 
 class AMRSpeciesPredictor(SpeciesPredictor):
 
+
     def __init__(
             self,
             phylo_group_covgs,
