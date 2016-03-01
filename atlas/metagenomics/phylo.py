@@ -34,7 +34,7 @@ class Hierarchy(object):
 
 class SpeciesPredictor(object):
 
-    def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs, base_json, verbose = False, hierarchy_json_file = "/data2/users/phelim/ana/tb/NTM-species-probes/data/truth/hierarchy.json"):
+    def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs, base_json, verbose = False, hierarchy_json_file = "data/hierarchy.json"):
         self.phylo_group_covgs = phylo_group_covgs
         self.sub_complex_covgs = sub_complex_covgs
         self.species_covgs = species_covgs
@@ -99,8 +99,8 @@ class SpeciesPredictor(object):
             total_percent_covered = round(bases_covered/total_bases,3)
             _median = covg_dict.get("median", [0])
             minimum_percentage_coverage_required =  percent_coverage_from_expected_coverage(self.expected_depth) * self.threshold.get(phylo_group, DEFAULT_THRESHOLD)
-            # print (minimum_percentage_coverage_required, self.expected_depth, percent_coverage_from_expected_coverage(self.expected_depth))
-            if total_percent_covered < minimum_percentage_coverage_required:
+            # print (phylo_group,minimum_percentage_coverage_required, self.expected_depth, percent_coverage_from_expected_coverage(self.expected_depth))
+            if total_percent_covered < minimum_percentage_coverage_required or median(_median) < 0.1 * self.expected_depth:
                 ## Remove low coverage nodes
                 _index = [i for i,d in enumerate(_median) if d > 0.1 * self.expected_depth]
                 percent_coverage = [percent_coverage[i] for i in _index]
@@ -133,7 +133,7 @@ class SpeciesPredictor(object):
         sub_species = {}
         for s in species.keys():
             allowed_sub_species = self.hierarchy.get_children(s)
-            sub_species_to_consider = { k: phylogenetics["lineage"].get(k, {"percent_coverage" : 0}) for k in allowed_sub_species } 
+            sub_species_to_consider = { k: phylogenetics.get("lineage",{}).get(k, {"percent_coverage" : 0}) for k in allowed_sub_species } 
             best_sub_species = self._get_best_coverage_dict(sub_species_to_consider)
             sub_species.update(best_sub_species)
         phylogenetics["lineage"] = sub_species
@@ -164,9 +164,9 @@ class SpeciesPredictor(object):
 class AMRSpeciesPredictor(SpeciesPredictor):
 
     def __init__(self, phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
-                 base_json, verbose = False):
+                 base_json, verbose = False, hierarchy_json_file = "data/hierarchy.json"):
         super(AMRSpeciesPredictor, self).__init__(phylo_group_covgs, sub_complex_covgs, species_covgs, lineage_covgs,
-                 base_json, verbose = verbose)
+                 base_json, verbose = verbose, hierarchy_json_file = hierarchy_json_file)
 
     def is_saureus_present(self):
         return "Staphaureus" in self.out_json["phylogenetics"]["phylo_group"]

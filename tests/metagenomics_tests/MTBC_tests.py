@@ -96,5 +96,47 @@ class MTBCSpeciesTests(TestCase):
         print (out_dict)
 
 
+    def test_low_per_best_hit(self):
+        species_predictor = AMRSpeciesPredictor(phylo_group_covgs = {},
+                                                sub_complex_covgs = {},
+                                                species_covgs = {},
+                                                lineage_covgs = {}, 
+                                                base_json = {})
+        species_predictor.out_json["phylogenetics"] = {
+                                                        "sub_complex": {
+                                                            "Mycobacterium_avium_complex": {
+                                                                "percent_coverage": 98.346,
+                                                                "median_depth": 54.0
+                                                            }
+                                                        },
+                                                        "phylo_group": {
+                                                            "Mycobacterium_tuberculosis_complex": {
+                                                                "percent_coverage": 98.887,
+                                                                "median_depth": 142.0
+                                                            }
+                                                        },
+                                                        "species": {
+                                                            "Mycobacterium_caprae": {
+                                                                "percent_coverage": 13.735,
+                                                                "median_depth": 132
+                                                            },
+                                                            "Mycobacterium_africanum": {
+                                                                "percent_coverage": 11.732,
+                                                                "median_depth": 85.0
+                                                            },
+                                                            "Mycobacterium_tuberculosis": {
+                                                                "percent_coverage": 32.316,
+                                                                "median_depth": 1
+                                                            }
+                                                        }
+                                                    }
+
+        out_dict = species_predictor.choose_best(species_predictor.out_json["phylogenetics"])
+
+        assert "Mycobacterium_africanum" in out_dict["species"]
+        assert "Mycobacterium_tuberculosis" not in out_dict["species"]
+        print (out_dict)        
+
+
 
 
