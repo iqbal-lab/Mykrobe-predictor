@@ -1,101 +1,61 @@
 import datetime
-import json 
-
-from mongoengine import Document
-from mongoengine import StringField
-from mongoengine import DateTimeField
-from mongoengine import IntField
-from mongoengine import ReferenceField
-from mongoengine import ListField
-from mongoengine import FloatField
-
-from atlas.utils import split_var_name
-from atlas.utils import make_hash
+import json
 
 
-class TypedVariant(Document):
-    meta = {'indexes': [
-                {
-                    'fields' : ['start']
-                },
-                {
-                    'fields' : ['name_hash']
-                },
-                {
-                    'fields' : ['call_set']
-                }                                                  
-                ]
-            }    
-    name = StringField()
-    alt_name = StringField()
-    name_hash = StringField(unique_with = "call_set")
-    reference_median_depth = IntField()
-    alternate_median_depth = IntField()
-    reference_percent_coverage = FloatField()
-    alternate_percent_coverage = FloatField()    
-    created_at = DateTimeField(required = True, default = datetime.datetime.now)
-    
-    start = IntField()
-    alt_index = IntField()
-    reference_bases = StringField()
-    alternate_bases = StringField()
-    call_set = ReferenceField('CallSet')
-    gt = StringField()
-    copy_number = FloatField()
-    induced_resistance = ListField(StringField)
+class VariantProbeCoverage(object):
 
-    @classmethod
-    def create_object(cls,
-                      reference_percent_coverage,
-                      alternate_percent_coverage,
-                      reference_median_depth,
-                      alternate_median_depth,
-                      name = "",  call_set = None, gt = None,
-                      alt_name = None, alt_index = None):
-        reference_bases, start, alternate_bases = split_var_name(name)
-        if reference_median_depth is None:
-            reference_median_depth = 0
-        if alternate_median_depth is None:
-            alternate_median_depth = 0   
+    def __init__(self, reference_coverage,
+                 alternate_coverages,
+                 var_name=None,
+                 params={}):
+        self.reference_coverage = reference_coverage
+        self.alternate_coverages = alternate_coverages
+        self.var_name = var_name
+        self.params = params
+        self.best_alternate_coverage = self._choose_best_alternate_coverage()
 
-        return cls( name = name, 
-                    name_hash = make_hash(name),
-                    reference_bases = reference_bases, 
-                    start = start, 
-                    alternate_bases = alternate_bases,
-                    call_set = call_set,
-                    reference_percent_coverage = int(reference_percent_coverage), 
-                    alternate_percent_coverage = int(alternate_percent_coverage),
-                    reference_median_depth = int(reference_median_depth),
-                    alternate_median_depth = int(alternate_median_depth),
-                    gt = gt,
-                    alt_name = alt_name,
-                    alt_index = alt_index         
-                    )   
+    def _choose_best_alternate_coverage(self):
+        self.alternate_coverages.sort(
+            key=lambda x: x.percent_coverage,
+            reverse=True)
+        current_best = self.alternate_coverages[0]
+        for probe_coverage in self.alternate_coverages[1:]:
+            if probe_coverage.percent_coverage < current_best.percent_coverage:
+                return current_best
+            else:
+                if probe_coverage.min_depth > current_best.min_depth:
+                    current_best = probe_coverage
+                elif probe_coverage.min_depth <= current_best.min_depth:
+                    if probe_coverage.median_depth > current_best.median_depth:
+                        current_best = probe_coverage
+        return current_best
 
-    @classmethod
-    def create(cls, **kwargs):
-        return cls.create_object(**kwargs).save()
+    @property
+    def coverage_dict(self):
+        return {"reference": self.reference_coverage.coverage_dict,
+                "alternate": self.best_alternate_coverage.coverage_dict
+                }
 
-    def set_genotype(self, gt):
-        self.gt = gt
+    @property
+    def reference_percent_coverage(self):
+        return self.reference_coverage.percent_coverage
 
-    def set_copy_number(self, cn):
-        self.copy_number = cn        
+    @property
+    def reference_median_depth(self):
+        return self.reference_coverage.median_depth
 
-    def add_induced_resistance(self, drug):
-        if drug not in self.induced_resistance:
-            self.induced_resistance.append(drug)        
-        
-    def to_dict(self):
-        d  = {  "name" : self.name,
-                "alt_name" : self.alt_name,
-                "gt" : self.gt,
-                "covg" : {"reference_percent_coverage" : self.reference_percent_coverage, 
-                          "alternate_percent_coverage" : self.alternate_percent_coverage, 
-                          "reference_median_depth": self.reference_median_depth,
-                          "alternate_median_depth" : self.alternate_median_depth
-                          },
-                "induced_resistance" : self.induced_resistance
-              }
-        return d
+    @property
+    def reference_min_depth(self):
+        return self.reference_coverage.min_depth
+
+    @property
+    def alternate_percent_coverage(self):
+        return self.best_alternate_coverage.percent_coverage
+
+    @property
+    def alternate_median_depth(self):
+        return self.best_alternate_coverage.median_depth
+
+    @property
+    def alternate_min_depth(self):
+        return self.best_alternate_coverage.min_depth
