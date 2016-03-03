@@ -168,7 +168,7 @@ class TBPredictor(BasePredictor):
             self).__init__(
             typed_variants,
             called_genes,
-            base_json)        
+            base_json)
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
@@ -179,7 +179,6 @@ class TBPredictor(BasePredictor):
                 "variant_to_resistance_drug.json"))
 
 
-
 class StaphPredictor(BasePredictor):
 
     def __init__(self, typed_variants, called_genes, base_json={}):
@@ -188,7 +187,7 @@ class StaphPredictor(BasePredictor):
             self).__init__(
             typed_variants,
             called_genes,
-            base_json)        
+            base_json)
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
@@ -197,7 +196,6 @@ class StaphPredictor(BasePredictor):
             os.path.join(
                 self.data_dir,
                 "variant_to_resistance_drug.json"))
-
 
 
 class GramNegPredictor(BasePredictor):

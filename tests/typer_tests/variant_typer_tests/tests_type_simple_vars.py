@@ -70,7 +70,6 @@ class VariantTyperTest(TestCase):
                                   alternate_coverages=alternate_coverages
                                   )
         call = self.vt.type(v1)
-        print call.genotype_likelihoods
         assert call.genotype == [0, 1]
 
 
