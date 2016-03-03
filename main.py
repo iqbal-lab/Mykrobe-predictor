@@ -261,6 +261,10 @@ def main():
         type=str,
         help='species',
         default=None)
+    parser_amr.add_argument(
+        '--tmp',
+        help='directory for skeleton binaries',
+        default="/tmp/")    
     parser_amr.add_argument('--force', default=False, action="store_true")
     parser_amr.set_defaults(func=run_subtool)
 
