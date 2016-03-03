@@ -3,7 +3,7 @@ from unittest import TestCase
 from atlas.schema import VariantCall
 from atlas.schema import Variant
 
-from atlas.pheno.amr import BasePredictor
+from atlas.pheno.amr import TBPredictor
 
 
 class AMRPredictTest(TestCase):
@@ -12,7 +12,7 @@ class AMRPredictTest(TestCase):
         self.variant_snp = Variant.create(start=0, end=1, reference_bases="A",
                                           alternate_bases=["T"])
 
-        self.predictor = BasePredictor(variant_calls={},
+        self.predictor = TBPredictor(variant_calls={},
                                        called_genes={})
 
     def teardown(self):

@@ -26,7 +26,6 @@ def copy_number(variant_call):
 class BasePredictor(object):
 
     def __init__(self, variant_calls, called_genes, base_json={}):
-        self.variant_or_gene_name_to_resistance_drug = {}
         self.variant_calls = variant_calls
         self.called_genes = called_genes
         self.drugs = self._get_drug_list_from_variant_to_resistance_drug()
@@ -162,13 +161,8 @@ def load_json(f):
 
 class TBPredictor(BasePredictor):
 
-    def __init__(self, typed_variants, called_genes, base_json={}):
-        super(
-            TBPredictor,
-            self).__init__(
-            typed_variants,
-            called_genes,
-            base_json)
+    def __init__(self, variant_calls, called_genes, base_json={}):
+
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
@@ -177,17 +171,19 @@ class TBPredictor(BasePredictor):
             os.path.join(
                 self.data_dir,
                 "variant_to_resistance_drug.json"))
+        super(
+            TBPredictor,
+            self).__init__(
+            variant_calls,
+            called_genes,
+            base_json)        
 
 
 class StaphPredictor(BasePredictor):
 
-    def __init__(self, typed_variants, called_genes, base_json={}):
-        super(
-            StaphPredictor,
-            self).__init__(
-            typed_variants,
-            called_genes,
-            base_json)
+    def __init__(self, variant_calls, called_genes, base_json={}):
+
+
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
@@ -196,11 +192,17 @@ class StaphPredictor(BasePredictor):
             os.path.join(
                 self.data_dir,
                 "variant_to_resistance_drug.json"))
+        super(
+            StaphPredictor,
+            self).__init__(
+            variant_calls,
+            called_genes,
+            base_json)        
 
 
 class GramNegPredictor(BasePredictor):
 
-    def __init__(self, typed_variants, called_genes, base_json={}):
+    def __init__(self, variant_calls, called_genes, base_json={}):
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
@@ -212,6 +214,6 @@ class GramNegPredictor(BasePredictor):
         super(
             GramNegPredictor,
             self).__init__(
-            typed_variants,
+            variant_calls,
             called_genes,
             base_json)

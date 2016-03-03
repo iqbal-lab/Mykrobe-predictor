@@ -112,7 +112,7 @@ def run(parser, args):
         gt.run()
     args.quiet = q
     if Predictor is not None:
-        predictor = Predictor(typed_variants=gt.variant_calls,
+        predictor = Predictor(variant_calls=gt.variant_calls,
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
         predictor.run()
