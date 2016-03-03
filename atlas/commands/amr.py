@@ -60,7 +60,8 @@ def run(parser, args):
         seq=args.seq,
         kmer=args.kmer,
         force=args.force,
-        verbose=False)
+        verbose=False,
+        skeleton_dir=args.tmp)
     cp.run()
     # print (cp.covgs["species"])
     # Detect species
