@@ -77,7 +77,7 @@ class VariantTyper(Typer):
 
     def _check_min_coverage(self, variant_probe_coverage):
         if variant_probe_coverage.alternate_min_depth < 0.1 * \
-                variant_probe_coverage.alternate_median_depth:
+                max(self.expected_depths):
             variant_probe_coverage.alternate_percent_coverage = variant_probe_coverage.alternate_percent_coverage * 0.9
         return variant_probe_coverage
 

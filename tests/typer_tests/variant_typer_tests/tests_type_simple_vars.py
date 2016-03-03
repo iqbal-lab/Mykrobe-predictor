@@ -206,3 +206,19 @@ class VariantTyperWithLowMinimum(TestCase):
 
         call = self.vt_no_contaim.type(v1)
         assert call.genotype == [0, 0]
+
+    def test_2(self):
+        reference_coverage = ProbeCoverage(min_depth=131,
+                                           percent_coverage=95.2381,
+                                           median_depth=155)
+        alt1 = ProbeCoverage(min_depth=1,
+                             percent_coverage=100,
+                             median_depth=1)
+        alternate_coverages = [alt1]
+        v1 = VariantProbeCoverage(var_name="A123T",
+                                  reference_coverage=reference_coverage,
+                                  alternate_coverages=alternate_coverages
+                                  )
+
+        call = self.vt_no_contaim.type(v1)
+        assert call.genotype == []
