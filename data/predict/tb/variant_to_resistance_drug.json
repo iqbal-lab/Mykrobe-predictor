@@ -301,20 +301,5 @@
 "rrs_C513T" : ["Streptomycin"],
 "rrs_C517T" : ["Streptomycin"],
 "rrs_C905A" : ["Streptomycin"],
-"tlyA_C-83T" : ["Capreomycin"],
-"rrs_A1401X" : ["Amikacin", "Capreomycin","Kanamycin"],
-"rrs_A1402X" : ["Amikacin", "Capreomycin","Kanamycin"],
-"rrs_G1484X" : ["Amikacin", "Capreomycin","Kanamycin"],
-"A1473170C" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"A1473246G" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"A1473246G" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"A1473246G" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"A1472359C" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"A1472359T" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"C1473247T" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"C1473247T" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"C1472358T" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"C1472362T" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"C1472362T" : ["Kanamycin", "Capreomycin", "Amikacin"],
-"C1472750A" : ["Kanamycin", "Capreomycin", "Amikacin"]
+"tlyA_C-83T" : ["Capreomycin"]
 }

@@ -13,7 +13,7 @@ class AMRPredictTest(TestCase):
                                           alternate_bases=["T"])
 
         self.predictor = TBPredictor(variant_calls={},
-                                       called_genes={})
+                                     called_genes={})
 
     def teardown(self):
         pass

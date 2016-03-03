@@ -176,13 +176,12 @@ class TBPredictor(BasePredictor):
             self).__init__(
             variant_calls,
             called_genes,
-            base_json)        
+            base_json)
 
 
 class StaphPredictor(BasePredictor):
 
     def __init__(self, variant_calls, called_genes, base_json={}):
-
 
         self.data_dir = os.path.abspath(
             os.path.join(
@@ -197,7 +196,7 @@ class StaphPredictor(BasePredictor):
             self).__init__(
             variant_calls,
             called_genes,
-            base_json)        
+            base_json)
 
 
 class GramNegPredictor(BasePredictor):
