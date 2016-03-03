@@ -71,7 +71,7 @@ class VariantTyperTest(TestCase):
                                   )
         call = self.vt.type(v1)
         print call.genotype_likelihoods
-        assert call.genotype == [0, 1]        
+        assert call.genotype == [0, 1]
 
 
 class VariantTyperWithContamination(TestCase):

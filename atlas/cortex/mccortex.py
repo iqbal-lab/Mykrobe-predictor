@@ -48,7 +48,7 @@ class McCortexRunner(object):
                 os.remove(self.ctx_skeleton_filepath)
             # panel
             seq_list = self._create_sequence_list()
-            cmd = ["/home/phelimb/git/mccortex/bin/mccortex31",
+            cmd = ["mccortex31",
                    "build",
                    "-m 5GB",
                    "-k",
@@ -79,7 +79,7 @@ class McCortexRunner(object):
 
     @property
     def coverages_cmd(self):
-        cmd = ["/home/phelimb/git/mccortex/bin/mccortex31", "geno", "-q",
+        cmd = ["mccortex31", "geno", "-q",
                "-I", self.ctx_skeleton_filepath,
                "-k", str(self.kmer), "-s", self.sample_name,
                "-o", self.covg_tmp_file_path]

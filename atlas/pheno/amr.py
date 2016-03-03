@@ -18,7 +18,7 @@ def copy_number(variant_call):
     coverage = variant_call.info.get("coverage")
 
     alternate_depth = coverage.get("alternate").get("median_depth")
-    wt_depth = coverage.get("alternate").get("median_depth")
+    wt_depth = coverage.get("reference").get("median_depth")
 
     return float(alternate_depth) / (alternate_depth + wt_depth)
 

@@ -27,12 +27,11 @@ class MTBCSpeciesTests(TestCase):
                 "median_depth": 2
             }
         }
-        assert species_predictor.is_mtbc_present() == True
-        assert species_predictor.is_ntm_present() == True
+        assert species_predictor.is_mtbc_present()
+        assert species_predictor.is_ntm_present()
 
-        assert len(
-            species_predictor._get_present_phylo_groups(
-                species_predictor.out_json["phylogenetics"]["phylo_group"])) == 2
+        assert len(species_predictor._get_present_phylo_groups(
+            species_predictor.out_json["phylogenetics"]["phylo_group"])) == 2
 
     def test_get_best_coverage_dict(self):
         species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
@@ -55,7 +54,6 @@ class MTBCSpeciesTests(TestCase):
                 "median_depth": 12.0
             }}).keys()
         assert list(best_species) == ["Mycobacterium_chimaera"]
-
 
     def test_mixed_chimera(self):
         species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
@@ -99,50 +97,44 @@ class MTBCSpeciesTests(TestCase):
         assert "Mycobacterium_intracellulare" in out_dict["species"]
         assert "Mycobacterium_bovis" not in out_dict["species"]
 
-
     def test_low_per_best_hit(self):
-        species_predictor = AMRSpeciesPredictor(phylo_group_covgs = {},
-                                                sub_complex_covgs = {},
-                                                species_covgs = {},
-                                                lineage_covgs = {}, 
-                                                base_json = {})
+        species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
+                                                sub_complex_covgs={},
+                                                species_covgs={},
+                                                lineage_covgs={},
+                                                base_json={})
         species_predictor.out_json["phylogenetics"] = {
-                                                        "sub_complex": {
-                                                            "Mycobacterium_avium_complex": {
-                                                                "percent_coverage": 98.346,
-                                                                "median_depth": 54.0
-                                                            }
-                                                        },
-                                                        "phylo_group": {
-                                                            "Mycobacterium_tuberculosis_complex": {
-                                                                "percent_coverage": 98.887,
-                                                                "median_depth": 142.0
-                                                            }
-                                                        },
-                                                        "species": {
-                                                            "Mycobacterium_caprae": {
-                                                                "percent_coverage": 13.735,
-                                                                "median_depth": 132
-                                                            },
-                                                            "Mycobacterium_africanum": {
-                                                                "percent_coverage": 11.732,
-                                                                "median_depth": 85.0
-                                                            },
-                                                            "Mycobacterium_tuberculosis": {
-                                                                "percent_coverage": 32.316,
-                                                                "median_depth": 1
-                                                            }
-                                                        },
-                                                        'lineage': {}
-                                                    }
+            "sub_complex": {
+                "Mycobacterium_avium_complex": {
+                    "percent_coverage": 98.346,
+                    "median_depth": 54.0
+                }
+            },
+            "phylo_group": {
+                "Mycobacterium_tuberculosis_complex": {
+                    "percent_coverage": 98.887,
+                    "median_depth": 142.0
+                }
+            },
+            "species": {
+                "Mycobacterium_caprae": {
+                    "percent_coverage": 13.735,
+                    "median_depth": 132
+                },
+                "Mycobacterium_africanum": {
+                    "percent_coverage": 11.732,
+                    "median_depth": 85.0
+                },
+                "Mycobacterium_tuberculosis": {
+                    "percent_coverage": 32.316,
+                    "median_depth": 1
+                }
+            },
+            'lineage': {}
+        }
 
-        out_dict = species_predictor.choose_best(species_predictor.out_json["phylogenetics"])
-        print (out_dict) 
+        out_dict = species_predictor.choose_best(
+            species_predictor.out_json["phylogenetics"])
+        print (out_dict)
         # assert "Mycobacterium_africanum" in out_dict["species"]
         # assert "Mycobacterium_tuberculosis" not in out_dict["species"]
-               
-
-
-
-
-
