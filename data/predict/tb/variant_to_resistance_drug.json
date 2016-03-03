@@ -1,4 +1,4 @@
-"ahpC_C-57T" : ["Isoniazid"],
+{"ahpC_C-57T" : ["Isoniazid"],
 "ahpC_C-72T" : ["Isoniazid"],
 "eis_C-10X" : ["Kanamycin"],
 "eis_G-10X" : ["Kanamycin"],
@@ -242,6 +242,5 @@
 "rrs_C905A" : ["Streptomycin"],
 "rrs_G1484X" : ["Amikacin","Capreomycin", "Kanamycin"],
 "rrs_G515X" : ["Streptomycin"],
-"tlyA_C-83T" : ["Capreomycin"],
-{
+"tlyA_C-83T" : ["Capreomycin"]
 }
