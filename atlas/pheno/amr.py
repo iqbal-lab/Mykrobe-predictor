@@ -153,11 +153,6 @@ class BasePredictor(object):
         self.predict_antibiogram()
         self.out_json["susceptibility"] = self.resistance_predictions
 
-    @property
-    def variant_or_gene_name_to_resistance_drug(self):
-        return {}
-
-
 def load_json(f):
     with open(f, 'r') as infile:
         return json.load(infile)
