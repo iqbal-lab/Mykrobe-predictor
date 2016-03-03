@@ -1,3 +1,4 @@
+scripts/add_tb_vcf.sh
 mykrobe.egg-info/
 atlas.egg-info/
 build
