@@ -58,6 +58,21 @@ class VariantTyperTest(TestCase):
         call = self.vt.type(v1)
         assert call.genotype == [0, 1]
 
+    def test_mixed_vars2(self):
+        reference_coverage = ProbeCoverage(min_depth=11,
+                                           percent_coverage=100,
+                                           median_depth=42)
+        alternate_coverages = [ProbeCoverage(min_depth=94,
+                                             percent_coverage=100,
+                                             median_depth=102)]
+        v1 = VariantProbeCoverage(var_name="A123T",
+                                  reference_coverage=reference_coverage,
+                                  alternate_coverages=alternate_coverages
+                                  )
+        call = self.vt.type(v1)
+        print call.genotype_likelihoods
+        assert call.genotype == [0, 1]        
+
 
 class VariantTyperWithContamination(TestCase):
 

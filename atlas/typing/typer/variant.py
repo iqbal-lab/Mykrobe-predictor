@@ -5,7 +5,7 @@ from atlas.typing.typer.base import MIN_LLK
 from atlas.schema import VariantCall
 
 DEFAULT_ERROR_RATE = 0.05
-DEFAULT_MINOR_FREQ = 0.1
+DEFAULT_MINOR_FREQ = 0.2
 
 
 class VariantTyper(Typer):
