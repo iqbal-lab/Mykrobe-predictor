@@ -237,10 +237,14 @@ class Genotyper(object):
             call = gt.type(probe_coverages, variant=variant)
             if sum(call.genotype) > 0 or self.include_hom_alt_calls:
                 self.variant_calls[probe_name] = call
-                tmp_var = copy(call.variant)
-                call.variant = None
-                out_json["-".join(tmp_var.names)] = call.to_mongo().to_dict()
-                self.variant_calls[probe_name].variant = tmp_var
+                if variant is not None:
+                    tmp_var = copy(call.variant)
+                    call.variant = None
+                    out_json["-".join(tmp_var.names)
+                             ] = call.to_mongo().to_dict()
+                    self.variant_calls[probe_name].variant = tmp_var
+                else:
+                    out_json[probe_name] = call.to_mongo().to_dict()
 
     def _create_variant(self, probe_name):
         names = []
@@ -249,10 +253,14 @@ class Genotyper(object):
             names.append("_".join([params.get("gene"), params.get("mut")]))
         var_name = probe_name.split('?')[0].split('-')[1]
         names.append(var_name)
-        ref, start, alt = split_var_name(var_name)
-        return Variant.create(
-            start=start,
-            reference_bases=ref,
-            alternate_bases=[alt],
-            names=names,
-            info=params)
+        try:
+            # If it's a variant panel we can create a variant
+            ref, start, alt = split_var_name(var_name)
+            return Variant.create(
+                start=start,
+                reference_bases=ref,
+                alternate_bases=[alt],
+                names=names,
+                info=params)
+        except AttributeError:
+            return None
