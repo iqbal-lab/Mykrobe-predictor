@@ -70,17 +70,24 @@ class PresenceTyper(Typer):
             sequence_probe_coverage)
         likelihoods = [hom_ref_likelihood, het_likelihood, hom_alt_likelihood]
         gt = self.likelihoods_to_genotype(likelihoods)
+        info = {
+            "copy_number": float(
+                sequence_probe_coverage.median_depth) / expected_depth,
+            "coverage": sequence_probe_coverage.coverage_dict,
+            "expected_depths": self.expected_depths,
+            "contamination_depths": self.contamination_depths
+        }
+        if sum([int(i) for i in gt.split("/")]) > 0:
+            info["version"] = sequence_probe_coverage.version
+        if sequence_probe_coverage.length is not None:
+            info["length"] = sequence_probe_coverage.length
+
         return SequenceCall.create(
             sequence=None,
             call_set=None,
             genotype=gt,
             genotype_likelihoods=likelihoods,
-            info={
-                "copy_number": float(
-                    sequence_probe_coverage.median_depth) / expected_depth,
-                "coverage": sequence_probe_coverage.coverage_dict,
-                "expected_depths": self.expected_depths,
-                "contamination_depths": self.contamination_depths})
+            info=info)
 
     def _hom_alt_likeihood(self, median_depth, expected_depth):
         return log_lik_depth(median_depth, expected_depth * 0.75)
@@ -129,12 +136,12 @@ class GeneCollectionTyper(Typer):
         self.presence_typer = PresenceTyper(
             expected_depths, contamination_depths)
 
-    def genotype(self, sequence_coverage_collection):
+    def type(self, sequence_coverage_collection):
         """Types a collection of genes returning the most likely gene version
             in the collection with it's genotype"""
         best_version = self.get_best_version(
             sequence_coverage_collection.values())
-        return self.presence_typer.genotype(best_version)
+        return self.presence_typer.type(best_version)
 
     def get_best_version(self, sequence_coverages):
         sequence_coverages.sort(key=lambda x: x.percent_coverage, reverse=True)

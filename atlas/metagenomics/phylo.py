@@ -45,7 +45,7 @@ class SpeciesPredictor(object):
             lineage_covgs,
             base_json,
             verbose=False,
-            hierarchy_json_file="data/phylo/mtbc_hierarchy.json"):
+            hierarchy_json_file=None):
         self.phylo_group_covgs = phylo_group_covgs
         self.sub_complex_covgs = sub_complex_covgs
         self.species_covgs = species_covgs
@@ -53,7 +53,10 @@ class SpeciesPredictor(object):
         self.out_json = base_json
         self.threshold = {}
         self.verbose = verbose
-        self.hierarchy = Hierarchy(load_json(hierarchy_json_file))
+        try:
+            self.hierarchy = Hierarchy(load_json(hierarchy_json_file))
+        except TypeError:
+            self.hierarchy = {}
 
     def run(self):
         self._load_taxon_thresholds()
@@ -149,10 +152,13 @@ class SpeciesPredictor(object):
         # sub_complex info where possible)
         species = {}
         for pg in phylo_groups.keys():
-            allowed_species = flatten([self.hierarchy.dict[pg]["children"][subc]["children"].keys(
-            ) for subc in self.hierarchy.dict[pg]["children"].keys() if subc is not "Unknown"])
-            species_to_consider = {k: phylogenetics["species"].get(
-                k, {"percent_coverage": 0}) for k in allowed_species}
+            if self.hierarchy:
+                allowed_species = flatten([self.hierarchy.dict[pg]["children"][subc]["children"].keys(
+                ) for subc in self.hierarchy.dict[pg]["children"].keys() if subc is not "Unknown"])
+                species_to_consider = {k: phylogenetics["species"].get(
+                    k, {"percent_coverage": 0}) for k in allowed_species}
+            else:
+                species_to_consider = phylogenetics["species"]
             best_species = self._get_present_phylo_groups(
                 species_to_consider,
                 mix_threshold=90)
@@ -161,9 +167,12 @@ class SpeciesPredictor(object):
         # For each species, get the best sub species where applicable
         sub_species = {}
         for s in species.keys():
-            allowed_sub_species = self.hierarchy.get_children(s)
-            sub_species_to_consider = {k: phylogenetics["lineage"].get(
-                k, {"percent_coverage": 0}) for k in allowed_sub_species}
+            if self.hierarchy:
+                allowed_sub_species = self.hierarchy.get_children(s)
+                sub_species_to_consider = {k: phylogenetics["lineage"].get(
+                    k, {"percent_coverage": 0}) for k in allowed_sub_species}
+            else:
+                sub_species_to_consider = phylogenetics.get("lineage", {})
             best_sub_species = self._get_best_coverage_dict(
                 sub_species_to_consider)
             sub_species.update(best_sub_species)
@@ -180,8 +189,8 @@ class SpeciesPredictor(object):
             d in phylo_groups.items() if d["percent_coverage"] > mix_threshold]
         if len(high_confidence_phylo_groups) > 1:
             # high_confidence_phylo_groups
-            return {k: phylo_groups.get(
-                k, {"percent_coverage": 0}) for k in high_confidence_phylo_groups}
+            return {k: phylo_groups.get(k, {"percent_coverage": 0})
+                    for k in high_confidence_phylo_groups}
         else:
             # Otherwise return best hit
             return self._get_best_coverage_dict(phylo_groups)
@@ -203,7 +212,6 @@ class SpeciesPredictor(object):
 
 class AMRSpeciesPredictor(SpeciesPredictor):
 
-
     def __init__(
             self,
             phylo_group_covgs,
@@ -211,7 +219,8 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             species_covgs,
             lineage_covgs,
             base_json,
-            verbose=False):
+            verbose=False,
+            hierarchy_json_file=None):
         super(
             AMRSpeciesPredictor,
             self).__init__(
@@ -220,7 +229,8 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             species_covgs,
             lineage_covgs,
             base_json,
-            verbose=verbose)
+            verbose=verbose,
+            hierarchy_json_file=hierarchy_json_file)
 
     def is_saureus_present(self):
         return "Staphaureus" in self.out_json["phylogenetics"]["phylo_group"]

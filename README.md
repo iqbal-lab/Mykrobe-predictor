@@ -41,6 +41,10 @@ Add new variants to atlas (requires mongod running in background)
 
 	atlas genotype tb-amr-probes.fasta 31 -s 10564-01 -1 /data2/users/phelim/data/tb/atlas/fastq/10564-01/10564-01.fastq.gz
 
+### Genotype a panel of genes
+
+	atlas genotype ~/git/atlas-core/data/panels/staph-amr-genes.fasta 31 -s C00001283 -1 /data2/users/phelim/data/staph/atlas/bams/C00001283.bam
+
 ### AMR prediction
 
 	atlas predict -s C00003204 -1 C00003204.bam

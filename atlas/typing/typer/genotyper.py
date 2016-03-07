@@ -107,25 +107,29 @@ class CoverageParser(object):
     def _parse_seq_panel(self, row):
         allele, median_depth, min_depth, percent_coverage = self._parse_summary_covgs_row(
             row)
+        probe_coverage = ProbeCoverage(
+            percent_coverage=percent_coverage,
+            median_depth=median_depth,
+            min_depth=min_depth)
+
         allele_name = allele.split('?')[0]
         params = get_params(allele)
         panel_type = params.get("panel_type", "presence")
         name = params.get('name')
+        version = params.get(
+            'version',
+            '1')
         if panel_type in ["variant", "presence"]:
-            gp = SequenceCoverage.create_object(
+            sequence_probe_coverage = SequenceProbeCoverage(
                 name=name,
-                version=params.get(
-                    'version',
-                    'NA'),
-                percent_coverage=percent_coverage,
-                median_depth=median_depth,
-                min_depth=min_depth,
+                probe_coverage=probe_coverage,
+                version=version,
                 length=params.get("length"))
             try:
-                self.covgs[panel_type][gp.name][gp.version] = gp
+                self.covgs[panel_type][name][version] = sequence_probe_coverage
             except KeyError:
-                self.covgs[panel_type][gp.name] = {}
-                self.covgs[panel_type][gp.name][gp.version] = gp
+                self.covgs[panel_type][name] = {}
+                self.covgs[panel_type][name][version] = sequence_probe_coverage
 
         else:
             # Species panels are treated differently
@@ -219,9 +223,9 @@ class Genotyper(object):
             contamination_depths=self.contamination_depths)
         gene_presence_covgs_out = {}
         for gene_name, gene_collection in self.gene_presence_covgs.items():
-            self.gene_presence_covgs[gene_name] = gt.genotype(gene_collection)
-            gene_presence_covgs_out[
-                gene_name] = self.gene_presence_covgs[gene_name].to_dict()
+            self.gene_presence_covgs[gene_name] = gt.type(gene_collection)
+            gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[
+                gene_name].to_mongo().to_dict()
         self.out_json[self.sample][
             "typed_presence"] = gene_presence_covgs_out
 
@@ -237,10 +241,14 @@ class Genotyper(object):
             call = gt.type(probe_coverages, variant=variant)
             if sum(call.genotype) > 0 or self.include_hom_alt_calls:
                 self.variant_calls[probe_name] = call
-                tmp_var = copy(call.variant)
-                call.variant = None
-                out_json["-".join(tmp_var.names)] = call.to_mongo().to_dict()
-                self.variant_calls[probe_name].variant = tmp_var
+                if variant is not None:
+                    tmp_var = copy(call.variant)
+                    call.variant = None
+                    out_json["-".join(tmp_var.names)
+                             ] = call.to_mongo().to_dict()
+                    self.variant_calls[probe_name].variant = tmp_var
+                else:
+                    out_json[probe_name] = call.to_mongo().to_dict()
 
     def _create_variant(self, probe_name):
         names = []
@@ -249,10 +257,14 @@ class Genotyper(object):
             names.append("_".join([params.get("gene"), params.get("mut")]))
         var_name = probe_name.split('?')[0].split('-')[1]
         names.append(var_name)
-        ref, start, alt = split_var_name(var_name)
-        return Variant.create(
-            start=start,
-            reference_bases=ref,
-            alternate_bases=[alt],
-            names=names,
-            info=params)
+        try:
+            # If it's a variant panel we can create a variant
+            ref, start, alt = split_var_name(var_name)
+            return Variant.create(
+                start=start,
+                reference_bases=ref,
+                alternate_bases=[alt],
+                names=names,
+                info=params)
+        except AttributeError:
+            return None
