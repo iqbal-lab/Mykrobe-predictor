@@ -41,4 +41,5 @@ class AMRPredictTest(TestCase):
                         "min_depth": 128}},
                 "expected_depths": [152]})
 
-        assert self.predictor._coverage_greater_than_threshold(call, [""]) == False
+        assert self.predictor._coverage_greater_than_threshold(call, [
+                                                               ""]) == False
