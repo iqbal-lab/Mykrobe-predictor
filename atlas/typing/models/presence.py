@@ -2,10 +2,12 @@
 
 class SequenceProbeCoverage(object):
 
-    def __init__(self, name, probe_coverage, percent_coverage_threshold=30):
+    def __init__(self, name, probe_coverage, percent_coverage_threshold=30, version = 1, length = None):
         self.name = name
         self.probe_coverage = probe_coverage
         self.percent_coverage_threshold = percent_coverage_threshold
+        self.version = version
+        self.length = length
 
     @property
     def median_depth(self):
