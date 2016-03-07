@@ -129,6 +129,12 @@ def main():
         type=int,
         help='kmer size')
     parser_geno.add_argument(
+        '--expected_depth',
+        metavar='expected depth',
+        type=int,
+        help='expected depth',
+        default = 100)    
+    parser_geno.add_argument(
         '--all',
         help='Store ref GT aswell as alt',
         default=False,
