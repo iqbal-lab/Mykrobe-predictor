@@ -23,7 +23,7 @@ def copy_number(call):
         alternate_depth = coverage.get("median_depth")
         wt_depth = call.info.get("expected_depths")[0]
 
-    return float(alternate_depth) / (alternate_depth + wt_depth)
+    return round(float(alternate_depth) / (alternate_depth + wt_depth), 2)
 
 
 class BasePredictor(object):

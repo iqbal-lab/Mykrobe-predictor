@@ -9,7 +9,7 @@ class ProbeCoverage(object):
 
     @property
     def coverage_dict(self):
-        return {"percent_coverage": self.percent_coverage,
-                "median_depth": self.median_depth,
-                "min_depth": self.min_depth,
+        return {"percent_coverage": round(self.percent_coverage, 2),
+                "median_depth": round(self.median_depth, 2),
+                "min_depth": round(self.min_depth, 2),
                 }
