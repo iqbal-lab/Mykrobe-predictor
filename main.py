@@ -133,7 +133,7 @@ def main():
         metavar='expected depth',
         type=int,
         help='expected depth',
-        default = 100)    
+        default=100)
     parser_geno.add_argument(
         '--all',
         help='Store ref GT aswell as alt',
@@ -270,7 +270,7 @@ def main():
     parser_amr.add_argument(
         '--tmp',
         help='directory for skeleton binaries',
-        default="/tmp/")    
+        default="/tmp/")
     parser_amr.add_argument('--force', default=False, action="store_true")
     parser_amr.set_defaults(func=run_subtool)
 
