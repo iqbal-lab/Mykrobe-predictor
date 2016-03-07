@@ -79,7 +79,7 @@ class McCortexRunner(object):
 
     @property
     def coverages_cmd(self):
-        cmd = ["mccortex31", "geno", "-q",
+        cmd = ["mccortex31", "geno",
                "-I", self.ctx_skeleton_filepath,
                "-k", str(self.kmer), "-s", self.sample_name,
                "-o", self.covg_tmp_file_path]
