@@ -76,11 +76,11 @@ class PresenceTyper(Typer):
             "coverage": sequence_probe_coverage.coverage_dict,
             "expected_depths": self.expected_depths,
             "contamination_depths": self.contamination_depths
-            }
+        }
         if sum([int(i) for i in gt.split("/")]) > 0:
             info["version"] = sequence_probe_coverage.version
         if sequence_probe_coverage.length is not None:
-            info["length"]= sequence_probe_coverage.length
+            info["length"] = sequence_probe_coverage.length
 
         return SequenceCall.create(
             sequence=None,

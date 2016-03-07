@@ -11,12 +11,13 @@ class MTBCSpeciesTests(TestCase):
         pass
 
     def test_mixed_MTBC_NTM(self):
-        species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
-                                                sub_complex_covgs={},
-                                                species_covgs={},
-                                                lineage_covgs={},
-                                                base_json={},
-                                                hierarchy_json_file=self.hierarchy_json_file)
+        species_predictor = AMRSpeciesPredictor(
+            phylo_group_covgs={},
+            sub_complex_covgs={},
+            species_covgs={},
+            lineage_covgs={},
+            base_json={},
+            hierarchy_json_file=self.hierarchy_json_file)
         species_predictor.out_json["phylogenetics"] = {}
         species_predictor.out_json["phylogenetics"]["phylo_group"] = {
             "Non_tuberculosis_mycobacterium_complex": {
@@ -35,12 +36,13 @@ class MTBCSpeciesTests(TestCase):
             species_predictor.out_json["phylogenetics"]["phylo_group"])) == 2
 
     def test_get_best_coverage_dict(self):
-        species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
-                                                sub_complex_covgs={},
-                                                species_covgs={},
-                                                lineage_covgs={},
-                                                base_json={},
-                                                hierarchy_json_file=self.hierarchy_json_file)
+        species_predictor = AMRSpeciesPredictor(
+            phylo_group_covgs={},
+            sub_complex_covgs={},
+            species_covgs={},
+            lineage_covgs={},
+            base_json={},
+            hierarchy_json_file=self.hierarchy_json_file)
 
         best_species = species_predictor._get_best_coverage_dict({
             "Mycobacterium_chimaera": {
@@ -58,12 +60,13 @@ class MTBCSpeciesTests(TestCase):
         assert list(best_species) == ["Mycobacterium_chimaera"]
 
     def test_mixed_chimera(self):
-        species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
-                                                sub_complex_covgs={},
-                                                species_covgs={},
-                                                lineage_covgs={},
-                                                base_json={},
-                                                hierarchy_json_file=self.hierarchy_json_file)
+        species_predictor = AMRSpeciesPredictor(
+            phylo_group_covgs={},
+            sub_complex_covgs={},
+            species_covgs={},
+            lineage_covgs={},
+            base_json={},
+            hierarchy_json_file=self.hierarchy_json_file)
         species_predictor.out_json["phylogenetics"] = {
             "sub_complex": {
                 "Mycobacterium_avium_complex": {
@@ -101,12 +104,13 @@ class MTBCSpeciesTests(TestCase):
         assert "Mycobacterium_bovis" not in out_dict["species"]
 
     def test_low_per_best_hit(self):
-        species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
-                                                sub_complex_covgs={},
-                                                species_covgs={},
-                                                lineage_covgs={},
-                                                base_json={},
-                                                hierarchy_json_file=self.hierarchy_json_file)
+        species_predictor = AMRSpeciesPredictor(
+            phylo_group_covgs={},
+            sub_complex_covgs={},
+            species_covgs={},
+            lineage_covgs={},
+            base_json={},
+            hierarchy_json_file=self.hierarchy_json_file)
         species_predictor.out_json["phylogenetics"] = {
             "sub_complex": {
                 "Mycobacterium_avium_complex": {

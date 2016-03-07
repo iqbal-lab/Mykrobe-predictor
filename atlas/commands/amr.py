@@ -81,7 +81,7 @@ def run(parser, args):
             "sub-species",
             {}),
         base_json=base_json[args.sample],
-        hierarchy_json_file = hierarchy_json_file)
+        hierarchy_json_file=hierarchy_json_file)
     species_predictor.run()
 
     # ## AMR prediction

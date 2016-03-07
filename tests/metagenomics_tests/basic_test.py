@@ -10,7 +10,6 @@ class MTBCSpeciesTests(TestCase):
     def teardown(self):
         pass
 
-
     def test_mixed_chimera(self):
         species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
                                                 sub_complex_covgs={},
@@ -52,4 +51,3 @@ class MTBCSpeciesTests(TestCase):
         assert "Mycobacterium_chimaera" in out_dict["species"]
         assert "Mycobacterium_intracellulare" in out_dict["species"]
         assert "Mycobacterium_bovis" not in out_dict["species"]
-

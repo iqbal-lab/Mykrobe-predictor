@@ -23,7 +23,6 @@ def copy_number(call):
         alternate_depth = coverage.get("median_depth")
         wt_depth = call.info.get("expected_depths")[0]
 
-
     return float(alternate_depth) / (alternate_depth + wt_depth)
 
 
@@ -65,11 +64,11 @@ class BasePredictor(object):
             self._update_resistance_prediction(name, gene)
 
     def _update_resistance_prediction(self, allele_name, variant_or_gene):
-        variant_names = self._get_names(allele_name)
-        for name in variant_names:
+        variant_or_gene_names = self._get_names(allele_name)
+        for name in variant_or_gene_names:
             drugs = self._get_drugs(name)
             resistance_prediction = self._resistance_prediction(
-                variant_or_gene, variant_names)
+                variant_or_gene, variant_or_gene_names)
             for drug in drugs:
                 current_resistance_prediction = self.resistance_predictions[
                     drug]["predict"]
@@ -77,6 +76,8 @@ class BasePredictor(object):
                 if current_resistance_prediction in ["I", "N"]:
                     self.resistance_predictions[drug][
                         "predict"] = resistance_prediction
+                    if resistance_prediction in ["r", "R"]:
+                        self.resistance_predictions[drug]["called_by"] = name
                 elif current_resistance_prediction == "S":
                     if resistance_prediction in ["r", "R"]:
                         self.resistance_predictions[drug][
@@ -98,7 +99,6 @@ class BasePredictor(object):
             names.append(allele_name_split[1])
         else:
             names.append(allele_name_split[0])
-
 
         return names
 

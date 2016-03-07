@@ -58,7 +58,6 @@ class SpeciesPredictor(object):
         except TypeError:
             self.hierarchy = {}
 
-
     def run(self):
         self._load_taxon_thresholds()
         self._aggregate_all()
@@ -157,7 +156,7 @@ class SpeciesPredictor(object):
                 allowed_species = flatten([self.hierarchy.dict[pg]["children"][subc]["children"].keys(
                 ) for subc in self.hierarchy.dict[pg]["children"].keys() if subc is not "Unknown"])
                 species_to_consider = {k: phylogenetics["species"].get(
-                k, {"percent_coverage": 0}) for k in allowed_species}
+                    k, {"percent_coverage": 0}) for k in allowed_species}
             else:
                 species_to_consider = phylogenetics["species"]
             best_species = self._get_present_phylo_groups(
@@ -190,8 +189,8 @@ class SpeciesPredictor(object):
             d in phylo_groups.items() if d["percent_coverage"] > mix_threshold]
         if len(high_confidence_phylo_groups) > 1:
             # high_confidence_phylo_groups
-            return {k: phylo_groups.get(
-                k, {"percent_coverage": 0}) for k in high_confidence_phylo_groups}
+            return {k: phylo_groups.get(k, {"percent_coverage": 0})
+                    for k in high_confidence_phylo_groups}
         else:
             # Otherwise return best hit
             return self._get_best_coverage_dict(phylo_groups)
@@ -212,7 +211,6 @@ class SpeciesPredictor(object):
 
 
 class AMRSpeciesPredictor(SpeciesPredictor):
-
 
     def __init__(
             self,
