@@ -25,7 +25,10 @@ def run(parser, args):
         skeleton_dir=args.tmp)
     cp.run()
     base_json = {args.sample: {}}
-    gt = Genotyper(sample=args.sample, expected_depths=[100],
+    base_json[args.sample]["panels"] = args.panels
+    base_json[args.sample]["files"] = args.seq
+    base_json[args.sample]["kmer"] = args.kmer
+    gt = Genotyper(sample=args.sample, expected_depths=[args.expected_depth],
                    variant_covgs=cp.variant_covgs,
                    gene_presence_covgs=cp.covgs["presence"],
                    base_json=base_json,
