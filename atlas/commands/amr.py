@@ -58,8 +58,8 @@ def run(parser, args):
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
     base_json[args.sample]["panels"] = panels
     base_json[args.sample]["files"] = args.seq
-    base_json[args.sample]["kmer"] = args.kmer    
-    
+    base_json[args.sample]["kmer"] = args.kmer
+
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
