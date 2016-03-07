@@ -14,11 +14,15 @@ DEFAULT_MIN_GENE_CN = 0.03
 DEFAULT_MIN_VARIANT_CN = 0.1
 
 
-def copy_number(variant_call):
-    coverage = variant_call.info.get("coverage")
+def copy_number(call):
+    coverage = call.info.get("coverage")
+    try:
+        alternate_depth = coverage.get("alternate").get("median_depth")
+        wt_depth = coverage.get("reference").get("median_depth")
+    except:
+        alternate_depth = coverage.get("median_depth")
+        wt_depth = call.info.get("expected_depths")[0]
 
-    alternate_depth = coverage.get("alternate").get("median_depth")
-    wt_depth = coverage.get("reference").get("median_depth")
 
     return float(alternate_depth) / (alternate_depth + wt_depth)
 
@@ -57,15 +61,15 @@ class BasePredictor(object):
     def predict_antibiogram(self):
         for allele_name, variant_call in self.variant_calls.items():
             self._update_resistance_prediction(allele_name, variant_call)
-        # for name, gene in self.called_genes.items():
-        #     self._update_resistance_prediction(gene)
+        for name, gene in self.called_genes.items():
+            self._update_resistance_prediction(name, gene)
 
     def _update_resistance_prediction(self, allele_name, variant_or_gene):
         variant_names = self._get_names(allele_name)
         for name in variant_names:
             drugs = self._get_drugs(name)
             resistance_prediction = self._resistance_prediction(
-                variant_or_gene)
+                variant_or_gene, variant_names)
             for drug in drugs:
                 current_resistance_prediction = self.resistance_predictions[
                     drug]["predict"]
@@ -89,7 +93,13 @@ class BasePredictor(object):
         params = get_params(allele_name)
         if params.get("mut"):
             names.append("_".join([params.get("gene"), params.get("mut")]))
-        names.append(allele_name.split('?')[0].split('-')[1])
+        allele_name_split = allele_name.split('?')[0].split('-')
+        if len(allele_name_split) > 1:
+            names.append(allele_name_split[1])
+        else:
+            names.append(allele_name_split[0])
+
+
         return names
 
     def _get_drugs(self, name, lower=False):
@@ -117,14 +127,14 @@ class BasePredictor(object):
         assert drugs is not None
         return drugs
 
-    def _resistance_prediction(self, variant_or_gene):
+    def _resistance_prediction(self, variant_or_gene, names):
         if sum(variant_or_gene.genotype) == 2:
-            if self._coverage_greater_than_threshold(variant_or_gene):
+            if self._coverage_greater_than_threshold(variant_or_gene, names):
                 return "R"
             else:
                 return "S"
         elif sum(variant_or_gene.genotype) == 1:
-            if self._coverage_greater_than_threshold(variant_or_gene):
+            if self._coverage_greater_than_threshold(variant_or_gene, names):
                 return "r"
             else:
                 return "S"
@@ -133,21 +143,13 @@ class BasePredictor(object):
         else:
             return "I"
 
-    def _coverage_greater_than_threshold(self, variant_or_gene):
-        if isinstance(variant_or_gene, SequenceCall):
-            return variant_or_gene.copy_number > self._coveage_threshold.get(
-                variant_or_gene.name,
-                DEFAULT_MIN_GENE_CN)
-        elif isinstance(variant_or_gene, VariantCall):
-            coveage_threshold = DEFAULT_MIN_VARIANT_CN
-            for name in variant_or_gene.variant.names:
-                if name in self._coveage_threshold:
-                    coveage_threshold = self._coveage_threshold.get(
-                        name, DEFAULT_MIN_VARIANT_CN)
-            return copy_number(variant_or_gene) > coveage_threshold
-        else:
-            raise TypeError(
-                "Must be either ProbeCoverage or TypedVariant object")
+    def _coverage_greater_than_threshold(self, variant_or_gene, names):
+        coveage_threshold = DEFAULT_MIN_VARIANT_CN
+        for name in names:
+            if name in self._coveage_threshold:
+                coveage_threshold = self._coveage_threshold.get(
+                    name, DEFAULT_MIN_VARIANT_CN)
+        return copy_number(variant_or_gene) > coveage_threshold
 
     def run(self):
         self.predict_antibiogram()

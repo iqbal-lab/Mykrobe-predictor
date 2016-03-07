@@ -10,25 +10,25 @@ from atlas.metagenomics import AMRSpeciesPredictor
 from pprint import pprint
 import json
 
-STAPH_PANELS = ["Coagneg",
-                "Staphaureus",
-                "Saureus",
-                "Sepidermidis",
-                "Shaemolyticus",
-                "Sother",
-                "staph-amr-genes",
-                "staph-amr-mutations"]
+STAPH_PANELS = ["data/panels/Coagneg.fasta",
+                "data/panels/Staphaureus.fasta",
+                "data/panels/Saureus.fasta",
+                "data/panels/Sepidermidis.fasta",
+                "data/panels/Shaemolyticus.fasta",
+                "data/panels/Sother.fasta",
+                "data/panels/staph-amr-genes.fasta",
+                "data/panels/staph-amr-mutations.fasta"]
 GN_PANELS = [
-    "gn-amr-genes",
-    "Escherichia_coli",
-    "Klebsiella_pneumoniae",
-    "gn-amr-genes-extended"]
+    "data/panels/gn-amr-genes",
+    "data/panels/Escherichia_coli",
+    "data/panels/Klebsiella_pneumoniae",
+    "data/panels/gn-amr-genes-extended"]
 
 
 def run(parser, args):
     base_json = {args.sample: {}}
     args = parser.parse_args()
-
+    hierarchy_json_file = None
     if args.panel is not None:
         if args.panel == "bradley-2015":
             TB_PANELS = [
@@ -42,17 +42,22 @@ def run(parser, args):
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
         panel_name = "tb-gn-staph-amr"
+
     elif args.species == "staph":
         panels = STAPH_PANELS
         panel_name = "staph-amr"
+        # hierarchy_json_file = "data/phylo/saureus_hierarchy.json"
+
     elif args.species == "tb":
         panels = TB_PANELS
         panel_name = "tb-amr"
+        hierarchy_json_file = "data/phylo/mtbc_hierarchy.json"
     elif args.species == "gn":
         panels = GN_PANELS
         panel_name = "gn-amr"
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
     base_json[args.sample]["panels"] = panels
+    base_json[args.sample]["files"] = args.seq
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
@@ -63,7 +68,6 @@ def run(parser, args):
         verbose=False,
         skeleton_dir=args.tmp)
     cp.run()
-    # print (cp.covgs["species"])
     # Detect species
     species_predictor = AMRSpeciesPredictor(
         phylo_group_covgs=cp.covgs.get(
@@ -76,7 +80,8 @@ def run(parser, args):
         lineage_covgs=cp.covgs.get(
             "sub-species",
             {}),
-        base_json=base_json)
+        base_json=base_json[args.sample],
+        hierarchy_json_file = hierarchy_json_file)
     species_predictor.run()
 
     # ## AMR prediction

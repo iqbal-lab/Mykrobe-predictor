@@ -116,14 +116,14 @@ class CoverageParser(object):
         params = get_params(allele)
         panel_type = params.get("panel_type", "presence")
         name = params.get('name')
-        version=params.get(
-                        'version',
-                        '1')        
+        version = params.get(
+            'version',
+            '1')
         if panel_type in ["variant", "presence"]:
             sequence_probe_coverage = SequenceProbeCoverage(
-                    name = name,
-                    probe_coverage=probe_coverage,
-                    version=version,
+                name=name,
+                probe_coverage=probe_coverage,
+                version=version,
                 length=params.get("length"))
             try:
                 self.covgs[panel_type][name][version] = sequence_probe_coverage
@@ -224,8 +224,8 @@ class Genotyper(object):
         gene_presence_covgs_out = {}
         for gene_name, gene_collection in self.gene_presence_covgs.items():
             self.gene_presence_covgs[gene_name] = gt.type(gene_collection)
-            gene_presence_covgs_out[
-                gene_name] = self.gene_presence_covgs[gene_name].to_mongo().to_dict()
+            gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[
+                gene_name].to_mongo().to_dict()
         self.out_json[self.sample][
             "typed_presence"] = gene_presence_covgs_out
 

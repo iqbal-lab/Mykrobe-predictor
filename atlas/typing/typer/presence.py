@@ -71,14 +71,17 @@ class PresenceTyper(Typer):
         likelihoods = [hom_ref_likelihood, het_likelihood, hom_alt_likelihood]
         gt = self.likelihoods_to_genotype(likelihoods)
         info = {
-                "copy_number": float(
-                    sequence_probe_coverage.median_depth) / expected_depth,
-                "coverage": sequence_probe_coverage.coverage_dict,
-                "expected_depths": self.expected_depths,
-                "contamination_depths": self.contamination_depths,
-                "length" : sequence_probe_coverage.length}
+            "copy_number": float(
+                sequence_probe_coverage.median_depth) / expected_depth,
+            "coverage": sequence_probe_coverage.coverage_dict,
+            "expected_depths": self.expected_depths,
+            "contamination_depths": self.contamination_depths
+            }
         if sum([int(i) for i in gt.split("/")]) > 0:
             info["version"] = sequence_probe_coverage.version
+        if sequence_probe_coverage.length is not None:
+            info["length"]= sequence_probe_coverage.length
+
         return SequenceCall.create(
             sequence=None,
             call_set=None,
