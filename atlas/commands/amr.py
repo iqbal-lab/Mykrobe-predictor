@@ -74,7 +74,9 @@ def run(parser, args):
     species_predictor = AMRSpeciesPredictor(
         phylo_group_covgs=cp.covgs.get(
             "complex",
-            {}),
+            cp.covgs.get(
+            "phylo_group",
+            {})),
         sub_complex_covgs=cp.covgs.get(
             "sub-complex",
             {}),
