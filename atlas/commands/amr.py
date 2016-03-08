@@ -75,8 +75,8 @@ def run(parser, args):
         phylo_group_covgs=cp.covgs.get(
             "complex",
             cp.covgs.get(
-            "phylo_group",
-            {})),
+                "phylo_group",
+                {})),
         sub_complex_covgs=cp.covgs.get(
             "sub-complex",
             {}),
