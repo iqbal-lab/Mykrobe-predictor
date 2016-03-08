@@ -68,7 +68,8 @@ def run(parser, args):
         kmer=args.kmer,
         force=args.force,
         verbose=False,
-        skeleton_dir=args.tmp)
+        tmp_dir=args.tmp,
+        skeleton_dir=args.skeleton_dir)
     cp.run()
     # Detect species
     species_predictor = AMRSpeciesPredictor(
@@ -126,5 +127,5 @@ def run(parser, args):
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
         predictor.run()
-
+    cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))

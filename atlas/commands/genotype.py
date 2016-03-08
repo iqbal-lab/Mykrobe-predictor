@@ -22,7 +22,8 @@ def run(parser, args):
         kmer=args.kmer,
         force=args.force,
         verbose=verbose,
-        skeleton_dir=args.tmp)
+        tmp_dir=args.tmp,
+        skeleton_dir=args.skeleton_dir)
     cp.run()
     base_json = {args.sample: {}}
     base_json[args.sample]["panels"] = args.panels
@@ -34,4 +35,5 @@ def run(parser, args):
                    base_json=base_json,
                    contamination_depths=[])
     gt.run()
+    cp.remove_temporary_files()
     print(json.dumps(gt.out_json, indent=4))

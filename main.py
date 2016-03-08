@@ -134,11 +134,11 @@ def main():
         type=int,
         help='expected depth',
         default=100)
-    parser_geno.add_argument(
-        '--all',
-        help='Store ref GT aswell as alt',
-        default=False,
-        action="store_true")
+    # parser_geno.add_argument(
+    #     '--all',
+    #     help='Store ref GT aswell as alt',
+    #     default=False,
+    #     action="store_true")
     parser_geno.add_argument(
         '-f',
         '--force',
@@ -147,8 +147,12 @@ def main():
         action="store_true")
     parser_geno.add_argument(
         '--tmp',
-        help='directory for skeleton binaries',
+        help='tmp directory',
         default="/tmp/")
+    parser_geno.add_argument(
+        '--skeleton_dir',
+        help='directory for skeleton binaries',
+        default="data/skeletons/")
     parser_geno.set_defaults(func=run_subtool)
 
     # ##########
@@ -262,15 +266,19 @@ def main():
         help='name',
         default='atlas_gt')
     parser_amr.add_argument(
-        '--species',
+        'species',
         metavar='species',
         type=str,
         help='species',
         default=None)
     parser_amr.add_argument(
         '--tmp',
-        help='directory for skeleton binaries',
+        help='tmp directory',
         default="/tmp/")
+    parser_amr.add_argument(
+        '--skeleton_dir',
+        help='directory for skeleton binaries',
+        default="data/skeletons/")
     parser_amr.add_argument('--force', default=False, action="store_true")
     parser_amr.set_defaults(func=run_subtool)
 
