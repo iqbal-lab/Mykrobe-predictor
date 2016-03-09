@@ -25,22 +25,22 @@ git clone **--recursive** git@github.com:Phelimb/atlas.git
 	
 ### Install Mykrobe predictor with virtualenv (recommended but optional)
 
-1. Install virtualenv
+#### Install virtualenv
 
 	https://virtualenv.readthedocs.org/en/latest/installation.html
 
-2. Create virtualenv 
+#### Create virtualenv 
 
 	virtualenv venv
 
-3. Activate the virtualenv
+#### Activate the virtualenv
 
 	source venv/bin/activate
 
 You can deactivate at anytime by typing deactivate. 
 
 
-4. Install Mykrobe predictor
+#### Install Mykrobe predictor
 
 
 	python setup.py install
