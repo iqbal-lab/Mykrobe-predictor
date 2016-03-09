@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import os
 import subprocess
+import urllib2
 
 
 class McCortexRunner(object):
@@ -14,13 +15,22 @@ class McCortexRunner(object):
             kmer=31,
             force=False,
             panel_name=None,
-            skeleton_dir="/tmp/"):
+            tmp_dir='/tmp/',
+            skeleton_dir='data/skeletons/'):
         self.sample = sample
         self.panels = panels
         self.seq = seq
         self.kmer = kmer
         self.force = force
         self._panel_name = panel_name
+        self.tmp_dir = tmp_dir
+        if skeleton_dir == 'atlas/data/skeletons/':
+            skeleton_dir = os.path.realpath(
+                os.path.join(
+                    os.path.dirname(
+                        os.path.realpath(__file__)),
+                    "..",
+                    skeleton_dir))
         self.skeleton_dir = skeleton_dir
 
     def run(self):
@@ -108,11 +118,11 @@ class McCortexRunner(object):
 
     @property
     def ctx_tmp_filepath(self):
-        return "%s/%s.ctx" % (self.skeleton_dir, self.sample_panel_name)
+        return "%s/%s.ctx" % (self.tmp_dir, self.sample_panel_name)
 
     @property
     def covg_tmp_file_path(self):
-        return "%s/%s.covgs" % (self.skeleton_dir, self.sample_panel_name)
+        return "%s/%s.covgs" % (self.tmp_dir, self.sample_panel_name)
 
     @property
     def ctx_skeleton_filepath(self):
@@ -123,3 +133,7 @@ class McCortexRunner(object):
                 "-")[
                 :100],
                 self.kmer))
+
+    def remove_temporary_files(self):
+        os.remove(self.ctx_tmp_filepath)
+        os.remove(self.covg_tmp_file_path)

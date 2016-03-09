@@ -1,5 +1,8 @@
 from __future__ import print_function
 import logging
+from pprint import pprint
+import json
+import os
 from atlas.utils import check_args
 from atlas.typing import CoverageParser
 from atlas.typing import Genotyper
@@ -7,17 +10,10 @@ from atlas.pheno import TBPredictor
 from atlas.pheno import StaphPredictor
 from atlas.pheno import GramNegPredictor
 from atlas.metagenomics import AMRSpeciesPredictor
-from pprint import pprint
-import json
+from atlas.version import __version__
+STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
+                "data/panels/staph-amr-bradley_2015.fasta.gz"]
 
-STAPH_PANELS = ["data/panels/Coagneg.fasta",
-                "data/panels/Staphaureus.fasta",
-                "data/panels/Saureus.fasta",
-                "data/panels/Sepidermidis.fasta",
-                "data/panels/Shaemolyticus.fasta",
-                "data/panels/Sother.fasta",
-                "data/panels/staph-amr-genes.fasta",
-                "data/panels/staph-amr-mutations.fasta"]
 GN_PANELS = [
     "data/panels/gn-amr-genes",
     "data/panels/Escherichia_coli",
@@ -32,12 +28,12 @@ def run(parser, args):
     if args.panel is not None:
         if args.panel == "bradley-2015":
             TB_PANELS = [
-                "data/panels/tb-species-160227.fasta",
-                "data/panels/tb-amr-bradley_2015.fasta"]
+                "data/panels/tb-species-160227.fasta.gz",
+                "data/panels/tb-amr-bradley_2015.fasta.gz"]
         elif args.panel == "walker-2015":
             TB_PANELS = [
-                "data/panels/tb-species-160227.fasta",
-                "data/panels/tb-amr-walker_2015.fasta"]
+                "data/panels/tb-species-160227.fasta.gz",
+                "data/panels/tb-amr-walker_2015.fasta.gz"]
 
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
@@ -59,7 +55,20 @@ def run(parser, args):
     base_json[args.sample]["panels"] = panels
     base_json[args.sample]["files"] = args.seq
     base_json[args.sample]["kmer"] = args.kmer
-
+    base_json[args.sample]["version"] = __version__
+    # Get real paths for panels
+    panels = [
+        os.path.realpath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                f)) for f in panels]
+    if hierarchy_json_file is not None:
+        hierarchy_json_file = os.path.realpath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                hierarchy_json_file))
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
@@ -68,7 +77,8 @@ def run(parser, args):
         kmer=args.kmer,
         force=args.force,
         verbose=False,
-        skeleton_dir=args.tmp)
+        tmp_dir=args.tmp,
+        skeleton_dir=args.skeleton_dir)
     cp.run()
     # Detect species
     species_predictor = AMRSpeciesPredictor(
@@ -126,5 +136,5 @@ def run(parser, args):
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
         predictor.run()
-
+    cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))

@@ -1,5 +1,6 @@
 from __future__ import print_function
 import json
+import os
 import operator
 from atlas.utils import median
 from atlas.utils import load_json
@@ -67,7 +68,12 @@ class SpeciesPredictor(object):
             covgs["Unknown"] = {"percent_coverage": -1, "median_depth": -1}
 
     def _load_taxon_thresholds(self):
-        with open("data/predict/taxon_coverage_threshold.json", "r") as infile:
+        taxon_coverage_threshold_file = os.path.realpath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "data/predict/taxon_coverage_threshold.json"))
+        with open(taxon_coverage_threshold_file, "r") as infile:
             self.threshold = json.load(infile)
 
     def calc_expected_depth(self):

@@ -5,7 +5,7 @@ from atlas.metagenomics import AMRSpeciesPredictor
 class MTBCSpeciesTests(TestCase):
 
     def setUp(self):
-        self.hierarchy_json_file = "data/phylo/mtbc_hierarchy.json"
+        self.hierarchy_json_file = "atlas/data/phylo/mtbc_hierarchy.json"
 
     def teardown(self):
         pass

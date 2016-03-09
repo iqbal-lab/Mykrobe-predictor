@@ -6,7 +6,7 @@ import glob
 import logging
 import subprocess
 from copy import copy
-from atlas.schema import Variant
+
 from atlas.typing import SequenceProbeCoverage
 from atlas.typing import VariantProbeCoverage
 from atlas.typing import ProbeCoverage
@@ -15,8 +15,8 @@ from atlas.typing import Panel
 from atlas.typing.typer.presence import GeneCollectionTyper
 from atlas.typing.typer.variant import VariantTyper
 
-from atlas.panelgeneration import VariantPanel
 from atlas.schema import VariantCallSet
+from atlas.schema import Variant
 
 from atlas.cortex import McCortexRunner
 
@@ -43,7 +43,8 @@ class CoverageParser(object):
             force,
             panels=None,
             verbose=True,
-            skeleton_dir='/tmp/'):
+            tmp_dir='/tmp/',
+            skeleton_dir='atlas/data/skeletons/'):
         self.sample = sample
         self.seq = seq
         self.kmer = kmer
@@ -54,6 +55,7 @@ class CoverageParser(object):
         self.mc_cortex_runner = None
         self.verbose = verbose
         self.skeleton_dir = skeleton_dir
+        self.tmp_dir = tmp_dir
         self.panel_file_paths = panel_file_paths
         self.panels = []
         for panel_file_path in self.panel_file_paths:
@@ -71,8 +73,12 @@ class CoverageParser(object):
                                                kmer=self.kmer,
                                                force=self.force,
                                                panel_name=self.panel_name,
+                                               tmp_dir=self.tmp_dir,
                                                skeleton_dir=self.skeleton_dir)
         self.mc_cortex_runner.run()
+
+    def remove_temporary_files(self):
+        self.mc_cortex_runner.remove_temporary_files()
 
     @property
     def panel_name(self):

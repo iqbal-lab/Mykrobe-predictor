@@ -23,11 +23,11 @@ class TestRegions():
 
     def setUp(self):
         DB.drop_database('atlas-test')
-        with open("data/NC_000962.3.fasta", 'r') as infile:
+        with open("atlas/data/NC_000962.3.fasta", 'r') as infile:
             self.reference_seq = list(SeqIO.parse(infile, "fasta"))[0].seq
         self.gm = GeneAminoAcidChangeToDNAVariants(
-            reference="data/NC_000962.3.fasta",
-            genbank="data/NC_000962.3.gb")
+            reference="atlas/data/NC_000962.3.fasta",
+            genbank="atlas/data/NC_000962.3.gb")
         self.reference_set = ReferenceSet().create_and_save(name="ref_set")
         self.variant_set = VariantSet.create_and_save(
             name="this_vcf_file",
@@ -109,8 +109,8 @@ class TestRegions():
 
     def test_gene_muts(self):
         self.gm = GeneAminoAcidChangeToDNAVariants(
-            reference="data/NC_000962.3.fasta",
-            genbank="data/NC_000962.3.gb")
+            reference="atlas/data/NC_000962.3.fasta",
+            genbank="atlas/data/NC_000962.3.gb")
         assert self.gm.get_alts("K") == ['AAA', 'AAG']
         # GAT -> ['GCA', 'GCT', 'GCC', 'GCG'], positions 759813,14,15
         assert sorted(self.gm.get_variant_names("rpoB", "D3A")) == sorted(
@@ -179,8 +179,8 @@ class TestRegions():
 
     def test_gene_muts2(self):
         self.gm = GeneAminoAcidChangeToDNAVariants(
-            reference="data/NC_000962.3.fasta",
-            genbank="data/NC_000962.3.gb")
+            reference="atlas/data/NC_000962.3.fasta",
+            genbank="atlas/data/NC_000962.3.gb")
         assert self.gm.get_alts("K") == ['AAA', 'AAG']
         # AGC -> ['CTT', 'CTC', 'CTA', 'CTG']
     #   # GAG -> ['GCA', 'GCT', 'GCC', 'GCG']
@@ -189,7 +189,7 @@ class TestRegions():
             ['CTC2156103TGC', 'CTC2156103AGC', 'CTC2156103GGC', 'CTC2156103CGC'])
 
     def test_make_variant_panel(self):
-        ag = AlleleGenerator("data/NC_000962.3.fasta")
+        ag = AlleleGenerator("atlas/data/NC_000962.3.fasta")
         gene = self.gm.get_gene("rpoB")
         for var in self.gm.get_variant_names("rpoB", "D3A"):
             ref, start, alt = split_var_name(var)
@@ -207,7 +207,7 @@ class TestRegions():
                 assert Seq(seq).translate()[2] == "A"
 
     def test_make_variant_panel2(self):
-        ag = AlleleGenerator("data/NC_000962.3.fasta")
+        ag = AlleleGenerator("atlas/data/NC_000962.3.fasta")
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "E3A"):
             ref, start, alt = split_var_name(var)
@@ -225,7 +225,7 @@ class TestRegions():
                 assert Seq(seq).reverse_complement().translate()[2] == "A"
 
     def test_make_variant_panel3(self):
-        ag = AlleleGenerator("data/NC_000962.3.fasta")
+        ag = AlleleGenerator("atlas/data/NC_000962.3.fasta")
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "S315L"):
             ref, start, alt = split_var_name(var)
@@ -243,7 +243,7 @@ class TestRegions():
                 assert Seq(seq).reverse_complement().translate()[314] == "L"
 
     def test_make_variant_panel4(self):
-        ag = AlleleGenerator("data/NC_000962.3.fasta")
+        ag = AlleleGenerator("atlas/data/NC_000962.3.fasta")
         gene = self.gm.get_gene("katG")
         for var in self.gm.get_variant_names("katG", "W90R"):
             ref, start, alt = split_var_name(var)
@@ -261,7 +261,7 @@ class TestRegions():
                 assert Seq(seq).reverse_complement().translate()[89] == "R"
 
     def test_make_variant_panel5(self):
-        ag = AlleleGenerator("data/NC_000962.3.fasta")
+        ag = AlleleGenerator("atlas/data/NC_000962.3.fasta")
         gene = self.gm.get_gene("gyrA")
         for var in self.gm.get_variant_names("gyrA", "D94X"):
             ref, start, alt = split_var_name(var)
