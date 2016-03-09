@@ -7,22 +7,22 @@ import os
 import os
 import argparse
 import sys
-import atlas.version
+sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__), "..")))
+from atlas.version import __version__
 import logging
-sys.path.append("/..")
 
 
 def run_subtool(parser, args):
     if args.command == 'add':
-        from atlas.commands.add import run
+        from atlas.cmds.add import run
     elif args.command == "genotype":
-        from atlas.commands.genotype import run
+        from atlas.cmds.genotype import run
     elif args.command == "dump-probes":
-        from atlas.commands.dump import run
+        from atlas.cmds.dump import run
     elif args.command == "make-probes":
-        from atlas.commands.makeprobes import run
+        from atlas.cmds.makeprobes import run
     elif args.command == "predict":
-        from atlas.commands.amr import run
+        from atlas.cmds.amr import run
 
     # run the chosen submodule.
     run(parser, args)
@@ -52,7 +52,7 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--version", help="Installed mykrobe version",
                         action="version",
-                        version="%(prog)s " + str(atlas.version.__version__))
+                        version="%(prog)s " + str(__version__))
     subparsers = parser.add_subparsers(
         title='[sub-commands]',
         dest='command',

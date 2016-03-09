@@ -6,7 +6,7 @@ import glob
 import logging
 import subprocess
 from copy import copy
-from atlas.schema import Variant
+
 from atlas.typing import SequenceProbeCoverage
 from atlas.typing import VariantProbeCoverage
 from atlas.typing import ProbeCoverage
@@ -15,8 +15,8 @@ from atlas.typing import Panel
 from atlas.typing.typer.presence import GeneCollectionTyper
 from atlas.typing.typer.variant import VariantTyper
 
-from atlas.panelgeneration import VariantPanel
 from atlas.schema import VariantCallSet
+from atlas.schema import Variant
 
 from atlas.cortex import McCortexRunner
 
@@ -205,7 +205,7 @@ class Genotyper(object):
             gene_presence_covgs,
             contamination_depths=[],
             base_json={},
-            include_hom_alt_calls=True):
+            include_hom_alt_calls=False):
         self.sample = sample
         self.variant_covgs = variant_covgs
         self.gene_presence_covgs = gene_presence_covgs

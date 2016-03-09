@@ -7,7 +7,7 @@ reqs = [str(ir.req) for ir in install_reqs]
 setup(
     name='mykrobe',
     version=str(atlas.version.__version__),
-    packages=['atlas', 'atlas.cmds', 'atlas.typing', 'atlas.typing.typer'],
+    packages=['atlas', 'atlas.cmds', 'atlas.typing', 'atlas.typing.typer', 'atlas.typing.models', 'atlas.schema', 'atlas.schema.models', 'atlas.stats', 'atlas.cortex', 'atlas.metagenomics'],
     license='https://github.com/iqbal-lab/Mykrobe-predictor/blob/master/LICENSE',
     url='http://github.com/phelimb/atlas',
     description='.',
