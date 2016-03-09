@@ -12,7 +12,8 @@ class TestSNPAlleleGenerator():
 
     def setUp(self):
         DB.drop_database('atlas-test')
-        self.pg = AlleleGenerator(reference_filepath="atlas/data/BX571856.1.fasta")
+        self.pg = AlleleGenerator(
+            reference_filepath="atlas/data/BX571856.1.fasta")
         self.reference_set = ReferenceSet().create_and_save(name="ref_set")
         self.variant_set = VariantSet.create_and_save(
             name="this_vcf_file",

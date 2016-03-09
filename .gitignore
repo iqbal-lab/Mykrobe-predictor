@@ -37,3 +37,4 @@ tb_vcfs.txt
 val_comids.txt
 val_tb_comids.txt
 vcfs.txt
+*.fasta

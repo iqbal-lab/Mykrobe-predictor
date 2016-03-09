@@ -10,14 +10,9 @@ from atlas.pheno import TBPredictor
 from atlas.pheno import StaphPredictor
 from atlas.pheno import GramNegPredictor
 from atlas.metagenomics import AMRSpeciesPredictor
-STAPH_PANELS = ["data/panels/Coagneg.fasta",
-                "data/panels/Staphaureus.fasta",
-                "data/panels/Saureus.fasta",
-                "data/panels/Sepidermidis.fasta",
-                "data/panels/Shaemolyticus.fasta",
-                "data/panels/Sother.fasta",
-                "data/panels/staph-amr-genes.fasta",
-                "data/panels/staph-amr-mutations.fasta"]
+STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
+                "data/panels/staph-amr-bradley_2015.fasta.gz"]
+
 GN_PANELS = [
     "data/panels/gn-amr-genes",
     "data/panels/Escherichia_coli",
@@ -32,12 +27,12 @@ def run(parser, args):
     if args.panel is not None:
         if args.panel == "bradley-2015":
             TB_PANELS = [
-                "data/panels/tb-species-160227.fasta",
-                "data/panels/tb-amr-bradley_2015.fasta"]
+                "data/panels/tb-species-160227.fasta.gz",
+                "data/panels/tb-amr-bradley_2015.fasta.gz"]
         elif args.panel == "walker-2015":
             TB_PANELS = [
-                "data/panels/tb-species-160227.fasta",
-                "data/panels/tb-amr-walker_2015.fasta"]
+                "data/panels/tb-species-160227.fasta.gz",
+                "data/panels/tb-amr-walker_2015.fasta.gz"]
 
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
@@ -66,11 +61,12 @@ def run(parser, args):
                 os.path.dirname(__file__),
                 "..",
                 f)) for f in panels]
-    hierarchy_json_file = os.path.realpath(
-        os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            hierarchy_json_file))
+    if hierarchy_json_file is not None:
+        hierarchy_json_file = os.path.realpath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                hierarchy_json_file))
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
