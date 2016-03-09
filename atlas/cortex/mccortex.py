@@ -4,6 +4,7 @@ import os
 import subprocess
 import urllib2
 
+
 class McCortexRunner(object):
 
     def __init__(
