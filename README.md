@@ -7,6 +7,8 @@ Dev : [![Build Status](https://travis-ci.com/Phelimb/atlas.svg?token=zS56Z2pmznV
 git clone **--recursive** https://github.com/Phelimb/atlas.git
 
 ### Install requirements mccortex
+** NB: You must install the version of mccortex that comes with this repostitory **
+
 
 	cd atlas
 	cd mccortex
@@ -14,7 +16,6 @@ git clone **--recursive** https://github.com/Phelimb/atlas.git
 	export PATH=$PATH:$(pwd)/bin
 	cd ..
 
-	** NB: You must install the version of mccortex that comes with this repostitory **
 
 ### Install Mykrobe predictor
 	
@@ -161,4 +162,4 @@ Likely problem: Submodules have not been pulled with the repo.
 Solution : Run 
 	
 	git pull && git submodule init && git submodule update && ./install.sh
-	
+
