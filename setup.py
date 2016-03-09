@@ -27,7 +27,8 @@ setup(
     install_requires=reqs,
     entry_points={
             'console_scripts': [
-                'mykrobe = atlas.main:main',
+                'mykrobe = atlas.mykrobe_predictor:main',
+                'atlas = atlas.atlas_main:main',
             ]},
     package_data={
         'atlas': [

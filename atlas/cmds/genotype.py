@@ -30,7 +30,7 @@ def run(parser, args):
     base_json[args.sample]["panels"] = args.panels
     base_json[args.sample]["files"] = args.seq
     base_json[args.sample]["kmer"] = args.kmer
-    base_json[args.sample]["version"] = __version__    
+    base_json[args.sample]["version"] = __version__
     gt = Genotyper(sample=args.sample, expected_depths=[args.expected_depth],
                    variant_covgs=cp.variant_covgs,
                    gene_presence_covgs=cp.covgs["presence"],
