@@ -14,6 +14,8 @@ git clone **--recursive** https://github.com/Phelimb/atlas.git
 	export PATH=$PATH:$(pwd)/bin
 	cd ..
 
+	** NB: You must install the version of mccortex that comes with this repostitory **
+
 ### Install Mykrobe predictor
 	
 ### Install Mykrobe predictor with virtualenv (recommended but optional)
@@ -67,7 +69,7 @@ git clone **--recursive** https://github.com/Phelimb/atlas.git
 
 	mykrobe predict tb_sample_id tb_sequence.bam tb
 
-	mykrobe predict staph_sample_id staph_sequence.bam tb
+	mykrobe predict staph_sample_id staph_sequence.bam staph
 
 ### Output
 
@@ -141,38 +143,22 @@ Output is in JSON format. To convert to a less verbose tabular format use [json_
 
 > Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis." Nature communications 6 (2015).
 
+### Paper, citation 
+
+> [Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis."Nature communications 6 (2015).](http://www.nature.com/ncomms/2015/151221/ncomms10063/full/ncomms10063.html)
+
+Please cite us if you use Mykrobe predictor in a publication
+
+All analysis in this paper was done with release [v0.1.3-beta](https://github.com/iqbal-lab/Mykrobe-predictor/releases/tag/v0.1.3-beta).
 
 
+### Common issues
 
-Add new variants to atlas (requires mongod running in background)
+mccortex fails to make. 
 
-	mykrobe add sample.vcf --db_name :db_name --kmer :kmer_size
+Likely problem: Submodules have not been pulled with the repo. 
 
-### Make panels
-
-	mykrobe make-probes -f example-data/staph-panel.txt -g BX571856.1.gb BX571856.1.fasta
-
-	mykrobe make-probes -f example-data/tb-walker-2015-panel.txt -g data/NC_000962.3.gb data/NC_000962.3.fasta
-
-### Dump variant probes (requires mongod running in background)
-
-	mykrobe dump-probes data/NC_000962.3.fasta > panel_tb_k31.fasta
-
-### Genotype using these variants
-
-	mykrobe genotype panel_tb_k31.fasta 31 -s 10564-01 -1 /data2/users/phelim/data/tb/atlas/fastq/10564-01/10564-01.fastq.gz
-
-	mykrobe genotype tb-amr-probes.fasta 31 -s 10564-01 -1 /data2/users/phelim/data/tb/atlas/fastq/10564-01/10564-01.fastq.gz
-
-### Genotype a panel of genes
-
-	mykrobe genotype ~/git/atlas-core/data/panels/staph-amr-genes.fasta 31 -s C00001283 -1 /data2/users/phelim/data/staph/atlas/bams/C00001283.bam
-
-
-## Extending Mykrobe
-
-Install mongodb
-
-	Follow instructions at https://docs.mongodb.org/manual/installation/
-
-
+Solution : Run 
+	
+	git pull && git submodule init && git submodule update && ./install.sh
+	
