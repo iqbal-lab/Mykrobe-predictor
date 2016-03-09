@@ -37,26 +37,30 @@ def get_drugs(drug_list):
 
 
 def get_phylo_group_string(d):
-    s = ""
+    s = []
+    depth=[]
     for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).iteritems():
-        s += "%s;" % (k)
-    return s
+        s.append(k)
+        depth.append(str(v.get("median_depth")))
+    return ";".join(s), ";".join(depth)
 
 
 def get_species_string(d):
-    s = ""
+    s = []
+    depth=[]
     for k, v in d.get("phylogenetics", {}).get("species", {}).iteritems():
-        s += "%s;" % (k)
-    return s
+        s.append(k)
+        depth.append(str(v.get("median_depth")))
+    return ";".join(s), ";".join(depth)
 
 
 def get_lineage_string(d):
-    s = ""
-    vmax = 0
+    s = []
+    depth=[]
     for k, v in d.get("phylogenetics", {}).get("lineage", {}).iteritems():
-        if v > vmax:
-            s += "%s;" % (k)
-    return s
+        s.append(k)
+        depth.append(str(v.get("median_depth")))
+    return ";".join(s), ";".join(depth)
 
 
 def get_file_name(f):
@@ -103,6 +107,9 @@ if args.format == "long":
         "phylo_group",
         "species",
         "lineage",
+        "phylo_group_depth",
+        "species_depth",
+        "lineage_depth",        
         "susceptibility",
         "variants"]
     print "\t".join(header)
@@ -113,9 +120,9 @@ if args.format == "long":
         except ValueError:
             d = {}
 
-        phylo_group = get_phylo_group_string(d)
-        species = get_species_string(d)
-        lineage = get_lineage_string(d)
+        phylo_group,phylo_group_depth  = get_phylo_group_string(d)
+        species,species_depth  = get_species_string(d)
+        lineage,lineage_depth  = get_lineage_string(d)
         file = get_file_name(f)
         sample_name = get_sample_name(f)
 
@@ -135,6 +142,9 @@ if args.format == "long":
                 phylo_group,
                 species,
                 lineage,
+                phylo_group_depth,
+                species_depth,
+                lineage_depth,                
                 call.get(
                     "predict",
                     'N'),
