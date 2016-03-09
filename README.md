@@ -135,11 +135,11 @@ Output is in JSON format. To convert to a less verbose tabular format use [json_
 	
 	mykrobe predict tb_sample_id tb_sequence.bam tb --panel walker-2015
 
-	Walker, Timothy M., et al. "Whole-genome sequencing for prediction of Mycobacterium tuberculosis drug susceptibility and resistance: a retrospective cohort study." The Lancet Infectious Diseases 15.10 (2015): 1193-1202.
+> Walker, Timothy M., et al. "Whole-genome sequencing for prediction of Mycobacterium tuberculosis drug susceptibility and resistance: a retrospective cohort study." The Lancet Infectious Diseases 15.10 (2015): 1193-1202.
 
 	mykrobe predict tb_sample_id tb_sequence.bam tb --panel bradley-2015
 
-	Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis." Nature communications 6 (2015).
+> Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis." Nature communications 6 (2015).
 
 
 
