@@ -7,7 +7,7 @@ Dev : [![Build Status](https://travis-ci.com/Phelimb/atlas.svg?token=zS56Z2pmznV
 git clone **--recursive** git@github.com:Phelimb/atlas.git
 
 ### Install requirements mccortex
-** NB: You must install the version of mccortex that comes with this repostitory **
+**NB: You must install the version of mccortex that comes with this repostitory**
 
 
 	cd atlas
