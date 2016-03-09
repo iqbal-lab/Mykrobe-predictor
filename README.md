@@ -4,7 +4,7 @@ Dev : [![Build Status](https://travis-ci.com/Phelimb/atlas.svg?token=zS56Z2pmznV
 
 ## Installation
 
-git clone **--recursive** https://github.com/Phelimb/atlas.git
+git clone **--recursive** git@github.com:Phelimb/atlas.git
 
 ### Install requirements mccortex
 ** NB: You must install the version of mccortex that comes with this repostitory **
@@ -17,33 +17,36 @@ git clone **--recursive** https://github.com/Phelimb/atlas.git
 	cd ..
 
 
-### Install Mykrobe predictor
+## Install Mykrobe predictor
+
+### Download probes
+
+	./scripts/download-probes.sh
 	
 ### Install Mykrobe predictor with virtualenv (recommended but optional)
 
-	1. [Install virtualenv](https://virtualenv.readthedocs.org/en/latest/installation.html)
-	2. Create virtualenv 'virtualenv venv'
-	3. Activate the virtualenv 'source venv/bin/activate'. You can deactivate at anytime by typing deactivate. 
+1. Install virtualenv
+
+	https://virtualenv.readthedocs.org/en/latest/installation.html
+
+2. Create virtualenv 
+
+	virtualenv venv
+
+3. Activate the virtualenv
+
+	source venv/bin/activate
+
+You can deactivate at anytime by typing deactivate. 
+
+
+4. Install Mykrobe predictor
+
 
 	python setup.py install
 
 
 ## Usage
-
-	mykrobe --help
-
-	usage: mykrobe [-h] [--version] {predict,genotype} ...
-
-	optional arguments:
-	  -h, --help          show this help message and exit
-	  --version           mykrobe version
-
-	[sub-commands]:
-	  {predict,genotype}
-	    predict           Predict the sample's antibiogram
-	    genotype          Genotype a sample
-
-	----------------------------------------------------------------
 
 	mykrobe predict --help
 
@@ -68,9 +71,9 @@ git clone **--recursive** https://github.com/Phelimb/atlas.git
 
 ### AMR prediction
 
-	mykrobe predict tb_sample_id tb_sequence.bam tb
+	mykrobe predict tb_sample_id tb_sequence.bam/fq tb
 
-	mykrobe predict staph_sample_id staph_sequence.bam staph
+	mykrobe predict staph_sample_id staph_sequence.bam/fq staph
 
 ### Output
 
