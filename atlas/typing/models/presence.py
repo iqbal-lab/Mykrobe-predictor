@@ -30,4 +30,3 @@ class SequenceProbeCoverage(object):
     @property
     def coverage_dict(self):
         return self.probe_coverage.coverage_dict
-

@@ -15,7 +15,7 @@ class McCortexRunner(object):
             force=False,
             panel_name=None,
             tmp_dir='/tmp/',
-            skeleton_dir='data/skeletons/'):
+            skeleton_dir='atlas/data/skeletons/'):
         self.sample = sample
         self.panels = panels
         self.seq = seq
@@ -23,7 +23,7 @@ class McCortexRunner(object):
         self.force = force
         self._panel_name = panel_name
         self.tmp_dir = tmp_dir
-        if skeleton_dir == 'data/skeletons/':
+        if skeleton_dir == 'atlas/data/skeletons/':
             skeleton_dir = os.path.realpath(
                 os.path.join(
                     os.path.dirname(
@@ -31,7 +31,6 @@ class McCortexRunner(object):
                     "..",
                     "..",
                     skeleton_dir))
-            print (skeleton_dir)
         self.skeleton_dir = skeleton_dir
 
     def run(self):

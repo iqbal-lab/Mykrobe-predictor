@@ -44,7 +44,7 @@ class CoverageParser(object):
             panels=None,
             verbose=True,
             tmp_dir='/tmp/',
-            skeleton_dir='data/skeletons/'):
+            skeleton_dir='atlas/data/skeletons/'):
         self.sample = sample
         self.seq = seq
         self.kmer = kmer

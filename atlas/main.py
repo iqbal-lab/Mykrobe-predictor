@@ -7,7 +7,11 @@ import os
 import os
 import argparse
 import sys
-sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append(
+    os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..")))
 from atlas.version import __version__
 import logging
 
@@ -35,7 +39,7 @@ class ArgumentParserWithDefaults(argparse.ArgumentParser):
         self.add_argument(
             "-q",
             "--quiet",
-            help="Do not output warnings to stderr",
+            help="do not output warnings to stderr",
             action="store_true",
             dest="quiet")
 
@@ -50,13 +54,14 @@ def main():
     parser = argparse.ArgumentParser(
         prog='mykrobe',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--version", help="Installed mykrobe version",
+    parser.add_argument("--version", help="mykrobe version",
                         action="version",
                         version="%(prog)s " + str(__version__))
     subparsers = parser.add_subparsers(
         title='[sub-commands]',
         dest='command',
-        parser_class=ArgumentParserWithDefaults)
+        parser_class=ArgumentParserWithDefaults,
+        metavar='{predict,genotype}')
     #########################################
     # create the individual tool parsers
     #########################################
@@ -66,7 +71,7 @@ def main():
     ##########
     parser_add = subparsers.add_parser(
         'add',
-        help='Adds a set of variants to the atlas')
+        help='Adds a set of variants to the atlas - development only')
     parser_add.add_argument('vcf', type=str, help='a vcf file')
     parser_add.add_argument('reference_set', type=str, help='reference set')
     parser_add.add_argument(
@@ -89,22 +94,57 @@ def main():
     parser_add.set_defaults(func=run_subtool)
 
     # ##########
+    # # AMR predict
+    # ##########
+    sequence_parser_mixin = argparse.ArgumentParser(add_help=False)
+    sequence_parser_mixin.add_argument(
+        'sample',
+        type=str,
+        help='sample id')
+    sequence_parser_mixin.add_argument(
+        'seq',
+        type=str,
+        help='sequence files (fastq or bam)',
+        nargs='+')
+    sequence_parser_mixin.add_argument(
+        '-k',
+        '--kmer',
+        metavar='kmer',
+        type=int,
+        help='kmer length (default:21)',
+        default=DEFAULT_KMER_SIZE)   
+    sequence_parser_mixin.add_argument(
+        '--tmp',
+        help='tmp directory (default: /tmp/)',
+        default="/tmp/")
+    sequence_parser_mixin.add_argument(
+        '--skeleton_dir',
+        help='directory for skeleton binaries',
+        default="atlas/data/skeletons/")    
+
+    parser_amr = subparsers.add_parser('predict', parents=[sequence_parser_mixin],
+                                       help="Predict the sample's antibiogram")
+    parser_amr.add_argument(
+        'species',
+        metavar='species',
+        choices=['staph', 'tb'],        
+        type=str,
+        help='species')    
+    parser_amr.add_argument(
+        '--panel',
+        metavar='panel',
+        type=str,
+        help='variant panel (default:bradley-2015)',
+        choices=['bradley-2015', 'walker-2015'],
+        default='bradley-2015')
+
+    parser_amr.add_argument('--force', default=False, action="store_true")
+    parser_amr.set_defaults(func=run_subtool)
+
+    # ##########
     # # Genotype
     # ##########
-    parser_geno = subparsers.add_parser('genotype', help='Genotype a sample')
-    parser_geno.add_argument(
-        '-s',
-        '--sample',
-        type=str,
-        help='sample id',
-        required=True)
-    parser_geno.add_argument(
-        '-1',
-        '--seq',
-        type=str,
-        help='Seq file',
-        nargs='+',
-        required=True)
+    parser_geno = subparsers.add_parser('genotype', parents=[sequence_parser_mixin], help='Genotype a sample')
     parser_geno.add_argument(
         'panels',
         metavar='panels',
@@ -112,54 +152,24 @@ def main():
         nargs='+',
         help='panels')
     parser_geno.add_argument(
-        '--name',
-        metavar='name',
-        type=str,
-        help='name',
-        default='atlas_gt')
-    parser_geno.add_argument(
-        '--db_name',
-        metavar='db_name',
-        type=str,
-        help='db_name',
-        default=None)
-    parser_geno.add_argument(
-        'kmer',
-        metavar='kmer',
-        type=int,
-        help='kmer size')
-    parser_geno.add_argument(
         '--expected_depth',
         metavar='expected depth',
         type=int,
         help='expected depth',
         default=100)
-    # parser_geno.add_argument(
-    #     '--all',
-    #     help='Store ref GT aswell as alt',
-    #     default=False,
-    #     action="store_true")
     parser_geno.add_argument(
         '-f',
         '--force',
         help='Force rebuilding of binaries',
         default=False,
         action="store_true")
-    parser_geno.add_argument(
-        '--tmp',
-        help='tmp directory',
-        default="/tmp/")
-    parser_geno.add_argument(
-        '--skeleton_dir',
-        help='directory for skeleton binaries',
-        default="data/skeletons/")
     parser_geno.set_defaults(func=run_subtool)
 
     # ##########
     # # Dump panel
     # ##########
     parser_dump = subparsers.add_parser('dump-probes',
-                                        help='Dump a panel of variant alleles')
+                                        help='Dump a panel of variant alleles - development only')
     parser_dump.add_argument(
         'reference_filepath',
         metavar='reference_filepath',
@@ -227,60 +237,7 @@ def main():
         default=31)
     parser_make_probes.set_defaults(func=run_subtool)
 
-    # ##########
-    # # AMR predict
-    # ##########
-    parser_amr = subparsers.add_parser('predict',
-                                       help="Predict the sample's antibiogram")
-    parser_amr.add_argument(
-        '-s',
-        '--sample',
-        type=str,
-        help='sample id',
-        required=True)
-    parser_amr.add_argument(
-        '-1',
-        '--seq',
-        type=str,
-        help='Seq file',
-        nargs='+',
-        required=True)
-    parser_amr.add_argument(
-        '--panel',
-        metavar='panel',
-        type=str,
-        help='panel',
-        choices=['bradley-2015', 'walker-2015'],
-        default='walker-2015')
-    parser_amr.add_argument(
-        '-k',
-        '--kmer',
-        metavar='kmer',
-        type=int,
-        help='kmer length',
-        default=DEFAULT_KMER_SIZE)
-    parser_amr.add_argument(
-        '--name',
-        metavar='name',
-        type=str,
-        help='name',
-        default='atlas_gt')
-    parser_amr.add_argument(
-        'species',
-        metavar='species',
-        type=str,
-        help='species',
-        default=None)
-    parser_amr.add_argument(
-        '--tmp',
-        help='tmp directory',
-        default="/tmp/")
-    parser_amr.add_argument(
-        '--skeleton_dir',
-        help='directory for skeleton binaries',
-        default="data/skeletons/")
-    parser_amr.add_argument('--force', default=False, action="store_true")
-    parser_amr.set_defaults(func=run_subtool)
+
 
     args = parser.parse_args()
     args.func(parser, args)

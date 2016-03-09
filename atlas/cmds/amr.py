@@ -1,5 +1,8 @@
 from __future__ import print_function
 import logging
+from pprint import pprint
+import json
+import os
 from atlas.utils import check_args
 from atlas.typing import CoverageParser
 from atlas.typing import Genotyper
@@ -7,9 +10,6 @@ from atlas.pheno import TBPredictor
 from atlas.pheno import StaphPredictor
 from atlas.pheno import GramNegPredictor
 from atlas.metagenomics import AMRSpeciesPredictor
-from pprint import pprint
-import json
-
 STAPH_PANELS = ["data/panels/Coagneg.fasta",
                 "data/panels/Staphaureus.fasta",
                 "data/panels/Saureus.fasta",
@@ -59,7 +59,9 @@ def run(parser, args):
     base_json[args.sample]["panels"] = panels
     base_json[args.sample]["files"] = args.seq
     base_json[args.sample]["kmer"] = args.kmer
-
+    ## Get real paths for panels
+    panels = [os.path.realpath(os.path.join(os.path.dirname(__file__), "..", f)) for f in panels]
+    hierarchy_json_file = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", hierarchy_json_file))
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,

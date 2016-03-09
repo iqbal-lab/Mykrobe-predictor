@@ -168,7 +168,7 @@ class TBPredictor(BasePredictor):
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
-                '../../data/predict/tb/'))
+                '../data/predict/tb/'))
         self.variant_or_gene_name_to_resistance_drug = load_json(
             os.path.join(
                 self.data_dir,
@@ -188,7 +188,7 @@ class StaphPredictor(BasePredictor):
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
-                '../../data/predict/staph/'))
+                '../data/predict/staph/'))
         self.variant_or_gene_name_to_resistance_drug = load_json(
             os.path.join(
                 self.data_dir,
@@ -207,7 +207,7 @@ class GramNegPredictor(BasePredictor):
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
-                '../../data/predict/gn/'))
+                '../data/predict/gn/'))
         self.variant_or_gene_name_to_resistance_drug = load_json(
             os.path.join(
                 self.data_dir,
