@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import os
 import subprocess
-
+import urllib2
 
 class McCortexRunner(object):
 
@@ -15,7 +15,7 @@ class McCortexRunner(object):
             force=False,
             panel_name=None,
             tmp_dir='/tmp/',
-            skeleton_dir='atlas/data/skeletons/'):
+            skeleton_dir='data/skeletons/'):
         self.sample = sample
         self.panels = panels
         self.seq = seq
@@ -28,7 +28,6 @@ class McCortexRunner(object):
                 os.path.join(
                     os.path.dirname(
                         os.path.realpath(__file__)),
-                    "..",
                     "..",
                     skeleton_dir))
         self.skeleton_dir = skeleton_dir
