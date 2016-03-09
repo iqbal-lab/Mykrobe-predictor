@@ -18,16 +18,15 @@ import logging
 from base import ArgumentParserWithDefaults
 from base import DEFAULT_KMER_SIZE
 
+
 def run_subtool(parser, args):
     if args.command == "genotype":
-        from atlas.cmds.genotype import run        
+        from atlas.cmds.genotype import run
     elif args.command == "predict":
         from atlas.cmds.amr import run
 
     # run the chosen submodule.
     run(parser, args)
-
-
 
 
 def main():
@@ -75,11 +74,9 @@ def main():
     # create the individual tool parsers
     #########################################
 
-
     # ##########
     # # AMR predict
     # ##########
-
 
     parser_amr = subparsers.add_parser(
         'predict',
@@ -128,7 +125,6 @@ def main():
         default=False,
         action="store_true")
     parser_geno.set_defaults(func=run_subtool)
-
 
     args = parser.parse_args()
     args.func(parser, args)

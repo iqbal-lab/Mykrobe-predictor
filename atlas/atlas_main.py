@@ -19,6 +19,7 @@ from base import ArgumentParserWithDefaults
 from base import DEFAULT_DB_NAME
 DEFAULT_KMER_SIZE = os.environ.get("KMER_SIZE", 31)
 
+
 def run_subtool(parser, args):
     if args.command == 'add':
         from atlas.cmds.add import run
@@ -26,6 +27,7 @@ def run_subtool(parser, args):
         from atlas.cmds.dump import run
     elif args.command == "make-probes":
         from atlas.cmds.makeprobes import run
+
 
 def main():
     #########################################
@@ -40,8 +42,7 @@ def main():
     subparsers = parser.add_subparsers(
         title='[sub-commands]',
         dest='command',
-        parser_class=ArgumentParserWithDefaults)        
-
+        parser_class=ArgumentParserWithDefaults)
 
     db_parser_mixin = argparse.ArgumentParser(add_help=False)
     db_parser_mixin.add_argument(
@@ -71,7 +72,6 @@ def main():
         action='store_true',
         help='Force recreate VariantSet')
     parser_add.set_defaults(func=run_subtool)
-
 
     # ##########
     # # Dump panel
@@ -134,7 +134,7 @@ def main():
         type=int,
         help='kmer length',
         default=31)
-    parser_make_probes.set_defaults(func=run_subtool)   
+    parser_make_probes.set_defaults(func=run_subtool)
 
     args = parser.parse_args()
     args.func(parser, args)
