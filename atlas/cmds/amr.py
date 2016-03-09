@@ -59,9 +59,18 @@ def run(parser, args):
     base_json[args.sample]["panels"] = panels
     base_json[args.sample]["files"] = args.seq
     base_json[args.sample]["kmer"] = args.kmer
-    ## Get real paths for panels
-    panels = [os.path.realpath(os.path.join(os.path.dirname(__file__), "..", f)) for f in panels]
-    hierarchy_json_file = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", hierarchy_json_file))
+    # Get real paths for panels
+    panels = [
+        os.path.realpath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                f)) for f in panels]
+    hierarchy_json_file = os.path.realpath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            hierarchy_json_file))
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,

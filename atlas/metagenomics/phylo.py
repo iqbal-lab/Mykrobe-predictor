@@ -68,7 +68,11 @@ class SpeciesPredictor(object):
             covgs["Unknown"] = {"percent_coverage": -1, "median_depth": -1}
 
     def _load_taxon_thresholds(self):
-        taxon_coverage_threshold_file =  os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "data/predict/taxon_coverage_threshold.json"))
+        taxon_coverage_threshold_file = os.path.realpath(
+            os.path.join(
+                os.path.dirname(__file__),
+                "..",
+                "data/predict/taxon_coverage_threshold.json"))
         with open(taxon_coverage_threshold_file, "r") as infile:
             self.threshold = json.load(infile)
 

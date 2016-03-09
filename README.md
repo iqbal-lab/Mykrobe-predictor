@@ -73,63 +73,63 @@ git clone **--recursive** https://github.com/Phelimb/atlas.git
 
 Output is in JSON format. To convert to a less verbose tabular format use [json_to_tsv](scripts/json_to_tsv.py).
 
-{
-    "sample_id": {
-        "susceptibility": {
-            "Rifampicin": {
-                "predict": "S"
-            },
-            ...
-            "Streptomycin": {
-                "predict": "S"
-            }
-        "phylogenetics": {
-            "lineage": {
-                "Unknown": {
-                    "percent_coverage": -1,
-                    "median_depth": -1
-                }
-            },
-			...
-            "species": {
-                "Mycobacterium_tuberculosis": {
-                    "percent_coverage": 98.0,
-                    "median_depth": 53
-                }
-            }
-        },  
-        "typed_variants": {
-            "rpoB_N438S-AAC761118AGT": {
-                "info": {
-                    "contamination_depths": [],
-                    "coverage": {
-                        "alternate": {
-                            "percent_coverage": 47.62,
-                            "median_depth": 0.0,
-                            "min_depth": 47.0
-                        },
-                        "reference": {
-                            "percent_coverage": 100.0,
-                            "median_depth": 49.0,
-                            "min_depth": 44.0
-                        }
-                    },
-                    "expected_depths": [
-                        56.0
-                    ]
-                },
-                "_cls": "Call.VariantCall",
-                "genotype": [
-                    0,
-                    0
-                ],
-                "genotype_likelihoods": [
-                    -4.25684443365591,
-                    -99999999.0,
-                    -99999999.0
-                ]
-            },   ...               
-        },			
+	{
+	    "sample_id": {
+	        "susceptibility": {
+	            "Rifampicin": {
+	                "predict": "S"
+	            },
+	            ...
+	            "Streptomycin": {
+	                "predict": "S"
+	            }
+	        "phylogenetics": {
+	            "lineage": {
+	                "Unknown": {
+	                    "percent_coverage": -1,
+	                    "median_depth": -1
+	                }
+	            },
+				...
+	            "species": {
+	                "Mycobacterium_tuberculosis": {
+	                    "percent_coverage": 98.0,
+	                    "median_depth": 53
+	                }
+	            }
+	        },  
+	        "typed_variants": {
+	            "rpoB_N438S-AAC761118AGT": {
+	                "info": {
+	                    "contamination_depths": [],
+	                    "coverage": {
+	                        "alternate": {
+	                            "percent_coverage": 47.62,
+	                            "median_depth": 0.0,
+	                            "min_depth": 47.0
+	                        },
+	                        "reference": {
+	                            "percent_coverage": 100.0,
+	                            "median_depth": 49.0,
+	                            "min_depth": 44.0
+	                        }
+	                    },
+	                    "expected_depths": [
+	                        56.0
+	                    ]
+	                },
+	                "_cls": "Call.VariantCall",
+	                "genotype": [
+	                    0,
+	                    0
+	                ],
+	                "genotype_likelihoods": [
+	                    -4.25684443365591,
+	                    -99999999.0,
+	                    -99999999.0
+	                ]
+	            },   ...               
+	        },			
 
 ### Change the panel for resistance prediction (TB only)
 	

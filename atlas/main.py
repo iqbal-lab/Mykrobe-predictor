@@ -112,7 +112,7 @@ def main():
         metavar='kmer',
         type=int,
         help='kmer length (default:21)',
-        default=DEFAULT_KMER_SIZE)   
+        default=DEFAULT_KMER_SIZE)
     sequence_parser_mixin.add_argument(
         '--tmp',
         help='tmp directory (default: /tmp/)',
@@ -120,16 +120,18 @@ def main():
     sequence_parser_mixin.add_argument(
         '--skeleton_dir',
         help='directory for skeleton binaries',
-        default="atlas/data/skeletons/")    
+        default="atlas/data/skeletons/")
 
-    parser_amr = subparsers.add_parser('predict', parents=[sequence_parser_mixin],
-                                       help="Predict the sample's antibiogram")
+    parser_amr = subparsers.add_parser(
+        'predict',
+        parents=[sequence_parser_mixin],
+        help="Predict the sample's antibiogram")
     parser_amr.add_argument(
         'species',
         metavar='species',
-        choices=['staph', 'tb'],        
+        choices=['staph', 'tb'],
         type=str,
-        help='species')    
+        help='species')
     parser_amr.add_argument(
         '--panel',
         metavar='panel',
@@ -144,7 +146,10 @@ def main():
     # ##########
     # # Genotype
     # ##########
-    parser_geno = subparsers.add_parser('genotype', parents=[sequence_parser_mixin], help='Genotype a sample')
+    parser_geno = subparsers.add_parser(
+        'genotype',
+        parents=[sequence_parser_mixin],
+        help='Genotype a sample')
     parser_geno.add_argument(
         'panels',
         metavar='panels',
@@ -168,8 +173,9 @@ def main():
     # ##########
     # # Dump panel
     # ##########
-    parser_dump = subparsers.add_parser('dump-probes',
-                                        help='Dump a panel of variant alleles - development only')
+    parser_dump = subparsers.add_parser(
+        'dump-probes',
+        help='Dump a panel of variant alleles - development only')
     parser_dump.add_argument(
         'reference_filepath',
         metavar='reference_filepath',
@@ -236,8 +242,6 @@ def main():
         help='kmer length',
         default=31)
     parser_make_probes.set_defaults(func=run_subtool)
-
-
 
     args = parser.parse_args()
     args.func(parser, args)
