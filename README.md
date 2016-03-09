@@ -37,7 +37,7 @@ git clone **--recursive** git@github.com:Phelimb/atlas.git
 
 	source venv/bin/activate
 
-You can deactivate at anytime by typing deactivate. 
+You can deactivate at anytime by typing 'deactivate'. 
 
 
 #### Install Mykrobe predictor

@@ -10,6 +10,7 @@ from atlas.pheno import TBPredictor
 from atlas.pheno import StaphPredictor
 from atlas.pheno import GramNegPredictor
 from atlas.metagenomics import AMRSpeciesPredictor
+from atlas.version import __version__
 STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
                 "data/panels/staph-amr-bradley_2015.fasta.gz"]
 
@@ -54,6 +55,7 @@ def run(parser, args):
     base_json[args.sample]["panels"] = panels
     base_json[args.sample]["files"] = args.seq
     base_json[args.sample]["kmer"] = args.kmer
+    base_json[args.sample]["version"] = __version__
     # Get real paths for panels
     panels = [
         os.path.realpath(
