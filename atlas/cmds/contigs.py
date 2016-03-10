@@ -115,12 +115,12 @@ def find_start_kmer(seq, mcq, k=args.kmer_size):
 
 
 def choose_best_assembly(paths):
-    paths.sort(key=lambda x: x["min_depth"], reverse=True)
+    paths.sort(key=lambda x: x["min_non_zero_depth"], reverse=True)
     current_best = paths[0]
     for path in paths[1:]:
-        if path["min_depth"] < current_best["min_depth"]:
+        if path["min_non_zero_depth"] < current_best["min_non_zero_depth"]:
             return current_best
-        elif path["min_depth"] == current_best["min_depth"]:
+        elif path["min_non_zero_depth"] == current_best["min_non_zero_depth"]:
             if path["median_depth"] > current_best["median_depth"]:
                 current_best = path
     return current_best

@@ -17,7 +17,7 @@ class McCortexRunner(object):
             panel_name=None,
             tmp_dir='/tmp/',
             skeleton_dir='data/skeletons/',
-            mccortex31_path = "mccortex31"):
+            mccortex31_path="mccortex31"):
         self.sample = sample
         self.panels = panels
         self.seq = seq

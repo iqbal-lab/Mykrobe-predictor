@@ -76,18 +76,21 @@ class BasePredictor(object):
                 if current_resistance_prediction in ["I", "N"]:
                     self.resistance_predictions[drug][
                         "predict"] = resistance_prediction
-                    if resistance_prediction in ["r", "R"]:
-                        self.resistance_predictions[drug]["called_by"] = name
                 elif current_resistance_prediction == "S":
                     if resistance_prediction in ["r", "R"]:
                         self.resistance_predictions[drug][
                             "predict"] = resistance_prediction
-                        self.resistance_predictions[drug]["called_by"] = name
                 elif current_resistance_prediction == "r":
                     if resistance_prediction == "R":
                         self.resistance_predictions[drug][
                             "predict"] = resistance_prediction
-                        self.resistance_predictions[drug]["called_by"] = name
+                if resistance_prediction in ["r","R"]:
+                    variant_or_gene.variant = None
+                    try:                          
+                        self.resistance_predictions[drug]["called_by"]["-".join(variant_or_gene_names)] = variant_or_gene.to_mongo().to_dict()
+                    except KeyError:
+                        self.resistance_predictions[drug]["called_by"] = {}
+                        self.resistance_predictions[drug]["called_by"]["-".join(variant_or_gene_names)] = variant_or_gene.to_mongo().to_dict()                                                    
 
     def _get_names(self, allele_name):
         names = []

@@ -45,7 +45,7 @@ class CoverageParser(object):
             verbose=True,
             tmp_dir='/tmp/',
             skeleton_dir='atlas/data/skeletons/',
-            mccortex31_path = "mccortex31"):
+            mccortex31_path="mccortex31"):
         self.sample = sample
         self.seq = seq
         self.kmer = kmer
@@ -69,15 +69,16 @@ class CoverageParser(object):
         self._parse_covgs()
 
     def _run_cortex(self):
-        self.mc_cortex_runner = McCortexRunner(sample=self.sample,
-                                               panels=self.panels,
-                                               seq=self.seq,
-                                               kmer=self.kmer,
-                                               force=self.force,
-                                               panel_name=self.panel_name,
-                                               tmp_dir=self.tmp_dir,
-                                               skeleton_dir=self.skeleton_dir,
-                                               mccortex31_path = self.mccortex31_path)
+        self.mc_cortex_runner = McCortexRunner(
+            sample=self.sample,
+            panels=self.panels,
+            seq=self.seq,
+            kmer=self.kmer,
+            force=self.force,
+            panel_name=self.panel_name,
+            tmp_dir=self.tmp_dir,
+            skeleton_dir=self.skeleton_dir,
+            mccortex31_path=self.mccortex31_path)
         self.mc_cortex_runner.run()
 
     def remove_temporary_files(self):

@@ -102,5 +102,3 @@ class MTBCSpeciesTests(TestCase):
         assert "Mycobacterium_chimaera" in out_dict["species"]
         assert "Mycobacterium_intracellulare" in out_dict["species"]
         assert "Mycobacterium_bovis" not in out_dict["species"]
-
-

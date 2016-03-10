@@ -79,7 +79,7 @@ def run(parser, args):
         verbose=False,
         tmp_dir=args.tmp,
         skeleton_dir=args.skeleton_dir,
-        mccortex31_path = args.mccortex31_path)
+        mccortex31_path=args.mccortex31_path)
     cp.run()
     # Detect species
     species_predictor = AMRSpeciesPredictor(

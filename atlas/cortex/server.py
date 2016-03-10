@@ -413,7 +413,7 @@ class GraphWalker(object):
             v["len_prot"] = len(v["prot"])
             if self.print_depths:
                 paths[i]["median_depth"] = median(paths[i]["depth"])
-                paths[i]["min_depth"] = min(paths[i]["depth"])
+                paths[i]["min_non_zero_depth"] = min(paths[i]["depth"])
                 paths[i]["depth"] = "-".join([str(x)
                                               for x in paths[i]["depth"]])
 

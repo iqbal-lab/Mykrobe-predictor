@@ -72,7 +72,7 @@ def main():
     sequence_parser_mixin.add_argument(
         '--mccortex31_path',
         help='Path to mccortex31',
-        default="mccortex31")    
+        default="mccortex31")
 
     #########################################
     # create the individual tool parsers
