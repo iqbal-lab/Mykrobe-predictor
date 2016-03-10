@@ -71,6 +71,8 @@ def get_file_name(f):
 def get_sample_name(f):
     return f.split('/')[-2]
 
+def get_plate_name(f):
+    return f.split('/')[-3]
 
 def get_expected_depth(d):
     return str(d.get("expected_depth", -1))
@@ -80,28 +82,29 @@ def get_mean_read_length(d):
     return str(d.get("mean_read_length", -1))
 
 
-def get_called_genes(d, drug=None):
-    genes = []
-    for gene, coverage in d.get("called_genes", {}).iteritems():
-        if coverage.get("induced_resistance") == drug:
-            genes.append(":".join([gene,
-                                   str(coverage.get("per_cov")),
-                                   str(coverage.get('median_cov'))]))
-    return ";".join(genes)
+# def get_called_genes(d, drug=None):
+#     genes = []
+#     for gene, coverage in d.get("called_genes", {}).iteritems():
+#         if coverage.get("induced_resistance") == drug:
+#             genes.append(":".join([gene,
+#                                    str(coverage.get("per_cov")),
+#                                    str(coverage.get('median_cov'))]))
+#     return ";".join(genes)
 
 
-def get_called_variants(d, drug=None):
-    variants = []
-    for gene, coverage in d.get("called_variants", {}).iteritems():
-        if coverage.get("induced_resistance") == drug:
-            variants.append(":".join([gene,
-                                      str(coverage.get('S_median_cov')),
-                                      str(coverage.get('R_median_cov'))]))
-    return ";".join(variants)
+# def get_called_variants(d, drug=None):
+#     variants = []
+#     for gene, coverage in d.get("called_variants", {}).iteritems():
+#         if coverage.get("induced_resistance") == drug:
+#             variants.append(":".join([gene,
+#                                       str(coverage.get('S_median_cov')),
+#                                       str(coverage.get('R_median_cov'))]))
+#     return ";".join(variants)
 
 if args.format == "long":
     header = [
         "file",
+        "plate_name",
         "sample",
         "drug",
         "phylo_group",
@@ -119,24 +122,24 @@ if args.format == "long":
             d = load_json(f)
         except ValueError:
             d = {}
-
-        phylo_group,phylo_group_depth  = get_phylo_group_string(d)
-        species,species_depth  = get_species_string(d)
-        lineage,lineage_depth  = get_lineage_string(d)
         file = get_file_name(f)
+
+        phylo_group,phylo_group_depth  = get_phylo_group_string(d[file])
+        species,species_depth  = get_species_string(d[file])
+        lineage,lineage_depth  = get_lineage_string(d[file])
         sample_name = get_sample_name(f)
+        plate_name = get_plate_name(f)
 
         drug_list = sorted(d[file].get('susceptibility', {}).keys())
-        drugs = sorted(get_drugs(drug_list))
+        drugs = sorted(drug_list)
 
         if not drugs:
             drugs = ["NA"]
         for drug in drugs:
-            called_genes = get_called_genes(d, drug=drug)
-            called_variants = get_called_variants(d, drug=drug)
             call = d[file].get('susceptibility', {}).get(drug, {})
             row = [
                 file,
+                plate_name,
                 sample_name,
                 drug,
                 phylo_group,
