@@ -92,14 +92,24 @@ def get_mean_read_length(d):
 #     return ";".join(genes)
 
 
-# def get_called_variants(d, drug=None):
-#     variants = []
-#     for gene, coverage in d.get("called_variants", {}).iteritems():
-#         if coverage.get("induced_resistance") == drug:
-#             variants.append(":".join([gene,
-#                                       str(coverage.get('S_median_cov')),
-#                                       str(coverage.get('R_median_cov'))]))
-#     return ";".join(variants)
+def get_variant_calls(d):
+    variants = []
+    for variant_name, variant_call in d.items():
+        wt_depth = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("median_depth")
+        alt_depth = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("median_depth")
+
+        wt_per_cov = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("percent_coverage")
+        alt_per_cov = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("percent_coverage")
+        if wt_per_cov < 100:
+            wt_depth = 0
+        if alt_per_cov <100:
+            alt_depth =0 
+
+        variants.append(":".join([variant_name,
+                         str(alt_depth),str(wt_depth)
+                       ]))
+    return ";".join(variants)
+
 
 if args.format == "long":
     header = [
@@ -114,7 +124,7 @@ if args.format == "long":
         "species_depth",
         "lineage_depth",        
         "susceptibility",
-        "variants"]
+        "variants (prot_mut-ref_mut:alt_depth:wt_depth)"]
     print "\t".join(header)
     rows = []
     for i, f in enumerate(args.files):
@@ -135,8 +145,11 @@ if args.format == "long":
 
         if not drugs:
             drugs = ["NA"]
+
+
         for drug in drugs:
             call = d[file].get('susceptibility', {}).get(drug, {})
+            called_by = get_variant_calls(call.get("called_by",{}))
             row = [
                 file,
                 plate_name,
@@ -151,9 +164,7 @@ if args.format == "long":
                 call.get(
                     "predict",
                     'N'),
-                call.get(
-                    "called_by",
-                    "")]
+                called_by]
             # rows.append(row)
             print "\t".join(row)
 
