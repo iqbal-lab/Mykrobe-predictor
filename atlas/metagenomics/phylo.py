@@ -110,7 +110,6 @@ class SpeciesPredictor(object):
         self._add_unknown_where_empty(
             self.out_json["phylogenetics"]["lineage"])
 
-
     def _bases_covered(self, percent_coverage, length):
         return sum([percent_coverage[i] * length[i]
                     for i in range(len(length))])
@@ -138,7 +137,7 @@ class SpeciesPredictor(object):
                 _median = [_median[i] for i in _index]
                 total_percent_covered = round(bases_covered / total_bases, 3)
             if total_percent_covered > threshold:
-                if phylo_group == "Mycobacterium_llatzerense": ## Mistake in panel
+                if phylo_group == "Mycobacterium_llatzerense":  # Mistake in panel
                     phylo_group = "Mycobacterium_mucogenicum"
                 covgs[phylo_group] = {
                     "percent_coverage": total_percent_covered,
