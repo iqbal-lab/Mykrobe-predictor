@@ -52,6 +52,8 @@ def get_params(url):
 
 
 def median(lst):
+    if not lst:
+        return 0
     sortedLst = sorted(lst)
     lstLen = len(lst)
     index = (lstLen - 1) // 2

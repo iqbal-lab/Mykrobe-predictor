@@ -125,7 +125,7 @@ class SpeciesPredictor(object):
             _median = covg_dict.get("median", [0])
             minimum_percentage_coverage_required = percent_coverage_from_expected_coverage(
                 self.expected_depth) * self.threshold.get(phylo_group, DEFAULT_THRESHOLD)
-            if total_percent_covered < minimum_percentage_coverage_required:
+            if total_percent_covered < minimum_percentage_coverage_required or median(_median) < 0.1 * self.expected_depth:
                 # Remove low coverage nodes
                 _index = [
                     i for i,

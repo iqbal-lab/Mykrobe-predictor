@@ -24,7 +24,8 @@ def run(parser, args):
         force=args.force,
         verbose=verbose,
         tmp_dir=args.tmp,
-        skeleton_dir=args.skeleton_dir)
+        skeleton_dir=args.skeleton_dir,
+        mccortex31_path = args.mccortex31_path)
     cp.run()
     base_json = {args.sample: {}}
     base_json[args.sample]["panels"] = args.panels

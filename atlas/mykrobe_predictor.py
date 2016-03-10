@@ -69,6 +69,10 @@ def main():
         '--skeleton_dir',
         help='directory for skeleton binaries',
         default="atlas/data/skeletons/")
+    sequence_parser_mixin.add_argument(
+        '--mccortex31_path',
+        help='Path to mccortex31',
+        default="mccortex31")    
 
     #########################################
     # create the individual tool parsers

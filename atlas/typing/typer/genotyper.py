@@ -44,7 +44,8 @@ class CoverageParser(object):
             panels=None,
             verbose=True,
             tmp_dir='/tmp/',
-            skeleton_dir='atlas/data/skeletons/'):
+            skeleton_dir='atlas/data/skeletons/',
+            mccortex31_path = "mccortex31"):
         self.sample = sample
         self.seq = seq
         self.kmer = kmer
@@ -58,6 +59,7 @@ class CoverageParser(object):
         self.tmp_dir = tmp_dir
         self.panel_file_paths = panel_file_paths
         self.panels = []
+        self.mccortex31_path = mccortex31_path
         for panel_file_path in self.panel_file_paths:
             panel = Panel(panel_file_path)
             self.panels.append(panel)
@@ -74,7 +76,8 @@ class CoverageParser(object):
                                                force=self.force,
                                                panel_name=self.panel_name,
                                                tmp_dir=self.tmp_dir,
-                                               skeleton_dir=self.skeleton_dir)
+                                               skeleton_dir=self.skeleton_dir,
+                                               mccortex31_path = self.mccortex31_path)
         self.mc_cortex_runner.run()
 
     def remove_temporary_files(self):

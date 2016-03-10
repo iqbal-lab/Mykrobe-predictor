@@ -16,7 +16,8 @@ class McCortexRunner(object):
             force=False,
             panel_name=None,
             tmp_dir='/tmp/',
-            skeleton_dir='data/skeletons/'):
+            skeleton_dir='data/skeletons/',
+            mccortex31_path = "mccortex31"):
         self.sample = sample
         self.panels = panels
         self.seq = seq
@@ -32,6 +33,7 @@ class McCortexRunner(object):
                     "..",
                     skeleton_dir))
         self.skeleton_dir = skeleton_dir
+        self.mccortex31_path = mccortex31_path
 
     def run(self):
         if self.force or not os.path.exists(self.covg_tmp_file_path):
@@ -58,7 +60,7 @@ class McCortexRunner(object):
                 os.remove(self.ctx_skeleton_filepath)
             # panel
             seq_list = self._create_sequence_list()
-            cmd = ["mccortex31",
+            cmd = [self.mccortex31_path,
                    "build",
                    "-m 5GB",
                    "-k",
@@ -89,7 +91,7 @@ class McCortexRunner(object):
 
     @property
     def coverages_cmd(self):
-        cmd = ["mccortex31", "geno",
+        cmd = [self.mccortex31_path, "geno",
                "-I", self.ctx_skeleton_filepath,
                "-k", str(self.kmer), "-s", self.sample_name,
                "-o", self.covg_tmp_file_path]

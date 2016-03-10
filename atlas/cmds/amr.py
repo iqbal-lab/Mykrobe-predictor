@@ -78,7 +78,8 @@ def run(parser, args):
         force=args.force,
         verbose=False,
         tmp_dir=args.tmp,
-        skeleton_dir=args.skeleton_dir)
+        skeleton_dir=args.skeleton_dir,
+        mccortex31_path = args.mccortex31_path)
     cp.run()
     # Detect species
     species_predictor = AMRSpeciesPredictor(
@@ -136,5 +137,5 @@ def run(parser, args):
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
         predictor.run()
-    cp.remove_temporary_files()
+    # cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))
