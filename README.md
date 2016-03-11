@@ -48,11 +48,11 @@ You can deactivate at anytime by typing 'deactivate'.
 
 ## Usage
 
-	mykrobe predict --help
-
+	mykrobe predict predict --help
 	usage: mykrobe predict [-h] [-k kmer] [--tmp TMP]
-	                       [--skeleton_dir SKELETON_DIR] [-q] [--panel panel]
-	                       [--force]
+	                       [--skeleton_dir SKELETON_DIR]
+	                       [--mccortex31_path MCCORTEX31_PATH] [-q]
+	                       [--panel panel] [--force]
 	                       sample seq [seq ...] species
 
 	positional arguments:
@@ -66,8 +66,11 @@ You can deactivate at anytime by typing 'deactivate'.
 	  --tmp TMP             tmp directory (default: /tmp/)
 	  --skeleton_dir SKELETON_DIR
 	                        directory for skeleton binaries
+	  --mccortex31_path MCCORTEX31_PATH (default:mccortex31)
+	                        Path to mccortex31
 	  -q, --quiet           do not output warnings to stderr
-	  --panel panel         variant panel (default:bradley-2015)	
+	  --panel panel         variant panel (default:bradley-2015)
+	  --force
 
 ### AMR prediction
 
