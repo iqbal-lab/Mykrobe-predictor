@@ -22,6 +22,7 @@ from atlas.cortex import McCortexRunner
 
 from atlas.utils import get_params
 from atlas.utils import split_var_name
+from atlas.utils import median
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +81,14 @@ class CoverageParser(object):
             skeleton_dir=self.skeleton_dir,
             mccortex31_path=self.mccortex31_path)
         self.mc_cortex_runner.run()
+
+    def estimate_depth(self):
+        depth = []
+        for variant_coverages in self.variant_covgs.values():
+            for variant_covg in variant_coverages:
+                if variant_covg.reference_coverage.median_depth > 0:
+                    depth.append(variant_covg.reference_coverage.median_depth)
+        return median(depth)
 
     def remove_temporary_files(self):
         self.mc_cortex_runner.remove_temporary_files()
@@ -209,7 +218,8 @@ class Genotyper(object):
             gene_presence_covgs,
             contamination_depths=[],
             base_json={},
-            include_hom_alt_calls=False):
+            include_hom_alt_calls=False,
+            force_gt = False):
         self.sample = sample
         self.variant_covgs = variant_covgs
         self.gene_presence_covgs = gene_presence_covgs
@@ -219,6 +229,7 @@ class Genotyper(object):
         self.variant_calls = {}
         self.sequence_calls = {}
         self.include_hom_alt_calls = include_hom_alt_calls
+        self.force_gt = force_gt
 
     def run(self):
         self._type()
@@ -237,19 +248,20 @@ class Genotyper(object):
             gene_presence_covgs_out[gene_name] = self.gene_presence_covgs[
                 gene_name].to_mongo().to_dict()
         self.out_json[self.sample][
-            "typed_presence"] = gene_presence_covgs_out
+            "sequence_calls"] = gene_presence_covgs_out
 
     def _type_variants(self):
-        self.out_json[self.sample]["typed_variants"] = {}
-        out_json = self.out_json[self.sample]["typed_variants"]
+        self.out_json[self.sample]["variant_calls"] = {}
+        out_json = self.out_json[self.sample]["variant_calls"]
         gt = VariantTyper(
             expected_depths=self.expected_depths,
-            contamination_depths=self.contamination_depths)
+            contamination_depths=self.contamination_depths,
+            force_gt = self.force_gt)
 
         for probe_name, probe_coverages in self.variant_covgs.items():
             variant = self._create_variant(probe_name)
             call = gt.type(probe_coverages, variant=variant)
-            if sum(call.genotype) > 0 or self.include_hom_alt_calls:
+            if sum(call.genotype) > 0 or not call.genotype or self.include_hom_alt_calls:
                 self.variant_calls[probe_name] = call
                 if variant is not None:
                     tmp_var = copy(call.variant)

@@ -137,5 +137,5 @@ def run(parser, args):
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
         predictor.run()
-    # cp.remove_temporary_files()
+    cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))
