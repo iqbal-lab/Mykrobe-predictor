@@ -9,7 +9,7 @@ class Typer(object):
             expected_depths,
             contamination_depths=[],
             error_rate=0.05,
-            force_gt = False):
+            force_gt=False):
         self.expected_depths = expected_depths
         self.contamination_depths = contamination_depths
         self.error_rate = error_rate

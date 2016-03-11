@@ -30,7 +30,6 @@ def run(parser, args):
     if args.expected_depth is None:
         args.expected_depth = cp.estimate_depth()
 
-
     base_json = {args.sample: {}}
     base_json[args.sample]["panels"] = args.panels
     base_json[args.sample]["files"] = args.seq
@@ -41,7 +40,7 @@ def run(parser, args):
                    gene_presence_covgs=cp.covgs["presence"],
                    base_json=base_json,
                    contamination_depths=[],
-                   force_gt = args.force_gt)
+                   force_gt=args.force_gt)
     gt.run()
     cp.remove_temporary_files()
     print(json.dumps(gt.out_json, indent=4))

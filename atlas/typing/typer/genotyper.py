@@ -219,7 +219,7 @@ class Genotyper(object):
             contamination_depths=[],
             base_json={},
             include_hom_alt_calls=False,
-            force_gt = False):
+            force_gt=False):
         self.sample = sample
         self.variant_covgs = variant_covgs
         self.gene_presence_covgs = gene_presence_covgs
@@ -256,12 +256,13 @@ class Genotyper(object):
         gt = VariantTyper(
             expected_depths=self.expected_depths,
             contamination_depths=self.contamination_depths,
-            force_gt = self.force_gt)
+            force_gt=self.force_gt)
 
         for probe_name, probe_coverages in self.variant_covgs.items():
             variant = self._create_variant(probe_name)
             call = gt.type(probe_coverages, variant=variant)
-            if sum(call.genotype) > 0 or not call.genotype or self.include_hom_alt_calls:
+            if sum(
+                    call.genotype) > 0 or not call.genotype or self.include_hom_alt_calls:
                 self.variant_calls[probe_name] = call
                 if variant is not None:
                     tmp_var = copy(call.variant)

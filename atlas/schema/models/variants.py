@@ -414,7 +414,7 @@ class Variant(Document, CreateAndSaveMixin):
         return VariantCall.objects(variant=self)
 
     def count_calls(self):
-        return VariantCall.objects(variant=self).count()        
+        return VariantCall.objects(variant=self).count()
 
     @property
     def var_name(self):

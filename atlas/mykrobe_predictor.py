@@ -132,7 +132,7 @@ def main():
         '--force_gt',
         help='Force genotype (no -/- genotypes)',
         default=False,
-        action="store_true")    
+        action="store_true")
     parser_geno.set_defaults(func=run_subtool)
 
     args = parser.parse_args()
