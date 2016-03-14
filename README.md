@@ -168,4 +168,6 @@ Likely problem: Submodules have not been pulled with the repo.
 Solution : Run 
 	
 	git pull && git submodule init && git submodule update
+	cd mccortex && git submodule init && git submodule update
+	make
 
