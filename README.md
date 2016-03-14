@@ -78,6 +78,10 @@ You can deactivate at anytime by typing 'deactivate'.
 
 	mykrobe predict staph_sample_id staph_sequence.bam/fq staph
 
+e.g.
+
+	mykrobe predict ERR117639 /download/ena/ERR117639*.gz tb
+
 ### Output
 
 Output is in JSON format. To convert to a less verbose tabular format use [json_to_tsv](scripts/json_to_tsv.py).
