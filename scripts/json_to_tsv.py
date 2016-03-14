@@ -39,28 +39,34 @@ def get_drugs(drug_list):
 def get_phylo_group_string(d):
     s = []
     depth=[]
+    per_cov=[]
     for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).iteritems():
         s.append(k)
         depth.append(str(v.get("median_depth")))
-    return ";".join(s), ";".join(depth)
+        per_cov.append(str(v.get("percent_coverage")))
+    return ";".join(s), ";".join(per_cov), ";".join(depth)
 
 
 def get_species_string(d):
     s = []
     depth=[]
+    per_cov=[]
     for k, v in d.get("phylogenetics", {}).get("species", {}).iteritems():
         s.append(k)
         depth.append(str(v.get("median_depth")))
-    return ";".join(s), ";".join(depth)
+        per_cov.append(str(v.get("percent_coverage")))
+    return ";".join(s), ";".join(per_cov), ";".join(depth)
 
 
 def get_lineage_string(d):
     s = []
     depth=[]
+    per_cov=[]
     for k, v in d.get("phylogenetics", {}).get("lineage", {}).iteritems():
         s.append(k)
         depth.append(str(v.get("median_depth")))
-    return ";".join(s), ";".join(depth)
+        per_cov.append(str(v.get("percent_coverage")))
+    return ";".join(s), ";".join(per_cov), ";".join(depth)
 
 
 def get_file_name(f):
@@ -106,7 +112,7 @@ def get_variant_calls(d):
             alt_depth =0 
 
         variants.append(":".join([variant_name,
-                         str(alt_depth),str(wt_depth)
+                         str(int(alt_depth)),str(int(wt_depth))
                        ]))
     return ";".join(variants)
 
@@ -120,9 +126,12 @@ if args.format == "long":
         "phylo_group",
         "species",
         "lineage",
+        "phylo_group_per_covg",
+        "species_per_covg",
+        "lineage_per_covg", 
         "phylo_group_depth",
         "species_depth",
-        "lineage_depth",        
+        "lineage_depth",                  
         "susceptibility",
         "variants (prot_mut-ref_mut:alt_depth:wt_depth)"]
     print "\t".join(header)
@@ -134,9 +143,9 @@ if args.format == "long":
             d = {}
         file = get_file_name(f)
 
-        phylo_group,phylo_group_depth  = get_phylo_group_string(d[file])
-        species,species_depth  = get_species_string(d[file])
-        lineage,lineage_depth  = get_lineage_string(d[file])
+        phylo_group,phylo_group_per_covg,phylo_group_depth  = get_phylo_group_string(d[file])
+        species,species_per_covg,species_depth  = get_species_string(d[file])
+        lineage,lineage_per_covg,lineage_depth  = get_lineage_string(d[file])
         sample_name = get_sample_name(f)
         plate_name = get_plate_name(f)
 
@@ -158,6 +167,9 @@ if args.format == "long":
                 phylo_group,
                 species,
                 lineage,
+                phylo_group_per_covg,
+                species_per_covg,
+                lineage_per_covg,                  
                 phylo_group_depth,
                 species_depth,
                 lineage_depth,                
