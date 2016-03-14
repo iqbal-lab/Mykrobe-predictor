@@ -6,22 +6,26 @@ from atlas.schema import VariantCall
 
 DEFAULT_ERROR_RATE = 0.05
 DEFAULT_MINOR_FREQ = 0.2
+from atlas.stats import percent_coverage_from_expected_coverage
 
 
 class VariantTyper(Typer):
 
     def __init__(self, expected_depths, contamination_depths=[],
                  error_rate=DEFAULT_ERROR_RATE,
-                 minor_freq=DEFAULT_MINOR_FREQ):
+                 minor_freq=DEFAULT_MINOR_FREQ,
+                 force_gt=False):
         super(
             VariantTyper,
             self).__init__(
             expected_depths,
             contamination_depths,
-            error_rate)
+            error_rate,
+            force_gt=force_gt)
         self.method = "MAP"
         self.error_rate = error_rate
         self.minor_freq = minor_freq
+        self.force_gt = force_gt
 
         if len(expected_depths) > 1:
             raise NotImplementedError("Mixed samples not handled yet")
@@ -66,6 +70,11 @@ class VariantTyper(Typer):
         gt = self.likelihoods_to_genotype(
             likelihoods
         )
+        if gt == "-/-" and self.force_gt:
+            if variant_probe_coverage.alternate_percent_coverage > variant_probe_coverage.reference_percent_coverage:
+                gt = "1/1"
+            else:
+                gt = "0/0"
         return VariantCall.create(
             variant=variant,
             genotype=gt,
@@ -82,7 +91,8 @@ class VariantTyper(Typer):
         return variant_probe_coverage
 
     def _hom_ref_lik(self, variant):
-        if variant.reference_percent_coverage < 100:
+        if variant.reference_percent_coverage < 100 * \
+                percent_coverage_from_expected_coverage(max(self.expected_depths)):
             return MIN_LLK
         else:
             hom_ref_likes = []
@@ -106,7 +116,8 @@ class VariantTyper(Typer):
             return max(hom_ref_likes)
 
     def _hom_alt_lik(self, variant):
-        if variant.alternate_percent_coverage < 100:
+        if variant.alternate_percent_coverage < 100 * \
+                percent_coverage_from_expected_coverage(max(self.expected_depths)):
             return MIN_LLK
         else:
             hom_alt_liks = []

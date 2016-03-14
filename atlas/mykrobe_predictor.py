@@ -121,11 +121,16 @@ def main():
         metavar='expected depth',
         type=int,
         help='expected depth',
-        default=100)
+        default=None)
     parser_geno.add_argument(
         '-f',
         '--force',
         help='Force rebuilding of binaries',
+        default=False,
+        action="store_true")
+    parser_geno.add_argument(
+        '--force_gt',
+        help='Force genotype (no -/- genotypes)',
         default=False,
         action="store_true")
     parser_geno.set_defaults(func=run_subtool)

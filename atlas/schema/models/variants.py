@@ -413,6 +413,9 @@ class Variant(Document, CreateAndSaveMixin):
         # are implicitly associated with this `Variant`.
         return VariantCall.objects(variant=self)
 
+    def count_calls(self):
+        return VariantCall.objects(variant=self).count()
+
     @property
     def var_name(self):
         return "".join([self.reference_bases, str(
