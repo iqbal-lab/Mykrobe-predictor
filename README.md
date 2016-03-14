@@ -4,13 +4,13 @@ Dev : [![Build Status](https://travis-ci.com/Phelimb/atlas.svg?token=zS56Z2pmznV
 
 ## Installation
 
-git clone **--recursive** git@github.com:Phelimb/atlas.git
+git clone **--recursive** -b m2 git@github.com:iqbal-lab/Mykrobe-predictor.git
 
 ### Install requirements mccortex
 **NB: You must install the version of mccortex that comes with this repostitory**
 
 
-	cd atlas
+	cd Mykrobe-predictor
 	cd mccortex
 	make	
 	export PATH=$PATH:$(pwd)/bin
@@ -19,7 +19,7 @@ git clone **--recursive** git@github.com:Phelimb/atlas.git
 
 ## Install Mykrobe predictor
 
-### Download probes
+### Download probes (run from top level dir)
 
 	./scripts/download-probes.sh
 	
