@@ -48,7 +48,7 @@ You can deactivate at anytime by typing 'deactivate'.
 
 ## Usage
 
-	mykrobe predict predict --help
+	mykrobe predict --help
 	usage: mykrobe predict [-h] [-k kmer] [--tmp TMP]
 	                       [--skeleton_dir SKELETON_DIR]
 	                       [--mccortex31_path MCCORTEX31_PATH] [-q]
