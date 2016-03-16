@@ -1,5 +1,5 @@
 from unittest import TestCase
-from atlas.metagenomics import AMRSpeciesPredictor
+from mykrobe.metagenomics import AMRSpeciesPredictor
 
 
 class MTBCSpeciesTests(TestCase):

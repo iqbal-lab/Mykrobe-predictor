@@ -1,4 +1,1 @@
-future
-Biopython
-mongoengine
-pyvcf
+mykatlas

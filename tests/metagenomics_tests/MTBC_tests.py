@@ -1,11 +1,11 @@
 from unittest import TestCase
-from atlas.metagenomics import AMRSpeciesPredictor
+from mykrobe.metagenomics import AMRSpeciesPredictor
 
 
 class MTBCSpeciesTests(TestCase):
 
     def setUp(self):
-        self.hierarchy_json_file = "atlas/data/phylo/mtbc_hierarchy.json"
+        self.hierarchy_json_file = "mykrobe/data/phylo/mtbc_hierarchy.json"
 
     def teardown(self):
         pass
