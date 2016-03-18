@@ -1,9 +1,10 @@
 from setuptools import setup
+from mykrobe.version import __version__
 
 
 setup(
     name='mykrobe',
-    version='0.3.0.2',
+    version=__version__,
     packages=[
         'mykrobe',
         'mykrobe.cmds',
