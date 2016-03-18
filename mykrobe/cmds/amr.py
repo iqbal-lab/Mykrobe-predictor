@@ -10,7 +10,8 @@ from mykrobe.predict import TBPredictor
 from mykrobe.predict import StaphPredictor
 from mykrobe.predict import GramNegPredictor
 from mykrobe.metagenomics import AMRSpeciesPredictor
-from mykrobe.version import __version__
+from mykrobe.version import __version__ as predictor_version
+from mykatlas.version import __version__ as atlas_version
 STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
                 "data/panels/staph-amr-bradley_2015.fasta.gz"]
 
@@ -55,7 +56,9 @@ def run(parser, args):
     base_json[args.sample]["panels"] = panels
     base_json[args.sample]["files"] = args.seq
     base_json[args.sample]["kmer"] = args.kmer
-    base_json[args.sample]["version"] = __version__
+    base_json[args.sample]["version"] = {}
+    base_json[args.sample]["version"]["mykrobe-predictor"] = predictor_version
+    base_json[args.sample]["version"]["mykrobe-atlas"] = atlas_version
     # Get real paths for panels
     panels = [
         os.path.realpath(

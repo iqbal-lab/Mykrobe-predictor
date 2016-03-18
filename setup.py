@@ -1,6 +1,6 @@
 from setuptools import setup
 from mykrobe.version import __version__
-
+__version__ = __version__[1:].split("-")[0]
 
 setup(
     name='mykrobe',
