@@ -8,7 +8,7 @@ setup(
     packages=[
         'mykrobe',
         'mykrobe.cmds',
-        'mykrobe.pheno',
+        'mykrobe.predict',
         'mykrobe.metagenomics'],
     license='https://github.com/iqbal-lab/Mykrobe-predictor/blob/master/LICENSE',
     url='https://github.com/iqbal-lab/Mykrobe-predictor',

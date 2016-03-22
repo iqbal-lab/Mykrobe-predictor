@@ -22,6 +22,8 @@ from mykatlas import sequence_parser_mixin
 def run_subtool(parser, args):
     if args.command == "predict":
         from mykrobe.cmds.amr import run
+    elif args.command == "genotype":
+        from mykatlas.cmds.genotype import run
 
     # run the chosen submodule.
     run(parser, args)
@@ -72,6 +74,42 @@ def main():
     parser_amr.add_argument('--force', default=False, action="store_true")
     parser_amr.set_defaults(func=run_subtool)
 
+    # ##########
+    # # Genotype
+    # ##########
+    parser_geno = subparsers.add_parser(
+        'genotype',
+        parents=[sequence_parser_mixin],
+        help='genotype a sample using a probe set')
+    parser_geno.add_argument(
+        'probe_sets',
+        metavar='parser_geno',
+        type=str,
+        nargs='+',
+        help='probe-set')
+    parser_geno.add_argument(
+        '--expected_depth',
+        metavar='expected depth',
+        type=int,
+        help='expected depth',
+        default=None)
+    parser_geno.add_argument(
+        '-f',
+        '--force',
+        help='Force rebuilding of binaries',
+        default=False,
+        action="store_true")
+    parser_geno.add_argument(
+        '-t',
+        '--threads',
+        type=int,
+        help='threads',
+        default=2)    
+    parser_geno.add_argument(
+        '--ignore_filtered',
+        help="don't include filtered genotypes",
+        default=False)
+    parser_geno.set_defaults(func=run_subtool)
 
 
     args = parser.parse_args()
