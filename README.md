@@ -19,35 +19,10 @@ git clone **--recursive** -b m2 https://github.com/iqbal-lab/Mykrobe-predictor.g
 
 ## Install Mykrobe predictor
 
-pip install mykrobe
-
-## Or using setup.py
-
-### Download probes (run from top level dir)
-
-	./scripts/download-probes.sh
-	
-### Install Mykrobe predictor with virtualenv (recommended but optional)
-
-#### Install virtualenv
-
-	https://virtualenv.readthedocs.org/en/latest/installation.html
-
-#### Create virtualenv 
-
-	virtualenv venv
-
-#### Activate the virtualenv
-
-	source venv/bin/activate
-
-You can deactivate at anytime by typing 'deactivate'. 
+	pip install mykrobe
 
 
-#### Install Mykrobe predictor
-
-
-	python setup.py install
+If this works then you're done! (alternative install below)
 
 
 ## Usage
@@ -165,6 +140,36 @@ Output is in JSON format. To convert to a less verbose tabular format use [json_
 Please cite us if you use Mykrobe predictor in a publication
 
 All analysis in this paper was done with release [v0.1.3-beta](https://github.com/iqbal-lab/Mykrobe-predictor/releases/tag/v0.1.3-beta).
+
+### Alternative install
+
+## Or using setup.py
+
+### Download probes (run from top level dir)
+
+	./scripts/download-probes.sh
+	
+### Install Mykrobe predictor with virtualenv (recommended but optional)
+
+#### Install virtualenv
+
+	https://virtualenv.readthedocs.org/en/latest/installation.html
+
+#### Create virtualenv 
+
+	virtualenv venv
+
+#### Activate the virtualenv
+
+	source venv/bin/activate
+
+You can deactivate at anytime by typing 'deactivate'. 
+
+
+#### Install Mykrobe predictor
+
+
+	python setup.py install
 
 
 ### Common issues
