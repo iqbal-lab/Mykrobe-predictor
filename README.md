@@ -19,6 +19,10 @@ git clone **--recursive** -b m2 https://github.com/iqbal-lab/Mykrobe-predictor.g
 
 ## Install Mykrobe predictor
 
+pip install mykrobe
+
+## Or using setup.py
+
 ### Download probes (run from top level dir)
 
 	./scripts/download-probes.sh
