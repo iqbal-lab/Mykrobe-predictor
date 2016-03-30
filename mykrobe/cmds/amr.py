@@ -4,14 +4,23 @@ from pprint import pprint
 import json
 import os
 from mykatlas.utils import check_args
+from mykatlas.analysis import AnalysisResult
 from mykatlas.typing import CoverageParser
 from mykatlas.typing import Genotyper
 from mykrobe.predict import TBPredictor
 from mykrobe.predict import StaphPredictor
 from mykrobe.predict import GramNegPredictor
+from mykrobe.predict import MykrobePredictorSusceptibilityResult
 from mykrobe.metagenomics import AMRSpeciesPredictor
+from mykrobe.metagenomics import MykrobePredictorPhylogeneticsResult
 from mykrobe.version import __version__ as predictor_version
 from mykatlas.version import __version__ as atlas_version
+
+from mongoengine import EmbeddedDocumentField
+from mongoengine import IntField
+from mongoengine import DictField
+from mongoengine import StringField
+
 STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
                 "data/panels/staph-amr-bradley_2015.fasta.gz"]
 
@@ -20,6 +29,57 @@ GN_PANELS = [
     "data/panels/Escherichia_coli",
     "data/panels/Klebsiella_pneumoniae",
     "data/panels/gn-amr-genes-extended"]
+
+class MykrobePredictorResult(object):
+
+    def __init__(self, susceptibility, phylogenetics, variant_calls, sequence_calls, kmer, probe_sets, files, version):
+        self.susceptibility = susceptibility
+        self.phylogenetics = phylogenetics
+        self.variant_calls = variant_calls
+        self.sequence_calls = sequence_calls
+        self.kmer = kmer
+        self.probe_sets = probe_sets
+        self.files = files
+        self.version = version
+
+    def to_dict(self):
+        return {"susceptibility": self.susceptibility.to_dict(),
+                "phylogenetics" : self.phylogenetics.to_dict(),
+                # "variant_calls" : self.variant_calls,
+                # "sequence_calls" : self.sequence_calls,
+                "kmer" : self.kmer,
+                "probe_sets" : self.probe_sets,
+                "files" : self.files,
+                "version" : self.version
+                 }
+
+
+        # return cls(susceptibility = susceptibility,
+        #             phylogenetics = phylogenetics,
+        #             variant_calls= variant_calls,
+        #             sequence_calls = sequence_calls,
+        #             kmer = kmer,
+        #             probe_sets = probe_sets,
+        #             files = files,
+        #             version = version)
+
+    # susceptibility = EmbeddedDocumentField("MykrobePredictorSusceptibilityResult")
+    # phylogenetics = EmbeddedDocumentField("MykrobePredictorPhylogeneticsResult")
+    # kmer = IntField()
+    # probe_sets = StringField()
+    # variant_calls = DictField()
+    # sequence_calls = DictField()
+
+    # @classmethod
+    # def create(cls, susceptibility, phylogenetics, variant_calls, sequence_calls, kmer, probe_sets, files, version):
+    #     return cls(susceptibility = susceptibility,
+    #                 phylogenetics = phylogenetics,
+    #                 variant_calls= variant_calls,
+    #                 sequence_calls = sequence_calls,
+    #                 kmer = kmer,
+    #                 probe_sets = probe_sets,
+    #                 files = files,
+    #                 version = version)
 
 
 def run(parser, args):
@@ -53,12 +113,9 @@ def run(parser, args):
         panels = GN_PANELS
         panel_name = "gn-amr"
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
-    base_json[args.sample]["panels"] = panels
-    base_json[args.sample]["files"] = args.seq
-    base_json[args.sample]["kmer"] = args.kmer
-    base_json[args.sample]["version"] = {}
-    base_json[args.sample]["version"]["mykrobe-predictor"] = predictor_version
-    base_json[args.sample]["version"]["mykrobe-atlas"] = atlas_version
+    version = {}
+    version["mykrobe-predictor"] = predictor_version
+    version["mykrobe-atlas"] = atlas_version    
     # Get real paths for panels
     panels = [
         os.path.realpath(
@@ -98,9 +155,8 @@ def run(parser, args):
         lineage_covgs=cp.covgs.get(
             "sub-species",
             {}),
-        base_json=base_json[args.sample],
         hierarchy_json_file=hierarchy_json_file)
-    species_predictor.run()
+    phylogenetics = species_predictor.run()
 
     # ## AMR prediction
 
@@ -139,6 +195,7 @@ def run(parser, args):
         predictor = Predictor(variant_calls=gt.variant_calls,
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
-        predictor.run()
-    cp.remove_temporary_files()
+        mykrobe_predictor_susceptibility_result = predictor.run()
+    base_json[args.sample] = MykrobePredictorResult(susceptibility = mykrobe_predictor_susceptibility_result, phylogenetics = phylogenetics, variant_calls = gt.variant_calls, sequence_calls = gt.sequence_calls, probe_sets = panels, files = args.seq, kmer = args.kmer, version = version).to_dict()
+    # cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))

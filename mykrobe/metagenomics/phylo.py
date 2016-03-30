@@ -5,6 +5,7 @@ import operator
 from mykrobe.utils import median
 from mykrobe.utils import load_json
 from mykrobe.utils import flatten
+from mykrobe.metagenomics.models import MykrobePredictorPhylogeneticsResult
 from mykatlas.stats import percent_coverage_from_expected_coverage
 
 
@@ -44,14 +45,13 @@ class SpeciesPredictor(object):
             sub_complex_covgs,
             species_covgs,
             lineage_covgs,
-            base_json,
             verbose=False,
             hierarchy_json_file=None):
         self.phylo_group_covgs = phylo_group_covgs
         self.sub_complex_covgs = sub_complex_covgs
         self.species_covgs = species_covgs
         self.lineage_covgs = lineage_covgs
-        self.out_json = base_json
+        self.out_json = {}
         self.threshold = {}
         self.verbose = verbose
         try:
@@ -62,6 +62,7 @@ class SpeciesPredictor(object):
     def run(self):
         self._load_taxon_thresholds()
         self._aggregate_all()
+        return MykrobePredictorPhylogeneticsResult(self.out_json["phylogenetics"])
 
     def _add_unknown_where_empty(self, covgs):
         if not covgs:
@@ -227,7 +228,6 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             sub_complex_covgs,
             species_covgs,
             lineage_covgs,
-            base_json,
             verbose=False,
             hierarchy_json_file=None):
         super(
@@ -237,7 +237,6 @@ class AMRSpeciesPredictor(SpeciesPredictor):
             sub_complex_covgs,
             species_covgs,
             lineage_covgs,
-            base_json,
             verbose=verbose,
             hierarchy_json_file=hierarchy_json_file)
 

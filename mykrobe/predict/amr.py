@@ -4,6 +4,8 @@ from mykrobe.utils import unique
 from mykrobe.utils import flatten
 from mykrobe.utils import get_params
 
+from mykrobe.predict.models import MykrobePredictorSusceptibilityResult
+
 from ga4ghmongo.schema import VariantCall
 from ga4ghmongo.schema import SequenceCall
 
@@ -49,8 +51,9 @@ class BasePredictor(object):
         }
 
     def _create_initial_resistance_prediction(self):
-        self.resistance_predictions = dict(
-            (k, {"predict": "I"}) for k in self.drugs)
+        self.result =  MykrobePredictorSusceptibilityResult(dict(
+            (k, {"predict": "I"}) for k in self.drugs))
+        self.resistance_predictions = self.result.susceptibility
 
     def _get_drug_list_from_variant_to_resistance_drug(self):
         return unique(
@@ -158,7 +161,7 @@ class BasePredictor(object):
 
     def run(self):
         self.predict_antibiogram()
-        self.out_json["susceptibility"] = self.resistance_predictions
+        return self.result 
 
 
 def load_json(f):
