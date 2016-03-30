@@ -25,7 +25,7 @@ setup(
             'data/predict/*/*',
             'data/predict/taxon_coverage_threshold.json',
             'data/phylo/*',
-            'data/panels/tb-species-160227.fasta.gz',
+            'data/panels/tb-species-160330.fasta.gz',
             'data/panels/staph-species-160227.fasta.gz',
             'data/panels/tb-amr-walker_2015.fasta.gz',
             'data/panels/tb-amr-bradley_2015.fasta.gz',
