@@ -29,11 +29,11 @@ def run(parser, args):
     if args.panel is not None:
         if args.panel == "bradley-2015":
             TB_PANELS = [
-                "data/panels/tb-species-160227.fasta.gz",
+                "data/panels/tb-species-160330.fasta.gz",
                 "data/panels/tb-amr-bradley_2015.fasta.gz"]
         elif args.panel == "walker-2015":
             TB_PANELS = [
-                "data/panels/tb-species-160227.fasta.gz",
+                "data/panels/tb-species-160330.fasta.gz",
                 "data/panels/tb-amr-walker_2015.fasta.gz"]
 
     if not args.species:
