@@ -1,4 +1,6 @@
 from unittest import TestCase
+import sys
+sys.path.append(".")
 from mykrobe.metagenomics import AMRSpeciesPredictor
 
 

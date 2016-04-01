@@ -1,3 +1,5 @@
+import sys
+sys.path.append(".")
 from unittest import TestCase
 
 from ga4ghmongo.schema import VariantCall

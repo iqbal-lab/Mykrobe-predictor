@@ -14,6 +14,7 @@ sys.path.append("/home/phelimb/git/Mykrobe-predictor")
 import argparse
 from mykrobe.utils import load_json
 from mykrobe.utils import unique
+from mykrobe.predict import MykrobePredictorSusceptibilityResult
 parser = argparse.ArgumentParser(description='Compares the JSON output of mykrobe predictor')
 parser.add_argument('truth', metavar='truth', type=str, help='truth')
 parser.add_argument('--ana1', type=str, help='analyses', nargs='+', default = [])
@@ -21,10 +22,6 @@ parser.add_argument('--ana2', type=str, help='analyses', nargs='+', default = []
 args = parser.parse_args()
 
 ## First generate a table with a column for each commit for each sample for each drug
-## 
-
-
-
 def file_paths_to_combined_dict(l):
 	ana = {}
 	for f in l:
@@ -34,7 +31,6 @@ def file_paths_to_combined_dict(l):
 			sys.stderr.write(str(e) + " %s \n" % f)
 		else:
 			assert data.keys()[0] not in ana
-			print data.keys(), ana.keys()
 			ana.update(data)
 	return ana
 
