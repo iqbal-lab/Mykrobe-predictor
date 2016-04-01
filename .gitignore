@@ -1,3 +1,6 @@
+scripts/amr_comid_tb.sh
+pypi.sh
+venv*
 scripts/add_tb_vcf.sh
 mykrobe.egg-info/
 atlas.egg-info/

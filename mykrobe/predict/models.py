@@ -20,13 +20,18 @@ class MykrobePredictorSusceptibilityResult(Document):
     def diff(self, other):
         diff = {}
         ## Compares the antibiogram of two predictor results
-        drugs = unique(self.susceptibility.keys() + other.susceptibility.keys())
+        drugs = unique(self.drugs + other.drugs)
         for drug in drugs:
             predict1,predict2 = self.susceptibility.get(drug, {"predict": "NA"}).get("predict"), other.susceptibility.get(drug,{"predict": "NA"}).get("predict")
             if predict1 != predict2:
                 diff[drug] = {}
                 diff[drug]["predict"] = (predict1,predict2)
         return diff
+
+    @property
+    def drugs(self):
+        return self.susceptibility.keys()
+
 
 
     # def compare(self, truth):
