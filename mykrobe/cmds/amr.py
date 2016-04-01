@@ -30,9 +30,12 @@ GN_PANELS = [
     "data/panels/Klebsiella_pneumoniae",
     "data/panels/gn-amr-genes-extended"]
 
+
 class MykrobePredictorResult(object):
 
-    def __init__(self, susceptibility, phylogenetics, variant_calls, sequence_calls, kmer, probe_sets, files, version):
+    def __init__(self, susceptibility, phylogenetics,
+                 variant_calls, sequence_calls,
+                 kmer, probe_sets, files, version):
         self.susceptibility = susceptibility
         self.phylogenetics = phylogenetics
         self.variant_calls = variant_calls
@@ -43,43 +46,22 @@ class MykrobePredictorResult(object):
         self.version = version
 
     def to_dict(self):
-        return {"susceptibility": self.susceptibility.to_dict(),
-                "phylogenetics" : self.phylogenetics.to_dict(),
-                # "variant_calls" : self.variant_calls,
-                # "sequence_calls" : self.sequence_calls,
-                "kmer" : self.kmer,
-                "probe_sets" : self.probe_sets,
-                "files" : self.files,
-                "version" : self.version
-                 }
-
-
-        # return cls(susceptibility = susceptibility,
-        #             phylogenetics = phylogenetics,
-        #             variant_calls= variant_calls,
-        #             sequence_calls = sequence_calls,
-        #             kmer = kmer,
-        #             probe_sets = probe_sets,
-        #             files = files,
-        #             version = version)
-
+        return {"susceptibility": self.susceptibility.to_dict().values()[0],
+                "phylogenetics": self.phylogenetics.to_dict().values()[0],
+                "variant_calls" : self.variant_calls,
+                "sequence_calls" : self.sequence_calls,
+                "kmer": self.kmer,
+                "probe_sets": self.probe_sets,
+                "files": self.files,
+                "version": self.version
+                }
+    ### For database document
     # susceptibility = EmbeddedDocumentField("MykrobePredictorSusceptibilityResult")
     # phylogenetics = EmbeddedDocumentField("MykrobePredictorPhylogeneticsResult")
     # kmer = IntField()
     # probe_sets = StringField()
     # variant_calls = DictField()
     # sequence_calls = DictField()
-
-    # @classmethod
-    # def create(cls, susceptibility, phylogenetics, variant_calls, sequence_calls, kmer, probe_sets, files, version):
-    #     return cls(susceptibility = susceptibility,
-    #                 phylogenetics = phylogenetics,
-    #                 variant_calls= variant_calls,
-    #                 sequence_calls = sequence_calls,
-    #                 kmer = kmer,
-    #                 probe_sets = probe_sets,
-    #                 files = files,
-    #                 version = version)
 
 
 def run(parser, args):
@@ -115,7 +97,7 @@ def run(parser, args):
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
     version = {}
     version["mykrobe-predictor"] = predictor_version
-    version["mykrobe-atlas"] = atlas_version    
+    version["mykrobe-atlas"] = atlas_version
     # Get real paths for panels
     panels = [
         os.path.realpath(
@@ -136,6 +118,7 @@ def run(parser, args):
         seq=args.seq,
         kmer=args.kmer,
         force=args.force,
+        threads = 1,
         verbose=False,
         tmp_dir=args.tmp,
         skeleton_dir=args.skeleton_dir,
@@ -188,7 +171,8 @@ def run(parser, args):
                        gene_presence_covgs=cp.covgs["presence"],
                        base_json=base_json,
                        contamination_depths=[],
-                       include_hom_alt_calls=True)
+                       include_hom_alt_calls=True,
+                       ignore_filtered = True)
         gt.run()
     args.quiet = q
     if Predictor is not None:
@@ -196,6 +180,15 @@ def run(parser, args):
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample])
         mykrobe_predictor_susceptibility_result = predictor.run()
-    base_json[args.sample] = MykrobePredictorResult(susceptibility = mykrobe_predictor_susceptibility_result, phylogenetics = phylogenetics, variant_calls = gt.variant_calls, sequence_calls = gt.sequence_calls, probe_sets = panels, files = args.seq, kmer = args.kmer, version = version).to_dict()
-    # cp.remove_temporary_files()
+    base_json[
+        args.sample] = MykrobePredictorResult(
+        susceptibility=mykrobe_predictor_susceptibility_result,
+        phylogenetics=phylogenetics,
+        variant_calls=gt.variant_calls_dict,
+        sequence_calls=gt.sequence_calls_dict,
+        probe_sets=panels,
+        files=args.seq,
+        kmer=args.kmer,
+        version=version).to_dict()
+    cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))
