@@ -132,7 +132,8 @@ def run(parser, args):
                        gene_presence_covgs=cp.covgs["presence"],
                        base_json=base_json,
                        contamination_depths=[],
-                       include_hom_alt_calls=True)
+                       include_hom_alt_calls=True,
+                       ignore_filtered = True)
         gt.run()
     args.quiet = q
     if Predictor is not None:
