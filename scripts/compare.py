@@ -229,7 +229,7 @@ class Stats(object):
 
     @property
     def row_long(self):
-		return [ self.num_samples, self.TP, self.FP, self.P,
+        return [ self.num_samples, self.TP, self.FP, self.P,
                     self.TN, self.FN, self.N, self.VME, self.ME, self.sensitivity,
                     self.specificity, self.VME_LB, self.VME_UB, self.ME_LB, self.ME_UB,
                     self.sensitivity_LB, self.sensitivity_UB, self.specificity_LB,
@@ -260,95 +260,98 @@ class Stats(object):
 
 ## First generate a table with a column for each commit for each sample for each drug
 def file_paths_to_combined_dict(l):
-	ana = {}
-	for f in l:
-		try:
-			data = load_json(f)
-		except ValueError, e:
-			sys.stderr.write(str(e) + " %s \n" % f)
-		else:
-			assert data.keys()[0] not in ana
-			ana.update(data)
-	return ana
+    ana = {}
+    for f in l:
+        try:
+            data = load_json(f)
+        except ValueError, e:
+            sys.stderr.write(str(e) + " %s \n" % f)
+        else:
+            assert data.keys()[0] not in ana
+            ana.update(data)
+    return ana
 
 def combined_dict_to_result_objects(data):
-	out_dict = {}
-	for k,v in data.items():
-		out_dict[k] = MykrobePredictorSusceptibilityResult.from_json(json.dumps({"susceptibility" : v.get("susceptibility", {})}))
-	return out_dict
+    out_dict = {}
+    for k,v in data.items():
+        out_dict[k] = MykrobePredictorSusceptibilityResult.from_json(json.dumps({"susceptibility" : v.get("susceptibility", {})}))
+    return out_dict
 
 def get_sample_ids(ana1, ana2):
-	return unique(ana1.keys() + ana2.keys())
+    return unique(ana1.keys() + ana2.keys())
 
 def create_comparision_table(sample_ids, truth, ana1, ana2):
-	df = []
-	for sample_id in sample_ids:
-		indv_truth = truth.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		indv_ana1 = ana1.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		indv_ana2 = ana2.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		drugs = unique(indv_truth.drugs + indv_ana1.drugs + indv_ana2.drugs)
-		if drugs:
-			for drug in drugs:
-				if args.ana2:
-					row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana2.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
-				else:
-					row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
-				df.append(row)
-	return df
+    df = []
+    for sample_id in sample_ids:
+        indv_truth = truth.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        indv_ana1 = ana1.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        indv_ana2 = ana2.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        drugs = unique(indv_truth.drugs + indv_ana1.drugs + indv_ana2.drugs)
+        if drugs:
+            for drug in drugs:
+                if args.ana2:
+                    row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana2.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
+                else:
+                    row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
+                df.append(row)
+    return df
 
 def inc_count(d, k1, k2):
-	if not k1 in d:
-		d[k1] = {}
-	if not k2 in d[k1]:
-		d[k1][k2] = 0
-	d[k1][k2] += 1
-	return d
+    if not k1 in d:
+        d[k1] = {}
+    if not k2 in d[k1]:
+        d[k1][k2] = 0
+    d[k1][k2] += 1
+    return d
 
 
 def update_comparision(comparison, drug, compare):
-	comparison = inc_count(comparison, "all", compare)
-	comparison = inc_count(comparison, drug, compare)	
-	return comparison
+    comparison = inc_count(comparison, "all", compare)
+    comparison = inc_count(comparison, drug, compare)    
+    return comparison
 
 def compare_analysis_to_truth(sample_ids, truth, ana):
-	comparison = {}
-	for sample_id in sample_ids:
-		indv_truth = truth.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		indv_ana = ana.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		drugs = unique(indv_truth.drugs + indv_ana.drugs)
-		if drugs:
-			for drug in drugs:
-				truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict")
-				ana_drug_predict = indv_ana.susceptibility.get(drug, {"predict" : "NA"}).get("predict")
-				assert truth_drug_predict in ["R", "NA", "S"]
-				if truth_drug_predict == "NA" or ana_drug_predict == "NA":
-					compare = "UNKNOWN"
-				elif truth_drug_predict == ana_drug_predict:
-					if truth_drug_predict == "R":
-						compare = "TP"
-					elif truth_drug_predict == "S":
-						compare = "TN"
-				else:
-					assert ana_drug_predict in ["R","S"]
-					if truth_drug_predict == "R":
-						compare = "FN"
-					elif truth_drug_predict == "S":
-						compare = "FP"					
-				comparison = update_comparision(comparison, drug, compare)
+    comparison = {}
+    for sample_id in sample_ids:
+        indv_truth = truth.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        indv_ana = ana.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        drugs = unique(indv_truth.drugs + indv_ana.drugs)
+        if drugs:
+            for drug in drugs:
+                truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict").upper()
+                ana_drug_predict = indv_ana.susceptibility.get(drug, {"predict" : "NA"}).get("predict").upper()
+                if not truth_drug_predict in ["R", "NA", "S"]:
+                    sys.stderr.write("failed truth check %s\n" % sample_id)
+                elif ana_drug_predict not in ["R","S"]:
+                    sys.stderr.write("failed predict check %s - %s \n" % (sample_id, ana_drug_predict))
+                else:
+                    if truth_drug_predict == "NA" or ana_drug_predict == "NA":
+                        compare = "UNKNOWN"
+                    elif truth_drug_predict == ana_drug_predict:
+                        if truth_drug_predict == "R":
+                            compare = "TP"
+                        elif truth_drug_predict == "S":
+                            compare = "TN"
+                    else:
+                        if truth_drug_predict == "R":
+                            compare = "FN"
+                        elif truth_drug_predict == "S":
+                            compare = "FP"                    
+                    comparison = update_comparision(comparison, drug, compare)
 
-	return comparison
+    return comparison
 
 def diff_stats(stats1, stats2):
-	TP =  stats1.TP - stats2.TP
-	FP =  stats1.FP - stats2.FP
-	TN =  stats1.TN - stats2.TN
-	FN =  stats1.FN - stats2.FN
+    TP =  stats1.TP - stats2.TP
+    FP =  stats1.FP - stats2.FP
+    TN =  stats1.TN - stats2.TN
+    FN =  stats1.FN - stats2.FN
 
-	sensitivity = stats1.sensitivity - stats2.sensitivity
-	specificity = stats1.specificity - stats2.specificity
-	total = stats1.total - stats2.total
+    sensitivity = stats1.sensitivity - stats2.sensitivity
+    specificity = stats1.specificity - stats2.specificity
+    total = stats1.total - stats2.total
 
-	return "Total: %+i, TP : %+i, FP : %+i, TN : %+i, FN : %+i, sensitivity : %+f%%, specificity : %+f%%" % (total, TP, FP, TN, FN, sensitivity, specificity)
+    return "Total: %+i, TP : %+i, FP : %+i, TN : %+i, FN : %+i, sensitivity : %+f%%, specificity : %+f%%" % (total, TP, FP, TN, FN, sensitivity, specificity)
 
 ## Load data
 truth = load_json(args.truth)
@@ -363,92 +366,92 @@ sample_ids = get_sample_ids( ana1, ana2)
 
 ## Run analyses
 if args.analysis == "table":
-	## sample  drug  truth  ana1   ana2 
-	## 1234    RIF   R     R     S 	
-	df = create_comparision_table(sample_ids, truth_susceptibility, ana1_susceptibility, ana2_susceptibility)
-	for row in df:
-		print ("\t".join(row))
+    ## sample  drug  truth  ana1   ana2 
+    ## 1234    RIF   R     R     S     
+    df = create_comparision_table(sample_ids, truth_susceptibility, ana1_susceptibility, ana2_susceptibility)
+    for row in df:
+        print ("\t".join(row))
 elif args.analysis == "summary":
-	## Report a summary of each analysis vs. truth
+    ## Report a summary of each analysis vs. truth
 
-	## ANA 1 
-	## Drug TP FP 
-	##
+    ## ANA 1 
+    ## Drug TP FP 
+    ##
 
-	## Ana 2 
+    ## Ana 2 
 
-	##
-	##
-	print "Ana1"
-	count_comparision_ana1 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana1_susceptibility)
-	if args.format == "short":
-		print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_short_header]))
-		for k,v in count_comparision_ana1.items():
-			stats = Stats(count_comparision = v)
-			print ("\t".join( [k] + [str(i) for i in stats.row_short]))
-		if args.ana2:
-			print "Ana2"
-			count_comparision_ana2 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana2_susceptibility)
-			print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_short_header]))
-			for k,v in count_comparision_ana2.items():
-				stats = Stats(count_comparision = v)
-				print ("\t".join( [k] + [str(i) for i in stats.row_short]))
-
-
-			## Diff ana 1 ana 2 summary
-			print "diff ana2 - ana1"
-			for k in count_comparision_ana1.keys():
-				stats_2 = Stats(count_comparision = count_comparision_ana2[k])
-				stats_1 = Stats(count_comparision = count_comparision_ana1[k])
-				diff = diff_stats(stats_2,stats_1)
-				print "\t".join([k, diff])
+    ##
+    ##
+    print "Ana1"
+    count_comparision_ana1 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana1_susceptibility)
+    if args.format == "short":
+        print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_short_header]))
+        for k,v in count_comparision_ana1.items():
+            stats = Stats(count_comparision = v)
+            print ("\t".join( [k] + [str(i) for i in stats.row_short]))
+        if args.ana2:
+            print "Ana2"
+            count_comparision_ana2 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana2_susceptibility)
+            print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_short_header]))
+            for k,v in count_comparision_ana2.items():
+                stats = Stats(count_comparision = v)
+                print ("\t".join( [k] + [str(i) for i in stats.row_short]))
 
 
-			##
-			##				
-	elif args.format == "long":
-		print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_long_header]))
-		for k,v in count_comparision.items():
-			stats = Stats(count_comparision = v)
-			print ("\t".join( [k] + [str(i) for i in stats.row_long]))
-		if args.ana2:
-			print "Ana2"
-			count_comparision = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana2_susceptibility)
-			print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_long_header]))
-			for k,v in count_comparision.items():
-				stats = Stats(count_comparision = v)
-				print ("\t".join( [k] + [str(i) for i in stats.row_long]))
+            ## Diff ana 1 ana 2 summary
+            print "diff ana2 - ana1"
+            for k in count_comparision_ana1.keys():
+                stats_2 = Stats(count_comparision = count_comparision_ana2[k])
+                stats_1 = Stats(count_comparision = count_comparision_ana1[k])
+                diff = diff_stats(stats_2,stats_1)
+                print "\t".join([k, diff])
 
-			## Diff ana 1 ana 2 summary
-			print "diff ana2 - ana1"
-			for k in count_comparision_ana1.keys():
-				stats_2 = Stats(count_comparision = count_comparision_ana2[k])
-				stats_1 = Stats(count_comparision = count_comparision_ana1[k])
-				diff = diff_stats(stats_2,stats_1)
-				print "\t".join([k, diff])				
+
+            ##
+            ##                
+    elif args.format == "long":
+        print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_long_header]))
+        for k,v in count_comparision.items():
+            stats = Stats(count_comparision = v)
+            print ("\t".join( [k] + [str(i) for i in stats.row_long]))
+        if args.ana2:
+            print "Ana2"
+            count_comparision = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana2_susceptibility)
+            print ("\t".join( ["Drug"] + [str(i) for i in Stats({}).row_long_header]))
+            for k,v in count_comparision.items():
+                stats = Stats(count_comparision = v)
+                print ("\t".join( [k] + [str(i) for i in stats.row_long]))
+
+            ## Diff ana 1 ana 2 summary
+            print "diff ana2 - ana1"
+            for k in count_comparision_ana1.keys():
+                stats_2 = Stats(count_comparision = count_comparision_ana2[k])
+                stats_1 = Stats(count_comparision = count_comparision_ana1[k])
+                diff = diff_stats(stats_2,stats_1)
+                print "\t".join([k, diff])                
 
 ## Report the diference between ana1 and and2
 elif args.analysis == "diff":
-	if args.ana2:
-		print "\t".join(["sample", "drug", "truth", "ana1", "ana2"])
-	else:
-		print "\t".join(["sample", "drug", "truth", "ana1"])
-	for sample_id in sample_ids:
-		indv_truth = truth_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		indv_ana1 = ana1_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		indv_ana2 = ana2_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
-		if args.ana2:
-			diff = indv_ana1.diff(indv_ana2)
-			if diff:
-				for drug, predict_diff in diff.items():
-					truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict")
-					ana1_predict, ana2_predict = predict_diff["predict"]
-					print "\t".join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict])
-		else:
-			diff = indv_truth.diff(indv_ana1)
-			if diff:
-				for drug, predict_diff in diff.items():
-					truth_drug_predict, ana1_predict = predict_diff["predict"]
-					if truth_drug_predict != "NA" and ana1_predict != "NA":
-						print "\t".join([sample_id, drug, truth_drug_predict, ana1_predict])			
+    if args.ana2:
+        print "\t".join(["sample", "drug", "truth", "ana1", "ana2"])
+    else:
+        print "\t".join(["sample", "drug", "truth", "ana1"])
+    for sample_id in sample_ids:
+        indv_truth = truth_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        indv_ana1 = ana1_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        indv_ana2 = ana2_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
+        if args.ana2:
+            diff = indv_ana1.diff(indv_ana2)
+            if diff:
+                for drug, predict_diff in diff.items():
+                    truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict")
+                    ana1_predict, ana2_predict = predict_diff["predict"]
+                    print "\t".join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict])
+        else:
+            diff = indv_truth.diff(indv_ana1)
+            if diff:
+                for drug, predict_diff in diff.items():
+                    truth_drug_predict, ana1_predict = predict_diff["predict"]
+                    if truth_drug_predict != "NA" and ana1_predict != "NA":
+                        print "\t".join([sample_id, drug, truth_drug_predict, ana1_predict])            
 
