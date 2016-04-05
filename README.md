@@ -183,3 +183,59 @@ Solution : Run
 	git pull && git submodule update --init --recursive
 	cd mccortex && make
 
+### Comparing results
+
+	./scripts/compare.py 
+
+	usage: compare.py [-h] [--analysis {summary,table,diff}]
+	                  [--ana1 ANA1 [ANA1 ...]] [--ana2 ANA2 [ANA2 ...]]
+	                  [--format {short,long}]
+	                  truth
+
+
+
+e.g. Get a summary of a commit vs the truth.  
+
+	Truth JSON is in the form: 
+
+	{
+	    "TRL0079551-S12": {
+	        "susceptibility": {
+	            "Rifampicin": {
+	                "predict": "S"
+	            },
+	            "Capreomycin": {
+	                "predict": "S"
+	            },
+	            ...
+	            "Quinolones": {
+	                "predict": "S"
+	            }
+	        }
+	    },
+
+
+	}	        		
+
+	compare.py --analysis summary truth.json --ana1 *.json
+
+Output 
+
+	Ana1
+	Drug    Total   FN(R)   FP(S)   VME     ME      sensitivity     specificity     PPV     NPV
+	Rifampicin      99      1 (24)  1 (75)  4.2%       1.3%       95.8%      98.7%      95.8%      98.7% 
+	Capreomycin     14      0 (4)   0 (10)  0.0%       0.0%       100.0%     100.0%     100.0%     100.0% 
+	all     539     23 (128)        14 (411)        18.0%      3.4%       82.0%      96.6%      88.2%      94.5% 
+
+	...	
+
+
+Other options for --analysis are `diff` and `table` which will report a table showing samples where two analyses differed and a full table of comparisions respectively. 
+
+e.g. 
+
+	sample  drug    truth   ana1    ana2
+	10205-03        Quinolones      NA      R       S
+	10091-01        Isoniazid      S      R       S
+
+

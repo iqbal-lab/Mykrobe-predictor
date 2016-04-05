@@ -72,6 +72,7 @@ def main():
         default='bradley-2015')
 
     parser_amr.add_argument('--force', default=False, action="store_true")
+    parser_amr.add_argument('--keep_tmp', default=False, action="store_true")
     parser_amr.set_defaults(func=run_subtool)
 
     # ##########

@@ -190,5 +190,6 @@ def run(parser, args):
         files=args.seq,
         kmer=args.kmer,
         version=version).to_dict()
-    cp.remove_temporary_files()
+    if not args.keep_tmp:
+        cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))
