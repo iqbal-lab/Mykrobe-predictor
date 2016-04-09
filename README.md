@@ -133,6 +133,10 @@ Output is in JSON format. To convert to a less verbose tabular format use [json_
 
 > Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis." Nature communications 6 (2015).
 
+### Choosing a panel for TB
+
+In short, bradley-2015 is more specific, walker-2015 more sensitive. You can see a comparision of the results on ~3000 MTUB sequence [here](example-data/walker-vs-bradley.md)
+
 ### Paper, citation 
 
 > [Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis."Nature communications 6 (2015).](http://www.nature.com/ncomms/2015/151221/ncomms10063/full/ncomms10063.html)
