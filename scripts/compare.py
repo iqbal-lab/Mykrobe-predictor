@@ -348,8 +348,11 @@ def combined_dict_to_result_objects(data):
         out_dict[k] = MykrobePredictorSusceptibilityResult.from_json(json.dumps({"susceptibility" : v.get("susceptibility", {})}))
     return out_dict
 
-def get_sample_ids(ana1, ana2):
+def get_union_sample_ids(ana1, ana2):
     return unique(ana1.keys() + ana2.keys())
+
+def get_intersection_sample_ids(ana1, ana2):
+    return list(set(ana1.keys()).intersection(ana2.keys()))
 
 def create_comparision_table(sample_ids, truth, ana1, ana2):
     df = []
@@ -381,7 +384,7 @@ def update_comparision(comparison, drug, compare):
     comparison = inc_count(comparison, drug, compare)    
     return comparison
 
-def compare_analysis_to_truth(sample_ids, truth, ana):
+def compare_analysis_to_truth(sample_ids, truth, ana, ana_name = ""):
     comparison = {}
     for sample_id in sample_ids:
         indv_truth = truth.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
@@ -393,16 +396,21 @@ def compare_analysis_to_truth(sample_ids, truth, ana):
             pass
         if drugs:
             for drug in drugs:
-                truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict").upper().strip()
-                ana_drug_predict = indv_ana.susceptibility.get(drug, {"predict" : "NA"}).get("predict").upper().strip()
+                if drug == "Fusidicacid":
+                    drug = "FusidicAcid"
+                truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict").upper().strip()[0]
+                ana_drug_predict = indv_ana.susceptibility.get(drug, {"predict" : "NA"}).get("predict").upper().strip()[0]
                 
                 ana_drug_predict=ana_drug_predict.replace("INCONCLUSIVE", "I")
                 truth_drug_predict=truth_drug_predict.replace("INCONCLUSIVE", "I")
+                truth_drug_predict=truth_drug_predict.replace("B", "I")
+                truth_drug_predict=truth_drug_predict.replace("N", "I")
+                truth_drug_predict=truth_drug_predict.replace("IA", "I")
 
                 if not truth_drug_predict in ["R", "NA", "S", "I"]:
-                    sys.stderr.write("failed truth check %s - %s \n" % (sample_id, ana_drug_predict))
+                    sys.stderr.write("failed truth check %s %s - %s - %s \n" % (ana_name, sample_id,drug, truth_drug_predict))
                 elif ana_drug_predict not in ["R", "NA", "S", "I"]:
-                    sys.stderr.write("failed predict check %s - %s \n" % (sample_id, ana_drug_predict))
+                    sys.stderr.write("failed predict check %s %s - %s - %s \n" % (ana_name, sample_id,drug, ana_drug_predict))
                 else:
                     if truth_drug_predict == "NA" or ana_drug_predict == "NA":
                         compare = "UNKNOWN"
@@ -449,7 +457,8 @@ truth_susceptibility = combined_dict_to_result_objects(truth)
 ana1_susceptibility = combined_dict_to_result_objects(ana1)
 ana2_susceptibility = combined_dict_to_result_objects(ana2)
 
-sample_ids = get_sample_ids( ana1, ana2)
+# sample_ids = get_union_sample_ids( ana1, ana2)
+sample_ids = get_intersection_sample_ids( ana1, ana2)
 
 if args.markdown:
     row_delim = " | "
@@ -469,17 +478,8 @@ if args.analysis == "table":
         print (row_delim.join(row))
 elif args.analysis == "summary":
     ## Report a summary of each analysis vs. truth
-
-    ## ANA 1 
-    ## Drug TP FP 
-    ##
-
-    ## Ana 2 
-
-    ##
-    ##
     print "\nAna1\n"
-    count_comparision_ana1 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana1_susceptibility)
+    count_comparision_ana1 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana1_susceptibility, "ana1")
     if args.format == "short":
         header =  ["Drug"] + [str(i) for i in Stats({}).row_short_header]
         print_header(header, row_delim)
@@ -491,7 +491,7 @@ elif args.analysis == "summary":
             print (row_delim.join( [k] + [str(i) for i in stats.row_short]))
         if args.ana2:
             print "\nAna2\n"
-            count_comparision_ana2 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana2_susceptibility)
+            count_comparision_ana2 = compare_analysis_to_truth(sample_ids, truth_susceptibility, ana2_susceptibility, "ana2")
             header =["Drug"] + [str(i) for i in Stats({}).row_short_header]
             print_header(header, row_delim)
             for k,v in count_comparision_ana2.items():
@@ -502,7 +502,7 @@ elif args.analysis == "summary":
             ## Diff ana 1 ana 2 summary
             print "\ndiff ana2 - ana1\n"
 
-            header = ["Total (+/-) ","TP  (+/-) ","FP  (+/-) ","TN  (+/-) ","FN  (+/-) ","sensitivity (+/-) ","specificity (+/-)"]
+            header = ["Drug", "Total (+/-) ","TP  (+/-) ","FP  (+/-) ","TN  (+/-) ","FN  (+/-) ","sensitivity (+/-) ","specificity (+/-)"]
             print_header(header, row_delim) 
             for k in count_comparision_ana1.keys():
                 if k in count_comparision_ana2:
@@ -529,7 +529,7 @@ elif args.analysis == "summary":
                 stats = Stats(count_comparision = v)
                 print (row_delim.join( [k] + [str(i) for i in stats.row_long]))
 
-            header = ["Total (+/-) ","TP  (+/-) ","FP  (+/-) ","TN  (+/-) ","FN  (+/-) ","sensitivity (+/-) ","specificity (+/-)"]
+            header = ["Drug", "Total (+/-) ","TP  (+/-) ","FP  (+/-) ","TN  (+/-) ","FN  (+/-) ","sensitivity (+/-) ","specificity (+/-)"]
             print_header(header, row_delim) 
             ## Diff ana 1 ana 2 summary
             print "\ndiff ana2 - ana1\n"

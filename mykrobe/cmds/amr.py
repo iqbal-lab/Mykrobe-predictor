@@ -22,7 +22,7 @@ from mongoengine import DictField
 from mongoengine import StringField
 
 STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
-                "data/panels/staph-amr-bradley_2015.fasta.gz"]
+                "data/panels/staph-amr-probe_set_v0_3_1_2.fasta.gz"]
 
 GN_PANELS = [
     "data/panels/gn-amr-genes",
@@ -81,19 +81,20 @@ def run(parser, args):
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
         panel_name = "tb-gn-staph-amr"
-
     elif args.species == "staph":
         panels = STAPH_PANELS
         panel_name = "staph-amr"
-        # hierarchy_json_file = "data/phylo/saureus_hierarchy.json"
-
+        Predictor = StaphPredictor
+        args.kmer = 15 ## Forced
     elif args.species == "tb":
         panels = TB_PANELS
         panel_name = "tb-amr"
         hierarchy_json_file = "data/phylo/mtbc_hierarchy.json"
+        Predictor = TBPredictor
     elif args.species == "gn":
         panels = GN_PANELS
         panel_name = "gn-amr"
+        Predictor = GramNegPredictor
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
     version = {}
     version["mykrobe-predictor"] = predictor_version
@@ -143,8 +144,7 @@ def run(parser, args):
 
     # ## AMR prediction
 
-    depths = []
-    Predictor = None
+    depths = [cp.estimate_depth()]
     if species_predictor.is_saureus_present():
         depths = [species_predictor.out_json["phylogenetics"]
                   ["phylo_group"]["Staphaureus"]["median_depth"]]
@@ -165,6 +165,8 @@ def run(parser, args):
     # Genotype
     q = args.quiet
     args.quiet = True
+    variant_calls_dict = {}
+    sequence_calls_dict = {}
     if depths:
         gt = Genotyper(sample=args.sample, expected_depths=depths,
                        variant_covgs=cp.variant_covgs,
@@ -174,7 +176,12 @@ def run(parser, args):
                        include_hom_alt_calls=True,
                        ignore_filtered = True)
         gt.run()
+        variant_calls_dict = gt.variant_calls_dict
+        sequence_calls_dict = gt.sequence_calls_dict
+    else:
+        depths = cp.estimate_depth()
     args.quiet = q
+    mykrobe_predictor_susceptibility_result = MykrobePredictorSusceptibilityResult()
     if Predictor is not None:
         predictor = Predictor(variant_calls=gt.variant_calls,
                               called_genes=gt.gene_presence_covgs,
@@ -184,8 +191,8 @@ def run(parser, args):
         args.sample] = MykrobePredictorResult(
         susceptibility=mykrobe_predictor_susceptibility_result,
         phylogenetics=phylogenetics,
-        variant_calls=gt.variant_calls_dict,
-        sequence_calls=gt.sequence_calls_dict,
+        variant_calls=variant_calls_dict,
+        sequence_calls=sequence_calls_dict,
         probe_sets=panels,
         files=args.seq,
         kmer=args.kmer,

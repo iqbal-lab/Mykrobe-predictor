@@ -6,6 +6,7 @@ dfrB	H150R
 dfrB	F99Y
 dfrB	L21V
 dfrB	N60I
+fus	E468V
 fus	A655E
 fus	D434N
 fus	E444K

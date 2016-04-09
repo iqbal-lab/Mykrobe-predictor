@@ -137,19 +137,21 @@ if args.format == "long":
     print "\t".join(header)
     rows = []
     for i, f in enumerate(args.files):
+        file = get_file_name(f)
         try:
             d = load_json(f)
+            d = d[file]
         except ValueError:
             d = {}
-        file = get_file_name(f)
+        
 
-        phylo_group,phylo_group_per_covg,phylo_group_depth  = get_phylo_group_string(d[file])
-        species,species_per_covg,species_depth  = get_species_string(d[file])
-        lineage,lineage_per_covg,lineage_depth  = get_lineage_string(d[file])
+        phylo_group,phylo_group_per_covg,phylo_group_depth  = get_phylo_group_string(d)
+        species,species_per_covg,species_depth  = get_species_string(d)
+        lineage,lineage_per_covg,lineage_depth  = get_lineage_string(d)
         sample_name = get_sample_name(f)
         plate_name = get_plate_name(f)
 
-        drug_list = sorted(d[file].get('susceptibility', {}).keys())
+        drug_list = sorted(d.get('susceptibility', {}).keys())
         drugs = sorted(drug_list)
 
         if not drugs:
@@ -157,7 +159,7 @@ if args.format == "long":
 
 
         for drug in drugs:
-            call = d[file].get('susceptibility', {}).get(drug, {})
+            call = d.get('susceptibility', {}).get(drug, {})
             called_by = get_variant_calls(call.get("called_by",{}))
             row = [
                 file,
