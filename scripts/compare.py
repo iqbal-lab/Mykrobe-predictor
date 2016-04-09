@@ -405,6 +405,7 @@ def compare_analysis_to_truth(sample_ids, truth, ana, ana_name = ""):
                 truth_drug_predict=truth_drug_predict.replace("INCONCLUSIVE", "I")
                 truth_drug_predict=truth_drug_predict.replace("B", "I")
                 truth_drug_predict=truth_drug_predict.replace("N", "I")
+                ana_drug_predict=ana_drug_predict.replace("N", "I")
                 truth_drug_predict=truth_drug_predict.replace("IA", "I")
 
                 if not truth_drug_predict in ["R", "NA", "S", "I"]:

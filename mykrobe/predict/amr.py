@@ -36,13 +36,14 @@ class BasePredictor(object):
         self.drugs = self._get_drug_list_from_variant_to_resistance_drug()
         self.resistance_prediction = self._create_initial_resistance_prediction()
         self.out_json = base_json
-        self._coveage_threshold = {
+        self._cn_threshold = {
             "ermA": 0.19,
             "ermB": 0.19,
             "ermC": 0.19,
             "ermT": 0.19,
             "ermY": 0.19,
             "fusA": 0.03,
+            "fusC": 0.03,
             "aacAaphD": 0.04,
             "mecA": 0.06,
             "mupA": 0.21,
@@ -152,8 +153,8 @@ class BasePredictor(object):
     def _coverage_greater_than_threshold(self, variant_or_gene, names):
         coveage_threshold = DEFAULT_MIN_VARIANT_CN
         for name in names:
-            if name in self._coveage_threshold:
-                coveage_threshold = self._coveage_threshold.get(
+            if name in self._cn_threshold:
+                coveage_threshold = self._cn_threshold.get(
                     name, DEFAULT_MIN_VARIANT_CN)
         return copy_number(variant_or_gene) > coveage_threshold
 

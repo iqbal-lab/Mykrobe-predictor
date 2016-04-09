@@ -84,17 +84,17 @@ def run(parser, args):
     elif args.species == "staph":
         panels = STAPH_PANELS
         panel_name = "staph-amr"
-        Predictor = StaphPredictor
+        # Predictor = StaphPredictor
         args.kmer = 15 ## Forced
     elif args.species == "tb":
         panels = TB_PANELS
         panel_name = "tb-amr"
         hierarchy_json_file = "data/phylo/mtbc_hierarchy.json"
-        Predictor = TBPredictor
+        # Predictor = TBPredictor
     elif args.species == "gn":
         panels = GN_PANELS
         panel_name = "gn-amr"
-        Predictor = GramNegPredictor
+        # Predictor = GramNegPredictor
     logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
     version = {}
     version["mykrobe-predictor"] = predictor_version
@@ -144,7 +144,8 @@ def run(parser, args):
 
     # ## AMR prediction
 
-    depths = [cp.estimate_depth()]
+    depths = []
+    Predictor = None
     if species_predictor.is_saureus_present():
         depths = [species_predictor.out_json["phylogenetics"]
                   ["phylo_group"]["Staphaureus"]["median_depth"]]
