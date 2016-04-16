@@ -4,7 +4,7 @@ Dev : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branc
 
 ## Installation
 
-git clone **--recursive** -b m2 https://github.com/iqbal-lab/Mykrobe-predictor.git
+git clone **--recursive** https://github.com/iqbal-lab/Mykrobe-predictor.git
 
 ### Install requirements mccortex
 **NB: You must install the version of mccortex that comes with this repostitory**
