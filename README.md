@@ -187,6 +187,113 @@ Solution : Run
 	git pull && git submodule update --init --recursive
 	cd mccortex && make
 
+### Genotype on a catalog 
+
+	mykrobe genotype [-h] [-k kmer] [--tmp TMP] [--keep_tmp]
+	                        [--skeleton_dir SKELETON_DIR]
+	                        [--mccortex31_path MCCORTEX31_PATH] [-t THREADS]
+	                        [--expected_depth EXPECTED_DEPTH] [-1 seq [seq ...]]
+	                        [-c ctx] [-f] [-q] [--ignore_filtered IGNORE_FILTERED]
+	                        sample probe_set
+
+	positional arguments:
+	  sample                sample id
+	  probe_set             probe_set
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -1 seq [seq ...], --seq seq [seq ...]
+	                        sequence files (fasta,fastq,bam)
+	  -c ctx, --ctx ctx     cortex graph binary	                        	  
+	  -k kmer, --kmer kmer  kmer length (default:21)
+	  --tmp TMP             tmp directory (default: /tmp/)
+	  --keep_tmp            Dont remove tmp files
+	  --skeleton_dir SKELETON_DIR
+	                        directory for skeleton binaries
+	  --mccortex31_path MCCORTEX31_PATH
+	                        Path to mccortex31
+	  -t THREADS, --threads THREADS
+	                        threads
+	  --expected_depth EXPECTED_DEPTH
+	                        expected depth
+	  -f, --force           force
+	  -q, --quiet           do not output warnings to stderr
+
+	  e.g. 
+
+	   head example-data/staph-amr-bradley_2015.fasta
+
+		>mecA?name=mecA&version=1
+		ATGAATATAGTTGAAAATGAAATATGTATAAGA...ATAAAAGGACTTATAAAGATTGA
+		>mecA?name=mecA&version=2
+		ATGAATATAGTTGAAAATGAAATATGTATAAGA...TGAAGATTTGCCAGAACATGAAT	   
+		>fusA?name=fusA&version=1
+		ATGAATATAGTTGAAAATGAAATATGTATAAGA...TGAAGATTTGCCAGAACATGAAT	 	  
+
+	   mykrobe genotype sample_id example-data/staph-amr-bradley_2015.fasta -1 seq.fq 
+
+		
+
+	{
+	    "sample_id": {
+	        "files": [
+	            "seq.fq "
+	        ],
+	        "kmer": 21,
+	        "sequence_calls": {
+	            "mecA": {
+	                "info": {
+	                    "copy_number": 0.0,
+	                    "contamination_depths": [],
+	                    "coverage": {
+	                        "percent_coverage": 0.0,
+	                        "median_depth": 0.0,
+	                        "min_non_zero_depth": 0.0
+	                    },
+	                    "expected_depths": [
+	                        1
+	                    ]
+	                },
+	                "_cls": "Call.SequenceCall",
+	                "genotype": [
+	                    0,
+	                    0
+	                ],
+	                "genotype_likelihoods": [
+	                    -0.001,
+	                    -99999999.0,
+	                    -99999999.0
+	                ]
+	            },
+	            "fusA": {
+	                "info": {
+	                    "copy_number": 1.0276923076923077,
+	                    "contamination_depths": [],
+	                    "version": "10",
+	                    "coverage": {
+	                        "percent_coverage": 100.0,
+	                        "median_depth": 167.0,
+	                        "min_non_zero_depth": 116.0
+	                    },
+	                    "expected_depths": [
+	                        162.5
+	                    ]
+	                },
+	                "_cls": "Call.SequenceCall",
+	                "genotype": [
+	                    1,
+	                    1
+	                ],
+	                "genotype_likelihoods": [
+	                    -994.7978064088725,
+	                    -349.45246450237215,
+	                    -10.95808091830304
+	                ]
+	            },	            	   
+	        ....
+	    }
+	}
+
 ### Comparing results
 
 	./scripts/compare.py 
