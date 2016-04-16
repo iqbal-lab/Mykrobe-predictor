@@ -53,9 +53,9 @@ If this works then you're done! (alternative install below)
 
 ### AMR prediction
 
-	mykrobe predict tb_sample_id tb_sequence.bam/fq tb
+	mykrobe predict tb_sample_id tb -1 tb_sequence.bam/fq
 
-	mykrobe predict staph_sample_id staph_sequence.bam/fq staph
+	mykrobe predict staph_sample_id staph -1 staph_sequence.bam/fq
 
 e.g.
 
@@ -125,11 +125,11 @@ Output is in JSON format. To convert to a less verbose tabular format use [json_
 
 ### Change the panel for resistance prediction (TB only)
 	
-	mykrobe predict tb_sample_id tb_sequence.bam tb --panel walker-2015
+	mykrobe predict tb_sample_id  tb --panel walker-2015 -1 tb_sequence.bam
 
 > Walker, Timothy M., et al. "Whole-genome sequencing for prediction of Mycobacterium tuberculosis drug susceptibility and resistance: a retrospective cohort study." The Lancet Infectious Diseases 15.10 (2015): 1193-1202.
 
-	mykrobe predict tb_sample_id tb_sequence.bam tb --panel bradley-2015
+	mykrobe predict tb_sample_id  tb --panel bradley-2015 -1 tb_sequence.bam
 
 > Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis." Nature communications 6 (2015).
 

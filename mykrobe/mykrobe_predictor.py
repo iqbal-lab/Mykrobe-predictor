@@ -17,7 +17,9 @@ import logging
 
 from base import ArgumentParserWithDefaults
 from base import DEFAULT_KMER_SIZE
-from mykatlas import sequence_parser_mixin
+from mykatlas.base import sequence_or_binary_parser_mixin
+from mykatlas.base import probe_set_mixin
+from mykatlas.base import force_mixin
 
 def run_subtool(parser, args):
     if args.command == "predict":
@@ -55,7 +57,7 @@ def main():
 
     parser_amr = subparsers.add_parser(
         'predict',
-        parents=[sequence_parser_mixin],
+        parents=[sequence_or_binary_parser_mixin, force_mixin],
         help="predict the sample's antibiogram")
     parser_amr.add_argument(
         'species',
@@ -71,47 +73,26 @@ def main():
         choices=['bradley-2015', 'walker-2015'],
         default='bradley-2015')
 
-    parser_amr.add_argument('--force', default=False, action="store_true")
-    parser_amr.add_argument('--keep_tmp', default=False, action="store_true")
     parser_amr.set_defaults(func=run_subtool)
 
     # ##########
     # # Genotype
     # ##########
+    # ##########
+    # # Genotype
+    # ##########
     parser_geno = subparsers.add_parser(
         'genotype',
-        parents=[sequence_parser_mixin],
+        parents=[
+            sequence_or_binary_parser_mixin,
+            probe_set_mixin,
+            force_mixin],
         help='genotype a sample using a probe set')
-    parser_geno.add_argument(
-        'probe_sets',
-        metavar='parser_geno',
-        type=str,
-        nargs='+',
-        help='probe-set')
-    parser_geno.add_argument(
-        '--expected_depth',
-        metavar='expected depth',
-        type=int,
-        help='expected depth',
-        default=None)
-    parser_geno.add_argument(
-        '-f',
-        '--force',
-        help='Force rebuilding of binaries',
-        default=False,
-        action="store_true")
-    parser_geno.add_argument(
-        '-t',
-        '--threads',
-        type=int,
-        help='threads',
-        default=2)    
     parser_geno.add_argument(
         '--ignore_filtered',
         help="don't include filtered genotypes",
         default=False)
     parser_geno.set_defaults(func=run_subtool)
-
 
     args = parser.parse_args()
     args.func(parser, args)
