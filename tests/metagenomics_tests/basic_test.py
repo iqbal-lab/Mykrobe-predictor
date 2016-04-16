@@ -14,8 +14,8 @@ class MTBCSpeciesTests(TestCase):
         species_predictor = AMRSpeciesPredictor(phylo_group_covgs={},
                                                 sub_complex_covgs={},
                                                 species_covgs={},
-                                                lineage_covgs={},
-                                                base_json={})
+                                                lineage_covgs={}
+                                                )
         species_predictor.out_json["phylogenetics"] = {
             "sub_complex": {
                 "Mycobacterium_avium_complex": {
