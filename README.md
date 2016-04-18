@@ -19,8 +19,27 @@ git clone **--recursive** https://github.com/iqbal-lab/Mykrobe-predictor.git
 
 ## Install Mykrobe predictor
 
+### Install Mykrobe predictor with virtualenv (recommended but optional)
+
+#### Install virtualenv
+
+	https://virtualenv.readthedocs.org/en/latest/installation.html
+
+#### Create virtualenv 
+
+	virtualenv venv
+
+#### Activate the virtualenv
+
+	source venv/bin/activate
+
+
 	pip install mykrobe
 
+
+### Install Mykrobe predictor without virtualenv (recommended but optional)
+
+	sudo pip install mykrobe
 
 If this works then you're done! (alternative install below)
 
