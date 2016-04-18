@@ -37,7 +37,7 @@ git clone **--recursive** https://github.com/iqbal-lab/Mykrobe-predictor.git
 	pip install mykrobe
 
 
-### Install Mykrobe predictor without virtualenv (recommended but optional)
+### Install Mykrobe predictor without virtualenv
 
 	sudo pip install mykrobe
 
