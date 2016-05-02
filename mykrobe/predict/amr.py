@@ -27,10 +27,17 @@ def copy_number(call):
 
     return round(float(alternate_depth) / (alternate_depth + wt_depth), 2)
 
+def depth_on_alternate(call):
+    coverage = call.info.get("coverage")
+    try:
+        alternate_depth = coverage.get("alternate").get("median_depth")
+    except:
+        alternate_depth = coverage.get("median_depth")
+    return alternate_depth
 
 class BasePredictor(object):
 
-    def __init__(self, variant_calls, called_genes, base_json={}):
+    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold = 0, ignore_filtered = True):
         self.variant_calls = variant_calls
         self.called_genes = called_genes
         self.drugs = self._get_drug_list_from_variant_to_resistance_drug()
@@ -50,6 +57,8 @@ class BasePredictor(object):
             "blaZ": 0.04,
             "tetK": 0.13
         }
+        self.depth_threshold = depth_threshold
+        self.ignore_filtered = ignore_filtered
 
     def _create_initial_resistance_prediction(self):
         self.result =  MykrobePredictorSusceptibilityResult(dict(
@@ -135,6 +144,8 @@ class BasePredictor(object):
         return drugs
 
     def _resistance_prediction(self, variant_or_gene, names):
+        if variant_or_gene.is_filtered() and self.ignore_filtered:
+            return "I"
         if sum(variant_or_gene.genotype) == 2:
             if self._coverage_greater_than_threshold(variant_or_gene, names):
                 return "R"
@@ -156,7 +167,13 @@ class BasePredictor(object):
             if name in self._cn_threshold:
                 coveage_threshold = self._cn_threshold.get(
                     name, DEFAULT_MIN_VARIANT_CN)
-        return copy_number(variant_or_gene) > coveage_threshold
+        CN_PASS = copy_number(variant_or_gene) > coveage_threshold
+        if depth_on_alternate(variant_or_gene) > self.depth_threshold:
+            COVERAGE_PASS = False
+        else:
+            COVERAGE_PASS = True
+
+        return CN_PASS and COVERAGE_PASS
 
     def run(self):
         self.predict_antibiogram()
@@ -170,7 +187,7 @@ def load_json(f):
 
 class TBPredictor(BasePredictor):
 
-    def __init__(self, variant_calls, called_genes, base_json={}):
+    def __init__(self, variant_calls, called_genes, base_json={},depth_threshold=0, ignore_filtered = True):
 
         self.data_dir = os.path.abspath(
             os.path.join(
@@ -185,12 +202,14 @@ class TBPredictor(BasePredictor):
             self).__init__(
             variant_calls,
             called_genes,
-            base_json)
+            base_json,
+            depth_threshold = depth_threshold, 
+            ignore_filtered = ignore_filtered)
 
 
 class StaphPredictor(BasePredictor):
 
-    def __init__(self, variant_calls, called_genes, base_json={}):
+    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold = 0, ignore_filtered = True):
 
         self.data_dir = os.path.abspath(
             os.path.join(
@@ -205,12 +224,14 @@ class StaphPredictor(BasePredictor):
             self).__init__(
             variant_calls,
             called_genes,
-            base_json)
+            base_json,
+            depth_threshold=depth_threshold,
+            ignore_filtered = ignore_filtered)
 
 
 class GramNegPredictor(BasePredictor):
 
-    def __init__(self, variant_calls, called_genes, base_json={}):
+    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold=0, ignore_filtered = True):
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
@@ -224,4 +245,6 @@ class GramNegPredictor(BasePredictor):
             self).__init__(
             variant_calls,
             called_genes,
-            base_json)
+            base_json,
+            depth_threshold=depth_threshold, 
+            ignore_filtered = ignore_filtered)

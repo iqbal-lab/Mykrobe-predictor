@@ -354,7 +354,7 @@ def get_union_sample_ids(ana1, ana2):
 def get_intersection_sample_ids(ana1, ana2):
     return list(set(ana1.keys()).intersection(ana2.keys()))
 
-def create_comparision_table(sample_ids, truth, ana1, ana2):
+def create_comparision_table(sample_ids, truth, ana1, ana2, ignore_drugs=[]):
     df = []
     for sample_id in sample_ids:
         indv_truth = truth.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
@@ -363,11 +363,12 @@ def create_comparision_table(sample_ids, truth, ana1, ana2):
         drugs = unique(indv_truth.drugs + indv_ana1.drugs + indv_ana2.drugs)
         if drugs:
             for drug in drugs:
-                if args.ana2:
-                    row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana2.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
-                else:
-                    row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
-                df.append(row)
+                if drug not in ignore_drugs:
+                    if args.ana2:
+                        row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana2.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
+                    else:
+                        row= [sample_id, drug, indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict"), indv_ana1.susceptibility.get(drug, {"predict" : "NA"}).get("predict") ]
+                    df.append(row)
     return df
 
 def inc_count(d, k1, k2):
@@ -427,11 +428,15 @@ def compare_analysis_to_truth(sample_ids, truth, ana, ana_name = ""):
                             compare = "TP"
                         elif truth_drug_predict == "S":
                             compare = "TN"
+                        else:
+                            compare = "UNKNOWN"                              
                     else:
                         if truth_drug_predict == "R":
                             compare = "FN"
                         elif truth_drug_predict == "S":
-                            compare = "FP"                    
+                            compare = "FP"
+                        else:
+                            compare = "UNKNOWN"                    
                     comparison = update_comparision(comparison, drug, compare)
 
     return comparison
@@ -458,8 +463,8 @@ truth_susceptibility = combined_dict_to_result_objects(truth)
 ana1_susceptibility = combined_dict_to_result_objects(ana1)
 ana2_susceptibility = combined_dict_to_result_objects(ana2)
 
-# sample_ids = get_union_sample_ids( ana1, ana2)
-sample_ids = get_intersection_sample_ids( ana1, ana2)
+sample_ids = get_union_sample_ids( ana1, ana2)
+# sample_ids = get_intersection_sample_ids( ana1, ana2)
 
 if args.markdown:
     row_delim = " | "
@@ -474,7 +479,7 @@ def print_header(header, row_delim = "\t"):
 if args.analysis == "table":
     ## sample  drug  truth  ana1   ana2 
     ## 1234    RIF   R     R     S     
-    df = create_comparision_table(sample_ids, truth_susceptibility, ana1_susceptibility, ana2_susceptibility)
+    df = create_comparision_table(sample_ids, truth_susceptibility, ana1_susceptibility, ana2_susceptibility, args.ignore_drugs)
     for row in df:
         print (row_delim.join(row))
 elif args.analysis == "summary":
@@ -484,9 +489,6 @@ elif args.analysis == "summary":
     if args.format == "short":
         header =  ["Drug"] + [str(i) for i in Stats({}).row_short_header]
         print_header(header, row_delim)
-        if args.markdown:
-            print row_delim.join(["-----"]*len(header))
-
         for k,v in count_comparision_ana1.items():
             stats = Stats(count_comparision = v)
             print (row_delim.join( [k] + [str(i) for i in stats.row_short]))

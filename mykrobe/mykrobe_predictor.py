@@ -20,6 +20,7 @@ from base import DEFAULT_KMER_SIZE
 from mykatlas.base import sequence_or_binary_parser_mixin
 from mykatlas.base import probe_set_mixin
 from mykatlas.base import force_mixin
+from mykatlas.base import genotyping_mixin
 
 def run_subtool(parser, args):
     if args.command == "predict":
@@ -57,7 +58,7 @@ def main():
 
     parser_amr = subparsers.add_parser(
         'predict',
-        parents=[sequence_or_binary_parser_mixin, force_mixin],
+        parents=[sequence_or_binary_parser_mixin, force_mixin, genotyping_mixin],
         help="predict the sample's antibiogram")
     parser_amr.add_argument(
         'species',
@@ -72,7 +73,12 @@ def main():
         help='variant panel (default:bradley-2015)',
         choices=['bradley-2015', 'walker-2015'],
         default='bradley-2015')
-
+    parser_amr.add_argument(
+        '--min_depth',
+        metavar='min_depth',
+        type=int,
+        help='min_depth',
+        default=0)
     parser_amr.set_defaults(func=run_subtool)
 
     # ##########

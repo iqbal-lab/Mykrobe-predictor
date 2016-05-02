@@ -175,7 +175,10 @@ def run(parser, args):
                        base_json=base_json,
                        contamination_depths=[],
                        include_hom_alt_calls=True,
-                       ignore_filtered = True)
+                       ignore_filtered = True,
+                       variant_confidence_threshold=args.min_variant_conf,
+                       sequence_confidence_threshold=args.min_gene_conf                      
+                       )
         gt.run()
         variant_calls_dict = gt.variant_calls_dict
         sequence_calls_dict = gt.sequence_calls_dict
@@ -186,7 +189,9 @@ def run(parser, args):
     if Predictor is not None:
         predictor = Predictor(variant_calls=gt.variant_calls,
                               called_genes=gt.gene_presence_covgs,
-                              base_json=base_json[args.sample])
+                              base_json=base_json[args.sample],
+                              depth_threshold = args.min_depth,
+                              ignore_filtered = True)
         mykrobe_predictor_susceptibility_result = predictor.run()
     base_json[
         args.sample] = MykrobePredictorResult(
