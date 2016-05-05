@@ -111,8 +111,10 @@ def get_variant_calls(d):
         if alt_per_cov <100:
             alt_depth =0 
 
+        conf = variant_call.get('info',{}).get('conf',"1")
+
         variants.append(":".join([variant_name,
-                         str(int(alt_depth)),str(int(wt_depth))
+                         str(int(alt_depth)),str(int(wt_depth)), str(int(conf))
                        ]))
     return ";".join(variants)
 
@@ -133,7 +135,7 @@ if args.format == "long":
         "species_depth",
         "lineage_depth",                  
         "susceptibility",
-        "variants (prot_mut-ref_mut:alt_depth:wt_depth)"]
+        "variants (prot_mut-ref_mut:alt_depth:wt_depth:conf)"]
     print "\t".join(header)
     rows = []
     for i, f in enumerate(args.files):

@@ -78,7 +78,7 @@ def main():
         metavar='min_depth',
         type=int,
         help='min_depth',
-        default=0)
+        default=3)
     parser_amr.set_defaults(func=run_subtool)
 
     # ##########

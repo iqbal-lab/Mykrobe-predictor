@@ -545,9 +545,10 @@ elif args.analysis == "summary":
 ## Report the diference between ana1 and and2
 elif args.analysis == "diff":
     if args.ana2:
-        print row_delim.join(["sample", "drug", "truth", "ana1", "ana2"])
+        header = ["sample", "drug", "truth", "ana1", "ana2"]        
     else:
-        print row_delim.join(["sample", "drug", "truth", "ana1"])
+        header = ["sample", "drug", "truth", "ana1", "called_by", "coverage"]
+    print_header(header, row_delim) 
     for sample_id in sample_ids:
         indv_truth = truth_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
         indv_ana1 = ana1_susceptibility.get(sample_id, MykrobePredictorSusceptibilityResult.create({}))
@@ -556,14 +557,17 @@ elif args.analysis == "diff":
             diff = indv_ana1.diff(indv_ana2)
             if diff:
                 for drug, predict_diff in diff.items():
-                    truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict")
-                    ana1_predict, ana2_predict = predict_diff["predict"]
-                    print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict])
+                    if drug not in args.ignore_drugs:
+                        truth_drug_predict = indv_truth.susceptibility.get(drug, {"predict" : "NA"}).get("predict")
+                        ana1_predict, ana2_predict = predict_diff["predict"]
+                        print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict])
         else:
             diff = indv_truth.diff(indv_ana1)
             if diff:
                 for drug, predict_diff in diff.items():
-                    truth_drug_predict, ana1_predict = predict_diff["predict"]
-                    if truth_drug_predict != "NA" and ana1_predict != "NA":
-                        print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict])            
+                    if drug not in args.ignore_drugs:
+                        truth_drug_predict, ana1_predict = predict_diff["predict"]
+                        if truth_drug_predict != "NA" and ana1_predict != "NA":
+                            ana1_susceptibility
+                            print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ";".join(indv_ana1.susceptibility.get(drug, {}).get("called_by", {}).keys()), ";".join([str(s.get("median_depth",0)) for s in ana1.get(sample_id, {}).get("phylogenetics").get("phylo_group").values()])])
 

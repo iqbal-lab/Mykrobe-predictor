@@ -27,17 +27,17 @@ def copy_number(call):
 
     return round(float(alternate_depth) / (alternate_depth + wt_depth), 2)
 
-def depth_on_alternate(call):
+def depth_on_allele(call):
     coverage = call.info.get("coverage")
     try:
-        alternate_depth = coverage.get("alternate").get("median_depth")
+        alternate_depth = coverage.get("alternate").get("median_depth") + coverage.get("reference").get("median_depth")
     except:
         alternate_depth = coverage.get("median_depth")
     return alternate_depth
 
 class BasePredictor(object):
 
-    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold = 0, ignore_filtered = True):
+    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold = 3, ignore_filtered = True):
         self.variant_calls = variant_calls
         self.called_genes = called_genes
         self.drugs = self._get_drug_list_from_variant_to_resistance_drug()
@@ -144,22 +144,29 @@ class BasePredictor(object):
         return drugs
 
     def _resistance_prediction(self, variant_or_gene, names):
-        if variant_or_gene.is_filtered() and self.ignore_filtered:
-            return "I"
+        __resistance_prediction = None
         if sum(variant_or_gene.genotype) == 2:
-            if self._coverage_greater_than_threshold(variant_or_gene, names):
-                return "R"
+            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_allele(variant_or_gene) < self.depth_threshold:
+                __resistance_prediction =  "I"            
+            elif self._coverage_greater_than_threshold(variant_or_gene, names):
+                __resistance_prediction =  "R"
             else:
-                return "S"
+                __resistance_prediction =  "S"
         elif sum(variant_or_gene.genotype) == 1:
-            if self._coverage_greater_than_threshold(variant_or_gene, names):
-                return "r"
+            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_allele(variant_or_gene) < self.depth_threshold:
+                __resistance_prediction =  "I"             
+            elif self._coverage_greater_than_threshold(variant_or_gene, names):
+                __resistance_prediction =  "r"
             else:
-                return "S"
+                __resistance_prediction =  "S"
         elif sum(variant_or_gene.genotype) == 0:
-            return "S"
+            if depth_on_allele(variant_or_gene) < self.depth_threshold:
+                __resistance_prediction = "I"
+            else:
+                __resistance_prediction =  "S"
         else:
-            return "I"
+            __resistance_prediction =  "I"
+        return __resistance_prediction
 
     def _coverage_greater_than_threshold(self, variant_or_gene, names):
         coveage_threshold = DEFAULT_MIN_VARIANT_CN
@@ -168,12 +175,7 @@ class BasePredictor(object):
                 coveage_threshold = self._cn_threshold.get(
                     name, DEFAULT_MIN_VARIANT_CN)
         CN_PASS = copy_number(variant_or_gene) > coveage_threshold
-        if depth_on_alternate(variant_or_gene) > self.depth_threshold:
-            COVERAGE_PASS = False
-        else:
-            COVERAGE_PASS = True
-
-        return CN_PASS and COVERAGE_PASS
+        return CN_PASS
 
     def run(self):
         self.predict_antibiogram()
@@ -187,7 +189,7 @@ def load_json(f):
 
 class TBPredictor(BasePredictor):
 
-    def __init__(self, variant_calls, called_genes, base_json={},depth_threshold=0, ignore_filtered = True):
+    def __init__(self, variant_calls, called_genes, base_json={},depth_threshold=3, ignore_filtered = True):
 
         self.data_dir = os.path.abspath(
             os.path.join(
@@ -209,7 +211,7 @@ class TBPredictor(BasePredictor):
 
 class StaphPredictor(BasePredictor):
 
-    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold = 0, ignore_filtered = True):
+    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold = 3, ignore_filtered = True):
 
         self.data_dir = os.path.abspath(
             os.path.join(
@@ -231,7 +233,7 @@ class StaphPredictor(BasePredictor):
 
 class GramNegPredictor(BasePredictor):
 
-    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold=0, ignore_filtered = True):
+    def __init__(self, variant_calls, called_genes, base_json={}, depth_threshold=3, ignore_filtered = True):
         self.data_dir = os.path.abspath(
             os.path.join(
                 os.path.dirname(__file__),
