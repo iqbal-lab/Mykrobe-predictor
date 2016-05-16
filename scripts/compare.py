@@ -126,6 +126,11 @@ class Stats(object):
         return self.count_comparision.get('IS', 0)
 
     @property
+    def I(self):
+        """Inconcusinve or Null calls"""
+        return self.IR + self.IS
+
+    @property
     def FP(self):
         return self.count_comparision.get('FP', 0)
 
@@ -154,6 +159,10 @@ class Stats(object):
         return "%s%% (%s%%-%s%%)" % (self.ME, self.ME_LB, self.ME_UB)
 
     @property
+    def MinorE_str(self):
+        return "%s%% (%s%%-%s%%)" % (self.MinorE, self.MinorE_LB, self.MinorE_UB)
+
+    @property
     def sensitivity_str(self):
         return "%s%% (%s%%-%s%%)" % (self.sensitivity,
                                      self.sensitivity_LB, self.sensitivity_UB)
@@ -165,11 +174,11 @@ class Stats(object):
 
     @property
     def FN_str(self):
-        return "%s (%s)" % (self.FN, self.P)
+        return "%s:%s (%s)" % (self.FN, self.IR, self.P)
 
     @property
     def FP_str(self):
-        return "%s (%s)" % (self.FP, self.N)
+        return "%s:%s (%s)" % (self.FP, self.IS, self.N)
 
     def percentage(self, num, denom):
         try:
@@ -184,6 +193,10 @@ class Stats(object):
     @property
     def ME(self):
         return self.percentage(self.FP, self.N)
+
+    @property
+    def MinorE(self):
+        return self.percentage(self.I, self.total)
 
     @property
     def sensitivity(self):
@@ -208,6 +221,14 @@ class Stats(object):
     @property
     def ME_LB(self):
         return round(100 * (self.ME_conf[0]), 1)
+
+    @property
+    def MinorE_UB(self):
+        return round(100 * (self.MinorE_conf[1]), 1)
+
+    @property
+    def MinorE_LB(self):
+        return round(100 * (self.MinorE_conf[0]), 1)        
 
     @property
     def sensitivity_UB(self):
@@ -274,6 +295,10 @@ class Stats(object):
         return self.binom_interval(success=self.FP, total=self.N)
 
     @property
+    def MinorE_conf(self):
+        return self.binom_interval(success=self.I, total=self.N)
+
+    @property
     def sensitivity_conf(self):
         return self.binom_interval(success=self.TP, total=self.P)
 
@@ -291,7 +316,7 @@ class Stats(object):
 
     @property
     def row_long_header(self):
-        header = ["Total", "TP", "FP", "P", "TN", "FN", "N", "VME", "ME", "Sens", "Spec",
+        header = ["Total", "TP", "FP", "P", "TN", "FN", "N", "VME", "ME",  "Sens", "Spec",
                   "VME_LB", "VME_UB", "ME_LB", "ME_UB", "Sens_LB", "Sens_UB", "Spec_LB", "Spec_UB",
                     "PPV", "PPV_LB", "PPV_UB",
                     "NPV", "NPV_LB", "NPV_UB"
@@ -311,17 +336,19 @@ class Stats(object):
     @property
     def row_short(self):
         return [self.num_samples, self.FN_str, self.FP_str,
-                    self.VME_str, self.ME_str, self.sensitivity_str, self.specificity_str,
+                    self.VME_str, self.ME_str, self.MinorE_str, 
+                    self.sensitivity_str, self.specificity_str,
                     self.PPV_str, self.NPV_str]
 
     @property
     def row_short_header(self):
         header = [
             "Total",
-            "FN(R)",
-            "FP(S)",
+            "FN:IR (R)",
+            "FP:IS (S)",
             "VME",
             "ME",
+            "MinorE",
             "sensitivity",
             "specificity",
             "PPV", "NPV"]
@@ -414,15 +441,15 @@ def compare_analysis_to_truth(sample_ids, truth, ana, ana_name = ""):
                 elif ana_drug_predict not in ["R", "NA", "S", "I"]:
                     sys.stderr.write("failed predict check %s %s - %s - %s \n" % (ana_name, sample_id,drug, ana_drug_predict))
                 else:
-                    if truth_drug_predict == "NA" or ana_drug_predict == "NA":
+                    if truth_drug_predict == "NA":
                         compare = "UNKNOWN"
-                    elif ana_drug_predict == "I":
+                    elif ana_drug_predict == "I" or ana_drug_predict == "NA" :
                         if truth_drug_predict == "R":
                             compare = "IR"
                         elif truth_drug_predict == "S":
                             compare = "IS" 
                         else:
-                            compare = "NA"                       
+                            compare = "UNKNOWN"                       
                     elif truth_drug_predict == ana_drug_predict:
                         if truth_drug_predict == "R":
                             compare = "TP"

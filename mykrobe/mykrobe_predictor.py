@@ -78,26 +78,21 @@ def main():
         metavar='min_depth',
         type=int,
         help='min_depth',
-        default=3)
+        default=1)
     parser_amr.set_defaults(func=run_subtool)
 
     # ##########
     # # Genotype
     # ##########
-    # ##########
-    # # Genotype
-    # ##########
+
     parser_geno = subparsers.add_parser(
         'genotype',
         parents=[
             sequence_or_binary_parser_mixin,
             probe_set_mixin,
-            force_mixin],
+            force_mixin,
+            genotyping_mixin],
         help='genotype a sample using a probe set')
-    parser_geno.add_argument(
-        '--ignore_filtered',
-        help="don't include filtered genotypes",
-        default=False)
     parser_geno.set_defaults(func=run_subtool)
 
     args = parser.parse_args()

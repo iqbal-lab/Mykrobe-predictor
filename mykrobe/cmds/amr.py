@@ -186,7 +186,7 @@ def run(parser, args):
         depths = cp.estimate_depth()
     args.quiet = q
     mykrobe_predictor_susceptibility_result = MykrobePredictorSusceptibilityResult()
-    if Predictor is not None:
+    if Predictor is not None and max(depths) > args.min_depth:
         predictor = Predictor(variant_calls=gt.variant_calls,
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample],

@@ -10,6 +10,7 @@ from ga4ghmongo.schema import VariantCall
 from ga4ghmongo.schema import SequenceCall
 
 from pprint import pprint
+import logging
 
 
 DEFAULT_MIN_GENE_CN = 0.03
@@ -27,10 +28,10 @@ def copy_number(call):
 
     return round(float(alternate_depth) / (alternate_depth + wt_depth), 2)
 
-def depth_on_allele(call):
+def depth_on_alternate(call):
     coverage = call.info.get("coverage")
     try:
-        alternate_depth = coverage.get("alternate").get("median_depth") + coverage.get("reference").get("median_depth")
+        alternate_depth = coverage.get("alternate").get("median_depth")
     except:
         alternate_depth = coverage.get("median_depth")
     return alternate_depth
@@ -62,7 +63,7 @@ class BasePredictor(object):
 
     def _create_initial_resistance_prediction(self):
         self.result =  MykrobePredictorSusceptibilityResult(dict(
-            (k, {"predict": "I"}) for k in self.drugs))
+            (k, {"predict": "N"}) for k in self.drugs))
         self.resistance_predictions = self.result.susceptibility
 
     def _get_drug_list_from_variant_to_resistance_drug(self):
@@ -80,14 +81,15 @@ class BasePredictor(object):
             drugs = self._get_drugs(name)
             resistance_prediction = self._resistance_prediction(
                 variant_or_gene, variant_or_gene_names)
+
             for drug in drugs:
                 current_resistance_prediction = self.resistance_predictions[
                     drug]["predict"]
                 assert resistance_prediction is not None
-                if current_resistance_prediction in ["I", "N"]:
+                if current_resistance_prediction == "N":
                     self.resistance_predictions[drug][
-                        "predict"] = resistance_prediction
-                elif current_resistance_prediction == "S":
+                            "predict"] = resistance_prediction
+                elif current_resistance_prediction in ["I", "S"]:
                     if resistance_prediction in ["r", "R"]:
                         self.resistance_predictions[drug][
                             "predict"] = resistance_prediction
@@ -146,26 +148,26 @@ class BasePredictor(object):
     def _resistance_prediction(self, variant_or_gene, names):
         __resistance_prediction = None
         if sum(variant_or_gene.genotype) == 2:
-            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_allele(variant_or_gene) < self.depth_threshold:
-                __resistance_prediction =  "I"            
+            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_alternate(variant_or_gene) < self.depth_threshold:
+                __resistance_prediction =  "N"            
             elif self._coverage_greater_than_threshold(variant_or_gene, names):
                 __resistance_prediction =  "R"
             else:
                 __resistance_prediction =  "S"
         elif sum(variant_or_gene.genotype) == 1:
-            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_allele(variant_or_gene) < self.depth_threshold:
-                __resistance_prediction =  "I"             
+            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_alternate(variant_or_gene) < self.depth_threshold:
+                __resistance_prediction =  "N"             
             elif self._coverage_greater_than_threshold(variant_or_gene, names):
                 __resistance_prediction =  "r"
             else:
                 __resistance_prediction =  "S"
         elif sum(variant_or_gene.genotype) == 0:
-            if depth_on_allele(variant_or_gene) < self.depth_threshold:
-                __resistance_prediction = "I"
-            else:
-                __resistance_prediction =  "S"
+            # if depth_on_allele(variant_or_gene) < self.depth_threshold:
+                # __resistance_prediction = "I"
+            # else:
+            __resistance_prediction =  "S"
         else:
-            __resistance_prediction =  "I"
+            __resistance_prediction =  "N"
         return __resistance_prediction
 
     def _coverage_greater_than_threshold(self, variant_or_gene, names):
