@@ -1,158 +1,372 @@
-Mykrobe-predictor
-=================
 
-This repo uses submodules so to download it, type the following
+Master : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branch=master)](https://travis-ci.org/Phelimb/Mykrobe-predictor)
 
-git clone --recursive https://github.com/iqbal-lab/Mykrobe-predictor.git
+Dev : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branch=m2)](https://travis-ci.org/Phelimb/Mykrobe-predictor)
 
-Then run the following command to compile libraries. 
+## Installation
 
-sh install.sh 
+git clone **--recursive** https://github.com/iqbal-lab/Mykrobe-predictor.git
 
-pip install -r code_generator/requirements.txt
-### Compilation ###
-
-To compile for S.aureus, run the following command 
-
-**make STAPH=1 predictor**
-
-to create this executable 
-
-bin/Mykrobe.predictor.staph
-
-To compile for M.tuberculosis, run the following command 
-
-**make TB=1 predictor**
-
-to create this executable 
-
-bin/Mykrobe.predictor.tb
+### Install requirements mccortex
+**NB: You must install the version of mccortex that comes with this repostitory**
 
 
-[In order to install on Mac you may need to install gcc via homebrew or macports. Running  "gcc -v" 
-should return something like:
-"gcc version 4.9.2 (Homebrew gcc49 4.9.2_1)"
-not 
-"Apple LLVM version 6.0 (clang-600.0.57)"
-
-### Usage ###
-
-Standard usage
-
-Mykrobe.predictor.staph --file some_file.fastq --install_dir /path/to/Mykrobe-predictor
-
-Finally, there are GUI versions of Mykrobe-predictor for Windows and Mac OS X, which you can download from Releases
-
-#### Force resistance predictions if species is not target species. 
-
-By default, if we can't find S. aureus or MTBC in the data we don't show resistance predictions. 
-
-You can force resistance predictions with --force flag
-
-Mykrobe.predictor.staph --file some_non_staph.fastq --install_dir /path/to/Mykrobe-predictor --force
+	cd Mykrobe-predictor
+	cd mccortex
+	make	
+	export PATH=$PATH:$(pwd)/bin
+	cd ..
 
 
-### Output ### 
+## Install Mykrobe predictor
 
-The output of Mykrobe is in JSON format. An exemplar output might looks like this:
+### Install Mykrobe predictor with virtualenv (recommended but optional)
+
+#### Install virtualenv
+
+	https://virtualenv.readthedocs.org/en/latest/installation.html
+
+#### Create virtualenv 
+
+	virtualenv venv
+
+#### Activate the virtualenv
+
+	source venv/bin/activate
+
+
+	pip install mykrobe
+
+
+### Install Mykrobe predictor without virtualenv
+
+	sudo pip install mykrobe
+
+If this works then you're done! (alternative install below)
+
+
+## Usage
+
+	mykrobe predict --help
+	usage: mykrobe predict [-h] [-k kmer] [--tmp TMP]
+	                       [--skeleton_dir SKELETON_DIR]
+	                       [--mccortex31_path MCCORTEX31_PATH] [-q]
+	                       [--panel panel] [--force]
+	                       sample seq [seq ...] species
+
+	positional arguments:
+	  sample                sample id
+	  seq                   sequence files (fastq or bam)
+	  species               species
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -k kmer, --kmer kmer  kmer length (default:21)
+	  --tmp TMP             tmp directory (default: /tmp/)
+	  --skeleton_dir SKELETON_DIR
+	                        directory for skeleton binaries
+	  --mccortex31_path MCCORTEX31_PATH (default:mccortex31)
+	                        Path to mccortex31
+	  -q, --quiet           do not output warnings to stderr
+	  --panel panel         variant panel (default:bradley-2015)
+	  --force
+
+### AMR prediction
+
+	mykrobe predict tb_sample_id tb -1 tb_sequence.bam/fq
+
+	mykrobe predict staph_sample_id staph -1 staph_sequence.bam/fq
+
+e.g.
+
+	mykrobe predict ERR117639 /download/ena/ERR117639*.gz tb
+
+### Output
+
+Output is in JSON format. To convert to a less verbose tabular format use [json_to_tsv](scripts/json_to_tsv.py).
 
 	{
-		"expected_depth": "77",
-		"mean_read_length": "48",
-		"phylogenetics": {
-			"phylo_group": {
-				"Staphylococcus aureus": "82"
-			},
-			"species": {
-				"S. aureus": "82"
-			},
-			"lineage": {
-				"N/A": "-1"
-			}
-		},
-		"susceptibility" :{
-			"Gentamicin": "S",
-			"Penicillin": "R",
-			"Methicillin": "R",
-			"Trimethoprim": "S",
-			"Erythromycin": "R",
-			"FusidicAcid": "S",
-			"Ciprofloxacin": "R",
-			"Rifampicin": "S",
-			"Tetracycline": "S",
-			"Vancomycin": "S",
-			"Mupirocin": "S",
-			"Clindamycin": "R(inducible)"
-		},
-		"called_variants" :{
-			"gyrA_S84L" :{
-				"R_per_cov": "100",
-				"S_per_cov": "0",
-				"R_median_cov": "101",
-				"S_median_cov": "0",
-				"conf": "1092",
-			"induced_resistance": "Ciprofloxacin"
-			}
-		},
-		"called_genes" :{
-			"blaZ" :{
-				"per_cov": "74",
-				"median_cov": "82",
-				"conf": "42298",
-			"induced_resistance": "Penicillin"
-			},
-			"ermC" :{
-				"per_cov": "99",
-				"median_cov": "834",
-				"conf": "2496",
-			"induced_resistance": "Erythromycin"
-			},
-			"mecA" :{
-				"per_cov": "99",
-				"median_cov": "96",
-				"conf": "285",
-			"induced_resistance": "Methicillin"
-			}
-		},
-		"virulence_toxins" :{
-			"PVL": "negative"
-		}
-	}
+	    "sample_id": {
+	        "susceptibility": {
+	            "Rifampicin": {
+	                "predict": "S"
+	            },
+	            ...
+	            "Streptomycin": {
+	                "predict": "S"
+	            }
+	        "phylogenetics": {
+	            "lineage": {
+	                "Unknown": {
+	                    "percent_coverage": -1,
+	                    "median_depth": -1
+	                }
+	            },
+				...
+	            "species": {
+	                "Mycobacterium_tuberculosis": {
+	                    "percent_coverage": 98.0,
+	                    "median_depth": 53
+	                }
+	            }
+	        },  
+	        "typed_variants": {
+	            "rpoB_N438S-AAC761118AGT": {
+	                "info": {
+	                    "contamination_depths": [],
+	                    "coverage": {
+	                        "alternate": {
+	                            "percent_coverage": 47.62,
+	                            "median_depth": 0.0,
+	                            "min_depth": 47.0
+	                        },
+	                        "reference": {
+	                            "percent_coverage": 100.0,
+	                            "median_depth": 49.0,
+	                            "min_depth": 44.0
+	                        }
+	                    },
+	                    "expected_depths": [
+	                        56.0
+	                    ]
+	                },
+	                "_cls": "Call.VariantCall",
+	                "genotype": [
+	                    0,
+	                    0
+	                ],
+	                "genotype_likelihoods": [
+	                    -4.25684443365591,
+	                    -99999999.0,
+	                    -99999999.0
+	                ]
+	            },   ...               
+	        },			
 
-The phylogenetics section gives results for the species identification results. In this case we confidently call S. aureus (at ~82x coverage) with no evidence of contamination from other Staphylococcal species. 
+### Change the panel for resistance prediction (TB only)
+	
+	mykrobe predict tb_sample_id  tb --panel walker-2015 -1 tb_sequence.bam
 
-The "susceptibility" section gives the DST results. The possible options are "S", "r", "R" for "Susceptible", "minor resistant" and "Resistant" respectively for all drugs with the exception of Clindamycin. The options for Clindamycin susceptibiliy prediction are: "S", "R(constitutive)", "R(inducible)", "r(constitutive)" and "r(inducible)". The "constitutive" is implied for all the other drugs and just means that there's a direct relationship between the gene and resistance (the normal case). However, Clindamycin has a special case. When any of the ERM* genes are present the isolate will become resistant to Clindamycin if first treated with Erythromycin (hence induced) but not otherwise [http://www.ncbi.nlm.nih.gov/pubmed/16380772](http://www.ncbi.nlm.nih.gov/pubmed/16380772). (constitutive) and (inducible) distinguish between these cases. 
+> Walker, Timothy M., et al. "Whole-genome sequencing for prediction of Mycobacterium tuberculosis drug susceptibility and resistance: a retrospective cohort study." The Lancet Infectious Diseases 15.10 (2015): 1193-1202.
 
-The "called_genes" and "called_variants" provide the evidence (if any) for the susceptibility calls. 
+	mykrobe predict tb_sample_id  tb --panel bradley-2015 -1 tb_sequence.bam
 
-"R_per_cov" - Percentage of kmers for the resistant allele recovered. 
+> Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis." Nature communications 6 (2015).
 
-"S_per_cov" - Percentage of kmers for the susceptible (wild-type) allele recovered. 
+### Choosing a panel for TB
 
-"R_median_cov" - Median coverage on all the recovered kmers on the resistant allele. 
+In short, bradley-2015 is more specific, walker-2015 more sensitive. You can see a comparision of the results on ~3000 MTUB sequence [here](example-data/walker-vs-bradley.md)
 
-"S_median_cov" - Median coverage on all the recovered kmers on the susceptible allele. 
+### Paper, citation 
 
+> [Bradley, Phelim, et al. "Rapid antibiotic-resistance predictions from genome sequence data for Staphylococcus aureus and Mycobacterium tuberculosis."Nature communications 6 (2015).](http://www.nature.com/ncomms/2015/151221/ncomms10063/full/ncomms10063.html)
 
-"per_cov" - Percentage of kmers recovered for the gene. 
-
-"median_cov" - Median coverage on all the recovered kmers for the gene. 
-
-
-"induced_resistance" - shows the drug resistance(s) normally associated with this genetic element. 
-
-### Paper, citation ###
-We have a preprint of the paper describing Mykrobe predictor here:
-http://biorxiv.org/content/early/2015/04/26/018564
 Please cite us if you use Mykrobe predictor in a publication
 
 All analysis in this paper was done with release [v0.1.3-beta](https://github.com/iqbal-lab/Mykrobe-predictor/releases/tag/v0.1.3-beta).
 
-### Extending Mykrobe (modifying panel or supporting a new species) ### 
-Please see [README_EXTENDING_MYKROBE](https://github.com/iqbal-lab/Mykrobe-predictor/blob/extending/README_EXTENDING_MYKROBE.md).
+### Alternative install
+
+## Or using setup.py
+
+### Download probes (run from top level dir)
+
+	./scripts/download-probes.sh
+	
+### Install Mykrobe predictor with virtualenv (recommended but optional)
+
+#### Install virtualenv
+
+	https://virtualenv.readthedocs.org/en/latest/installation.html
+
+#### Create virtualenv 
+
+	virtualenv venv
+
+#### Activate the virtualenv
+
+	source venv/bin/activate
+
+You can deactivate at anytime by typing 'deactivate'. 
+
+
+#### Install Mykrobe predictor
+
+
+	python setup.py install
+
+
+### Common issues
+
+mccortex fails to make. 
+
+Likely problem: Submodules have not been pulled with the repo. 
+
+Solution : Run 
+	
+	git pull && git submodule update --init --recursive
+	cd mccortex && make
+
+### Genotype on a catalog 
+
+	mykrobe genotype [-h] [-k kmer] [--tmp TMP] [--keep_tmp]
+	                        [--skeleton_dir SKELETON_DIR]
+	                        [--mccortex31_path MCCORTEX31_PATH] [-t THREADS]
+	                        [--expected_depth EXPECTED_DEPTH] [-1 seq [seq ...]]
+	                        [-c ctx] [-f] [-q] [--ignore_filtered IGNORE_FILTERED]
+	                        sample probe_set
+
+	positional arguments:
+	  sample                sample id
+	  probe_set             probe_set
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -1 seq [seq ...], --seq seq [seq ...]
+	                        sequence files (fasta,fastq,bam)
+	  -c ctx, --ctx ctx     cortex graph binary	                        	  
+	  -k kmer, --kmer kmer  kmer length (default:21)
+	  --tmp TMP             tmp directory (default: /tmp/)
+	  --keep_tmp            Dont remove tmp files
+	  --skeleton_dir SKELETON_DIR
+	                        directory for skeleton binaries
+	  --mccortex31_path MCCORTEX31_PATH
+	                        Path to mccortex31
+	  -t THREADS, --threads THREADS
+	                        threads
+	  --expected_depth EXPECTED_DEPTH
+	                        expected depth
+	  -f, --force           force
+	  -q, --quiet           do not output warnings to stderr
+
+	  e.g. 
+
+	   head example-data/staph-amr-bradley_2015.fasta
+
+		>mecA?name=mecA&version=1
+		ATGAATATAGTTGAAAATGAAATATGTATAAGA...ATAAAAGGACTTATAAAGATTGA
+		>mecA?name=mecA&version=2
+		ATGAATATAGTTGAAAATGAAATATGTATAAGA...TGAAGATTTGCCAGAACATGAAT	   
+		>fusA?name=fusA&version=1
+		ATGAATATAGTTGAAAATGAAATATGTATAAGA...TGAAGATTTGCCAGAACATGAAT	 	  
+
+	   mykrobe genotype sample_id example-data/staph-amr-bradley_2015.fasta -1 seq.fq 
+
+		
+
+	{
+	    "sample_id": {
+	        "files": [
+	            "seq.fq "
+	        ],
+	        "kmer": 21,
+	        "sequence_calls": {
+	            "mecA": {
+	                "info": {
+	                    "copy_number": 0.0,
+	                    "contamination_depths": [],
+	                    "coverage": {
+	                        "percent_coverage": 0.0,
+	                        "median_depth": 0.0,
+	                        "min_non_zero_depth": 0.0
+	                    },
+	                    "expected_depths": [
+	                        1
+	                    ]
+	                },
+	                "_cls": "Call.SequenceCall",
+	                "genotype": [
+	                    0,
+	                    0
+	                ],
+	                "genotype_likelihoods": [
+	                    -0.001,
+	                    -99999999.0,
+	                    -99999999.0
+	                ]
+	            },
+	            "fusA": {
+	                "info": {
+	                    "copy_number": 1.0276923076923077,
+	                    "contamination_depths": [],
+	                    "version": "10",
+	                    "coverage": {
+	                        "percent_coverage": 100.0,
+	                        "median_depth": 167.0,
+	                        "min_non_zero_depth": 116.0
+	                    },
+	                    "expected_depths": [
+	                        162.5
+	                    ]
+	                },
+	                "_cls": "Call.SequenceCall",
+	                "genotype": [
+	                    1,
+	                    1
+	                ],
+	                "genotype_likelihoods": [
+	                    -994.7978064088725,
+	                    -349.45246450237215,
+	                    -10.95808091830304
+	                ]
+	            },	            	   
+	        ....
+	    }
+	}
+
+### Comparing results
+
+	./scripts/compare.py 
+
+	usage: compare.py [-h] [--analysis {summary,table,diff}]
+	                  [--ana1 ANA1 [ANA1 ...]] [--ana2 ANA2 [ANA2 ...]]
+	                  [--format {short,long}]
+	                  truth
 
 
 
+e.g. Get a summary of a commit vs the truth.  
+
+	Truth JSON is in the form: 
+
+	{
+	    "TRL0079551-S12": {
+	        "susceptibility": {
+	            "Rifampicin": {
+	                "predict": "S"
+	            },
+	            "Capreomycin": {
+	                "predict": "S"
+	            },
+	            ...
+	            "Quinolones": {
+	                "predict": "S"
+	            }
+	        }
+	    },
 
 
-.
+	}	        		
+
+	compare.py --analysis summary truth.json --ana1 *.json
+
+Output 
+
+	Ana1
+	Drug    Total   FN(R)   FP(S)   VME     ME      sensitivity     specificity     PPV     NPV
+	Rifampicin      99      1 (24)  1 (75)  4.2%       1.3%       95.8%      98.7%      95.8%      98.7% 
+	Capreomycin     14      0 (4)   0 (10)  0.0%       0.0%       100.0%     100.0%     100.0%     100.0% 
+	all     539     23 (128)        14 (411)        18.0%      3.4%       82.0%      96.6%      88.2%      94.5% 
+
+	...	
+
+
+Other options for --analysis are `diff` and `table` which will report a table showing samples where two analyses differed and a full table of comparisions respectively. 
+
+e.g. 
+
+	sample  drug    truth   ana1    ana2
+	10205-03        Quinolones      NA      R       S
+	10091-01        Isoniazid      S      R       S
+
+

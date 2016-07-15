@@ -7,3 +7,7 @@
 [submodule "libs/seq_file"]
 	path = libs/seq_file
 	url = https://github.com/Phelimb/seq_file.git
+[submodule "mccortex"]
+	path = mccortex
+	url = https://github.com/Phelimb/mccortex.git
+
