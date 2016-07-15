@@ -88,39 +88,41 @@ def get_mean_read_length(d):
     return str(d.get("mean_read_length", -1))
 
 
-# def get_called_genes(d, drug=None):
-#     genes = []
-#     for gene, coverage in d.get("called_genes", {}).iteritems():
-#         if coverage.get("induced_resistance") == drug:
-#             genes.append(":".join([gene,
-#                                    str(coverage.get("per_cov")),
-#                                    str(coverage.get('median_cov'))]))
-#     return ";".join(genes)
+def get_called_genes(d, drug=None):
+    variants = []
+    for variant_name, variant_call in d.items():
+        if variant_call.get("_cls") == "Call.SequenceCall":
+            per_cov = variant_call.get('info',{}).get('coverage',{}).get("percent_coverage")
+            depth = variant_call.get('info',{}).get('coverage',{}).get("median_depth")
+            variants.append(":".join([variant_name,
+                             str(int(per_cov)),str(int(depth))]))
+    return ";".join(variants)
 
 
 def get_variant_calls(d):
     variants = []
     for variant_name, variant_call in d.items():
-        wt_depth = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("median_depth")
-        alt_depth = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("median_depth")
+        if variant_call.get("_cls") != "Call.SequenceCall":
+            wt_depth = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("median_depth")
+            alt_depth = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("median_depth")
 
-        wt_per_cov = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("percent_coverage")
-        alt_per_cov = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("percent_coverage")
-        if wt_per_cov < 100:
-            wt_depth = 0
-        if alt_per_cov <100:
-            alt_depth =0 
+            wt_per_cov = variant_call.get('info',{}).get('coverage',{}).get("reference",{}).get("percent_coverage")
+            alt_per_cov = variant_call.get('info',{}).get('coverage',{}).get("alternate",{}).get("percent_coverage")
+            if wt_per_cov < 100:
+                wt_depth = 0
+            if alt_per_cov <100:
+                alt_depth =0 
+            conf = variant_call.get('info',{}).get('conf',"1")
 
-        conf = variant_call.get('info',{}).get('conf',"1")
-
-        variants.append(":".join([variant_name,
-                         str(int(alt_depth)),str(int(wt_depth)), str(int(conf))
-                       ]))
+            variants.append(":".join([variant_name,
+                             str(int(alt_depth)),str(int(wt_depth)), str(int(conf))
+                           ]))
     return ";".join(variants)
 
 
 if args.format == "long":
     header = [
+        "mykrobe_version",
         "file",
         "plate_name",
         "sample",
@@ -135,14 +137,16 @@ if args.format == "long":
         "species_depth",
         "lineage_depth",                  
         "susceptibility",
-        "variants (prot_mut-ref_mut:alt_depth:wt_depth:conf)"]
+        "variants (gene:alt_depth:wt_depth:conf)",
+        "genes (prot_mut-ref_mut:percent_covg:depth)"]
     print "\t".join(header)
     rows = []
     for i, f in enumerate(args.files):
         file = get_file_name(f)
         try:
             d = load_json(f)
-            d = d[file]
+            k = d.keys()
+            d = d[k[0]]
         except ValueError:
             d = {}
         
@@ -162,8 +166,9 @@ if args.format == "long":
 
         for drug in drugs:
             call = d.get('susceptibility', {}).get(drug, {})
-            called_by = get_variant_calls(call.get("called_by",{}))
-            row = [
+            called_by_variants = get_variant_calls(call.get("called_by",{}))
+            called_by_genes = get_called_genes(call.get("called_by",{}))
+            row = [d.get("version",{}).get("mykrobe-predictor","-1"),
                 file,
                 plate_name,
                 sample_name,
@@ -180,7 +185,9 @@ if args.format == "long":
                 call.get(
                     "predict",
                     'N'),
-                called_by]
+                called_by_variants, 
+                called_by_genes
+                ]
             # rows.append(row)
             print "\t".join(row)
 

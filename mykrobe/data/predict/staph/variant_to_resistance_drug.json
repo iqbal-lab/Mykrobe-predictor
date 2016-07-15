@@ -9,7 +9,7 @@
 "aph2Ic":[],
 "aphA3aph3III":[],
 "blaZ":["Penicillin"],
-"mecA":["Methicillin"],
+"mecA":["Methicillin","Penicillin"],
 "mecC":["Methicillin"],
 "fusA" : [],
 "fusB":["FusidicAcid"],

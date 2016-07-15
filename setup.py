@@ -29,5 +29,5 @@ setup(
             'data/panels/staph-species-160227.fasta.gz',
             'data/panels/tb-amr-walker_2015.fasta.gz',
             'data/panels/tb-amr-bradley_2015.fasta.gz',
-            'data/panels/staph-amr-probe_set_v0_3_1_2.fasta.gz',
+            'data/panels/staph-amr-probe_set_v0_3_13-160715.fasta.gz',
         ]})
