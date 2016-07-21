@@ -1,1 +1,1 @@
-mykatlas
+mykatlas==0.3.12

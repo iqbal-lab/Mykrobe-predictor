@@ -174,7 +174,7 @@ def run(parser, args):
                        gene_presence_covgs=cp.covgs["presence"],
                        base_json=base_json,
                        contamination_depths=[],
-                       include_hom_alt_calls=True,
+                       report_all_calls=True,
                        ignore_filtered = True,
                        variant_confidence_threshold=args.min_variant_conf,
                        sequence_confidence_threshold=args.min_gene_conf                      
