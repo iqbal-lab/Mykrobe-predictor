@@ -70,9 +70,9 @@ def main():
         '--panel',
         metavar='panel',
         type=str,
-        help='variant panel (default:bradley-2015)',
+        help='variant panel (default:walker-2015)',
         choices=['bradley-2015', 'walker-2015'],
-        default='bradley-2015')
+        default='walker-2015')
     parser_amr.add_argument(
         '--min_depth',
         metavar='min_depth',
