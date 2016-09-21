@@ -6,6 +6,8 @@ Dev : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branc
 
 git clone **--recursive** https://github.com/iqbal-lab/Mykrobe-predictor.git
 
+The quickest way to get going with Mykrobe is to use the docker image that comes with all of the required dependancies. You can find instructions for docker usage in the [docker_usage_readne.md](docker_usage_readne.md). Otherwise, please read below for a local install. 
+
 ### Install requirements mccortex
 **NB: You must install the version of mccortex that comes with this repostitory**
 
