@@ -10,8 +10,3 @@ script: nosetests
 git:
     submodules: false
 
-os:
-- linux
-- osx
-sudo: required
-    
