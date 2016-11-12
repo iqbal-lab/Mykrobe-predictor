@@ -1,38 +1,39 @@
-## Defines Mykrobe predictor output
+# Defines Mykrobe predictor output
 from mongoengine import Document
 from mongoengine import DictField
 
 from mykrobe.utils import unique
+
+
 class MykrobePredictorSusceptibilityResult(Document):
 
     susceptibility = DictField()
 
     @classmethod
     def create(cls, susceptibility):
-        return cls(susceptibility = susceptibility)
+        return cls(susceptibility=susceptibility)
 
     def to_dict(self):
-    	return self.to_mongo().to_dict()
+        return self.to_mongo().to_dict()
 
-    def __eq__(self,other):
+    def __eq__(self, other):
         return self.susceptibility == other.susceptibility
 
     def diff(self, other):
         diff = {}
-        ## Compares the antibiogram of two predictor results
+        # Compares the antibiogram of two predictor results
         drugs = unique(self.drugs + other.drugs)
         for drug in drugs:
-            predict1,predict2 = self.susceptibility.get(drug, {"predict": "NA"}).get("predict"), other.susceptibility.get(drug,{"predict": "NA"}).get("predict")
+            predict1, predict2 = self.susceptibility.get(drug, {"predict": "NA"}).get(
+                "predict"), other.susceptibility.get(drug, {"predict": "NA"}).get("predict")
             if predict1 != predict2:
                 diff[drug] = {}
-                diff[drug]["predict"] = (predict1,predict2)
+                diff[drug]["predict"] = (predict1, predict2)
         return diff
 
     @property
     def drugs(self):
-        return self.susceptibility.keys()
-
-
+        return list(self.susceptibility.keys())
 
     # def compare(self, truth):
     #     """
@@ -129,13 +130,15 @@ class MykrobePredictorSusceptibilityResult(Document):
     #     def called_variants(self):
     #         """Return the called variants objects associated that have induced this drug"""
     #         return [
-    #             cv for cv in self.mykrobe_result.called_variants if self.mykrobe_drug in cv.induced_resistance]
+    # cv for cv in self.mykrobe_result.called_variants if self.mykrobe_drug in
+    # cv.induced_resistance]
 
     #     @property
     #     def called_genes(self):
     #         """Return the called gene objects associated that have induced this drug"""
     #         return [
-    #             gene for gene in self.mykrobe_result.called_genes if self.mykrobe_drug in gene.induced_resistance]
+    # gene for gene in self.mykrobe_result.called_genes if self.mykrobe_drug
+    # in gene.induced_resistance]
 
     #     @property
     #     def is_induced_by_gene(self):
@@ -244,11 +247,11 @@ class MykrobePredictorSusceptibilityResult(Document):
 
     # @property
     # def major_lineage(self):
-    #     return self.lineage.major_name 
+    #     return self.lineage.major_name
 
     # @property
     # def is_mixed(self):
-    #     return len(self.phylo_group.names) > 1                       
+    #     return len(self.phylo_group.names) > 1
 
     # class Phylo(object):
 
