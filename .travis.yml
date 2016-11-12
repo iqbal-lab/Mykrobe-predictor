@@ -9,3 +9,9 @@ install: "pip install -r requirements.txt"
 script: nosetests
 git:
     submodules: false
+
+os:
+- linux
+- osx
+sudo: required
+    

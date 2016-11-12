@@ -46,16 +46,16 @@ class MykrobePredictorResult(object):
         self.version = version
 
     def to_dict(self):
-        return {"susceptibility": self.susceptibility.to_dict().values()[0],
-                "phylogenetics": self.phylogenetics.to_dict().values()[0],
-                "variant_calls" : self.variant_calls,
-                "sequence_calls" : self.sequence_calls,
+        return {"susceptibility": list(self.susceptibility.to_dict().values())[0],
+                "phylogenetics": list(self.phylogenetics.to_dict().values())[0],
+                "variant_calls": self.variant_calls,
+                "sequence_calls": self.sequence_calls,
                 "kmer": self.kmer,
                 "probe_sets": self.probe_sets,
                 "files": self.files,
                 "version": self.version
                 }
-    ### For database document
+    # For database document
     # susceptibility = EmbeddedDocumentField("MykrobePredictorSusceptibilityResult")
     # phylogenetics = EmbeddedDocumentField("MykrobePredictorPhylogeneticsResult")
     # kmer = IntField()
@@ -85,7 +85,7 @@ def run(parser, args):
         panels = STAPH_PANELS
         panel_name = "staph-amr"
         # Predictor = StaphPredictor
-        args.kmer = 15 ## Forced
+        args.kmer = 15  # Forced
     elif args.species == "tb":
         panels = TB_PANELS
         panel_name = "tb-amr"
@@ -119,7 +119,7 @@ def run(parser, args):
         seq=args.seq,
         kmer=args.kmer,
         force=args.force,
-        threads = 1,
+        threads=1,
         verbose=False,
         tmp_dir=args.tmp,
         skeleton_dir=args.skeleton_dir,
@@ -175,9 +175,9 @@ def run(parser, args):
                        base_json=base_json,
                        contamination_depths=[],
                        report_all_calls=True,
-                       ignore_filtered = True,
+                       ignore_filtered=True,
                        variant_confidence_threshold=args.min_variant_conf,
-                       sequence_confidence_threshold=args.min_gene_conf                      
+                       sequence_confidence_threshold=args.min_gene_conf
                        )
         gt.run()
         variant_calls_dict = gt.variant_calls_dict
@@ -190,8 +190,8 @@ def run(parser, args):
         predictor = Predictor(variant_calls=gt.variant_calls,
                               called_genes=gt.gene_presence_covgs,
                               base_json=base_json[args.sample],
-                              depth_threshold = args.min_depth,
-                              ignore_filtered = True)
+                              depth_threshold=args.min_depth,
+                              ignore_filtered=True)
         mykrobe_predictor_susceptibility_result = predictor.run()
     base_json[
         args.sample] = MykrobePredictorResult(

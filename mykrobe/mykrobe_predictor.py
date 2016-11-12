@@ -15,12 +15,13 @@ sys.path.append(
 from mykrobe.version import __version__
 import logging
 
-from base import ArgumentParserWithDefaults
-from base import DEFAULT_KMER_SIZE
+from mykatlas.base import ArgumentParserWithDefaults
+from mykatlas.base import DEFAULT_KMER_SIZE
 from mykatlas.base import sequence_or_binary_parser_mixin
 from mykatlas.base import probe_set_mixin
 from mykatlas.base import force_mixin
 from mykatlas.base import genotyping_mixin
+
 
 def run_subtool(parser, args):
     if args.command == "predict":
@@ -47,7 +48,6 @@ def main():
         dest='command',
         parser_class=ArgumentParserWithDefaults)
 
-
     #########################################
     # create the individual tool parsers
     #########################################
@@ -58,7 +58,8 @@ def main():
 
     parser_amr = subparsers.add_parser(
         'predict',
-        parents=[sequence_or_binary_parser_mixin, force_mixin, genotyping_mixin],
+        parents=[sequence_or_binary_parser_mixin,
+                 force_mixin, genotyping_mixin],
         help="predict the sample's antibiogram")
     parser_amr.add_argument(
         'species',

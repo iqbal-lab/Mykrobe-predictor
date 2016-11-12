@@ -15,7 +15,7 @@ setup(
     description='.',
     author='Phelim Bradley, Zamin Iqbal',
     author_email='wave@phel.im, zam@well.ox.ac.uk',
-    install_requires=["mykatlas==0.3.12"],
+    install_requires=["mykatlas"],
     entry_points={
             'console_scripts': [
                 'mykrobe = mykrobe.mykrobe_predictor:main'
