@@ -164,9 +164,6 @@ class BasePredictor(object):
             else:
                 __resistance_prediction = "S"
         elif sum(variant_or_gene.get('genotype')) == 0:
-            # if depth_on_allele(variant_or_gene) < self.depth_threshold:
-                # __resistance_prediction = "I"
-            # else:
             __resistance_prediction = "S"
         else:
             __resistance_prediction = "N"

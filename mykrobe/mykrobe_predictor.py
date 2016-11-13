@@ -100,27 +100,33 @@ def main():
     # # Atlas-var
     # ##########
 
-    parser_atlasvar = subparsers.add_parser(
-        'atlas-var')
-    parser_atlasvar.set_defaults(func=run_subtool)
+    # parser_atlasvar = subparsers.add_parser(
+    #     'atlas-var')
+    # parser_atlasvar.set_defaults(func=run_subtool)
 
-    subparsers_var = parser_atlasvar.add_subparsers(
-        title='[sub-commands]',
-        dest='command',
-        parser_class=ArgumentParserWithDefaults)
+    # subparsers_var = parser_atlasvar.add_subparsers(
+    #     title='[sub-commands]',
+    #     dest='command',
+    #     parser_class=ArgumentParserWithDefaults)
 
-    parser_atlas_var = subparsers_var.add_parser(
-        'genotype',
-        parents=[
-            sequence_or_binary_parser_mixin,
-            probe_set_mixin,
-            force_mixin,
-            genotyping_mixin],
-        help='genotype a sample using a probe set')
-    parser_atlas_var.set_defaults(func=run_subtool)
+    # parser_atlas_var = subparsers_var.add_parser(
+    #     'genotype',
+    #     parents=[
+    #         sequence_or_binary_parser_mixin,
+    #         probe_set_mixin,
+    #         force_mixin,
+    #         genotyping_mixin],
+    #     help='genotype a sample using a probe set')
+    # parser_atlas_var.set_defaults(func=run_subtool)
 
     args = parser.parse_args()
-    args.func(parser, args)
+    try:
+        args.func(parser, args)
+    except AttributeError as e:
+        if "func" in str(e):
+            parser.print_help()
+        else:
+            raise e
 
 
 if __name__ == "__main__":
