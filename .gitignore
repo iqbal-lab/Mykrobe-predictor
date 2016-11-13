@@ -1,3 +1,4 @@
+.dockerignore
 scripts/amr_comid_tb.sh
 pypi.sh
 venv*
