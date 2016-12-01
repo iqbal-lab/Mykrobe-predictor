@@ -18,24 +18,33 @@ DEFAULT_MIN_VARIANT_CN = 0.1
 
 
 def copy_number(call):
-    coverage = call.info.get("coverage")
+    coverage = call.get('info', {}).get("coverage")
     try:
         alternate_depth = coverage.get("alternate").get("median_depth")
         wt_depth = coverage.get("reference").get("median_depth")
     except:
         alternate_depth = coverage.get("median_depth")
-        wt_depth = call.info.get("expected_depths")[0]
+        wt_depth = call.get('info', {}).get("expected_depths")[0]
 
     return round(float(alternate_depth) / (alternate_depth + wt_depth), 2)
 
 
 def depth_on_alternate(call):
-    coverage = call.info.get("coverage")
+    coverage = call.get('info', {}).get("coverage")
     try:
         alternate_depth = coverage.get("alternate").get("median_depth")
     except:
         alternate_depth = coverage.get("median_depth")
     return alternate_depth
+
+
+def is_filtered(call):
+    info = call.get('info', {})
+    _filter = info.get('filter', 'PASS')
+    if not _filter == "PASS":
+        return True
+    else:
+        return False
 
 
 class BasePredictor(object):
@@ -75,6 +84,11 @@ class BasePredictor(object):
         for allele_name, variant_call in self.variant_calls.items():
             self._update_resistance_prediction(allele_name, variant_call)
         for name, gene in self.called_genes.items():
+            if isinstance(gene, list):
+                if len(gene) > 1:
+                    logging.warning(
+                        "Ambigious gene call from mykatlas. Continuing regardless. ")
+                gene = gene[0]
             self._update_resistance_prediction(name, gene)
 
     def _update_resistance_prediction(self, allele_name, variant_or_gene):
@@ -100,14 +114,14 @@ class BasePredictor(object):
                         self.resistance_predictions[drug][
                             "predict"] = resistance_prediction
                 if resistance_prediction in ["r", "R"]:
-                    variant_or_gene.variant = None
+                    variant_or_gene['variant'] = None
                     try:
                         self.resistance_predictions[drug]["called_by"][
-                            "-".join(variant_or_gene_names)] = variant_or_gene.to_mongo().to_dict()
+                            "-".join(variant_or_gene_names)] = variant_or_gene
                     except KeyError:
                         self.resistance_predictions[drug]["called_by"] = {}
                         self.resistance_predictions[drug]["called_by"][
-                            "-".join(variant_or_gene_names)] = variant_or_gene.to_mongo().to_dict()
+                            "-".join(variant_or_gene_names)] = variant_or_gene
 
     def _get_names(self, allele_name):
         names = []
@@ -150,14 +164,14 @@ class BasePredictor(object):
     def _resistance_prediction(self, variant_or_gene, names):
         __resistance_prediction = None
         if sum(variant_or_gene.get('genotype')) == 2:
-            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_alternate(variant_or_gene) < self.depth_threshold:
+            if (is_filtered(variant_or_gene) and self.ignore_filtered) or depth_on_alternate(variant_or_gene) < self.depth_threshold:
                 __resistance_prediction = "N"
             elif self._coverage_greater_than_threshold(variant_or_gene, names):
                 __resistance_prediction = "R"
             else:
                 __resistance_prediction = "S"
         elif sum(variant_or_gene.get('genotype')) == 1:
-            if (variant_or_gene.is_filtered() and self.ignore_filtered) or depth_on_alternate(variant_or_gene) < self.depth_threshold:
+            if (is_filtered(variant_or_gene) and self.ignore_filtered) or depth_on_alternate(variant_or_gene) < self.depth_threshold:
                 __resistance_prediction = "N"
             elif self._coverage_greater_than_threshold(variant_or_gene, names):
                 __resistance_prediction = "r"
