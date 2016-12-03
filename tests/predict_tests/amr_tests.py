@@ -21,16 +21,16 @@ class AMRPredictTest(TestCase):
         pass
 
     def test_wt_vars(self):
-        call = VariantCall.create(
-            variant=self.variant_snp,
-            genotype=[
+        call = {
+            "variant": None,
+            "genotype": [
                 0,
                 1],
-            genotype_likelihoods=[
+            "genotype_likelihoods": [
                 0.1,
                 0.9,
                 0.12],
-            info={
+            "info": {
                 "contamination_depths": [],
                 "coverage": {
                     "alternate": {
@@ -41,7 +41,7 @@ class AMRPredictTest(TestCase):
                         "percent_coverage": 100.0,
                         "median_depth": 139,
                         "min_depth": 128}},
-                "expected_depths": [152]})
+                "expected_depths": [152]}}
 
         assert self.predictor._coverage_greater_than_threshold(call, [
                                                                ""]) == False

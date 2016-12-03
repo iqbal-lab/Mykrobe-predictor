@@ -126,7 +126,7 @@ def main():
         if "func" in str(e):
             parser.print_help()
         else:
-            raise e
+            args.func(parser, args)
 
 
 if __name__ == "__main__":
