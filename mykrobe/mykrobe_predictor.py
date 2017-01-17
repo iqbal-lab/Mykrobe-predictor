@@ -14,6 +14,7 @@ sys.path.append(
             "..")))
 from mykrobe.version import __version__
 import logging
+logger = logging.getLogger(__name__)
 
 from mykatlas.base import ArgumentParserWithDefaults
 from mykatlas.base import DEFAULT_KMER_SIZE
