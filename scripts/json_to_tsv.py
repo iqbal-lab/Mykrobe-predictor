@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+from __future__ import print_function
 
 # This script is intended to load a JSON dict containing resistotypes,
 # a list of comids and a list of drugs of interest. It will return a column for each drug,
@@ -7,6 +8,7 @@ import argparse
 import json
 import csv
 import os
+
 parser = argparse.ArgumentParser(description='''load a JSON dict containing resistotypes,
  a list of comids and a list of drugs of interest. It will return a column for each drug,
  Where 1 = R, 0 S, 0 unknown. ''')
@@ -40,7 +42,7 @@ def get_phylo_group_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).iteritems():
+    for k, v in d.get("phylogenetics", {}).get("phylo_group", {}).items():
         s.append(k)
         depth.append(str(v.get("median_depth")))
         per_cov.append(str(v.get("percent_coverage")))
@@ -51,7 +53,7 @@ def get_species_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("species", {}).iteritems():
+    for k, v in d.get("phylogenetics", {}).get("species", {}).items():
         s.append(k)
         depth.append(str(v.get("median_depth")))
         per_cov.append(str(v.get("percent_coverage")))
@@ -62,7 +64,7 @@ def get_lineage_string(d):
     s = []
     depth=[]
     per_cov=[]
-    for k, v in d.get("phylogenetics", {}).get("lineage", {}).iteritems():
+    for k, v in d.get("phylogenetics", {}).get("lineage", {}).items():
         s.append(k)
         depth.append(str(v.get("median_depth")))
         per_cov.append(str(v.get("percent_coverage")))
@@ -75,7 +77,7 @@ def get_file_name(f):
 
 
 def get_sample_name(f):
-    return f.split('/')[-2]
+    return list(f.keys())[0]
 
 def get_plate_name(f):
     return f.split('/')[-3]
@@ -139,13 +141,13 @@ if args.format == "long":
         "susceptibility",
         "variants (gene:alt_depth:wt_depth:conf)",
         "genes (prot_mut-ref_mut:percent_covg:depth)"]
-    print "\t".join(header)
+    print ("\t".join(header))
     rows = []
     for i, f in enumerate(args.files):
         file = get_file_name(f)
         try:
             d = load_json(f)
-            k = d.keys()
+            k = list(d.keys())
             d = d[k[0]]
         except ValueError:
             d = {}
@@ -154,8 +156,11 @@ if args.format == "long":
         phylo_group,phylo_group_per_covg,phylo_group_depth  = get_phylo_group_string(d)
         species,species_per_covg,species_depth  = get_species_string(d)
         lineage,lineage_per_covg,lineage_depth  = get_lineage_string(d)
-        sample_name = get_sample_name(f)
-        plate_name = get_plate_name(f)
+        sample_name = get_sample_name(d)
+        try:
+            plate_name = get_plate_name(f)
+        except  IndexError:
+            plate_name = ""
 
         drug_list = sorted(d.get('susceptibility', {}).keys())
         drugs = sorted(drug_list)
@@ -189,7 +194,7 @@ if args.format == "long":
                 called_by_genes
                 ]
             # rows.append(row)
-            print "\t".join(row)
+            print ("\t".join(row))
 
 else:
     0 / 0

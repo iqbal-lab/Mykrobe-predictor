@@ -1,0 +1,1 @@
+docker build -t phelimb/mykrobe_predictor .

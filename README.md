@@ -4,45 +4,16 @@ Dev : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branc
 
 ## Installation
 
-git clone **--recursive** https://github.com/iqbal-lab/Mykrobe-predictor.git
+## Python
+	
+	(sudo) pip install git+https://github.com/Phelimb/atlas@202e42ed75a2f835436913dab7bc327e470a8b7f ## Required dependancy. 
+	(sudo) pip install mykrobe
 
-### Install requirements mccortex
-**NB: You must install the version of mccortex that comes with this repostitory**
+We recommend that you use a virtualenv to install mykrobe. If you haven't used virtualenv before please read a guide [here](virutualenvREADME.md).
 
+## Docker 
 
-	cd Mykrobe-predictor
-	cd mccortex
-	make	
-	export PATH=$PATH:$(pwd)/bin
-	cd ..
-
-
-## Install Mykrobe predictor
-
-### Install Mykrobe predictor with virtualenv (recommended but optional)
-
-#### Install virtualenv
-
-	https://virtualenv.readthedocs.org/en/latest/installation.html
-
-#### Create virtualenv 
-
-	virtualenv venv
-
-#### Activate the virtualenv
-
-	source venv/bin/activate
-
-
-	pip install mykrobe
-
-
-### Install Mykrobe predictor without virtualenv
-
-	sudo pip install mykrobe
-
-If this works then you're done! (alternative install below)
-
+	docker run phelimb/mykrobe_predictor mykrobe --help
 
 ## Usage
 
@@ -164,47 +135,7 @@ Please cite us if you use Mykrobe predictor in a publication
 
 All analysis in this paper was done with release [v0.1.3-beta](https://github.com/iqbal-lab/Mykrobe-predictor/releases/tag/v0.1.3-beta).
 
-### Alternative install
 
-## Or using setup.py
-
-### Download probes (run from top level dir)
-
-	./scripts/download-probes.sh
-	
-### Install Mykrobe predictor with virtualenv (recommended but optional)
-
-#### Install virtualenv
-
-	https://virtualenv.readthedocs.org/en/latest/installation.html
-
-#### Create virtualenv 
-
-	virtualenv venv
-
-#### Activate the virtualenv
-
-	source venv/bin/activate
-
-You can deactivate at anytime by typing 'deactivate'. 
-
-
-#### Install Mykrobe predictor
-
-
-	python setup.py install
-
-
-### Common issues
-
-mccortex fails to make. 
-
-Likely problem: Submodules have not been pulled with the repo. 
-
-Solution : Run 
-	
-	git pull && git submodule update --init --recursive
-	cd mccortex && make
 
 ### Genotype on a catalog 
 
@@ -368,4 +299,19 @@ e.g.
 	10205-03        Quinolones      NA      R       S
 	10091-01        Isoniazid      S      R       S
 
+
+### Common issues
+
+* mccortex install fails
+
+mccortex should be installed automatically with the atlas dependancy. If for some reason it doesn't you can run a manual install:
+
+	git clone --recursive https://github.com/iqbal-lab/Mykrobe-predictor.git
+	cd Mykrobe-predictor
+	cd mccortex
+	make    
+	export PATH=$PATH:$(pwd)/bin
+	cd ..
+
+	
 

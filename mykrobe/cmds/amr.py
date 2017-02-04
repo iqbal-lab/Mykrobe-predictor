@@ -1,5 +1,7 @@
 from __future__ import print_function
 import logging
+logger = logging.getLogger(__name__)
+
 from pprint import pprint
 import json
 import os
@@ -46,16 +48,16 @@ class MykrobePredictorResult(object):
         self.version = version
 
     def to_dict(self):
-        return {"susceptibility": self.susceptibility.to_dict().values()[0],
-                "phylogenetics": self.phylogenetics.to_dict().values()[0],
-                "variant_calls" : self.variant_calls,
-                "sequence_calls" : self.sequence_calls,
+        return {"susceptibility": list(self.susceptibility.to_dict().values())[0],
+                "phylogenetics": list(self.phylogenetics.to_dict().values())[0],
+                "variant_calls": self.variant_calls,
+                "sequence_calls": self.sequence_calls,
                 "kmer": self.kmer,
                 "probe_sets": self.probe_sets,
                 "files": self.files,
                 "version": self.version
                 }
-    ### For database document
+    # For database document
     # susceptibility = EmbeddedDocumentField("MykrobePredictorSusceptibilityResult")
     # phylogenetics = EmbeddedDocumentField("MykrobePredictorPhylogeneticsResult")
     # kmer = IntField()
@@ -85,7 +87,7 @@ def run(parser, args):
         panels = STAPH_PANELS
         panel_name = "staph-amr"
         # Predictor = StaphPredictor
-        args.kmer = 15 ## Forced
+        args.kmer = 15  # Forced
     elif args.species == "tb":
         panels = TB_PANELS
         panel_name = "tb-amr"
@@ -112,6 +114,10 @@ def run(parser, args):
                 os.path.dirname(__file__),
                 "..",
                 hierarchy_json_file))
+    if args.ont:
+        args.expected_error_rate = 0.15
+        logger.debug("Setting expected error rate to %s (--ont)" % args.expected_error_rate)    
+
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
@@ -119,7 +125,7 @@ def run(parser, args):
         seq=args.seq,
         kmer=args.kmer,
         force=args.force,
-        threads = 1,
+        threads=1,
         verbose=False,
         tmp_dir=args.tmp,
         skeleton_dir=args.skeleton_dir,
@@ -170,14 +176,15 @@ def run(parser, args):
     sequence_calls_dict = {}
     if depths:
         gt = Genotyper(sample=args.sample, expected_depths=depths,
+                       expected_error_rate=args.expected_error_rate,
                        variant_covgs=cp.variant_covgs,
                        gene_presence_covgs=cp.covgs["presence"],
                        base_json=base_json,
                        contamination_depths=[],
-                       include_hom_alt_calls=True,
-                       ignore_filtered = True,
+                       report_all_calls=True,
+                       ignore_filtered=True,
                        variant_confidence_threshold=args.min_variant_conf,
-                       sequence_confidence_threshold=args.min_gene_conf                      
+                       sequence_confidence_threshold=args.min_gene_conf
                        )
         gt.run()
         variant_calls_dict = gt.variant_calls_dict
@@ -188,10 +195,11 @@ def run(parser, args):
     mykrobe_predictor_susceptibility_result = MykrobePredictorSusceptibilityResult()
     if Predictor is not None and max(depths) > args.min_depth:
         predictor = Predictor(variant_calls=gt.variant_calls,
-                              called_genes=gt.gene_presence_covgs,
+                              called_genes=gt.sequence_calls_dict,
                               base_json=base_json[args.sample],
-                              depth_threshold = args.min_depth,
-                              ignore_filtered = True)
+                              depth_threshold=args.min_depth,
+                              ignore_filtered=True,
+                              ignore_minor_calls=args.ont)
         mykrobe_predictor_susceptibility_result = predictor.run()
     base_json[
         args.sample] = MykrobePredictorResult(
