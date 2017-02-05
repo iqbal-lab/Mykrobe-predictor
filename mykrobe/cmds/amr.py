@@ -116,8 +116,9 @@ def run(parser, args):
                 hierarchy_json_file))
     if args.ont:
         args.expected_error_rate = 0.15
-        logger.debug("Setting expected error rate to %s (--ont)" % args.expected_error_rate)    
-
+        logger.debug("Setting expected error rate to %s (--ont)" %
+                     args.expected_error_rate)
+        args.filters = ["LOW_GT_CONF"]
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
@@ -175,7 +176,8 @@ def run(parser, args):
     variant_calls_dict = {}
     sequence_calls_dict = {}
     if depths:
-        gt = Genotyper(sample=args.sample, expected_depths=depths,
+        gt = Genotyper(sample=args.sample,
+                       expected_depths=depths,
                        expected_error_rate=args.expected_error_rate,
                        variant_covgs=cp.variant_covgs,
                        gene_presence_covgs=cp.covgs["presence"],
@@ -183,6 +185,7 @@ def run(parser, args):
                        contamination_depths=[],
                        report_all_calls=True,
                        ignore_filtered=True,
+                       filters=args.filters,
                        variant_confidence_threshold=args.min_variant_conf,
                        sequence_confidence_threshold=args.min_gene_conf
                        )
