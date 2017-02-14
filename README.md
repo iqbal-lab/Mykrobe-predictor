@@ -6,7 +6,7 @@ Dev : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branc
 
 ## Python
 	
-	(sudo) pip install git+https://github.com/Phelimb/atlas@4dfae2cf07121bdfe37819e766f55d36f37b034f ## Required dependancy. 
+	(sudo) pip install git+https://github.com/Phelimb/atlas@9db4a0f866de5ba6e7e048cade82502481de0987 ## Required dependancy. 
 	(sudo) pip install mykrobe
 
 We recommend that you use a virtualenv to install mykrobe. If you haven't used virtualenv before please read a guide [here](virutualenvREADME.md).
