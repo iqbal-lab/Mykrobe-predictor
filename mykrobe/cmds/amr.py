@@ -24,7 +24,7 @@ from mongoengine import DictField
 from mongoengine import StringField
 
 STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
-                "data/panels/staph-amr-probe_set_v0_3_13-160715.fasta.gz"]
+                "data/panels/staph-amr-bradley_2015-feb-17-2017.fasta.gz"]
 
 GN_PANELS = [
     "data/panels/gn-amr-genes",
