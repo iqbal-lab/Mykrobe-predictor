@@ -27,7 +27,7 @@ setup(
             'data/phylo/*',
             'data/panels/tb-species-160330.fasta.gz',
             'data/panels/staph-species-160227.fasta.gz',
-            'data/panels/tb-amr-walker_2015.fasta.gz',
-            'data/panels/tb-amr-bradley_2015.fasta.gz',
-            'data/panels/staph-amr-probe_set_v0_3_13-160715.fasta.gz',
+            'data/panels/tb-walker-probe-set-feb-09-2017.fasta.gz',
+            'data/panels/tb-bradley-probe-set-feb-09-2017.fasta.gz',
+            'data/panels/staph-amr-bradley_2015-feb-17-2017.fasta.gz',
         ]})
