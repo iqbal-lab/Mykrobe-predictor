@@ -1,3 +1,3 @@
-git+https://github.com/Phelimb/atlas@069cedf2109c40a1ec54a22865536b7f8b83c953
+git+https://github.com/Phelimb/atlas@0115fc5cb0fc7972db86eed6b11822a293a77c1a
 numpy
 nose
