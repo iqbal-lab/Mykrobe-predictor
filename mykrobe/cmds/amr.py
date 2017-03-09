@@ -24,7 +24,7 @@ from mongoengine import DictField
 from mongoengine import StringField
 
 STAPH_PANELS = ["data/panels/staph-species-160227.fasta.gz",
-                "data/panels/staph-amr-probe_set_v0_3_13-160715.fasta.gz"]
+                "data/panels/staph-amr-bradley_2015-feb-17-2017.fasta.gz"]
 
 GN_PANELS = [
     "data/panels/gn-amr-genes",
@@ -74,11 +74,11 @@ def run(parser, args):
         if args.panel == "bradley-2015":
             TB_PANELS = [
                 "data/panels/tb-species-160330.fasta.gz",
-                "data/panels/tb-amr-bradley_2015.fasta.gz"]
+                "data/panels/tb-bradley-probe-set-feb-09-2017.fasta.gz"]
         elif args.panel == "walker-2015":
             TB_PANELS = [
                 "data/panels/tb-species-160330.fasta.gz",
-                "data/panels/tb-amr-walker_2015.fasta.gz"]
+                "data/panels/tb-walker-probe-set-feb-09-2017.fasta.gz"]
 
     if not args.species:
         panels = TB_PANELS + GN_PANELS + STAPH_PANELS
@@ -116,8 +116,9 @@ def run(parser, args):
                 hierarchy_json_file))
     if args.ont:
         args.expected_error_rate = 0.15
-        logger.debug("Setting expected error rate to %s (--ont)" % args.expected_error_rate)    
-
+        logger.debug("Setting expected error rate to %s (--ont)" %
+                     args.expected_error_rate)
+        args.filters = ["LOW_GT_CONF"]
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
@@ -175,7 +176,8 @@ def run(parser, args):
     variant_calls_dict = {}
     sequence_calls_dict = {}
     if depths:
-        gt = Genotyper(sample=args.sample, expected_depths=depths,
+        gt = Genotyper(sample=args.sample,
+                       expected_depths=depths,
                        expected_error_rate=args.expected_error_rate,
                        variant_covgs=cp.variant_covgs,
                        gene_presence_covgs=cp.covgs["presence"],
@@ -183,6 +185,7 @@ def run(parser, args):
                        contamination_depths=[],
                        report_all_calls=True,
                        ignore_filtered=True,
+                       filters=args.filters,
                        variant_confidence_threshold=args.min_variant_conf,
                        sequence_confidence_threshold=args.min_gene_conf
                        )
