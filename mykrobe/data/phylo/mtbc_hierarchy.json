@@ -230,10 +230,6 @@
                         "phylo_group": "species", 
                         "children": {}
                     }, 
-                    "Mycobacterium_ratisbonense": {
-                        "phylo_group": "species", 
-                        "children": {}
-                    }, 
                     "Mycobacterium_triplex": {
                         "phylo_group": "species", 
                         "children": {}
@@ -431,10 +427,6 @@
                         "children": {}
                     }, 
                     "Mycobacterium_interjectum": {
-                        "phylo_group": "species", 
-                        "children": {}
-                    }, 
-                    "Mycobacterium_tomidae": {
                         "phylo_group": "species", 
                         "children": {}
                     }, 
