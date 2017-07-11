@@ -212,7 +212,8 @@ class SpeciesPredictor(object):
             return coverage_dict
         sorted_coverage_dict = sorted(
             coverage_dict.items(),
-            key=lambda x: x[1]["percent_coverage"],
+            key=lambda x: (x[1]["percent_coverage"], x[
+                           1].get("median_depth", 0)),
             reverse=True)
         if (sorted_coverage_dict[0][1]["percent_coverage"]) > 0:
             return {sorted_coverage_dict[0][0]: sorted_coverage_dict[0][1]}
