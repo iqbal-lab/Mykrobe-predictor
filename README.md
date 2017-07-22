@@ -310,7 +310,7 @@ mccortex should be installed automatically with the atlas dependancy. If for som
 	cd Mykrobe-predictor
 	cd mccortex
 	make    
-	export PATH=$PATH:$(pwd)/bin
+	export PATH=$(pwd)/bin:$PATH
 	cd ..
 
 	
