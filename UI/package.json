@@ -4,6 +4,9 @@
   "description": "",
   "keywords": [],
   "private": true,
+  "scripts": {
+    "nw-app": "nw app"
+  },
   "devDependencies": {
     "bower": "^1.3.11",
     "grunt": "^0.4.5",
@@ -31,5 +34,8 @@
   },
   "engines": {
     "node": ">=0.8.0"
+  },
+  "dependencies": {
+    "nw": "^0.12.3"
   }
 }
