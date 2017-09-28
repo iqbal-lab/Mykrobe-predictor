@@ -14,6 +14,12 @@
   "overrides": {
     "masonry": {
         "main": ["./dist/masonry.pkgd.min.js"]
+    },
+    "outlayer": {
+      "main": [
+        "item.js",
+        "outlayer.js"
+      ]
     }
   },
   "authors": [

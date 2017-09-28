@@ -9,7 +9,7 @@ $(document).ready(function() {
 	var that = this;
 	if ( $('body').hasClass('app') ) {
 		that.app = new MykrobeApp();
-	}    
+	}
 	else if ( $('body').hasClass('about') ) {
 		that.about = new MykrobeAbout();
 	}
