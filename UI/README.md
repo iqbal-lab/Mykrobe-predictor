@@ -5,12 +5,22 @@ The app uses [node-webkit](https://github.com/rogerwang/node-webkit) to provide 
 
 ### How do I get set up? ###
 
-First you will need to install [Node.js](http://nodejs.org/), I suggest using homebrew via nvm for this.
+First you will need to install [Node.js](http://nodejs.org/)
+
+#### Mac OS
+
+I suggest using homebrew via nvm for this.
 
 ~~~~
 brew install nvm
 nvm use
 ~~~~
+
+#### Windows
+
+[Download nodejs 4.1 installer](https://nodejs.org/download/release/v4.1.0/)
+
+> Note that the version of Node WebKit used doesn't run in 64-bit mode, so the app always identifies as 32-bit (`win32`). However it can still spawn a 64-bit process.
 
 Then run the following terminal commands to install node followed by the dependencies used by the app. From the root folder of the source code:
 
@@ -74,8 +84,7 @@ A compressed disk image containing the signed app is created in the `dist` folde
 
 #### Windows Deployment ####
 
-Binary and associated files are created in the `build/releases/<target>/win/` folder.
-
+Binary and associated files are created in the `build/releases/<target>/win/` folder. 
 Change the exe icon first using an exe icon resource editor
 
 Then all the files can be bundled into a single executable using the free [Enigma Virtual Box](http://enigmaprotector.com/assets/files/enigmavb.exe)
