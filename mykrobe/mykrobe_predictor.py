@@ -1,27 +1,28 @@
 #! /usr/bin/env python
 from __future__ import print_function
+import os
 import sys
-import os
-
-
-import os
+import logging
 import argparse
-import sys
+
+
 sys.path.append(
     os.path.realpath(
         os.path.join(
             os.path.dirname(__file__),
             "..")))
-from mykrobe.version import __version__
-import logging
-logger = logging.getLogger(__name__)
 
+
+from mykrobe.version import __version__
 from mykatlas.base import ArgumentParserWithDefaults
-from mykatlas.base import DEFAULT_KMER_SIZE
 from mykatlas.base import sequence_or_binary_parser_mixin
 from mykatlas.base import probe_set_mixin
 from mykatlas.base import force_mixin
 from mykatlas.base import genotyping_mixin
+
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 
 def run_subtool(parser, args):
