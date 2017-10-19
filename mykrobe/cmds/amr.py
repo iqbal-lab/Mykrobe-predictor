@@ -97,7 +97,7 @@ def run(parser, args):
         panels = GN_PANELS
         panel_name = "gn-amr"
         # Predictor = GramNegPredictor
-    logging.info("Running AMR prediction with panels %s" % ", ".join(panels))
+    logger.info("Running AMR prediction with panels %s" % ", ".join(panels))
     version = {}
     version["mykrobe-predictor"] = predictor_version
     version["mykrobe-atlas"] = atlas_version
@@ -132,6 +132,8 @@ def run(parser, args):
         skeleton_dir=args.skeleton_dir,
         mccortex31_path=args.mccortex31_path)
     cp.run()
+    logger.debug('CoverageParser complete')
+
     # Detect species
     species_predictor = AMRSpeciesPredictor(
         phylo_group_covgs=cp.covgs.get(

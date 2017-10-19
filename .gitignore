@@ -6,7 +6,6 @@ scripts/add_tb_vcf.sh
 mykrobe.egg-info/
 atlas.egg-info/
 build
-dist
 *.ctx
 .DS_Store
 .temporary_delete_me
@@ -15,7 +14,6 @@ dist
 *.dat
 *#
 *.p
-
 *.gz
 dump
 *.fa
@@ -42,3 +40,5 @@ val_comids.txt
 val_tb_comids.txt
 vcfs.txt
 *.fasta
+dist/inno_setup_build/
+dist/pyinstaller_build/

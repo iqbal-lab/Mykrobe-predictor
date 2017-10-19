@@ -615,7 +615,7 @@ else:
 def print_header(header, row_delim="\t"):
     print (row_delim.join(header))
     if args.markdown:
-        print row_delim.join(["-----"] * len(header))
+        print (row_delim.join(["-----"] * len(header)))
 # Run analyses
 if args.analysis == "table":
     # sample  drug  truth  ana1   ana2
@@ -630,7 +630,7 @@ if args.analysis == "table":
         print (row_delim.join(row))
 elif args.analysis == "summary":
     # Report a summary of each analysis vs. truth
-    print "\nAna1\n"
+    print("\nAna1\n")
     count_comparision_ana1 = compare_analysis_to_truth(
         sample_ids, truth_susceptibility, ana1_susceptibility, "ana1")
     if args.format == "short":
@@ -640,7 +640,7 @@ elif args.analysis == "summary":
             stats = Stats(count_comparision=v)
             print (row_delim.join([k] + [str(i) for i in stats.row_short]))
         if args.ana2:
-            print "\nAna2\n"
+            print("\nAna2\n")
             count_comparision_ana2 = compare_analysis_to_truth(
                 sample_ids, truth_susceptibility, ana2_susceptibility, "ana2")
             header = ["Drug"] + [str(i) for i in Stats({}).row_short_header]
@@ -650,7 +650,7 @@ elif args.analysis == "summary":
                 print (row_delim.join([k] + [str(i) for i in stats.row_short]))
 
             # Diff ana 1 ana 2 summary
-            print "\ndiff ana2 - ana1\n"
+            print("\ndiff ana2 - ana1\n")
 
             header = [
                 "Drug",
@@ -670,7 +670,7 @@ elif args.analysis == "summary":
                     stats_2 = Stats({})
                 stats_1 = Stats(count_comparision=count_comparision_ana1[k])
                 diff = diff_stats(stats_2, stats_1)
-                print row_delim.join([k] + [str("%+f" % i) for i in diff])
+                print (row_delim.join([k] + [str("%+f" % i) for i in diff]))
 
             ##
             ##
@@ -681,7 +681,7 @@ elif args.analysis == "summary":
             stats = Stats(count_comparision=v)
             print (row_delim.join([k] + [str(i) for i in stats.row_long]))
         if args.ana2:
-            print "Ana2"
+            print ("Ana2")
             count_comparision = compare_analysis_to_truth(
                 sample_ids, truth_susceptibility, ana2_susceptibility)
             print (row_delim.join(["Drug"] + [str(i)
@@ -701,12 +701,12 @@ elif args.analysis == "summary":
                 "specificity (+/-)"]
             print_header(header, row_delim)
             # Diff ana 1 ana 2 summary
-            print "\ndiff ana2 - ana1\n"
+            print ("\ndiff ana2 - ana1\n")
             for k in count_comparision_ana1.keys():
                 stats_2 = Stats(count_comparision=count_comparision_ana2[k])
                 stats_1 = Stats(count_comparision=count_comparision_ana1[k])
                 diff = diff_stats(stats_2, stats_1)
-                print row_delim.join([k] + [str("%+f" % i) for i in diff])
+                print (row_delim.join([k] + [str("%+f" % i) for i in diff]))
 
 # Report the diference between ana1 and and2
 elif args.analysis == "diff":
@@ -730,7 +730,7 @@ elif args.analysis == "diff":
                         truth_drug_predict = indv_truth.susceptibility.get(
                             drug, {"predict": "NA"}).get("predict")
                         ana1_predict, ana2_predict = predict_diff["predict"]
-                        print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict])
+                        print (row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ana2_predict]))
         else:
             diff = indv_truth.diff(indv_ana1)
             if diff:
@@ -740,4 +740,4 @@ elif args.analysis == "diff":
                             "predict"]
                         if truth_drug_predict != "NA" and ana1_predict != "NA":
                             ana1_susceptibility
-                            print row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ";".join(indv_ana1.susceptibility.get(drug, {}).get("called_by", {}).keys()), ";".join([str(s.get("median_depth", 0)) for s in ana1.get(sample_id, {}).get("phylogenetics").get("phylo_group").values()])])
+                            print (row_delim.join([sample_id, drug, truth_drug_predict, ana1_predict, ";".join(indv_ana1.susceptibility.get(drug, {}).get("called_by", {}).keys()), ";".join([str(s.get("median_depth", 0)) for s in ana1.get(sample_id, {}).get("phylogenetics").get("phylo_group").values()])]))
