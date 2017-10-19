@@ -1,4 +1,4 @@
-# Rough procedure for generating the win64 installer (`mykrobe_predictor_installer_win64.exe`)
+# Procedure for generating binaries for Windows 64 bits
 
 Working directory: `Mykrobe-predictor`
 
@@ -12,8 +12,4 @@ Working directory: `Mykrobe-predictor`
 
 5) with cygwin64: `(cd dist && pyinstaller --workpath='./pyinstaller_build/binary_cache' --distpath='./pyinstaller_build' mykrobe_predictor_pyinstaller.spec)`
 
-6) install InnoSetup (http://www.jrsoftware.org/isinfo.php)
-
-7) compile the install binary using the InnoSetup GUI and `mykrobe_predictor_win64.iss`
-
-8) win64 installer binary: `./dist/inno_setup_build/mykrobe_predictor_installer_win64.exe`
+6) binaries and dependencies: `./dist/pyinstaller_build/mykrobe_predictor`

@@ -1,5 +1,7 @@
 import os
 import json
+import logging
+
 from mykrobe.utils import unique
 from mykrobe.utils import flatten
 from mykrobe.utils import get_params
@@ -10,8 +12,9 @@ from ga4ghmongo.schema import VariantCall
 from ga4ghmongo.schema import SequenceCall
 
 from pprint import pprint
-import logging
 
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_MIN_GENE_CN = 0.03
 DEFAULT_MIN_VARIANT_CN = 0.1
@@ -87,7 +90,7 @@ class BasePredictor(object):
         for name, gene in self.called_genes.items():
             if isinstance(gene, list):
                 if len(gene) > 1:
-                    logging.warning(
+                    logger.warning(
                         "Ambigious gene call from mykatlas. Continuing regardless. ")
                 gene = gene[0]
             self._update_resistance_prediction(name, gene)
