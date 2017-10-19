@@ -5,18 +5,26 @@ The app uses [node-webkit](https://github.com/rogerwang/node-webkit) to provide 
 
 ### How do I get set up? ###
 
-First you will need to install [Node.js](http://nodejs.org/), I suggest using homebrew via nvm for this. 
+First you will need to install [Node.js](http://nodejs.org/)
+
+#### Mac OS
+
+I suggest using homebrew via nvm for this.
 
 ~~~~
 brew install nvm
-nvm install 0.12.0
-nvm use 0.12.0
+nvm use
 ~~~~
+
+#### Windows
+
+[Download nodejs 4.1 installer](https://nodejs.org/download/release/v4.1.0/)
+
+> Note that the version of Node WebKit used doesn't run in 64-bit mode, so the app always identifies as 32-bit (`win32`). However it can still spawn a 64-bit process.
 
 Then run the following terminal commands to install node followed by the dependencies used by the app. From the root folder of the source code:
 
 ~~~~
-npm install -g nw
 npm install -g grunt-cli
 npm install -g sass
 npm install
@@ -30,20 +38,20 @@ Note; `npm` should not require `sudo` to run. If it does (as happened to me) the
 The following terminal command runs the app in the `app` folder. You can terminate it with `ctrl-C`.
 
 ~~~~
-nw app
+npm run nw-app
 ~~~~
 
 #### Configuration ####
 
 The app uses [grunt](http://gruntjs.com/) to configure and build the app;
 
-Command 				| Description 																								
------------------------ | --------------------------------------------------------------------------------------------------------- 
-`grunt sass`  			| Convert the [sass](http://sass-lang.com/) into the `css` used by the app. 								
-`grunt watch` 			| Watch for changes to the sass files and recompile them automatically. Terminate it with `ctrl-C`. 		
-`grunt minify` 			| Minify assets and place in the `dist` folder for final packaging. Can be tested using `nw dist`. 	
-`grunt mac-icons`		| Create Mac icon files from `icon/mac/icon.pdf`.															
-`grunt clean`			| Erase temporary files.																					
+Command 				| Description
+----------------------- | ---------------------------------------------------------------------------------------------------------
+`grunt sass`  			| Convert the [sass](http://sass-lang.com/) into the `css` used by the app.
+`grunt watch` 			| Watch for changes to the sass files and recompile them automatically. Terminate it with `ctrl-C`.
+`grunt minify` 			| Minify assets and place in the `dist` folder for final packaging. Can be tested using `nw dist`.
+`grunt mac-icons`		| Create Mac icon files from `icon/mac/icon.pdf`.
+`grunt clean`			| Erase temporary files.
 
 ### Targets ###
 
@@ -51,7 +59,7 @@ Command 				| Description
 grunt set-target
 ~~~~
 
-Sets the current app target. This reads the targets set in the targets.json file, then updates the `package.json` file accordingly. 
+Sets the current app target. This reads the targets set in the targets.json file, then updates the `package.json` file accordingly.
 
 #### Appearance ####
 
@@ -65,11 +73,10 @@ The app distribution build will only contain the binaries for the specified targ
 ### Deployment ###
 
 ~~~~
-npm install grunt-contrib-sass --save-dev
 grunt dist
 ~~~~
 
-Compiles, minifies, packages and compiles the binaries. 
+Compiles, minifies, packages and compiles the binaries.
 
 #### Mac Deployment ####
 
@@ -78,7 +85,6 @@ A compressed disk image containing the signed app is created in the `dist` folde
 #### Windows Deployment ####
 
 Binary and associated files are created in the `build/releases/<target>/win/` folder. 
-
 Change the exe icon first using an exe icon resource editor
 
 Then all the files can be bundled into a single executable using the free [Enigma Virtual Box](http://enigmaprotector.com/assets/files/enigmavb.exe)

@@ -41,3 +41,8 @@ val_comids.txt
 val_tb_comids.txt
 vcfs.txt
 *.fasta
+
+# UI
+node_modules
+bower_components
+*cache*
