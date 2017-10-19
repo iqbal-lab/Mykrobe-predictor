@@ -37,7 +37,7 @@ class MykrobePredictorResult(object):
 
     def __init__(self, susceptibility, phylogenetics,
                  variant_calls, sequence_calls,
-                 kmer, probe_sets, files, version):
+                 kmer, probe_sets, files, version, model):
         self.susceptibility = susceptibility
         self.phylogenetics = phylogenetics
         self.variant_calls = variant_calls
@@ -46,6 +46,7 @@ class MykrobePredictorResult(object):
         self.probe_sets = probe_sets
         self.files = files
         self.version = version
+        self.model = model
 
     def to_dict(self):
         return {"susceptibility": list(self.susceptibility.to_dict().values())[0],
@@ -55,7 +56,8 @@ class MykrobePredictorResult(object):
                 "kmer": self.kmer,
                 "probe_sets": self.probe_sets,
                 "files": self.files,
-                "version": self.version
+                "version": self.version,
+                "genotype_model": self.model
                 }
     # For database document
     # susceptibility = EmbeddedDocumentField("MykrobePredictorSusceptibilityResult")
@@ -119,6 +121,7 @@ def run(parser, args):
         logger.debug("Setting expected error rate to %s (--ont)" %
                      args.expected_error_rate)
         args.filters = ["LOW_GT_CONF"]
+        args.model = "kmer_count"
     # Run Cortex
     cp = CoverageParser(
         sample=args.sample,
@@ -189,7 +192,8 @@ def run(parser, args):
                        ignore_filtered=True,
                        filters=args.filters,
                        variant_confidence_threshold=args.min_variant_conf,
-                       sequence_confidence_threshold=args.min_gene_conf
+                       sequence_confidence_threshold=args.min_gene_conf,
+                       model=args.model
                        )
         gt.run()
         variant_calls_dict = gt.variant_calls_dict
@@ -215,7 +219,8 @@ def run(parser, args):
         probe_sets=panels,
         files=args.seq,
         kmer=args.kmer,
-        version=version).to_dict()
+        version=version,
+        model=args.model).to_dict()
     if not args.keep_tmp:
         cp.remove_temporary_files()
     print(json.dumps(base_json, indent=4))
