@@ -244,6 +244,21 @@ All analysis in this paper was done with release [v0.1.3-beta](https://github.co
 	    }
 	}
 
+### Description of output of `json_to_tsv.py`
+
+`phylo_group` tells you whether non-tuberculous mycobacteria or Mycobacterium tuberculosis complex was identified (or both)
+`species` tells you which species was/were (if more than one) identified
+`lineage` tells you which lineage the sample is, if within the MTBC
+`phylo_group_per_covg` tells you the percentage coverage of the probes for each phylogroup identified
+`species_per_covg` tells you the percentage coverage of the probes for each species identified
+`lineage_per_cov` the percentage coverage of the probes for each lineage identified
+`phylo_group_depth` is the median depth of the probe for each phylogroup identified
+`species_depth` is the median depth of the probe for each species identified
+`lineage_depth` is the median depth of the probe for each lineage identified
+`susceptibility` is whether the strain is Resistant or Sensitive
+`variants (gene:alt_depth:wt_depth:conf)` is the gene identified, the alternate allele depth, the wild type allele depth, and the confidence
+
+
 ### Comparing results
 
 	./scripts/compare.py 
