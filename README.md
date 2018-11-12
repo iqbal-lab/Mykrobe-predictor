@@ -2,6 +2,10 @@ Master : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?br
 
 Dev : [![Build Status](https://travis-ci.org/Phelimb/Mykrobe-predictor.svg?branch=m2)](https://travis-ci.org/Phelimb/Mykrobe-predictor)
 
+
+# Warning! This repository is about to be deprecated as we move to a new codebase. This should be happening by mid December 2018 at the worst (aiming for much sooner)
+
+
 ## Installation
 
 ## Python
