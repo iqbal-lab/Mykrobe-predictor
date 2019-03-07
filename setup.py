@@ -30,5 +30,6 @@ setup(
             'data/panels/staph-species-160227.fasta.gz',
             'data/panels/tb-walker-probe-set-feb-09-2017.fasta.gz',
             'data/panels/tb-bradley-probe-set-feb-09-2017.fasta.gz',
+            'data/panels/tb-hunt-probe-set-jan-03-2018.fasta.gz',
             'data/panels/staph-amr-bradley_2015-feb-17-2017.fasta.gz',
         ]})
